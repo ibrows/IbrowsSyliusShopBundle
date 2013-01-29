@@ -1,5 +1,6 @@
 sylius_cart:
   driver: doctrine/orm
+  engine: twig 
   resolver: ibrows_syliusshop.cart.resolver
   classes:
     cart:
@@ -7,4 +8,4 @@ sylius_cart:
       repository: Ibrows\SyliusShopBundle\Repository\CartRepository
     item:
       model: Ibrows\SyliusShopBundle\Entity\CartItem
-      form: Ibrows\SyliusShopBundle\Form\Type\CartItemType
+      form: Sylius\Bundle\CartBundle\Form\Type\CartItemType 

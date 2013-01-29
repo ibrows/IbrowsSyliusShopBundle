@@ -1,0 +1,8 @@
+sylius_inventory:
+  driver: doctrine/orm
+  backorders: true
+  classes:
+      unit:
+          model: Ibrows\SyliusShopBundle\Entity\InventoryUnit
+      stockable:
+          model: Ibrows\SyliusShopBundle\Entity\?

@@ -4,3 +4,4 @@ imports:
   - { resource: cart.yml }
   - { resource: resource.yml }
   - { resource: address.yml }
+  - { resource: inventory.yml }
