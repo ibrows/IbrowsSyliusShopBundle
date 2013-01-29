@@ -1,0 +1,10 @@
+sylius_cart:
+  driver: doctrine/orm
+  resolver: ibrows_syliusshop.cart.resolver
+  classes:
+    cart:
+      model: Ibrows\SyliusShopBundle\Entity\Cart
+      repository: Ibrows\SyliusShopBundle\Repository\CartRepository
+    item:
+      model: Ibrows\SyliusShopBundle\Entity\CartItem
+      form: Ibrows\SyliusShopBundle\Form\Type\CartItemType
