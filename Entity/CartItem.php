@@ -20,13 +20,6 @@ class CartItem extends BaseCartItem
      */
     protected $id;
 
-    /**
-     * Cart.
-     * @ORM\ManyToOne(targetEntity="Cart", inversedBy="items")
-     * @ORM\JoinColumn(name="cart_id", referencedColumnName="id")
-     * @var CartInterface
-     */
-    protected $cart;
 
     /**
      * @var Object

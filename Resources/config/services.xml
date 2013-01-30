@@ -5,7 +5,7 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
         <parameters>
-        	<parameter key="ibrows_sylius_shop.cart.itemresolver.class">Ibrows\SyliusShopBundle\Cart\BaseItemResolver</parameter>
+        	<parameter key="ibrows_sylius_shop.cart.itemresolver">Ibrows\SyliusShopBundle\Cart\BaseItemResolver</parameter>
          </parameters>
 
 

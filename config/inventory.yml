@@ -5,4 +5,4 @@ sylius_inventory:
       unit:
           model: Ibrows\SyliusShopBundle\Entity\InventoryUnit
       stockable:
-          model: Ibrows\SyliusShopBundle\Entity\?
+          model: sylius_inventory.classes.stockable.model 
