@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="inventory_unit")
+ * @ORM\Table(name="sylius_inventory_unit")
  */
 class InventoryUnit extends BaseInventoryUnit
 {

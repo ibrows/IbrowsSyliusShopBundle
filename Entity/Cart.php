@@ -7,7 +7,7 @@ use Sylius\Bundle\CartBundle\Entity\Cart as BaseCart;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="cart")
+ * @ORM\Table(name="ibr_sylius_cart")
  */
 class Cart  extends BaseCart
 {
