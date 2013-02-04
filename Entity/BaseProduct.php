@@ -50,14 +50,17 @@ class BaseProduct extends CustomizableProduct implements StockableInterface
         parent::__construct();
     }
 
-    public function getSku()
+    /**
+     * {@inheritdoc}
+     */
+    public function setDeletedAt(\DateTime $deletedAt = null)
     {
-        return $this->sku;
+        $this->deletedAt = $deletedAt;
     }
 
-    public function setSku($sku)
+    public function getSku()
     {
-        $this->sku = $sku;
+        $this->getId();
     }
 
     /**
