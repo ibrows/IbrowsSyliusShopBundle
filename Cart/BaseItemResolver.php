@@ -62,6 +62,7 @@ class BaseItemResolver implements ItemResolverInterface
      */
     public function resolve(CartItemInterface $item, Request $request)
     {
+
         /*
          * We're getting here product id via query but you can easily override route
          * pattern and use attributes, which are available through request object.
@@ -79,21 +80,14 @@ class BaseItemResolver implements ItemResolverInterface
         }
 
         // We use forms to easily set the quantity and pick variant but you can do here whatever is required to create the item.
-        $form = $this->formFactory->create('sylius_cart_item', null, array('product' => $product));
+        $form = $this->formFactory->create('sylius_cart_item', null, array( 'data_class' => 'Ibrows\SyliusShopBundle\Entity\CartItem')); //'product' => $product
 
         $form->bind($request);
         $item = $form->getData(); // Item instance, cool.
 
-        // If our product has no variants, we simply set the master variant of it.
-        if (!$product->hasOptions()) {
-            $item->setVariant($product->getMasterVariant());
-        }
-
-        $variant = $item->getVariant();
-
         // If all is ok with form, quantity and other stuff, simply return the item.
-        if ($form->isValid() && null !== $variant) {
-            $this->isStockAvailable($variant);
+        if ($form->isValid() && null !== $product) {
+            $this->isStockAvailable($product);
 
             return $item;
         }
@@ -105,7 +99,7 @@ class BaseItemResolver implements ItemResolverInterface
      * @param VariantInterface $variant
      * @throws ItemResolvingException
      */
-    private function isStockAvailable(VariantInterface $variant)
+    private function isStockAvailable($variant)
     {
         if (!$this->availabilityChecker->isStockAvailable($variant)) {
             throw new ItemResolvingException('Selected item is out of stock');
