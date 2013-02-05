@@ -1,6 +1,6 @@
 sylius_inventory:
   driver: doctrine/orm
-  backorders: true
+  backorders: false
   classes:
       unit:
           model: Ibrows\SyliusShopBundle\Entity\InventoryUnit

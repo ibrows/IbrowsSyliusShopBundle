@@ -27,12 +27,12 @@ class BaseProduct extends CustomizableProduct implements StockableInterface
      * @Assert\NotBlank
      * @Assert\Min(0)
      */
-    protected $onHand = 1;
+    protected $onHand = 0;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    protected $availableOnDemand = true;
+    protected $availableOnDemand = false;
 
     /**
      *

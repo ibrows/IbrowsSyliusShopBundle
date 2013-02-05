@@ -100,9 +100,10 @@ class BaseItemResolver implements ItemResolverInterface
      * @param VariantInterface $variant
      * @throws ItemResolvingException
      */
-    private function isStockAvailable($variant)
+    private function isStockAvailable($product)
     {
-        if (!$this->availabilityChecker->isStockAvailable($variant)) {
+
+        if (!$this->availabilityChecker->isStockAvailable($product)) {
             throw new ItemResolvingException('Selected item is out of stock');
         }
     }
