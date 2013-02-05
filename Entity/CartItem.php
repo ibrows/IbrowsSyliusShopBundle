@@ -2,6 +2,8 @@
 
 namespace Ibrows\SyliusShopBundle\Entity;
 
+use Sylius\Bundle\InventoryBundle\Model\StockableInterface;
+
 use Sylius\Bundle\CartBundle\Model\CartItemInterface;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -22,16 +24,24 @@ class CartItem extends BaseCartItem
 
 
     /**
-     * @var Object
+     * @var StockableInterface
+     * @ORM\OneToOne(targetEntity="\Sylius\Bundle\InventoryBundle\Model\StockableInterface")
      */
     protected $product;
 
+    /**
+     * @return \Sylius\Bundle\InventoryBundle\Model\StockableInterface
+     */
     public function getProduct()
     {
         return $this->product;
     }
 
-    public function setProduct($product)
+
+    /**
+     * @param StockableInterface $product
+     */
+    public function setProduct(StockableInterface $product)
     {
         $this->product = $product;
     }

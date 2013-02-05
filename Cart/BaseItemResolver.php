@@ -88,7 +88,8 @@ class BaseItemResolver implements ItemResolverInterface
         // If all is ok with form, quantity and other stuff, simply return the item.
         if ($form->isValid() && null !== $product) {
             $this->isStockAvailable($product);
-
+            $item->setProduct($product);
+            $item->setUnitPrice($product->getPrice());
             return $item;
         }
 
