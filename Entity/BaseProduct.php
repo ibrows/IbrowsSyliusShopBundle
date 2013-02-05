@@ -35,7 +35,7 @@ class BaseProduct extends CustomizableProduct implements StockableInterface
     protected $availableOnDemand = false;
 
     /**
-     *
+     * @ORM\Column(type="decimal", scale=2, precision=11)
      * @Assert\NotBlank
      *
      * @var float
