@@ -105,7 +105,6 @@ class BaseProduct extends CustomizableProduct implements StockableInterface
     public function setOnHand($onHand)
     {
         $this->onHand = $onHand;
-
         if (0 > $this->onHand) {
             $this->onHand = 0;
         }

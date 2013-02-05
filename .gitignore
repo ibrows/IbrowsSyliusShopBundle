@@ -1,0 +1,8 @@
+/.externalToolBuilders/
+.DS_Store
+/nbproject/
+/.buildpath
+/.project
+/.settings/
+/.idea/
+/temp
