@@ -2,7 +2,6 @@
 
 namespace Ibrows\SyliusShopBundle\Controller;
 
-
 use Ibrows\SyliusShopBundle\Entity\Cart;
 
 use Ibrows\SyliusShopBundle\Entity\CartItem;
@@ -14,18 +13,17 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
-
 use Sylius\Bundle\CartBundle\SyliusCartEvents;
 use Sylius\Bundle\CartBundle\Event\CartItemEvent;
 use Sylius\Bundle\CartBundle\Event\FlashEvent;
 use Sylius\Bundle\CartBundle\Resolver\ItemResolvingException;
 
 /**
- * @Route("/cart")
+ * @Route("/cartitem")
  * @author marcsteiner
  *
  */
-class CartItemController  extends AbstractController
+class CartItemController extends AbstractController
 {
     /**
      * Adds item to cart.
@@ -35,7 +33,7 @@ class CartItemController  extends AbstractController
      * It redirect to cart summary page by default.
      *
      * @param Request $request
-     * @Route("/", name="cart_item_add")
+     * @Route("/add", name="cart_item_add")
      * @return Response
      */
     public function addAction(Request $request)
@@ -51,22 +49,19 @@ class CartItemController  extends AbstractController
             $item = $this->getResolver()->resolve($item, $request);
         } catch (ItemResolvingException $exception) {
             $dispatcher->dispatch(SyliusCartEvents::ITEM_ADD_ERROR, new FlashEvent($exception->getMessage()));
-            $this->redirect($this->generateUrl($this->getCartSummaryRoute()));
-
-
+           throw $e;
         }
 
         $cart->addItem($item);
-        self::refreshCart($cart);
         $manager->persist($cart);
         $manager->flush();
-
-
+        $manager->clear();
         $dispatcher->dispatch(SyliusCartEvents::ITEM_ADD_COMPLETED, new FlashEvent());
 
-        return  $this->redirect($this->generateUrl($this->getCartSummaryRoute()));
-    }
+        return $this->forwardByRoute($this->getCartSummaryRoute());
 
+
+    }
 
     /**
      * Removes item from cart.
@@ -95,17 +90,14 @@ class CartItemController  extends AbstractController
             return $this->redirectToCartSummary();
         }
 
-
         $cart->removeItem($item);
         self::refreshCart($cart);
         $manager->persist($cart);
         $manager->flush();
 
-
         $dispatcher->dispatch(SyliusCartEvents::ITEM_REMOVE_COMPLETED, new FlashEvent());
 
         return $this->redirectToCartSummary();
     }
-
 
 }

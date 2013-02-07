@@ -1,25 +1,31 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Controller;
-
 use Ibrows\SyliusShopBundle\Controller\AbstractController;
 
-use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 
 use Sylius\Bundle\CartBundle\SyliusCartEvents;
-use Sylius\Bundle\CartBundle\Event\CartEvent;
+use Sylius\Bundle\CartBundle\Event\CartItemEvent;
 use Sylius\Bundle\CartBundle\Event\FlashEvent;
+use Sylius\Bundle\CartBundle\Resolver\ItemResolvingException;
 
-
+/**
+ * @Route("/cart")
+ * @author marcsteiner
+ *
+ */
 class CartController extends AbstractController
 {
     /**
-     * Displays current cart summary page.
-     * The parameters includes the form created from `sylius_cart` type.
-     *
      * @param Request
-     *
+     * @Route("/", name="cart_summary")
+     * @Template("")
      * @return Response
      */
     public function summaryAction(Request $request)
@@ -27,43 +33,22 @@ class CartController extends AbstractController
         $cart = $this->getCurrentCart();
         $form = $this->createForm('sylius_cart', $cart);
 
-        return $this->renderResponse('summary.html', array(
-            'cart' => $cart,
-            'form' => $form->createView()
-        ));
-    }
+        if ($request->getMethod() == 'POST' && $form->bind($request)->isValid()) {
 
-    /**
-     * This action is used to submit the cart summary form.
-     * If the form and updated cart are valid, it refreshes
-     * the cart data and saves it using the operator.
-     *
-     * If there are any errors, it displays the cart summary page.
-     *
-     * @param Request $request
-     *
-     * @return Response
-     */
-    public function saveAction(Request $request)
-    {
-        $cart = $this->getCurrentCart();
-        $form = $this->createForm('sylius_cart', $cart);
-
-        if ($form->bind($request)->isValid()) {
+            $cart->refreshCart();
+            $manager = $this->getDoctrine()->getManagerForClass('Ibrows\SyliusShopBundle\Entity\Cart');
+            $manager->persist($cart);
+            $manager->flush();
+            $manager->clear();
             /* @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */
-            $dispatcher = $this->container->get('event_dispatcher');
-
-            $event = new CartEvent($cart);
-            $event->isFresh(true);
-
-            $dispatcher->dispatch(SyliusCartEvents::CART_SAVE_INITIALIZE, $event);
+            $dispatcher = $this->get('event_dispatcher');
             $dispatcher->dispatch(SyliusCartEvents::CART_SAVE_COMPLETED, new FlashEvent());
         }
 
-        return $this->renderResponse('summary.html', array(
-            'cart' => $cart,
-            'form' => $form->createView()
-        ));
+        return array(
+                'cart' => $cart,
+                'form' => $form->createView()
+        );
     }
 
     /**
@@ -79,6 +64,6 @@ class CartController extends AbstractController
         $dispatcher->dispatch(SyliusCartEvents::CART_CLEAR_INITIALIZE, new CartEvent($this->getCurrentCart()));
         $dispatcher->dispatch(SyliusCartEvents::CART_CLEAR_COMPLETED, new FlashEvent());
 
-        return $this->redirectToCartSummary();
+        return $this->forwardByRoute($this->getCartSummaryRoute());
     }
 }

@@ -2,18 +2,21 @@
 
 namespace Ibrows\SyliusShopBundle\Controller;
 
+use Symfony\Component\HttpKernel\HttpKernelInterface;
+
 use Sylius\Bundle\CartBundle\Model\CartInterface;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 abstract class AbstractController extends Controller
 {
-    public static function refreshCart(CartInterface $cart)
-    {
-        $cart->calculateTotal();
-        $cart->setTotalItems($cart->countItems());
-        return $cart;
+
+
+    protected function forwardByRoute($name){
+       $defaults =  $this->get('router')->getRouteCollection()->get($name)->getDefaults();
+       return $this->forward($defaults['_controller'],array(),$this->container->get('request')->query->all());
     }
+
     /**
      * Cart summary page route.
      *
@@ -21,7 +24,7 @@ abstract class AbstractController extends Controller
      */
     protected function getCartSummaryRoute()
     {
-        return 'sylius_cart_summary';
+        return 'cart_summary';
     }
 
     /**

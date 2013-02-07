@@ -1,0 +1,31 @@
+{% extends "IbrowsSyliusShopBundle::baselayout.html.twig" %}
+
+{% block content %}
+
+<h3>My cart</h3>
+
+  <ul>
+        {% for  item in cart.items %}
+        <li>
+        {{ item.quantity }} x {{ item }} : {{ item.unitprice }}
+        </li>
+        {% endfor %}
+  </ul>
+<strong>{{ cart.totalItems }}</strong> items, <strong>{{ cart.total }}</strong>
+
+
+
+
+
+                       </form>
+                       <form action="{{ path('cart_summary') }}" method="post" >
+        {% for  itemform in form %}
+
+
+             {{ form_widget(itemform) }}
+
+
+        {% endfor %}
+                              <input type="submit">
+         </form>
+{% endblock %}

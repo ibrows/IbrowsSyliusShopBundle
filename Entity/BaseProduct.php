@@ -125,4 +125,7 @@ class BaseProduct extends CustomizableProduct implements StockableInterface
         $this->availableOnDemand = (Boolean) $availableOnDemand;
     }
 
+    public function __toString(){
+        return $this->getInventoryName();
+    }
 }

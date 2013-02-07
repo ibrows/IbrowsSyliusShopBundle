@@ -52,6 +52,6 @@ class CartItem extends BaseCartItem
     }
 
     public function __toString(){
-        return $this->product->getInventoryName();
+        return $this->product->__toString();
     }
 }
