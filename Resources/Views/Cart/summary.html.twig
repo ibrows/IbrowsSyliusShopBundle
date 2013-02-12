@@ -7,7 +7,7 @@
   <ul>
         {% for  item in cart.items %}
         <li>
-        {{ item.quantity }} x {{ item }} : {{ item.unitprice }}
+        {{ item.quantity }} x {{ item }} : {{ item.unitprice }}  <a href="{{ path('cart_item_remove',{'id':item.id}) }}">remove</a>
         </li>
         {% endfor %}
   </ul>
@@ -19,13 +19,13 @@
 
                        </form>
                        <form action="{{ path('cart_summary') }}" method="post" >
-        {% for  itemform in form %}
+                    {% for  itemform in form %}
 
 
-             {{ form_widget(itemform) }}
+                         {{ form_widget(itemform) }}
 
 
-        {% endfor %}
+                    {% endfor %}
                               <input type="submit">
          </form>
 {% endblock %}

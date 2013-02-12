@@ -32,8 +32,7 @@ class CartController extends AbstractController
     {
         $cart = $this->getCurrentCart();
         $form = $this->createForm('sylius_cart', $cart);
-
-        if ($request->getMethod() == 'POST' && $form->bind($request)->isValid()) {
+        if ($request->getMethod() == 'POST' && $request->request->get('sylius_cart') != null && $form->bind($request)->isValid()) {
 
             $cart->refreshCart();
             $manager = $this->getDoctrine()->getManagerForClass('Ibrows\SyliusShopBundle\Entity\Cart');

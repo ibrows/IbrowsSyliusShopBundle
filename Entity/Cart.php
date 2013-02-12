@@ -26,7 +26,7 @@ class Cart  extends BaseCart
 
     /**
      * Items in cart.
-     * @ORM\OneToMany(targetEntity="CartItem", mappedBy="cart", cascade="all")
+     * @ORM\OneToMany(targetEntity="CartItem", mappedBy="cart", cascade="all", orphanRemoval=true)
      * @ORM\JoinColumn(name="typ_id", referencedColumnName="id")
      * @var Collection
      */

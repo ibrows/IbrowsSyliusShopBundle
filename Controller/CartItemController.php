@@ -48,8 +48,8 @@ class CartItemController extends AbstractController
         try {
             $item = $this->getResolver()->resolve($item, $request);
         } catch (ItemResolvingException $exception) {
-            $dispatcher->dispatch(SyliusCartEvents::ITEM_ADD_ERROR, new FlashEvent($exception->getMessage()));
-           throw $e;
+           $dispatcher->dispatch(SyliusCartEvents::ITEM_ADD_ERROR, new FlashEvent($exception->getMessage()));
+           throw $exception;
         }
 
         $cart->addItem($item);
@@ -70,15 +70,17 @@ class CartItemController extends AbstractController
      * If the item is found and the current user cart contains that item,
      * it will be removed and the cart - refreshed and saved.
      *
-     * @param mixed $id
-     *
+     * @param Request $request
+     * @Route("/remove/{id}", name="cart_item_remove")
+     * @return Response
      * @return Response
      */
     public function removeAction($id)
     {
         $cart = $this->getCurrentCart();
-        $repo = $this->getDoctrine()->getManagerForClass('Ibrows\SyliusShopBundle\Entity\CartItem')->getRepository();
-        $item = $repo->find($id);
+        $item = $this->getDoctrine()->getManagerForClass('Ibrows\SyliusShopBundle\Entity\CartItem')->find('Ibrows\SyliusShopBundle\Entity\CartItem',$id);
+
+
         $manager = $this->getDoctrine()->getManagerForClass('Ibrows\SyliusShopBundle\Entity\Cart');
 
         /* @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */
@@ -86,18 +88,16 @@ class CartItemController extends AbstractController
 
         if (!$item || false === $cart->hasItem($item)) {
             $dispatcher->dispatch(SyliusCartEvents::ITEM_REMOVE_ERROR, new FlashEvent());
-
-            return $this->redirectToCartSummary();
+            throw new \Exception('item not found: '. $id);
         }
 
         $cart->removeItem($item);
-        self::refreshCart($cart);
         $manager->persist($cart);
         $manager->flush();
 
         $dispatcher->dispatch(SyliusCartEvents::ITEM_REMOVE_COMPLETED, new FlashEvent());
 
-        return $this->redirectToCartSummary();
+        return $this->forwardByRoute($this->getCartSummaryRoute());
     }
 
 }
