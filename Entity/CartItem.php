@@ -25,7 +25,7 @@ class CartItem extends BaseCartItem
 
     /**
      * @var StockableInterface
-     * @ORM\OneToOne(targetEntity="\Sylius\Bundle\InventoryBundle\Model\StockableInterface")
+     * @ORM\ManyToOne(targetEntity="\Sylius\Bundle\InventoryBundle\Model\StockableInterface")
      */
     protected $product;
 
