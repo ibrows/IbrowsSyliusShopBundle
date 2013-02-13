@@ -1,0 +1,15 @@
+ibrshop:
+   resource: "@IbrowsSyliusShopBundle/Controller"
+   type:     annotation 
+   prefix:   /
+sylius_product_list:
+    path: /product
+    defaults:
+        _controller: sylius.controller.product:indexAction
+        _paginate: 9
+
+sylius_product_show:
+    path: /product/{slug}
+    defaults:
+        _controller: sylius.controller.product:showAction
+        _identifier: slug

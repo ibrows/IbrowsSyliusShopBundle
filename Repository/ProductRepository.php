@@ -2,7 +2,9 @@
 
 namespace Ibrows\SyliusShopBundle\Repository;
 
-use Doctrine\ORM\EntityRepository;
+
+
+use Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository;
 
 class ProductRepository extends EntityRepository
 {

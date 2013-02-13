@@ -4,6 +4,6 @@ sylius_assortment:
   classes:
     product:
       model: Ibrows\SyliusShopBundle\Entity\Product
-      controller: Sylius\Bundle\ResourceBundle\Controller\ResourceController
+      controller: Ibrows\SyliusShopBundle\Controller\ProductController
       repository: Ibrows\SyliusShopBundle\Repository\ProductRepository
       form: Sylius\Bundle\AssortmentBundle\Form\Type\ProductType 
