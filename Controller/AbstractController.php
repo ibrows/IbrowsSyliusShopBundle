@@ -1,6 +1,9 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Controller;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
+use Sylius\Bundle\ResourceBundle\Controller\Configuration;
 
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
@@ -11,10 +14,61 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 abstract class AbstractController extends Controller
 {
 
+    /**
+     * @var Configuration
+     */
+    protected $configuration;
+    protected $bundlePrefix = 'sylius';
+    protected $resourceName = null;
 
-    protected function forwardByRoute($name){
-       $defaults =  $this->get('router')->getRouteCollection()->get($name)->getDefaults();
-       return $this->forward($defaults['_controller'],array(),$this->container->get('request')->query->all());
+    public function initConfig()
+    {
+        $this->configuration = new Configuration($this->bundlePrefix, $this->resourceName);
+    }
+
+    public function findOr404(array $criteria = null)
+    {
+        $config = $this->getConfiguration();
+
+        if (null === $criteria) {
+            $criteria = $config->getIdentifierCriteria();
+        }
+
+        if (!$resource = $this->getRepository()->findOneBy($criteria)) {
+            throw new NotFoundHttpException(sprintf('Requested %s does not exist', $config->getResourceName()));
+        }
+
+        return $resource;
+    }
+
+    /**
+     * Get configuration with the bound request.
+     *
+     * @return Configuration
+     */
+    public function getConfiguration()
+    {
+        if ($this->configuration == null) {
+            $this->initConfig();
+        }
+        $this->configuration->setRequest($this->getRequest());
+        return $this->configuration;
+    }
+
+    public function getRepository()
+    {
+        return $this->getService('repository');
+    }
+
+    protected function getService($name)
+    {
+        return $this->get($this->getConfiguration()->getServiceName($name));
+    }
+
+    protected function forwardByRoute($name)
+    {
+        $defaults = $this->get('router')->getRouteCollection()->get($name)->getDefaults();
+        return $this->forward($defaults['_controller'], array(), $this->container->get('request')->query->all());
     }
 
     /**
@@ -34,10 +88,7 @@ abstract class AbstractController extends Controller
      */
     protected function getCurrentCart()
     {
-        return $this
-        ->getProvider()
-        ->getCart()
-        ;
+        return $this->getProvider()->getCart();
     }
 
     /**

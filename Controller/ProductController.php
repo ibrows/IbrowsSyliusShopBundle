@@ -19,15 +19,20 @@ use Sylius\Bundle\CartBundle\Resolver\ItemResolvingException;
 
 /**
  * @author marcsteiner
- *
+ * @Route("/product")
  */
-class ProductController extends ResourceController
+class ProductController extends AbstractController
 {
 
+    protected $bundlePrefix = 'sylius';
+    protected $resourceName = 'product';
+
     /**
+     * @Route("/", name="product_list")
+     * @Template("")
      * Get collection (paginated by default) of resources.
      */
-    public function indexAction(Request $request)
+    public function listAction(Request $request)
     {
         $config = $this->getConfiguration();
 
@@ -50,25 +55,15 @@ class ProductController extends ResourceController
             ;
         }
 
-        $view = $this
-        ->view()
-        ->setTemplate('IbrowsSyliusShopBundle:Product:list.html.twig')
-        ->setTemplateVar($pluralName)
-        ->setData($resources)
-        ;
-
-        return $this->handleView($view);
+        return array($pluralName=>$resources);
     }
-
+    /**
+     * @Route("/show/{slug}", name="product_show", defaults={"_identifier"="slug"})
+     * @Template("")
+     */
     public function showAction()
     {
-        $view =  $this
-        ->view()
-        ->setTemplate('IbrowsSyliusShopBundle:Product:show.html.twig')
-        ->setTemplateVar($this->getConfiguration()->getResourceName())
-        ->setData($this->findOr404())
-        ;
-
-        return $this->handleView($view);
+        $data = $this->findOr404();
+        return array($this->getConfiguration()->getResourceName() =>$data);
     }
 }

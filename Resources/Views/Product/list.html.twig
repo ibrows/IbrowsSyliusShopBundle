@@ -14,7 +14,7 @@
     {% for i, entity in products %}
     {% set form = sylius_cart_form() %}
                     <li>
-                       {{ entity.code }} <a href="{{ path('sylius_product_show', { 'slug':entity.slug }) }}">{{ entity.name }}</a>
+                       {{ entity.code }} <a href="{{ path('product_show', { 'slug':entity.slug }) }}">{{ entity.name }}</a>
                        {% if entity.inStock %}
                        <form action="{{ path('cart_item_add', {'id': entity.id }) }}" method="post" >
                        {{ entity.inStock }}
