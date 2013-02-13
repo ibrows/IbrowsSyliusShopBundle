@@ -22,6 +22,9 @@ use Sylius\Bundle\CartBundle\Resolver\ItemResolvingException;
  */
 class CartController extends AbstractController
 {
+    protected $bundlePrefix = 'sylius_cart';
+    protected $resourceName = 'cart';
+
     /**
      * @param Request
      * @Route("/", name="cart_summary")
@@ -35,7 +38,7 @@ class CartController extends AbstractController
         if ($request->getMethod() == 'POST' && $request->request->get('sylius_cart') != null && $form->bind($request)->isValid()) {
 
             $cart->refreshCart();
-            $manager = $this->getDoctrine()->getManagerForClass('Ibrows\SyliusShopBundle\Entity\Cart');
+            $manager = $this->getManager();
             $manager->persist($cart);
             $manager->flush();
             $manager->clear();

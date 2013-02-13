@@ -9,3 +9,4 @@ sylius_cart:
     item:
       model: Ibrows\SyliusShopBundle\Entity\CartItem
       form: Sylius\Bundle\CartBundle\Form\Type\CartItemType 
+      repository: Ibrows\SyliusShopBundle\Repository\CartRepository

@@ -25,6 +25,9 @@ use Sylius\Bundle\CartBundle\Resolver\ItemResolvingException;
  */
 class CartItemController extends AbstractController
 {
+
+    protected $bundlePrefix = 'sylius_cart';
+    protected $resourceName = 'item';
     /**
      * Adds item to cart.
      * It uses the resolver service so you can populate the new item instance
@@ -41,7 +44,7 @@ class CartItemController extends AbstractController
         $cart = $this->getCurrentCart();
 
         $item = new CartItem();
-        $manager = $this->getDoctrine()->getManagerForClass('Ibrows\SyliusShopBundle\Entity\Cart');
+        $manager = $this->getManager();
         /* @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */
         $dispatcher = $this->container->get('event_dispatcher');
 
@@ -73,12 +76,11 @@ class CartItemController extends AbstractController
      * @param Request $request
      * @Route("/remove/{id}", name="cart_item_remove")
      * @return Response
-     * @return Response
      */
     public function removeAction($id)
     {
         $cart = $this->getCurrentCart();
-        $item = $this->getDoctrine()->getManagerForClass('Ibrows\SyliusShopBundle\Entity\CartItem')->find('Ibrows\SyliusShopBundle\Entity\CartItem',$id);
+        $item = $this->findOr404();
 
 
         $manager = $this->getDoctrine()->getManagerForClass('Ibrows\SyliusShopBundle\Entity\Cart');

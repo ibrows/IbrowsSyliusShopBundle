@@ -60,10 +60,16 @@ abstract class AbstractController extends Controller
         return $this->getService('repository');
     }
 
+    public function getManager()
+    {
+        return $this->getService('manager');
+    }
+
     protected function getService($name)
     {
         return $this->get($this->getConfiguration()->getServiceName($name));
     }
+
 
     protected function forwardByRoute($name)
     {
