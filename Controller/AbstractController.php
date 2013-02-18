@@ -1,15 +1,13 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Controller;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use Sylius\Bundle\ResourceBundle\Controller\Configuration;
-
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-
 use Sylius\Bundle\CartBundle\Model\CartInterface;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 abstract class AbstractController extends Controller
 {
@@ -26,6 +24,11 @@ abstract class AbstractController extends Controller
         $this->configuration = new Configuration($this->bundlePrefix, $this->resourceName);
     }
 
+    /**
+     * @param array $criteria
+     * @return mixed
+     * @throws NotFoundHttpException
+     */
     public function findOr404(array $criteria = null)
     {
         $config = $this->getConfiguration();
