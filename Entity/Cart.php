@@ -3,7 +3,6 @@
 namespace Ibrows\SyliusShopBundle\Entity;
 
 use Sylius\Bundle\CartBundle\Model\CartInterface;
-
 use Sylius\Bundle\CartBundle\Model\CartItemInterface;
 
 use Doctrine\Common\Collections\Collection;
@@ -15,7 +14,7 @@ use Sylius\Bundle\CartBundle\Entity\Cart as BaseCart;
  * @ORM\Entity
  * @ORM\Table(name="ibr_sylius_cart")
  */
-class Cart  extends BaseCart
+class Cart extends BaseCart
 {
     /**
      * @ORM\Id
@@ -25,41 +24,60 @@ class Cart  extends BaseCart
     protected $id;
 
     /**
-     * Items in cart.
-     * @ORM\OneToMany(targetEntity="CartItem", mappedBy="cart", cascade="all", orphanRemoval=true)
-     * @ORM\JoinColumn(name="typ_id", referencedColumnName="id")
      * @var Collection
+     * @ORM\OneToMany(targetEntity="CartItem", mappedBy="cart", cascade="all", orphanRemoval=true)
+     * @ORM\JoinColumn(name="item_id", referencedColumnName="id")
      */
     protected $items;
 
-    public function refreshCart()
-    {
+    public function refreshCart(){
         $this->calculateTotal();
         $this->setTotalItems($this->countItems());
         return $this;
     }
 
+    /**
+     * @return CartItemInterface[]|Collection
+     */
     public function getItems(){
         return $this->items;
     }
 
+    /**
+     * @param CartItemInterface $item
+     * @return Cart
+     */
     public function addItem(CartItemInterface $item){
         parent::addItem($item);
         $this->refreshCart();
+
+        return $this;
     }
 
+    /**
+     * @param CartItemInterface $item
+     * @return Cart
+     */
     public function removeItem(CartItemInterface $item){
         parent::removeItem($item);
         $this->refreshCart();
+
+        return $this;
     }
 
+    /**
+     * @param Collection|CartItemInterface[] $items
+     * @return Cart
+     */
     public function setItems(Collection $items){
         foreach($this->items as $item){
             $this->removeItem($item);
         }
+
         foreach($items as $item){
             $this->addItem($item);
         }
-    }
 
+        return $this;
+    }
 }
