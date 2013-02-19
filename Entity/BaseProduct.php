@@ -21,7 +21,6 @@ class BaseProduct extends CustomizableProduct implements StockableInterface
      */
     protected $id;
 
-
     /**
      * @ORM\Column(type="integer")
      * @Assert\NotBlank
@@ -53,7 +52,7 @@ class BaseProduct extends CustomizableProduct implements StockableInterface
     /**
      * {@inheritdoc}
      */
-    public function setDeletedAt(\DateTime $deletedAt = null)
+    public function setDeletedAt(\DateTime $deletedAt)
     {
         $this->deletedAt = $deletedAt;
     }
