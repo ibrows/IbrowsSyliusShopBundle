@@ -88,12 +88,25 @@ class BaseItemResolver implements ItemResolverInterface
         // If all is ok with form, quantity and other stuff, simply return the item.
         if ($form->isValid() && null !== $product) {
             $this->isStockAvailable($product);
+            $this->isStockSufficient($product, $item->getQuantity());
             $item->setProduct($product);
             $item->setUnitPrice($product->getPrice());
             return $item;
         }
 
         throw new ItemResolvingException('Submitted form is invalid');
+    }
+
+    /**
+     * @param VariantInterface $variant
+     * @throws ItemResolvingException
+     */
+    private function isStockSufficient($stockable, $quantity)
+    {
+
+        if (!$this->availabilityChecker->isStockSufficient($stockable, $quantity)) {
+            throw new ItemResolvingException('Selected item has not enough');
+        }
     }
 
     /**
