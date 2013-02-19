@@ -97,7 +97,7 @@ abstract class AbstractController extends Controller
      */
     protected function getCurrentCart()
     {
-        return $this->getProvider()->getCart();
+        return $this->getCartProvider()->getCart();
     }
 
     /**
@@ -105,9 +105,9 @@ abstract class AbstractController extends Controller
      *
      * @return CartProviderInterface
      */
-    protected function getProvider()
+    protected function getCartProvider()
     {
-        return $this->get('sylius_cart.provider');
+        return $this->get('sylius.cart_provider');
     }
 
     /**
@@ -116,9 +116,9 @@ abstract class AbstractController extends Controller
      *
      * @return CartResolverInterface
      */
-    protected function getResolver()
+    protected function getCartResolver()
     {
-        return $this->get('sylius_cart.resolver');
+        return $this->get('sylius.cart_resolver');
     }
 
     protected function getProductRepository()

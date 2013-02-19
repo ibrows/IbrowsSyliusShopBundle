@@ -26,8 +26,8 @@ use Sylius\Bundle\CartBundle\Resolver\ItemResolvingException;
 class CartItemController extends AbstractController
 {
 
-    protected $bundlePrefix = 'sylius_cart';
-    protected $resourceName = 'item';
+    protected $bundlePrefix = 'sylius';
+    protected $resourceName = 'cart_item';
     /**
      * Adds item to cart.
      * It uses the resolver service so you can populate the new item instance
@@ -49,7 +49,7 @@ class CartItemController extends AbstractController
         $dispatcher = $this->container->get('event_dispatcher');
 
         try {
-            $item = $this->getResolver()->resolve($item, $request);
+            $item = $this->getCartResolver()->resolve($item, $request);
         } catch (ItemResolvingException $exception) {
            $dispatcher->dispatch(SyliusCartEvents::ITEM_ADD_ERROR, new FlashEvent($exception->getMessage()));
            throw $exception;
