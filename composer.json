@@ -19,7 +19,6 @@
 
         "sylius/assortment-bundle": "dev-master",
         "sylius/cart-bundle": "dev-master",
-        "sylius/addressing-bundle": "dev-master",
         "sylius/inventory-bundle": "dev-master",
 
         "ibrows/wizard-annotation-bundle": "dev-master"
