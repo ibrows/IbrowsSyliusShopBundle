@@ -15,7 +15,7 @@ class IbrowsSyliusShopBundle extends Bundle
 
 
         $interfaces = array(
-                'Sylius\Bundle\CartBundle\Model\CartInterface' => 'sylius_cart.model.cart.class',
+                'Sylius\Bundle\CartBundle\Model\CartInterface' => 'sylius.model.cart.class',
         );
         $container->addCompilerPass(new CompilerPass($interfaces));
     }

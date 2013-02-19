@@ -1,3 +1,0 @@
-# Sylius AddressingBundle
-sylius_addressing:
-  driver: doctrine/orm
