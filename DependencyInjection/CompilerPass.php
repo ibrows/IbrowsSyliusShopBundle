@@ -1,5 +1,6 @@
 <?php
 namespace Ibrows\SyliusShopBundle\DependencyInjection;
+
 use Sylius\Bundle\ResourceBundle\DependencyInjection\DoctrineTargetEntitiesResolver;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
