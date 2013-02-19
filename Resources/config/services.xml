@@ -6,6 +6,7 @@
 
         <parameters>
         	<parameter key="ibrows_sylius_shop.cart.itemresolver">Ibrows\SyliusShopBundle\Cart\BaseItemResolver</parameter>
+        	<parameter key="ibrows_sylius_shop.cart.manager.class">Ibrows\SyliusShopBundle\Cart\BaseManager</parameter>
          </parameters>
 
 
@@ -17,6 +18,15 @@
 			 <argument type="service" id="form.factory" />
             <argument type="service" id="sylius.availability_checker.default" />
         </service>
-
+        <service id="ibrows_syliusshop.cart.manager" class="%ibrows_sylius_shop.cart.manager.class%" >
+			<argument type="service" id="sylius.manager.cart" />
+			<argument type="service" id="sylius.repository.cart" />
+			<argument type="service" id="sylius.manager.cart_item" />
+			<argument type="service" id="sylius.repository.cart_item" />			
+			<argument type="service" id="sylius.cart_provider" />
+			<argument type="service" id="sylius.cart_resolver" />
+		    <argument type="service" id="form.factory" />
+            <argument type="service" id="sylius.availability_checker.default" />
+        </service>
     </services>
 </container>

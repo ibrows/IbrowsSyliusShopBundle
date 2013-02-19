@@ -1,7 +1,6 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Controller;
-
 use Ibrows\SyliusShopBundle\Controller\AbstractController;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -25,8 +24,6 @@ use Sylius\Bundle\CartBundle\Resolver\ItemResolvingException;
  */
 class CartController extends AbstractController
 {
-    protected $bundlePrefix = 'sylius_cart';
-    protected $resourceName = 'cart';
 
     /**
      * @param Request
@@ -36,24 +33,19 @@ class CartController extends AbstractController
      */
     public function summaryAction(Request $request)
     {
+        $manager = $this->getCartManager();
         $cart = $this->getCurrentCart();
         $form = $this->createForm('sylius_cart', $cart);
         if ($request->getMethod() == 'POST' && $request->request->get('sylius_cart') != null && $form->bind($request)->isValid()) {
-
-            $cart->refreshCart();
-            $manager = $this->getManager();
-            $manager->persist($cart);
-            $manager->flush();
-            $manager->clear();
-
+            $manager->setCurrentCart($cart);
             /* @var $dispatcher EventDispatcherInterface */
             $dispatcher = $this->get('event_dispatcher');
             $dispatcher->dispatch(SyliusCartEvents::CART_SAVE_COMPLETED, new FlashEvent());
         }
 
         return array(
-            'cart' => $cart,
-            'form' => $form->createView()
+                'cart' => $cart,
+                'form' => $form->createView()
         );
     }
 
@@ -65,9 +57,10 @@ class CartController extends AbstractController
      */
     public function clearAction()
     {
+        $this->getCartManager()->clearCurrentCart();
+
         /* @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */
         $dispatcher = $this->container->get('event_dispatcher');
-        $dispatcher->dispatch(SyliusCartEvents::CART_CLEAR_INITIALIZE, new CartEvent($this->getCurrentCart()));
         $dispatcher->dispatch(SyliusCartEvents::CART_CLEAR_COMPLETED, new FlashEvent());
 
         return $this->forwardByRoute($this->getCartSummaryRoute());

@@ -1,7 +1,6 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Controller;
-
 use Ibrows\SyliusShopBundle\Entity\Cart;
 
 use Ibrows\SyliusShopBundle\Entity\CartItem;
@@ -26,8 +25,6 @@ use Sylius\Bundle\CartBundle\Resolver\ItemResolvingException;
 class CartItemController extends AbstractController
 {
 
-    protected $bundlePrefix = 'sylius';
-    protected $resourceName = 'cart_item';
     /**
      * Adds item to cart.
      * It uses the resolver service so you can populate the new item instance
@@ -41,28 +38,19 @@ class CartItemController extends AbstractController
      */
     public function addAction(Request $request)
     {
-        $cart = $this->getCurrentCart();
 
-        $item = new CartItem();
-        $manager = $this->getManager();
-        /* @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */
+        $cartmanger = $this->getCartManager();
+        $item = $cartmanger->createNewItem();
         $dispatcher = $this->container->get('event_dispatcher');
-
         try {
-            $item = $this->getCartResolver()->resolve($item, $request);
+            $item = $cartmanger->resolve($item, $request);
         } catch (ItemResolvingException $exception) {
-           $dispatcher->dispatch(SyliusCartEvents::ITEM_ADD_ERROR, new FlashEvent($exception->getMessage()));
-           throw $exception;
+            $dispatcher->dispatch(SyliusCartEvents::ITEM_ADD_ERROR, new FlashEvent($exception->getMessage()));
+            throw $exception;
         }
-
-        $cart->addItem($item);
-        $manager->persist($cart);
-        $manager->flush();
-        $manager->clear();
+        $cartmanger->addItem($item);
         $dispatcher->dispatch(SyliusCartEvents::ITEM_ADD_COMPLETED, new FlashEvent());
-
         return $this->forwardByRoute($this->getCartSummaryRoute());
-
 
     }
 
@@ -79,23 +67,18 @@ class CartItemController extends AbstractController
      */
     public function removeAction($id)
     {
+        $cartmanger = $this->getCartManager();
         $cart = $this->getCurrentCart();
-        $item = $this->findOr404();
-
-
-        $manager = $this->getDoctrine()->getManagerForClass('Ibrows\SyliusShopBundle\Entity\Cart');
+        $item = $this->findOr404($cartmanger->getItemRepository());
 
         /* @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */
         $dispatcher = $this->container->get('event_dispatcher');
 
         if (!$item || false === $cart->hasItem($item)) {
             $dispatcher->dispatch(SyliusCartEvents::ITEM_REMOVE_ERROR, new FlashEvent());
-            throw new \Exception('item not found: '. $id);
+            throw new \Exception('item not found: ' . $id);
         }
-
-        $cart->removeItem($item);
-        $manager->persist($cart);
-        $manager->flush();
+        $cartmanger->removeItem($item);
 
         $dispatcher->dispatch(SyliusCartEvents::ITEM_REMOVE_COMPLETED, new FlashEvent());
 

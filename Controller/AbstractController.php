@@ -2,6 +2,10 @@
 
 namespace Ibrows\SyliusShopBundle\Controller;
 
+use Doctrine\Common\Persistence\ObjectRepository;
+
+use Ibrows\SyliusShopBundle\Cart\BaseManager;
+
 use Sylius\Bundle\ResourceBundle\Controller\Configuration;
 use Sylius\Bundle\CartBundle\Model\CartInterface;
 
@@ -19,58 +23,25 @@ abstract class AbstractController extends Controller
     protected $bundlePrefix = 'sylius';
     protected $resourceName = null;
 
-    public function initConfig()
-    {
-        $this->configuration = new Configuration($this->bundlePrefix, $this->resourceName);
-    }
+
 
     /**
      * @param array $criteria
      * @return mixed
      * @throws NotFoundHttpException
      */
-    public function findOr404(array $criteria = null)
+    public function findOr404(ObjectRepository $repo, array $criteria = null)
     {
-        $config = $this->getConfiguration();
 
         if (null === $criteria) {
-            $criteria = $config->getIdentifierCriteria();
+            $criteria = array('id'=> $this->getRequest()->get('id'));
         }
 
-        if (!$resource = $this->getRepository()->findOneBy($criteria)) {
+        if (!$resource = $repo->findOneBy($criteria)) {
             throw new NotFoundHttpException(sprintf('Requested %s does not exist', $config->getResourceName()));
         }
 
         return $resource;
-    }
-
-    /**
-     * Get configuration with the bound request.
-     *
-     * @return Configuration
-     */
-    public function getConfiguration()
-    {
-        if ($this->configuration == null) {
-            $this->initConfig();
-        }
-        $this->configuration->setRequest($this->getRequest());
-        return $this->configuration;
-    }
-
-    public function getRepository()
-    {
-        return $this->getService('repository');
-    }
-
-    public function getManager()
-    {
-        return $this->getService('manager');
-    }
-
-    protected function getService($name)
-    {
-        return $this->get($this->getConfiguration()->getServiceName($name));
     }
 
 
@@ -97,28 +68,14 @@ abstract class AbstractController extends Controller
      */
     protected function getCurrentCart()
     {
-        return $this->getCartProvider()->getCart();
+        return $this->getCartManager()->getCurrentCart();
     }
 
     /**
-     * Get cart provider.
-     *
-     * @return CartProviderInterface
+     * @return BaseManager
      */
-    protected function getCartProvider()
-    {
-        return $this->get('sylius.cart_provider');
-    }
-
-    /**
-     * Get cart item resolver.
-     * This service is used to build the new cart item instance.
-     *
-     * @return CartResolverInterface
-     */
-    protected function getCartResolver()
-    {
-        return $this->get('sylius.cart_resolver');
+    protected function getCartManager(){
+        return $this->get('ibrows_syliusshop.cart.manager');
     }
 
     protected function getProductRepository()
