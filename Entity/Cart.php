@@ -2,7 +2,7 @@
 
 namespace Ibrows\SyliusShopBundle\Entity;
 
-use Sylius\Bundle\CartBundle\Model\CartInterface;
+use Ibrows\SyliusShopBundle\Cart\CartInterface;
 use Sylius\Bundle\CartBundle\Model\CartItemInterface;
 
 use Doctrine\Common\Collections\Collection;
@@ -14,7 +14,7 @@ use Sylius\Bundle\CartBundle\Entity\Cart as BaseCart;
  * @ORM\Entity
  * @ORM\Table(name="ibr_sylius_cart")
  */
-class Cart extends BaseCart
+class Cart extends BaseCart implements CartInterface
 {
     /**
      * @ORM\Id
@@ -24,12 +24,21 @@ class Cart extends BaseCart
     protected $id;
 
     /**
+     * @var string
+     * @ORM\Column(type="string")
+     */
+    protected $email;
+
+    /**
      * @var Collection
      * @ORM\OneToMany(targetEntity="CartItem", mappedBy="cart", cascade="all", orphanRemoval=true)
      * @ORM\JoinColumn(name="item_id", referencedColumnName="id")
      */
     protected $items;
 
+    /**
+     * @return Cart
+     */
     public function refreshCart(){
         $this->calculateTotal();
         $this->setTotalItems($this->countItems());
@@ -78,6 +87,24 @@ class Cart extends BaseCart
             $this->addItem($item);
         }
 
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param string $email
+     * @return Cart
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
         return $this;
     }
 }

@@ -2,10 +2,11 @@
 
 namespace Ibrows\SyliusShopBundle\Cart;
 
+use Ibrows\SyliusShopBundle\Cart\CartInterface;
+
 use Sylius\Bundle\InventoryBundle\Checker\AvailabilityCheckerInterface;
 use Sylius\Bundle\CartBundle\Provider\CartProviderInterface;
 use Sylius\Bundle\CartBundle\Resolver\ItemResolverInterface;
-use Sylius\Bundle\CartBundle\Model\CartInterface;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;

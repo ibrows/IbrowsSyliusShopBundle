@@ -6,9 +6,9 @@ use Doctrine\Common\Persistence\ObjectRepository;
 
 use Ibrows\SyliusShopBundle\Cart\BaseManager;
 use Ibrows\SyliusShopBundle\Repository\ProductRepository;
+use Ibrows\SyliusShopBundle\Cart\CartInterface;
 
 use Sylius\Bundle\ResourceBundle\Controller\Configuration;
-use Sylius\Bundle\CartBundle\Model\CartInterface;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
