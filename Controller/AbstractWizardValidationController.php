@@ -2,6 +2,9 @@
 
 namespace Ibrows\SyliusShopBundle\Controller;
 
+use Ibrows\Bundle\WizardAnnotationBundle\Annotation\Wizard;
+use Ibrows\Bundle\WizardAnnotationBundle\Annotation\AnnotationHandler as WizardHandler;
+
 use Symfony\Component\HttpFoundation\Response;
 
 abstract class AbstractWizardValidationController extends AbstractController
@@ -11,9 +14,6 @@ abstract class AbstractWizardValidationController extends AbstractController
      */
     public function basketValidation()
     {
-        if($this->getCartManager()->getCurrentCart()->isEmpty()){
-            return $this->redirect($this->generateUrl('start'));
-        }
         return true;
     }
 
@@ -22,6 +22,9 @@ abstract class AbstractWizardValidationController extends AbstractController
      */
     public function authValidation()
     {
+        if($this->getCurrentCart()->isEmpty()){
+            return Wizard::REDIRECT_STEP_BACK;
+        }
         return true;
     }
 

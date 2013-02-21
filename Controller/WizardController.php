@@ -2,18 +2,11 @@
 
 namespace Ibrows\SyliusShopBundle\Controller;
 
-use Ibrows\SyliusShopBundle\Controller\AbstractController;
-
 use Ibrows\Bundle\WizardAnnotationBundle\Annotation\Wizard;
-use Ibrows\Bundle\WizardAnnotationBundle\Annotation\AnnotationHandler as WizardHandler;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @Route("/wizard")
