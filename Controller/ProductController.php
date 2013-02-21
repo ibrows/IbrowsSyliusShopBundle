@@ -23,6 +23,9 @@ use Sylius\Bundle\CartBundle\Resolver\ItemResolvingException;
  */
 class ProductController extends AbstractController
 {
+    /**
+     * @var string
+     */
     protected $resourceName = 'product';
 
     /**
