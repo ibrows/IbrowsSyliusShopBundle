@@ -11,6 +11,8 @@ use Doctrine\Common\Persistence\ObjectRepository;
 
 use Sylius\Bundle\ResourceBundle\Model\RepositoryInterface;
 
+use Sylius\Bundle\CartBundle\Model\CartInterface;
+
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Sylius\Bundle\CartBundle\Provider\CartProviderInterface;

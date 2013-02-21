@@ -23,12 +23,20 @@
             %}
                 <link href="{{ asset_url }}" type="text/css" rel="stylesheet"   media="screen" />
             {% endstylesheets %}
+
+            {% stylesheets
+                '@IbrowsSyliusShopBundle/Resources/public/css/*.css'
+            %}
+                <link rel="stylesheet" type="text/css" media="screen" href="{{ asset_url }}" />
+            {% endstylesheets %}
         {% endblock styles %}
     </head>
     <body>
         {% block navi %}
             {% include 'IbrowsSyliusShopBundle::navi.html.twig' %}
         {% endblock navi %}
+
+        {% block wizard %}{% endblock wizard %}
 
         {% block content %}{% endblock content %}
 
