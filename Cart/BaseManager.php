@@ -1,25 +1,17 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Cart;
-use Sylius\Bundle\CartBundle\Model\CartItemInterface;
 
 use Sylius\Bundle\InventoryBundle\Checker\AvailabilityCheckerInterface;
-
-use Symfony\Component\Form\FormFactory;
-
-use Doctrine\Common\Persistence\ObjectRepository;
-
-use Sylius\Bundle\ResourceBundle\Model\RepositoryInterface;
-
+use Sylius\Bundle\CartBundle\Provider\CartProviderInterface;
+use Sylius\Bundle\CartBundle\Resolver\ItemResolverInterface;
 use Sylius\Bundle\CartBundle\Model\CartInterface;
 
 use Doctrine\Common\Persistence\ObjectManager;
-
-use Sylius\Bundle\CartBundle\Provider\CartProviderInterface;
-
-use Sylius\Bundle\CartBundle\Resolver\ItemResolverInterface;
+use Doctrine\Common\Persistence\ObjectRepository;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Form\FormFactory;
 
 /**
  * @author marcsteiner
@@ -27,7 +19,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class BaseManager
 {
-
     /**
      * @var ObjectManager
      */
