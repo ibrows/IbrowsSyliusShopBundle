@@ -21,7 +21,9 @@ class WizardController extends AbstractWizardValidationController
      */
     public function basketAction()
     {
-        return array();
+        return array(
+            'cart' => $this->getCurrentCart()
+        );
     }
 
     /**

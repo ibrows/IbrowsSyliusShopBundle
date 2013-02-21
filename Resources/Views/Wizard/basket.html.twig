@@ -1,5 +1,17 @@
 {% extends 'IbrowsSyliusShopBundle:Wizard:basewizard.html.twig' %}
 
 {% block content %}
-    Basket
+    <h1>Basket</h1>
+    <ul>
+        {% for item in cart.items %}
+            <li>
+                Product: {{ item }}
+                <ul>
+                    <li>Quantity: {{ item.quantity }}</li>
+                    <li>UnitPrice: {{ item.unitPrice }}</li>
+                    <li>Total: {{ item.total }}</li>
+                </ul>
+            </li>
+        {% endfor %}
+    </ul>
 {% endblock content %}
