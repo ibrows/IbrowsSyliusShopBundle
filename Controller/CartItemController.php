@@ -1,6 +1,7 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Controller;
+
 use Ibrows\SyliusShopBundle\Entity\Cart;
 
 use Ibrows\SyliusShopBundle\Entity\CartItem;
