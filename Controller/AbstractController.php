@@ -5,46 +5,59 @@ namespace Ibrows\SyliusShopBundle\Controller;
 use Doctrine\Common\Persistence\ObjectRepository;
 
 use Ibrows\SyliusShopBundle\Cart\BaseManager;
+use Ibrows\SyliusShopBundle\Repository\ProductRepository;
 
 use Sylius\Bundle\ResourceBundle\Controller\Configuration;
 use Sylius\Bundle\CartBundle\Model\CartInterface;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 abstract class AbstractController extends Controller
 {
-
     /**
      * @var Configuration
      */
     protected $configuration;
-    protected $bundlePrefix = 'sylius';
-    protected $resourceName = null;
-
-
 
     /**
+     * @var string
+     */
+    protected $bundlePrefix = 'sylius';
+
+    /**
+     * @var string
+     */
+    protected $resourceName = null;
+
+    /**
+     * @param ObjectRepository $repo
      * @param array $criteria
-     * @return mixed
-     * @throws NotFoundHttpException
+     * @return object
      */
     public function findOr404(ObjectRepository $repo, array $criteria = null)
     {
+        $id = $this->getRequest()->get('id');
 
         if (null === $criteria) {
-            $criteria = array('id'=> $this->getRequest()->get('id'));
+            $criteria = array('id'=> $id);
         }
 
         if (!$resource = $repo->findOneBy($criteria)) {
-            throw new NotFoundHttpException(sprintf('Requested %s does not exist', $config->getResourceName()));
+            $this->createNotFoundException(sprintf(
+                'Requested Entity "%s" with id "%s" does not exist',
+                $repo->getClassName(),
+                $id
+            ));
         }
 
         return $resource;
     }
 
-
+    /**
+     * @param string $name
+     * @return Response
+     */
     protected function forwardByRoute($name)
     {
         $defaults = $this->get('router')->getRouteCollection()->get($name)->getDefaults();
@@ -78,6 +91,9 @@ abstract class AbstractController extends Controller
         return $this->get('ibrows_syliusshop.cart.manager');
     }
 
+    /**
+     * @return ProductRepository
+     */
     protected function getProductRepository()
     {
         return $this->get('sylius.repository.product');
