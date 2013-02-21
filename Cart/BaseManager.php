@@ -23,7 +23,7 @@ class BaseManager
     /**
      * @var ObjectManager
      */
-    private $cartManager;
+    private $om;
 
     /**
      * @var ObjectRepository
@@ -83,12 +83,23 @@ class BaseManager
         $this->resolver = $resolver;
         $this->provider = $provider;
         $this->cartRepository = $repo;
-        $this->cartManager = $om;
+        $this->objectManager = $om;
         $this->itemRepository = $itemrepo;
         $this->itemManager = $itemom;
         $this->formFactory = $formFactory;
         $this->availabilityChecker = $availabilityChecker;
 
+    }
+
+    /**
+     * @param CartInterface $cart
+     * @return BaseManager
+     */
+    public function persistCart(CartInterface $cart)
+    {
+        $this->objectManager->persist($cart);
+        $this->objectManager->flush();
+        return $this;
     }
 
     public function resolve($item, Request $request)
@@ -116,8 +127,8 @@ class BaseManager
 
     public function clearCurrentCart()
     {
-        $this->cartManager->remove($this->getCurrentCart());
-        $this->cartManager->flush();
+        $this->objectManager->remove($this->getCurrentCart());
+        $this->objectManager->flush();
         $this->provider->abandonCart();
     }
 
@@ -128,8 +139,8 @@ class BaseManager
     protected function saveCurrentCart()
     {
         $this->refreshCurrentCart();
-        $this->cartManager->persist($this->getCurrentCart());
-        $this->cartManager->flush();
+        $this->objectManager->persist($this->getCurrentCart());
+        $this->objectManager->flush();
     }
 
     /**
@@ -153,9 +164,9 @@ class BaseManager
         $this->saveCurrentCart();
     }
 
-    public function getCartManager()
+    public function getObjectManager()
     {
-        return $this->cartManager;
+        return $this->objectManager;
     }
 
     public function getCartRepository()

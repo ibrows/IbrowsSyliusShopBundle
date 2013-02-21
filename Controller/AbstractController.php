@@ -4,14 +4,23 @@ namespace Ibrows\SyliusShopBundle\Controller;
 
 use Doctrine\Common\Persistence\ObjectRepository;
 
+use Ibrows\SyliusShopBundle\Form\AuthType;
+use Ibrows\SyliusShopBundle\Form\LoginType;
+
 use Ibrows\SyliusShopBundle\Cart\BaseManager;
 use Ibrows\SyliusShopBundle\Repository\ProductRepository;
 use Ibrows\SyliusShopBundle\Cart\CartInterface;
+
+use Ibrows\SyliusShopBundle\IbrowsSyliusShopBundle;
 
 use Sylius\Bundle\ResourceBundle\Controller\Configuration;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\Translation\TranslatorInterface;
+
+use FOS\UserBundle\Model\UserManagerInterface;
+use FOS\UserBundle\Model\UserInterface;
 
 abstract class AbstractController extends Controller
 {
@@ -92,10 +101,80 @@ abstract class AbstractController extends Controller
     }
 
     /**
+     * @param CartInterface $cart
+     * @return BaseManager
+     */
+    protected function persistCart(CartInterface $cart)
+    {
+        return $this->getCartManager()->persistCart($cart);
+    }
+
+    /**
      * @return ProductRepository
      */
     protected function getProductRepository()
     {
         return $this->get('sylius.repository.product');
+    }
+
+    /**
+     * @return TranslatorInterface
+     */
+    protected function getTranslator()
+    {
+        return $this->get('translator');
+    }
+
+    /**
+     * @return UserInterface
+     */
+    public function getUser()
+    {
+        return parent::getUser();
+    }
+
+    /**
+     * @param string $id
+     * @param array $parameters
+     * @param string $domain
+     * @param string $locale
+     * @return string
+     */
+    protected function translateWithPrefix($id, array $parameters = array(), $domain = null, $locale = null)
+    {
+        $id = $this->getTranslationPrefix().'.'.$id;
+        return $this->getTranslator()->trans($id, $parameters, $domain, $locale);
+    }
+
+    /**
+     * @return UserManagerInterface
+     */
+    protected function getFOSUserManager()
+    {
+        return $this->get('fos_user.user_manager');
+    }
+
+    /**
+     * @return string
+     */
+    protected function getTranslationPrefix()
+    {
+        return IbrowsSyliusShopBundle::TRANSLATION_PREFIX;
+    }
+
+    /**
+     * @return AuthType
+     */
+    protected function getAuthType()
+    {
+        return new AuthType();
+    }
+
+    /**
+     * @return LoginType
+     */
+    protected function getLoginType()
+    {
+        return new LoginType();
     }
 }

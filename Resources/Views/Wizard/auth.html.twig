@@ -1,5 +1,19 @@
 {% extends 'IbrowsSyliusShopBundle:Wizard:basewizard.html.twig' %}
 
 {% block content %}
-    Auth
+    <h1>Auth</h1>
+
+    <h2>Ohne Registrierung</h2>
+    <form action="{{ url('wizard_auth') }}" method="post" {{ form_enctype(authForm) }}
+        {{ form_widget(authForm) }}
+        <input class="btn" type="submit" name="{{ authSubmitName }}" value="continue">
+    </form>
+
+    <hr>
+
+    <h2>Login</h2>
+    <form action="{{ url('wizard_auth') }}" method="post" {{ form_enctype(loginForm) }}
+        {{ form_widget(loginForm) }}
+        <input class="btn" type="submit" name="{{ loginSubmitName }}" value="login">
+    </form>
 {% endblock content %}

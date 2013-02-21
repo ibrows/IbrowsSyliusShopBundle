@@ -25,6 +25,7 @@ abstract class AbstractWizardValidationController extends AbstractController
         if($this->getCurrentCart()->isEmpty()){
             return Wizard::REDIRECT_STEP_BACK;
         }
+
         return true;
     }
 

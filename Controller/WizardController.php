@@ -4,6 +4,10 @@ namespace Ibrows\SyliusShopBundle\Controller;
 
 use Ibrows\Bundle\WizardAnnotationBundle\Annotation\Wizard;
 
+use Symfony\Component\HttpFoundation\Request;
+
+use Symfony\Component\Form\FormError;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -31,9 +35,62 @@ class WizardController extends AbstractWizardValidationController
      * @Template
      * @Wizard(name="auth", number=2, validationMethod="authValidation")
      */
-    public function authAction()
+    public function authAction(Request $request)
     {
-        return array();
+        $cart = $this->getCurrentCart();
+        $wizard = $this->getWizard();
+
+        if($cart->getEmail()){
+            return $this->redirect($wizard->getNextStepUrl());
+        }
+
+        if($user = $this->getUser()){
+            if(!$cart->getEmail()){
+                $cart->setEmail($user->getEmail());
+                $this->persistCart($cart);
+            }
+            return $this->redirect($wizard->getNextStepUrl());
+        }
+
+        $authForm = $this->createForm($this->getAuthType());
+        $loginForm = $this->createForm($this->getLoginType());
+
+        $authSubmitName = 'auth';
+        $loginSubmitName = 'login';
+
+        if("POST" == $request->getMethod()){
+            if($request->request->get($authSubmitName)){
+                $authForm->bind($request);
+                if($authForm->isValid()){
+                    $email = $authForm->get('email')->getData();
+                    if($this->getFOSUserManager()->findUserByEmail($email)){
+                        $authForm->addError(new FormError(
+                            $this->translateWithPrefix("user.emailallreadyexisting", array('%email%' => $email), "validators")
+                        ));
+                    }else{
+                        $cart->setEmail($email);
+                        $this->getCartManager()->persistCart($cart);
+                        $this->persistCart($cart);
+                        return $this->redirect($wizard->getNextStepUrl());
+                    }
+                }
+            }
+
+            if($request->request->get($loginSubmitName)){
+                $loginForm->bind($request);
+                if($loginForm->isValid()){
+
+                }
+            }
+        }
+
+        return array(
+            'authForm' => $authForm->createView(),
+            'loginForm' => $loginForm->createView(),
+
+            'authSubmitName' => $authSubmitName,
+            'loginSubmitName' => $loginSubmitName
+        );
     }
 
     /**

@@ -1,0 +1,3 @@
+ibrows_sylius_shop:
+  user:
+    emailallreadyexisting: 'Die E-Mail Adresse "%email%" wird bereits verwendet'
