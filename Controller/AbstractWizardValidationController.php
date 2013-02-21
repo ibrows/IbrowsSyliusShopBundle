@@ -33,7 +33,7 @@ abstract class AbstractWizardValidationController extends AbstractController
      */
     public function addressValidation()
     {
-        if($this->getCurrentCart()->getEmail()){
+        if(!$this->getCurrentCart()->getEmail()){
             return Wizard::REDIRECT_STEP_BACK;
         }
         return true;
