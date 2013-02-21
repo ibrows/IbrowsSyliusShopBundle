@@ -24,12 +24,12 @@ use Sylius\Bundle\CartBundle\Resolver\ItemResolvingException;
  */
 class CartController extends AbstractController
 {
-
     /**
-     * @param Request
      * @Route("/", name="cart_summary")
-     * @Template("")
-     * @return Response
+     * @Template
+     *
+     * @param Request $request
+     * @return array
      */
     public function summaryAction(Request $request)
     {
@@ -38,14 +38,15 @@ class CartController extends AbstractController
         $form = $this->createForm('sylius_cart', $cart);
         if ($request->getMethod() == 'POST' && $request->request->get('sylius_cart') != null && $form->bind($request)->isValid()) {
             $manager->setCurrentCart($cart);
+
             /* @var $dispatcher EventDispatcherInterface */
             $dispatcher = $this->get('event_dispatcher');
             $dispatcher->dispatch(SyliusCartEvents::CART_SAVE_COMPLETED, new FlashEvent());
         }
 
         return array(
-                'cart' => $cart,
-                'form' => $form->createView()
+            'cart' => $cart,
+            'form' => $form->createView()
         );
     }
 
