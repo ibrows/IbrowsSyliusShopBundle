@@ -4,7 +4,7 @@ namespace Ibrows\SyliusShopBundle\Form;
 
 use Symfony\Component\Form\FormBuilderInterface;
 
-class LoginType extends AuthType
+abstract class AbstractAddressType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -12,15 +12,6 @@ class LoginType extends AuthType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        parent::buildForm($builder, $options);
-        $builder->add('password', 'password');
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return 'ibr_sylius_login';
+        $builder->add('email', 'email');
     }
 }

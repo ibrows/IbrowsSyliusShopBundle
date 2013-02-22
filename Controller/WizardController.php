@@ -5,8 +5,7 @@ namespace Ibrows\SyliusShopBundle\Controller;
 use Ibrows\Bundle\WizardAnnotationBundle\Annotation\Wizard;
 
 use Symfony\Component\HttpFoundation\Request;
-
-use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\Response;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -16,7 +15,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
  * @Route("/wizard")
  * @author Mike Meier
  */
-class WizardController extends AbstractWizardValidationController
+class WizardController extends AbstractWizardController
 {
     /**
      * @Route("/basket", name="wizard_basket")
@@ -38,6 +37,7 @@ class WizardController extends AbstractWizardValidationController
     public function authAction(Request $request)
     {
         $cart = $this->getCurrentCart();
+        $wizard = $this->getWizard();
 
         $authForm = $this->createForm($this->getAuthType());
         $loginForm = $this->createForm($this->getLoginType());
@@ -48,32 +48,19 @@ class WizardController extends AbstractWizardValidationController
 
         if("POST" == $request->getMethod()){
             if($request->request->get($authDeleteSubmitName)){
-                $cart->setEmail(null);
-                $this->persistCart($cart);
+                if(($authDelete = $this->authDelete($cart)) instanceof Response){
+                    return $authDelete;
+                }
             }
 
             if($request->request->get($authSubmitName)){
-                $authForm->bind($request);
-                if($authForm->isValid()){
-                    $email = $authForm->get('email')->getData();
-                    if($this->getFOSUserManager()->findUserByEmail($email)){
-                        $authForm->addError(new FormError(
-                            $this->translateWithPrefix("user.emailallreadyexisting", array('%email%' => $email), "validators")
-                        ));
-                    }else{
-                        $cart->setEmail($email);
-                        $this->getCartManager()->persistCart($cart);
-                        $this->persistCart($cart);
-                        return $this->redirect($this->getWizard()->getNextStepUrl());
-                    }
+                if(($authByEmail = $this->authByEmail($request, $authForm, $cart, $wizard)) instanceof Response){
+                    return $authByEmail;
                 }
             }
 
             if($request->request->get($loginSubmitName)){
-                $loginForm->bind($request);
-                if($loginForm->isValid()){
-
-                }
+                $this->authByUsernameAndPassword($request, $loginSubmitName);
             }
         }
 
@@ -95,7 +82,13 @@ class WizardController extends AbstractWizardValidationController
      */
     public function addressAction()
     {
-        return array();
+        $invoiceAddressForm = $this->createForm($this->getInvoiceAddressType());
+        $deliveryAddressForm = $this->createForm($this->getDeliveryAddressType());
+
+        return array(
+            'invoiceAddressForm' => $invoiceAddressForm->createView(),
+            'deliveryAddressForm' => $deliveryAddressForm->createView()
+        );
     }
 
     /**

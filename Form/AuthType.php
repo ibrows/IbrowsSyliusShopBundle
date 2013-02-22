@@ -6,7 +6,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class AuthType extends AbstractType
 {
-
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -21,6 +20,6 @@ class AuthType extends AbstractType
      */
     public function getName()
     {
-        return 'authtype';
+        return 'ibr_sylius_auth';
     }
 }

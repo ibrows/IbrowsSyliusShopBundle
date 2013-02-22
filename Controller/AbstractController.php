@@ -4,9 +4,6 @@ namespace Ibrows\SyliusShopBundle\Controller;
 
 use Doctrine\Common\Persistence\ObjectRepository;
 
-use Ibrows\SyliusShopBundle\Form\AuthType;
-use Ibrows\SyliusShopBundle\Form\LoginType;
-
 use Ibrows\SyliusShopBundle\Cart\BaseManager;
 use Ibrows\SyliusShopBundle\Repository\ProductRepository;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
@@ -160,21 +157,5 @@ abstract class AbstractController extends Controller
     protected function getTranslationPrefix()
     {
         return IbrowsSyliusShopBundle::TRANSLATION_PREFIX;
-    }
-
-    /**
-     * @return AuthType
-     */
-    protected function getAuthType()
-    {
-        return new AuthType();
-    }
-
-    /**
-     * @return LoginType
-     */
-    protected function getLoginType()
-    {
-        return new LoginType();
     }
 }
