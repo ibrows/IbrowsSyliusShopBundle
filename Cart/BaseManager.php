@@ -2,7 +2,7 @@
 
 namespace Ibrows\SyliusShopBundle\Cart;
 
-use Ibrows\SyliusShopBundle\Cart\CartInterface;
+use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 
 use Sylius\Bundle\InventoryBundle\Checker\AvailabilityCheckerInterface;
 use Sylius\Bundle\CartBundle\Provider\CartProviderInterface;

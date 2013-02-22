@@ -25,7 +25,7 @@ class BaseProduct extends CustomizableProduct implements StockableInterface
 
     /**
      * @var int
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", name="on_hand")
      * @Assert\NotBlank
      * @Assert\Min(0)
      */
@@ -33,7 +33,7 @@ class BaseProduct extends CustomizableProduct implements StockableInterface
 
     /**
      * @var bool
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", name="available_on_demand")
      */
     protected $availableOnDemand = false;
 
@@ -43,14 +43,6 @@ class BaseProduct extends CustomizableProduct implements StockableInterface
      * @Assert\NotBlank
      */
     protected $price = 0.00;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setDeletedAt(\DateTime $deletedAt)
-    {
-        $this->deletedAt = $deletedAt;
-    }
 
     /**
      * @return int

@@ -38,27 +38,20 @@ class WizardController extends AbstractWizardValidationController
     public function authAction(Request $request)
     {
         $cart = $this->getCurrentCart();
-        $wizard = $this->getWizard();
-
-        if($cart->getEmail()){
-            return $this->redirect($wizard->getNextStepUrl());
-        }
-
-        if($user = $this->getUser()){
-            if(!$cart->getEmail()){
-                $cart->setEmail($user->getEmail());
-                $this->persistCart($cart);
-            }
-            return $this->redirect($wizard->getNextStepUrl());
-        }
 
         $authForm = $this->createForm($this->getAuthType());
         $loginForm = $this->createForm($this->getLoginType());
 
         $authSubmitName = 'auth';
         $loginSubmitName = 'login';
+        $authDeleteSubmitName = 'authDelete';
 
         if("POST" == $request->getMethod()){
+            if($request->request->get($authDeleteSubmitName)){
+                $cart->setEmail(null);
+                $this->persistCart($cart);
+            }
+
             if($request->request->get($authSubmitName)){
                 $authForm->bind($request);
                 if($authForm->isValid()){
@@ -71,7 +64,7 @@ class WizardController extends AbstractWizardValidationController
                         $cart->setEmail($email);
                         $this->getCartManager()->persistCart($cart);
                         $this->persistCart($cart);
-                        return $this->redirect($wizard->getNextStepUrl());
+                        return $this->redirect($this->getWizard()->getNextStepUrl());
                     }
                 }
             }
@@ -85,11 +78,13 @@ class WizardController extends AbstractWizardValidationController
         }
 
         return array(
+            'cart' => $cart,
             'authForm' => $authForm->createView(),
             'loginForm' => $loginForm->createView(),
 
             'authSubmitName' => $authSubmitName,
-            'loginSubmitName' => $loginSubmitName
+            'loginSubmitName' => $loginSubmitName,
+            'authDeleteSubmitName' => $authDeleteSubmitName
         );
     }
 

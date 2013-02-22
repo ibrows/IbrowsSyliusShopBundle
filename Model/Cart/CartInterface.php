@@ -22,7 +22,7 @@ interface CartInterface extends BaseCartInterface
      * @param string $email
      * @return CartInterface
      */
-    public function setEmail($email);
+    public function setEmail($email = null);
 
     /**
      * @return InvoiceAddressInterface

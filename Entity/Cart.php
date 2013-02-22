@@ -133,7 +133,7 @@ class Cart extends BaseCart implements CartInterface
      * @param string $email
      * @return Cart
      */
-    public function setEmail($email)
+    public function setEmail($email = null)
     {
         $this->email = $email;
         return $this;
