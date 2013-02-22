@@ -1,12 +1,13 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Entity;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+
 use Sylius\Bundle\AssortmentBundle\Entity\CustomizableProduct;
-use Doctrine\ORM\Mapping as ORM;
 use Sylius\Bundle\InventoryBundle\Model\StockableInterface;
+
 use Symfony\Component\Validator\Constraints as Assert;
+
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @author marcsteiner
@@ -15,6 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class BaseProduct extends CustomizableProduct implements StockableInterface
 {
     /**
+     * @var int
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -22,6 +24,7 @@ class BaseProduct extends CustomizableProduct implements StockableInterface
     protected $id;
 
     /**
+     * @var int
      * @ORM\Column(type="integer")
      * @Assert\NotBlank
      * @Assert\Min(0)
@@ -29,25 +32,17 @@ class BaseProduct extends CustomizableProduct implements StockableInterface
     protected $onHand = 0;
 
     /**
+     * @var bool
      * @ORM\Column(type="boolean")
      */
     protected $availableOnDemand = false;
 
     /**
+     * @var float
      * @ORM\Column(type="decimal", scale=2, precision=11)
      * @Assert\NotBlank
-     *
-     * @var float
      */
     protected $price = 0.00;
-
-    /**
-     * Override constructor to set on hand stock.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
 
     /**
      * {@inheritdoc}
@@ -57,9 +52,12 @@ class BaseProduct extends CustomizableProduct implements StockableInterface
         $this->deletedAt = $deletedAt;
     }
 
+    /**
+     * @return int
+     */
     public function getSku()
     {
-        $this->getId();
+        return $this->getId();
     }
 
     /**
@@ -109,22 +107,34 @@ class BaseProduct extends CustomizableProduct implements StockableInterface
         }
     }
 
+    /**
+     * @return string
+     */
     public function getInventoryName()
     {
         return $this->getName();
     }
 
+    /**
+     * @return bool
+     */
     public function isAvailableOnDemand()
     {
         return $this->availableOnDemand;
     }
 
+    /**
+     * @param bool $availableOnDemand
+     */
     public function setAvailableOnDemand($availableOnDemand)
     {
-        $this->availableOnDemand = (Boolean) $availableOnDemand;
+        $this->availableOnDemand = (bool)$availableOnDemand;
     }
 
+    /**
+     * @return string
+     */
     public function __toString(){
-        return $this->getInventoryName();
+        return (string)$this->getInventoryName();
     }
 }

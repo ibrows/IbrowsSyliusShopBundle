@@ -1,10 +1,10 @@
 <?php
 
-
 namespace Ibrows\SyliusShopBundle\Entity;
 
 use Sylius\Bundle\InventoryBundle\Entity\InventoryUnit as BaseInventoryUnit;
 use Sylius\Bundle\SalesBundle\Model\OrderInterface;
+
 use Doctrine\ORM\Mapping as ORM;
 
 /**

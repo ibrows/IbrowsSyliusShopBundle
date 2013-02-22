@@ -1,0 +1,9 @@
+# Doctrine Configuration
+doctrine:
+  orm:
+    resolve_target_entities:
+      Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface: Address
+      Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface: Address
+
+      Ibrows\SyliusShopBundle\Model\Delivery\DeliveryOptionsInterface: DeliveryOptions
+      Ibrows\SyliusShopBundle\Model\Payment\PaymentOptionsInterface: PaymentOptions

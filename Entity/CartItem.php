@@ -14,7 +14,7 @@ use DateTime;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="ibr_sylius_cartitem")
+ * @ORM\Table(name="ibr_sylius_cart_item")
  */
 class CartItem extends BaseCartItem implements BaseCartItemInterface
 {

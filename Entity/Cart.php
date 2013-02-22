@@ -24,6 +24,7 @@ use DateTime;
 class Cart extends BaseCart implements CartInterface
 {
     /**
+     * @var int
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -51,21 +52,29 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @var InvoiceAddressInterface
+     * @ORM\OneToOne(targetEntity="Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface")
+     * @ORM\JoinColumn(name="invoice_address_id", referencedColumnName="id")
      */
     protected $invoiceAddress;
 
     /**
      * @var DeliveryAddressInterface
+     * @ORM\OneToOne(targetEntity="Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface")
+     * @ORM\JoinColumn(name="payment_address_id", referencedColumnName="id")
      */
     protected $deliveryAddress;
 
     /**
      * @var DeliveryOptionsInterface
+     * @ORM\OneToOne(targetEntity="Ibrows\SyliusShopBundle\Model\Delivery\DeliveryOptionsInterface")
+     * @ORM\JoinColumn(name="delivery_options_id", referencedColumnName="id")
      */
     protected $deliveryOptions;
 
     /**
      * @var PaymentOptionsInterface
+     * @ORM\OneToOne(targetEntity="Ibrows\SyliusShopBundle\Model\Payment\PaymentOptionsInterface")
+     * @ORM\JoinColumn(name="payment_options_id", referencedColumnName="id")
      */
     protected $paymentOptions;
 
