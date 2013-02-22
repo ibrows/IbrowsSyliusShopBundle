@@ -33,7 +33,7 @@ class CartItem extends BaseCartItem implements BaseCartItemInterface
 
     /**
      * @var DateTime
-     * @ORM\Column(type="DateTime", nullable=true)
+     * @ORM\Column(type="datetime", nullable=true)
      */
     protected $delivered = null;
 

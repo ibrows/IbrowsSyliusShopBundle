@@ -45,7 +45,7 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @var bool
-     * @ORM\Column(type="DateTime", nullable=true)
+     * @ORM\Column(type="datetime", nullable=true)
      */
     protected $payed = null;
 
