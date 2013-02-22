@@ -2,4 +2,13 @@
 
 {% block content %}
     <h1>Address</h1>
+    <form action="{{ url('wizard_address') }}" method="POST">
+        <h2>Delivery</h2>
+        {{ form_widget(deliveryAddressForm) }}
+
+        <h2>Invoice</h2>
+        {{ form_widget(invoiceAddressForm) }}
+
+        <input class="btn" type="submit" name="address" value="continue">
+    </form>
 {% endblock content %}

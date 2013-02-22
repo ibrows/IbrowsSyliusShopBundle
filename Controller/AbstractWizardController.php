@@ -7,8 +7,14 @@ use Ibrows\Bundle\WizardAnnotationBundle\Annotation\AnnotationHandler as WizardH
 
 use Ibrows\SyliusShopBundle\Form\AuthType;
 use Ibrows\SyliusShopBundle\Form\LoginType;
+
 use Ibrows\SyliusShopBundle\Form\DeliveryAddressType;
 use Ibrows\SyliusShopBundle\Form\InvoiceAddressType;
+
+use Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface;
+use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
+
+use Ibrows\SyliusShopBundle\Entity\Address;
 
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 
@@ -142,6 +148,22 @@ abstract class AbstractWizardController extends AbstractController
     protected function getLoginType()
     {
         return new LoginType();
+    }
+
+    /**
+     * @return InvoiceAddressInterface
+     */
+    protected function getNewInvoiceAddress()
+    {
+        return new Address();
+    }
+
+    /**
+     * @return InvoiceAddressInterface
+     */
+    protected function getNewDeliveryAddress()
+    {
+        return new Address();
     }
 
     /**

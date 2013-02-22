@@ -80,10 +80,25 @@ class WizardController extends AbstractWizardController
      * @Template
      * @Wizard(name="address", number=3, validationMethod="addressValidation")
      */
-    public function addressAction()
+    public function addressAction(Request $request)
     {
+        $cart = $this->getCurrentCart();
+
         $invoiceAddressForm = $this->createForm($this->getInvoiceAddressType());
         $deliveryAddressForm = $this->createForm($this->getDeliveryAddressType());
+
+        $invoiceAddressForm->setData($cart->getInvoiceAddress()?:$this->getNewInvoiceAddress());
+        $deliveryAddressForm->setData($cart->getDeliveryAddress()?:$this->getNewDeliveryAddress());
+
+        if("POST" == $request->getMethod()){
+            $invoiceAddressForm->bind($request);
+            $deliveryAddressForm->bind($request);
+
+            if($invoiceAddressForm->isValid() && $deliveryAddressForm->isValid()){
+                $cart->setInvoiceAddress($invoiceAddressForm->getData());
+                $cart->setDeliveryAddress($deliveryAddressForm->getData());
+            }
+        }
 
         return array(
             'invoiceAddressForm' => $invoiceAddressForm->createView(),
