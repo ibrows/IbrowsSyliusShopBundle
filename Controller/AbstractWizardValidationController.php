@@ -45,6 +45,10 @@ abstract class AbstractWizardValidationController extends AbstractController
      */
     public function paymentValidation()
     {
+        $cart = $this->getCurrentCart();
+        if(!$cart->getDeliveryAddress() || !$cart->getInvoiceAddress()){
+            return Wizard::REDIRECT_STEP_BACK;
+        }
         return true;
     }
 
@@ -53,6 +57,9 @@ abstract class AbstractWizardValidationController extends AbstractController
      */
     public function summaryValidation()
     {
+        if(!$this->getCurrentCart()->getPaymentOptions()){
+            return Wizard::REDIRECT_STEP_BACK;
+        }
         return true;
     }
 

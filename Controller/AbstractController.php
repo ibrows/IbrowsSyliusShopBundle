@@ -9,7 +9,7 @@ use Ibrows\SyliusShopBundle\Form\LoginType;
 
 use Ibrows\SyliusShopBundle\Cart\BaseManager;
 use Ibrows\SyliusShopBundle\Repository\ProductRepository;
-use Ibrows\SyliusShopBundle\Cart\CartInterface;
+use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 
 use Ibrows\SyliusShopBundle\IbrowsSyliusShopBundle;
 

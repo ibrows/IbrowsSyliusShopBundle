@@ -2,18 +2,21 @@
 
 namespace Ibrows\SyliusShopBundle\Entity;
 
-use Sylius\Bundle\InventoryBundle\Model\StockableInterface;
+use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface as BaseCartItemInterface;
 
+use Sylius\Bundle\InventoryBundle\Model\StockableInterface;
 use Sylius\Bundle\CartBundle\Model\CartItemInterface;
+use Sylius\Bundle\CartBundle\Entity\CartItem as BaseCartItem;
 
 use Doctrine\ORM\Mapping as ORM;
-use Sylius\Bundle\CartBundle\Entity\CartItem as BaseCartItem;
+
+use DateTime;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="ibr_sylius_cartitem")
  */
-class CartItem extends BaseCartItem
+class CartItem extends BaseCartItem implements BaseCartItemInterface
 {
     /**
      * @ORM\Id
@@ -22,21 +25,32 @@ class CartItem extends BaseCartItem
      */
     protected $id;
 
-
     /**
      * @var StockableInterface
-     * @ORM\ManyToOne(targetEntity="\Sylius\Bundle\InventoryBundle\Model\StockableInterface")
+     * @ORM\ManyToOne(targetEntity="Sylius\Bundle\InventoryBundle\Model\StockableInterface")
      */
     protected $product;
 
     /**
-     * @return \Sylius\Bundle\InventoryBundle\Model\StockableInterface
+     * @var DateTime
+     * @ORM\Column(type="DateTime", nullable=true)
+     */
+    protected $delivered = null;
+
+    /**
+     * @return string
+     */
+    public function __toString(){
+        return (string)$this->product;
+    }
+
+    /**
+     * @return StockableInterface
      */
     public function getProduct()
     {
         return $this->product;
     }
-
 
     /**
      * @param StockableInterface $product
@@ -46,12 +60,42 @@ class CartItem extends BaseCartItem
         $this->product = $product;
     }
 
+    /**
+     * @param CartItemInterface $item
+     * @return bool
+     */
     public function equals(CartItemInterface $item)
     {
         return $this->product === $item->getProduct();
     }
 
-    public function __toString(){
-        return $this->product->__toString();
+    /**
+     * @return bool
+     */
+    public function isDelivered()
+    {
+        return $this->delivered !== null;
+    }
+
+    /**
+     * @param bool $flag
+     * @return CartItemInterface
+     */
+    public function setDelivered($flag = true)
+    {
+        if(false === $flag){
+            $this->delivered = null;
+        }else{
+            $this->delivered = new DateTime;
+        }
+        return $this;
+    }
+
+    /**
+     * @return DateTime
+     */
+    public function getDeliveredAt()
+    {
+        return $this->delivered;
     }
 }
