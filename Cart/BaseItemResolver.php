@@ -1,6 +1,7 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Cart;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Doctrine\Common\Persistence\ObjectRepository;
 
@@ -40,19 +41,19 @@ class BaseItemResolver implements ItemResolverInterface
      * Constructor.
      *
      * @param ObjectRepository             $productRepository
+     * @param string classname
      * @param FormFactory                  $formFactory
      * @param AvailabilityCheckerInterface $availabilityChecker
      */
-    public function __construct(
-        ObjectRepository             $productRepository,
-        FormFactory                  $formFactory,
-        AvailabilityCheckerInterface $availabilityChecker
-    )
+    public function __construct(RegistryInterface $registry, $classname, FormFactory $formFactory, AvailabilityCheckerInterface $availabilityChecker)
     {
-        $this->productRepository = $productRepository;
+        $manager = $registry->getManagerForClass($classname);
+        $this->productRepository = $manager->getRepository($classname);
         $this->formFactory = $formFactory;
         $this->availabilityChecker = $availabilityChecker;
     }
+
+
 
     /**
      * {@inheritdoc}
@@ -80,7 +81,7 @@ class BaseItemResolver implements ItemResolverInterface
         }
 
         // We use forms to easily set the quantity and pick variant but you can do here whatever is required to create the item.
-        $form = $this->formFactory->create('sylius_cart_item', null, array( 'data_class' => 'Ibrows\SyliusShopBundle\Entity\CartItem')); //'product' => $product
+        $form = $this->formFactory->create('sylius_cart_item', null, array('data_class' => 'Ibrows\SyliusShopBundle\Entity\CartItem')); //'product' => $product
 
         $form->bind($request);
         $item = $form->getData(); // Item instance, cool.

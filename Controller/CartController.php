@@ -33,9 +33,11 @@ class CartController extends AbstractController
      */
     public function summaryAction(Request $request)
     {
+
         $manager = $this->getCartManager();
         $cart = $this->getCurrentCart();
         $form = $this->createForm('sylius_cart', $cart);
+
         if ($request->getMethod() == 'POST' && $request->request->get('sylius_cart') != null && $form->bind($request)->isValid()) {
             $manager->setCurrentCart($cart);
 

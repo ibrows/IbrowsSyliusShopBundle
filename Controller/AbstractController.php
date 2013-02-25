@@ -21,20 +21,7 @@ use FOS\UserBundle\Model\UserInterface;
 
 abstract class AbstractController extends Controller
 {
-    /**
-     * @var Configuration
-     */
-    protected $configuration;
 
-    /**
-     * @var string
-     */
-    protected $bundlePrefix = 'sylius';
-
-    /**
-     * @var string
-     */
-    protected $resourceName = null;
 
     /**
      * @param ObjectRepository $repo
@@ -50,7 +37,7 @@ abstract class AbstractController extends Controller
         }
 
         if (!$resource = $repo->findOneBy($criteria)) {
-            $this->createNotFoundException(sprintf(
+            throw $this->createNotFoundException(sprintf(
                 'Requested Entity "%s" with id "%s" does not exist',
                 $repo->getClassName(),
                 $id
@@ -111,7 +98,10 @@ abstract class AbstractController extends Controller
      */
     protected function getProductRepository()
     {
-        return $this->get('sylius.repository.product');
+        $registry = $this->get('doctrine');
+        $classname = $this->container->getParameter('ibrows_sylius_shop.product.class');
+        $manager = $registry->getManagerForClass( $classname );
+        return $manager->getRepository($classname);
     }
 
     /**
