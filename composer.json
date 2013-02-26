@@ -24,7 +24,6 @@
     },
    "repositories": [
         {
-            "name": "sylius/cart-bundle",
             "type": "vcs",
             "url":  "git://github.com/ibrows/SyliusCartBundle.git"
         }
