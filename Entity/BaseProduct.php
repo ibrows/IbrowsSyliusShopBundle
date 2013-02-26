@@ -107,6 +107,8 @@ class BaseProduct  implements StockableInterface
      */
     protected $deletedAt;
 
+
+
     /**
      * Constructor.
      */
