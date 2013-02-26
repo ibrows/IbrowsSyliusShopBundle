@@ -17,11 +17,19 @@
     "require": {
         "php": ">=5.3.0",
 
-        "sylius/cart-bundle": "dev-master",
+        "ibrows/sylius/cart-bundle": "dev-master",
         "sylius/inventory-bundle": "dev-master",
 
         "ibrows/wizard-annotation-bundle": "dev-master"
     },
+   "repositories": [
+        {
+            "name": "ibrows/sylius/cart-bundle",
+            "type": "vcs",
+            "url":  "git://github.com/ibrows/SyliusCartBundle.git"
+        }
+
+    ], 
     "autoload": {
         "psr-0": { "Ibrows\\SyliusShopBundle": "" }
     },
