@@ -2,6 +2,8 @@
 
 namespace Ibrows\SyliusShopBundle\Controller;
 
+use Ibrows\SyliusShopBundle\Form\PaymentOptionType;
+
 use Ibrows\Bundle\WizardAnnotationBundle\Annotation\Wizard;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -84,19 +86,25 @@ class WizardController extends AbstractWizardController
     {
         $cart = $this->getCurrentCart();
 
-        $invoiceAddressForm = $this->createForm($this->getInvoiceAddressType());
-        $deliveryAddressForm = $this->createForm($this->getDeliveryAddressType());
+        $invoiceaddress = $cart->getInvoiceAddress()?:$this->getNewInvoiceAddress();
+        $deliveryAddress = $cart->getDeliveryAddress()?:$this->getNewDeliveryAddress();
 
-        $invoiceAddressForm->setData($cart->getInvoiceAddress()?:$this->getNewInvoiceAddress());
-        $deliveryAddressForm->setData($cart->getDeliveryAddress()?:$this->getNewDeliveryAddress());
+        $invoiceAddressForm = $this->createForm($this->getInvoiceAddressType(), $invoiceaddress, array('data_class' => $this->getInvoiceAddressClass()));
+        $deliveryAddressForm = $this->createForm($this->getDeliveryAddressType(), $deliveryAddress, array('data_class' => $this->getDeliveryAddressClass()));
+
 
         if("POST" == $request->getMethod()){
             $invoiceAddressForm->bind($request);
             $deliveryAddressForm->bind($request);
 
             if($invoiceAddressForm->isValid() && $deliveryAddressForm->isValid()){
-                $cart->setInvoiceAddress($invoiceAddressForm->getData());
-                $cart->setDeliveryAddress($deliveryAddressForm->getData());
+                $cart->setInvoiceAddress($invoiceaddress);
+                $cart->setDeliveryAddress($deliveryAddress);
+                $em = $this->getDoctrine()->getEntityManager();
+                $em->persist($invoiceaddress);
+                $em->persist($deliveryAddress);
+                $em->persist($cart);
+                $em->flush();
             }
         }
 
@@ -106,6 +114,16 @@ class WizardController extends AbstractWizardController
         );
     }
 
+    public function getInvoiceAddressClass(){
+        return $this->container->getParameter('ibrows_sylius_shop.invoiceaddress.class');
+    }
+    public function getDeliveryAddressClass(){
+        return $this->container->getParameter('ibrows_sylius_shop.deliveryaddress.class');
+    }
+    public function getPaymentOptionsClass(){
+        return $this->container->getParameter('ibrows_sylius_shop.paymentoptions.class');
+    }
+
     /**
      * @Route("/payment", name="wizard_payment")
      * @Template
@@ -113,7 +131,22 @@ class WizardController extends AbstractWizardController
      */
     public function paymentAction()
     {
-        return array();
+        $em = $this->getDoctrine()->getEntityManagerForClass($this->getPaymentOptionsClass());
+
+        $cart = $this->getCartManager()->getCurrentCart();
+        $form = $this->createForm(new PaymentOptionType(), $cart,  array('data_class' => 'Ibrows\SyliusShopBundle\Entity\Cart'));
+
+        $request = $this->getRequest();
+        if("POST" == $request->getMethod()){
+            $form->bind($request);
+
+            if($form->isValid()){
+                $em->persist($cart);
+                $em->flush();
+            }
+        }
+
+        return array('form' => $form->createView());
     }
 
     /**

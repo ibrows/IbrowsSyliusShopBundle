@@ -2,4 +2,9 @@
 
 {% block content %}
     Payment
+    <form action="{{ url('wizard_payment') }}" method="post" {{ form_enctype(form) }}>
+    {{ form_errors(form) }}
+    {{ form_rest(form) }}
+    <input type="submit" />
+    </form>
 {% endblock content %}

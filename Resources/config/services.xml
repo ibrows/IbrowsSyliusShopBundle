@@ -6,6 +6,7 @@
 
         <parameters>
         	<parameter key="ibrows_sylius_shop.cart.itemresolver">Ibrows\SyliusShopBundle\Cart\BaseItemResolver</parameter>
+        	<parameter key="ibrows_sylius_shop.cart.itemresolver">Ibrows\SyliusShopBundle\Cart\BaseItemResolver</parameter>
         	<parameter key="ibrows_sylius_shop.cart.manager.class">Ibrows\SyliusShopBundle\Cart\BaseManager</parameter>
         	<parameter key="ibrows_sylius_shop.product.class">Ibrows\SyliusShopBundle\Entity\BaseProduct</parameter>
          </parameters>

@@ -1,6 +1,12 @@
 # Imports
+parameters:
+  ibrows_sylius_shop.deliveryaddress.class: Ibrows\SyliusShopBundle\Entity\Address
+  ibrows_sylius_shop.invoiceaddress.class: Ibrows\SyliusShopBundle\Entity\Address
+  ibrows_sylius_shop.deliveryoptions.class: Ibrows\SyliusShopBundle\Entity\DeliveryOptions
+  ibrows_sylius_shop.paymentoptions.class: Ibrows\SyliusShopBundle\Entity\PaymentOptions
+
 imports:
   - { resource: cart.yml }
   - { resource: resource.yml }
-  - { resource: inventory.yml }
+  - { resource: inventory.yml } 
   - { resource: doctrine.yml }

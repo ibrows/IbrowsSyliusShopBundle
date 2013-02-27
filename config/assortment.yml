@@ -1,9 +1,0 @@
-# Sylius AssortmentBundle
-sylius_assortment:
-  driver: doctrine/orm
-  classes:
-    product:
-      model: Ibrows\SyliusShopBundle\Entity\Product
-      controller: Ibrows\SyliusShopBundle\Controller\ProductController
-      repository: Ibrows\SyliusShopBundle\Repository\ProductRepository
-      form: Sylius\Bundle\AssortmentBundle\Form\Type\ProductType 
