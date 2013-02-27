@@ -100,11 +100,12 @@ class WizardController extends AbstractWizardController
             if($invoiceAddressForm->isValid() && $deliveryAddressForm->isValid()){
                 $cart->setInvoiceAddress($invoiceaddress);
                 $cart->setDeliveryAddress($deliveryAddress);
+
                 $em = $this->getDoctrine()->getEntityManager();
                 $em->persist($invoiceaddress);
                 $em->persist($deliveryAddress);
-                $em->persist($cart);
-                $em->flush();
+
+                $this->getCartManager()->setCurrentCart($cart);
             }
         }
 
@@ -141,8 +142,7 @@ class WizardController extends AbstractWizardController
             $form->bind($request);
 
             if($form->isValid()){
-                $em->persist($cart);
-                $em->flush();
+                $this->getCartManager()->setCurrentCart($cart);
             }
         }
 
@@ -156,7 +156,9 @@ class WizardController extends AbstractWizardController
      */
     public function summaryAction()
     {
-        return array();
+        return array(
+            'cart' => $this->getCurrentCart()
+        );
     }
 
     /**

@@ -252,4 +252,32 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
     {
         return $this->zip;
     }
+
+    protected function getStringTemplate()
+    {
+        return "%%Company%%
+        %%Firstname%% %%Lastname%%
+        %%Street%%
+        %%Zip%% %%City%%";
+    }
+
+    protected function getStringTemplateVariables()
+    {
+        $vars = get_object_vars($this);
+        return $vars;
+    }
+
+    public function __toString()
+    {
+        $template = $this->getStringTemplate();
+
+        foreach ($this->getStringTemplateVariables() as $var => $value) {
+            $var = ucfirst($var);
+            if(method_exists($this, 'get' .  $var)){
+                $value = call_user_func(array($this, 'get' .  $var));
+            }
+            $template = preg_replace('!%%' . $var . '%%!', $value, $template);
+        }
+        return preg_replace("!\n+\s*\n+!","\n",$template);
+    }
 }

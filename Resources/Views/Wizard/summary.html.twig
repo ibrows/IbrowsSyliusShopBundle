@@ -1,5 +1,24 @@
 {% extends 'IbrowsSyliusShopBundle:Wizard:basewizard.html.twig' %}
 
 {% block content %}
-    Summary
+    <h1>Summary</h1>
+     <h2>items</h2>
+       <ul>
+        {% for item in cart.items %}
+            <li>
+                Product: {{ item }}
+                <ul>
+                    <li>Quantity: {{ item.quantity }}</li>
+                    <li>UnitPrice: {{ item.unitPrice }}</li>
+                    <li>Total: {{ item.total }}</li>
+                </ul>
+            </li>
+        {% endfor %}
+
+    </ul>
+    <h2>Total</h2>{{ cart.total }}
+    <h2>deliveryAddress</h2>{{ cart.deliveryAddress }}
+    <h2>invoiceAddress</h2>{{ cart.invoiceAddress }}
+    <h2>deliveryOptions</h2>{{ cart.deliveryOptions }}
+    <h2>paymentOptions</h2>{{ cart.paymentOptions }}
 {% endblock content %}
