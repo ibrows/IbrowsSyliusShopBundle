@@ -19,7 +19,9 @@
 
         "sylius/cart-bundle": "dev-ibrows",
         "sylius/inventory-bundle": "dev-master",
-
+        
+ 	    "jms/payment-core-bundle": "master-dev",
+ 	    "jms/payment-paypal-bundle": "master-dev",
         "ibrows/wizard-annotation-bundle": "dev-master"
     },
    "repositories": [
