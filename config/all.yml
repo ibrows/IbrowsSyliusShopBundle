@@ -9,4 +9,6 @@ imports:
   - { resource: cart.yml }
   - { resource: resource.yml }
   - { resource: inventory.yml } 
+  - { resource: payment.yml }  
   - { resource: doctrine.yml }
+   
