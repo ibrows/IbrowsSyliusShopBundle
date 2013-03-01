@@ -1,2 +1,7 @@
 jms_payment_core:
     secret: 'WK{Q?j)JHG>!p:hkvaJ3'
+jms_payment_paypal:
+    username: test
+    password: test
+    signature: test
+    debug: true

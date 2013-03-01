@@ -2,6 +2,10 @@
 
 namespace Ibrows\SyliusShopBundle\Entity;
 
+use JMS\Payment\CoreBundle\Model\PaymentInstructionInterface;
+
+use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
+
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 
 use Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface;
@@ -77,6 +81,12 @@ class Cart extends BaseCart implements CartInterface
      * @ORM\JoinColumn(name="payment_options_id", referencedColumnName="id")
      */
     protected $paymentOptions;
+
+    /**
+     *  @var PaymentInstructionInterface
+     *  @ORM\OneToOne(targetEntity="JMS\Payment\CoreBundle\Model\PaymentInstructionInterface")
+     */
+    private $paymentInstruction;
 
     /**
      * @return Cart
@@ -208,6 +218,16 @@ class Cart extends BaseCart implements CartInterface
     public function setPaymentOptions(PaymentOptionsInterface $paymentOptions = null)
     {
         $this->paymentOptions = $paymentOptions;
+    }
+
+    public function getPaymentInstruction()
+    {
+        return $this->paymentInstruction;
+    }
+
+    public function setPaymentInstruction(PaymentInstructionInterface $instruction)
+    {
+        $this->paymentInstruction = $instruction;
     }
 
     /**

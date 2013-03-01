@@ -7,3 +7,5 @@ doctrine:
 
       Ibrows\SyliusShopBundle\Model\Delivery\DeliveryOptionsInterface: DeliveryOptions
       Ibrows\SyliusShopBundle\Model\Payment\PaymentOptionsInterface: PaymentOptions
+      
+      JMS\Payment\CoreBundle\Model\PaymentInstructionInterface: JMS\Payment\CoreBundle\Entity\PaymentInstruction

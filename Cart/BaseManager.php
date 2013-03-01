@@ -127,8 +127,6 @@ class BaseManager
 
     public function clearCurrentCart()
     {
-        $this->objectManager->remove($this->getCurrentCart());
-        $this->objectManager->flush();
         $this->provider->abandonCart();
     }
 
