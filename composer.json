@@ -19,7 +19,6 @@
 
         "sylius/cart-bundle": "dev-ibrows",
         "sylius/inventory-bundle": "dev-master",
-        
 
  	    "ibrows/payment-saferpay-bundle": "dev-master",
         "ibrows/wizard-annotation-bundle": "dev-master"
