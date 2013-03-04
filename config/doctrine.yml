@@ -5,7 +5,7 @@ doctrine:
       Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface: %ibrows_sylius_shop.deliveryaddress.class%
       Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface: %ibrows_sylius_shop.invoiceaddress.class%
 
-      Ibrows\SyliusShopBundle\Model\Delivery\DeliveryOptionsInterface: DeliveryOptions
-      Ibrows\SyliusShopBundle\Model\Payment\PaymentOptionsInterface: PaymentOptions
+      Ibrows\SyliusShopBundle\Model\Delivery\DeliveryOptionsInterface: %ibrows_sylius_shop.deliveryoptions.class%
+      Ibrows\SyliusShopBundle\Model\Payment\PaymentOptionsInterface: %ibrows_sylius_shop.paymentoptions.class%
       
       JMS\Payment\CoreBundle\Model\PaymentInstructionInterface: JMS\Payment\CoreBundle\Entity\PaymentInstruction
