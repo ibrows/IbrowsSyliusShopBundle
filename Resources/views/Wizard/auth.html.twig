@@ -18,9 +18,9 @@
         <hr>
 
         <h2>Login</h2>
-        <form action="{{ url('wizard_auth') }}" method="post" {{ form_enctype(loginForm) }}>
+        <form action="{{ url('fos_user_security_check') }}" method="post" {{ form_enctype(loginForm) }}>
             {{ form_widget(loginForm) }}
-            <input class="btn" type="submit" name="{{ loginSubmitName }}" value="login">
+            <input class="btn" type="submit" name="login" value="login">
         </form>
     {% endif %}
 

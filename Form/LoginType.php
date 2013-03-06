@@ -13,7 +13,13 @@ class LoginType extends AuthType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         parent::buildForm($builder, $options);
-        $builder->add('password', 'password');
+        $builder
+            ->add('password', 'password')
+            ->add('_remember_me', 'checkbox', array('required' => false))
+            ->add('_failure_path', 'hidden')
+            ->add('_target_path', 'hidden')
+            ->add('_csrf_token', 'hidden')
+        ;
     }
 
     /**
@@ -21,6 +27,6 @@ class LoginType extends AuthType
      */
     public function getName()
     {
-        return 'ibr_sylius_login';
+        return '';
     }
 }

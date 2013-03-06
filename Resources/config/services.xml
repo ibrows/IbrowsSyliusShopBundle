@@ -9,8 +9,8 @@
         	<parameter key="ibrows_sylius_shop.cart.manager.class">Ibrows\SyliusShopBundle\Cart\CartManager</parameter>
             <parameter key="ibrows_sylius_shop.currentcart.manager.class">Ibrows\SyliusShopBundle\Cart\CurrentCartManager</parameter>
         	<parameter key="ibrows_sylius_shop.product.class">Ibrows\SyliusShopBundle\Entity\BaseProduct</parameter>
+            <parameter key="ibrows_sylius_shop.logininformation.class">Ibrows\SyliusShopBundle\Login\LoginInformation</parameter>
          </parameters>
-
 
     <services>
 
@@ -37,6 +37,12 @@
             <argument type="service" id="sylius.repository.cart_item" />
             <argument type="service" id="sylius.cart_resolver" />
             <argument type="service" id="sylius.cart_provider" />
+        </service>
+
+        <service id="ibrows_syliusshop.login.logininformation" class="%ibrows_sylius_shop.logininformation.class%" scope="request">
+            <argument type="service" id="request" />
+            <argument type="service" id="form.csrf_provider" />
+            <argument type="service" id="security.context" />
         </service>
     </services>
 </container>

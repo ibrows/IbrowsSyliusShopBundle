@@ -1,24 +1,19 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Controller;
+
 use JMS\Payment\CoreBundle\Entity\FinancialTransaction;
-
 use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
-
 use JMS\Payment\CoreBundle\Model\PaymentInterface;
-
 use JMS\Payment\CoreBundle\PluginController\PluginController;
-
 use JMS\Payment\CoreBundle\Plugin\Exception\ActionRequiredException;
-
 use JMS\Payment\CoreBundle\Plugin\Exception\Action\VisitUrl;
-
 use JMS\Payment\CoreBundle\PluginController\Result;
 
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Ibrows\SyliusShopBundle\Form\PaymentOptionType;
-
 use Ibrows\Bundle\WizardAnnotationBundle\Annotation\Wizard;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -61,29 +56,36 @@ class WizardController extends AbstractWizardController
         $authForm = $this->createForm($this->getAuthType(), null, array(
             'validation_groups' => array('sylius_wizard_auth')
         ));
-        $loginForm = $this->createForm($this->getLoginType(), null, array(
+
+        $loginInformation = $this->getLoginInformation();
+        $loginForm = $this->createForm($this->getLoginType(), array(
+            '_csrf_token' => $loginInformation->getCsrfToken(),
+            '_username' => $loginInformation->getLastUsername(),
+            '_target_path' => 'wizard_auth',
+            '_failure_path' => 'wizard_auth'
+        ), array(
             'validation_groups' => array('sylius_wizard_login')
         ));
 
+        $authError = $loginInformation->getAuthenticationError();
+        if($authError){
+            $loginForm->addError(new FormError($authError));
+        }
+
         $authSubmitName = 'auth';
-        $loginSubmitName = 'login';
         $authDeleteSubmitName = 'authDelete';
 
         if ("POST" == $request->getMethod()) {
             if ($request->request->get($authDeleteSubmitName)) {
-                if (($authDelete = $this->authDelete($cartManager)) instanceof Response) {
-                    return $authDelete;
+                if (($response = $this->authDelete($cartManager)) instanceof Response) {
+                    return $response;
                 }
             }
 
             if ($request->request->get($authSubmitName)) {
-                if (($authByEmail = $this->authByEmail($request, $authForm, $cartManager, $wizard)) instanceof Response) {
-                    return $authByEmail;
+                if (($response = $this->authByEmail($request, $authForm, $cartManager, $wizard)) instanceof Response) {
+                    return $response;
                 }
-            }
-
-            if ($request->request->get($loginSubmitName)) {
-                $this->authByUsernameAndPassword($request, $loginForm);
             }
         }
 
@@ -92,7 +94,6 @@ class WizardController extends AbstractWizardController
             'authForm' => $authForm->createView(),
             'loginForm' => $loginForm->createView(),
             'authSubmitName' => $authSubmitName,
-            'loginSubmitName' => $loginSubmitName,
             'authDeleteSubmitName' => $authDeleteSubmitName
         );
     }
