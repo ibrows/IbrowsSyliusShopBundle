@@ -42,7 +42,7 @@ class WizardController extends AbstractWizardController
     public function basketAction()
     {
         return array(
-                'cart' => $this->getCurrentCart()
+            'cart' => $this->getCurrentCart()
         );
     }
 
@@ -56,8 +56,12 @@ class WizardController extends AbstractWizardController
         $cart = $this->getCurrentCart();
         $wizard = $this->getWizard();
 
-        $authForm = $this->createForm($this->getAuthType());
-        $loginForm = $this->createForm($this->getLoginType());
+        $authForm = $this->createForm($this->getAuthType(), null, array(
+            'validation_groups' => array('sylius_wizard_auth')
+        ));
+        $loginForm = $this->createForm($this->getLoginType(), null, array(
+            'validation_groups' => array('sylius_wizard_login')
+        ));
 
         $authSubmitName = 'auth';
         $loginSubmitName = 'login';
@@ -82,12 +86,12 @@ class WizardController extends AbstractWizardController
         }
 
         return array(
-                'cart' => $cart,
-                'authForm' => $authForm->createView(),
-                'loginForm' => $loginForm->createView(),
-                'authSubmitName' => $authSubmitName,
-                'loginSubmitName' => $loginSubmitName,
-                'authDeleteSubmitName' => $authDeleteSubmitName
+            'cart' => $cart,
+            'authForm' => $authForm->createView(),
+            'loginForm' => $loginForm->createView(),
+            'authSubmitName' => $authSubmitName,
+            'loginSubmitName' => $loginSubmitName,
+            'authDeleteSubmitName' => $authDeleteSubmitName
         );
     }
 
@@ -104,45 +108,34 @@ class WizardController extends AbstractWizardController
         $deliveryAddress = $cart->getDeliveryAddress() ? : $this->getNewDeliveryAddress();
 
         $invoiceAddressForm = $this->createForm($this->getInvoiceAddressType(), $invoiceaddress, array(
-                        'data_class' => $this->getInvoiceAddressClass()
-                ));
-        $deliveryAddressForm = $this->createForm($this->getDeliveryAddressType(), $deliveryAddress, array(
-                        'data_class' => $this->getDeliveryAddressClass()
-                ));
+            'data_class' => $this->getInvoiceAddressClass(),
+            'validation_groups' => array('sylius_wizard_address')
+        ));
 
-        if ("POST" == $request->getMethod()) {
+        $deliveryAddressForm = $this->createForm($this->getDeliveryAddressType(), $deliveryAddress, array(
+            'data_class' => $this->getDeliveryAddressClass(),
+            'validation_groups' => array('sylius_wizard_address')
+        ));
+
+        if("POST" == $request->getMethod()) {
             $invoiceAddressForm->bind($request);
             $deliveryAddressForm->bind($request);
-
-            if ($invoiceAddressForm->isValid() && $deliveryAddressForm->isValid()) {
+            if($invoiceAddressForm->isValid() && $deliveryAddressForm->isValid()) {
                 $cart->setInvoiceAddress($invoiceaddress);
                 $cart->setDeliveryAddress($deliveryAddress);
 
-                $em = $this->getDoctrine()->getEntityManager();
-                $em->persist($invoiceaddress);
-                $em->persist($deliveryAddress);
+                $om = $this->getObjectManager();
+                $om->persist($invoiceaddress);
+                $om->persist($deliveryAddress);
 
                 $this->getCartManager()->setCurrentCart($cart);
             }
         }
 
         return array(
-                'invoiceAddressForm' => $invoiceAddressForm->createView(),
-                'deliveryAddressForm' => $deliveryAddressForm->createView()
+            'invoiceAddressForm' => $invoiceAddressForm->createView(),
+            'deliveryAddressForm' => $deliveryAddressForm->createView()
         );
-    }
-
-    public function getInvoiceAddressClass()
-    {
-        return $this->container->getParameter('ibrows_sylius_shop.invoiceaddress.class');
-    }
-    public function getDeliveryAddressClass()
-    {
-        return $this->container->getParameter('ibrows_sylius_shop.deliveryaddress.class');
-    }
-    public function getPaymentOptionsClass()
-    {
-        return $this->container->getParameter('ibrows_sylius_shop.paymentoptions.class');
     }
 
     /**
@@ -295,7 +288,7 @@ class WizardController extends AbstractWizardController
     public function summaryAction()
     {
         return array(
-                'cart' => $this->getCurrentCart()
+            'cart' => $this->getCurrentCart()
         );
     }
 
@@ -306,7 +299,10 @@ class WizardController extends AbstractWizardController
      */
     public function notificationAction()
     {
-        $this->getCartManager()->clearCurrentCart();
-        return array();
+        $cart = $this->getCurrentCart();
+        $this->getCartManager()->closeCart();
+        return array(
+            'cart' => $cart
+        );
     }
 }
