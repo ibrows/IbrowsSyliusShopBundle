@@ -11,12 +11,14 @@ use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Ibrows\SyliusShopBundle\IbrowsSyliusShopBundle;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use FOS\UserBundle\Model\UserManagerInterface;
 use FOS\UserBundle\Model\UserInterface;
+use FOS\UserBundle\Security\LoginManager;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
@@ -55,6 +57,14 @@ abstract class AbstractController extends Controller
     protected function getObjectManager($name = null)
     {
         return $this->getDoctrine()->getManager($name);
+    }
+
+    /**
+     * @return LoginManager
+     */
+    protected function getLoginManager()
+    {
+        return $this->get('fos_user.security.login_manager');
     }
 
     /**
