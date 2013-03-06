@@ -2,6 +2,9 @@
 
 namespace Ibrows\SyliusShopBundle\Controller;
 
+use Ibrows\SyliusShopBundle\Cart\CartManager;
+use Ibrows\SyliusShopBundle\Cart\CurrentCartManager;
+
 use Ibrows\Bundle\WizardAnnotationBundle\Annotation\Wizard;
 use Ibrows\Bundle\WizardAnnotationBundle\Annotation\AnnotationHandler as WizardHandler;
 
@@ -90,22 +93,23 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
-     * @param CartInterface $cart
+     * @param CartManager $cartManager
+     * @return CartManager
      */
-    protected function authDelete(CartInterface $cart)
+    protected function authDelete(CartManager $cartManager)
     {
-        $cart->setEmail(null);
-        $this->persistCart($cart);
+        $cartManager->getCart()->setEmail(null);
+        return $cartManager->persistCart();
     }
 
     /**
      * @param Request $request
      * @param FormInterface $authForm
-     * @param CartInterface $cart
+     * @param CartManager $cartManager
      * @param WizardHandler $wizard
      * @return RedirectResponse|void
      */
-    protected function authByEmail(Request $request, FormInterface $authForm, CartInterface $cart, WizardHandler $wizard)
+    protected function authByEmail(Request $request, FormInterface $authForm, CartManager $cartManager, WizardHandler $wizard)
     {
         $authForm->bind($request);
         if($authForm->isValid()){
@@ -115,9 +119,8 @@ abstract class AbstractWizardController extends AbstractController
                     $this->translateWithPrefix("user.emailallreadyexisting", array('%email%' => $email), "validators")
                 ));
             }else{
-                $cart->setEmail($email);
-                $this->getCartManager()->persistCart($cart);
-                $this->persistCart($cart);
+                $cartManager->getCart()->setEmail($email);
+                $cartManager->persistCart();
                 return $this->redirect($wizard->getNextStepUrl());
             }
         }
