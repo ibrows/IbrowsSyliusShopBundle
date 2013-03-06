@@ -140,25 +140,21 @@ class WizardController extends AbstractWizardController
         );
     }
 
+
     /**
-     * @Route("/payment", name="wizard_payment")
+     * @Route("/payment", name="wizard_payment_instruction")
      * @Template
-     * @Wizard(name="payment", number=5, validationMethod="paymentValidation")
+     * @Wizard(name="payment", number=4, validationMethod="paymentInstructionValidation")
      */
-    public function paymentAction()
-    {
+    public function paymentInstructionAction(){
         $em = $this->getDoctrine()->getManagerForClass($this->getPaymentOptionsClass());
         $cart = $this->getCartManager()->getCurrentCart();
-        if($cart->isPayed()){
-           return $this->redirect($this->getWizard()->getNextStepUrl());
-        }
-
         $invoiceaddress = $cart->getInvoiceAddress();
         $ppc = $this->get("payment.plugin_controller");
         /* @var $ppc PluginController   */
         $form = $this
-                ->createForm('jms_choose_payment_method', null,
-                        array('amount' => $cart->getTotal(), 'currency' => 'CHF', 'default_method' => null, // Optional
+        ->createForm('jms_choose_payment_method', null,
+                array('amount' => $cart->getTotal(), 'currency' => 'CHF', 'default_method' => null, // Optional
                         'predefined_data' => array(
                                 'saferpay' => array(
                                         'DESCRIPTION' => sprintf('Bestellnummer: %s', $cart->getId()),
@@ -176,7 +172,45 @@ class WizardController extends AbstractWizardController
                                         'EMAIL' => $invoiceaddress->getEmail()
                                 ),
                         ),
-                        ));
+                ));
+        $instruction = $cart->getPaymentInstruction();
+        if ($instruction == null) {
+            if ('POST' === $this->getRequest()->getMethod()) {
+                $form->bindRequest($this->getRequest());
+
+                if ($form->isValid()) {
+                    $instruction = $form->getData();
+                    $ppc->createPaymentInstruction($instruction);
+                    $cart->setPaymentInstruction($instruction);
+                    $this->getCartManager()->persistCart($cart);
+                }
+                return array(
+                        'form' => $form->createView()
+                );
+            }
+
+
+        }
+        return array(
+                'form' => $form->createView()
+        );
+    }
+
+    /**
+     * @Route("/payment", name="wizard_payment")
+     * @Template
+     * @Wizard(name="payment", number=7, validationMethod="paymentValidation")
+     */
+    public function paymentAction()
+    {
+        $em = $this->getDoctrine()->getManagerForClass($this->getPaymentOptionsClass());
+        $cart = $this->getCartManager()->getCurrentCart();
+        if($cart->isPayed()){
+           return $this->redirect($this->getWizard()->getNextStepUrl());
+        }
+
+        $ppc = $this->get("payment.plugin_controller");
+        /* @var $ppc PluginController   */
 
         $status = $this->getRequest()->query->get('status', false);
         if ($status == 'success') {
@@ -218,24 +252,8 @@ class WizardController extends AbstractWizardController
         }
 
         $instruction = $cart->getPaymentInstruction();
-        if ($instruction == null) {
-            if ('POST' === $this->getRequest()->getMethod()) {
-                $form->bindRequest($this->getRequest());
-
-                if ($form->isValid()) {
-                    $instruction = $form->getData();
-                    $ppc->createPaymentInstruction($instruction);
-                    $cart->setPaymentInstruction($instruction);
-                    $this->getCartManager()->setCurrentCart($cart);
-
-                }
-                return array(
-                        'form' => $form->createView()
-                );
-            }
 
 
-        }
 
         if (null === $pendingTransaction = $instruction->getPendingTransaction()) {
             $payment = $ppc->createPayment($instruction->getId(), $instruction->getAmount() - $instruction->getDepositedAmount());
