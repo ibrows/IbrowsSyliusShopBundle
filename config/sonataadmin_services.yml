@@ -1,31 +1,13 @@
-services: 
-    #SonataAdmin        
-    ibrows.admin.shop.product:
-      class: Ibrows\SonidoBundle\Admin\ProductAdmin
+services:    
+    ibrows_syliusshop.admin.product:
+      class: Ibrows\SyliusShopBundle\Admin\DefaultAdmin
       tags:
         - { name: sonata.admin, manager_type: orm, group: Shop, label: Product, label_translator_strategy: sonata.admin.label.strategy.native}
-      arguments: [null, '%ibrows_sylius_shop.product.class%',  'IbrowsSonidoBundle:DefaultAdmin']
+      arguments: [null, '%ibrows_sylius_shop.product.class%',  'IbrowsSyliusShopBundle:DefaultAdmin']
+    ibrows_syliusshop.admin.user:
+      class: Ibrows\SyliusShopBundle\Admin\UserAdmin
+      tags:
+        - { name: sonata.admin, manager_type: orm, group: Shop, label: User, label_translator_strategy: sonata.admin.label.strategy.native}
+      arguments: [null, '%ibrows_sylius_shop.product.class%',  'IbrowsSyliusShopBundle:DefaultAdmin']      
       
-    ibrows.admin.shop.product.type:  
-      class: Ibrows\SyliusShopBundle\Admin\DefaultAdmin
-      tags:
-        - {display: none, name: sonata.admin, manager_type: orm, group: Shop, label: Type, label_translator_strategy: sonata.admin.label.strategy.native}
-      arguments: [null, Ibrows\SonidoBundle\Entity\Type,  'IbrowsSonidoBundle:DefaultAdmin']   
-      
-    ibrows.admin.shop.product.country:  
-      class: Ibrows\SyliusShopBundle\Admin\DefaultAdmin
-      tags:
-        - {display: none, name: sonata.admin, manager_type: orm, group: Shop, label: Country, label_translator_strategy: sonata.admin.label.strategy.native}
-      arguments: [null, Ibrows\SonidoBundle\Entity\Country,  'IbrowsSonidoBundle:DefaultAdmin'] 
-            
-    ibrows.admin.shop.product.region:  
-      class: Ibrows\SyliusShopBundle\Admin\DefaultAdmin
-      tags:
-        - {display: none, name: sonata.admin, manager_type: orm, group: Shop, label: Region, label_translator_strategy: sonata.admin.label.strategy.native}
-      arguments: [null, Ibrows\SonidoBundle\Entity\Region,  'IbrowsSonidoBundle:DefaultAdmin'] 
-                       
-    ibrows.admin.shop.product.tax:  
-      class: Ibrows\SyliusShopBundle\Admin\DefaultAdmin
-      tags:
-        - {display: none, name: sonata.admin, manager_type: orm, group: Shop, label: Tax, label_translator_strategy: sonata.admin.label.strategy.native}
-      arguments: [null, Ibrows\SonidoBundle\Entity\Tax,  'IbrowsSonidoBundle:DefaultAdmin']      
+ 
