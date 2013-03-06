@@ -138,18 +138,6 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @param FormInterface $loginForm
-     */
-    protected function authByUsernameAndPassword(Request $request, FormInterface $loginForm)
-    {
-        $loginForm->bind($request);
-        if($loginForm->isValid()){
-            // TODO login user with fos user and show errors if needed or redirect to nextStepUrl
-        }
-    }
-
-    /**
      * @return AuthType
      */
     protected function getAuthType()

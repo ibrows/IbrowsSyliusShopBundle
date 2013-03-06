@@ -8,6 +8,8 @@ use Ibrows\SyliusShopBundle\Cart\CurrentCartManager;
 use Ibrows\SyliusShopBundle\Repository\ProductRepository;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 
+use Ibrows\SyliusShopBundle\Login\LoginInformationInterface;
+
 use Ibrows\SyliusShopBundle\IbrowsSyliusShopBundle;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -15,6 +17,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+
+use Symfony\Component\Security\Core\SecurityContextInterface;
 
 use FOS\UserBundle\Model\UserManagerInterface;
 use FOS\UserBundle\Model\UserInterface;
@@ -48,6 +53,23 @@ abstract class AbstractController extends Controller
         }
 
         return $resource;
+    }
+
+    /**
+     * @return LoginInformationInterface
+     */
+    protected function getLoginInformation()
+    {
+        return $this->get('ibrows_syliusshop.login.logininformation');
+    }
+
+    /**
+     * @param string $name
+     * @return mixed
+     */
+    protected function getParameter($name)
+    {
+        return $this->container->getParameter($name);
     }
 
     /**
