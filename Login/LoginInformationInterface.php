@@ -2,6 +2,8 @@
 
 namespace Ibrows\SyliusShopBundle\Login;
 
+use FOS\UserBundle\Model\UserInterface;
+
 interface LoginInformationInterface
 {
     /**
@@ -18,4 +20,9 @@ interface LoginInformationInterface
      * @return string
      */
     public function getCsrfToken();
+
+    /**
+     * @return UserInterface
+     */
+    public function getUser();
 }

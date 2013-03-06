@@ -4,10 +4,16 @@
     <h1>Auth</h1>
 
     {% if cart.email %}
-        Aktuelle E-Mail: {{ cart.email }}
-        <form action="{{ url('wizard_auth') }}" method="post">
-            <input class="btn" type="submit" name="{{ authDeleteSubmitName }}" value="change">
-        </form>
+        {% if user %}
+            Angemeldet als {{ user.username }} | <a href="">Logout</a>
+        {% else %}
+            Aktuelle E-Mail: {{ cart.email }}
+
+            <form action="{{ url('wizard_auth') }}" method="post">
+                <input class="btn" type="submit" name="{{ authDeleteSubmitName }}" value="change">
+            </form>
+        {% endif %}
+
     {% else %}
         <h2>Ohne Registrierung</h2>
         <form action="{{ url('wizard_auth') }}" method="post" {{ form_enctype(authForm) }}>

@@ -2,6 +2,8 @@
 
 namespace Ibrows\SyliusShopBundle\Login;
 
+use FOS\UserBundle\Model\UserInterface;
+
 use Symfony\Component\Security\Core\SecurityContextInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -96,5 +98,21 @@ class LoginInformation implements LoginInformationInterface
 
         $this->error = $error;
         $this->lastUsername = $session->get(SecurityContextInterface::LAST_USERNAME);
+    }
+
+    /**
+     * @return UserInterface
+     */
+    public function getUser()
+    {
+        if (null === $token = $this->securityContext->getToken()) {
+            return null;
+        }
+
+        if (!is_object($user = $token->getUser())) {
+            return null;
+        }
+
+        return $user;
     }
 }

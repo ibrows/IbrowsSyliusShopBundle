@@ -58,6 +58,12 @@ class WizardController extends AbstractWizardController
         ));
 
         $loginInformation = $this->getLoginInformation();
+        $user = $loginInformation->getUser();
+
+        if($user){
+            $cart->setEmail($user->getEmail());
+        }
+
         $loginForm = $this->createForm($this->getLoginType(), array(
             '_csrf_token' => $loginInformation->getCsrfToken(),
             '_username' => $loginInformation->getLastUsername(),
@@ -76,7 +82,7 @@ class WizardController extends AbstractWizardController
         $authDeleteSubmitName = 'authDelete';
 
         if ("POST" == $request->getMethod()) {
-            if ($request->request->get($authDeleteSubmitName)) {
+            if ($request->request->get($authDeleteSubmitName) && !$user) {
                 if (($response = $this->authDelete($cartManager)) instanceof Response) {
                     return $response;
                 }
@@ -91,6 +97,7 @@ class WizardController extends AbstractWizardController
 
         return array(
             'cart' => $cart,
+            'user' => $user,
             'authForm' => $authForm->createView(),
             'loginForm' => $loginForm->createView(),
             'authSubmitName' => $authSubmitName,
