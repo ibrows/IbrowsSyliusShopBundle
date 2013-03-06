@@ -150,13 +150,13 @@ class WizardController extends AbstractWizardController
 
 
     /**
-     * @Route("/payment", name="wizard_payment_instruction")
+     * @Route("/payment_instruction", name="wizard_payment_instruction")
      * @Template
-     * @Wizard(name="payment", number=4, validationMethod="paymentInstructionValidation")
+     * @Wizard(name="payment_instruction", number=4, validationMethod="paymentInstructionValidation")
      */
     public function paymentInstructionAction(){
         $em = $this->getDoctrine()->getManagerForClass($this->getPaymentOptionsClass());
-        $cart = $this->getCartManager()->getCurrentCart();
+        $cart = $this->getCurrentCart();
         $invoiceaddress = $cart->getInvoiceAddress();
         $ppc = $this->get("payment.plugin_controller");
         /* @var $ppc PluginController   */
@@ -190,7 +190,7 @@ class WizardController extends AbstractWizardController
                     $instruction = $form->getData();
                     $ppc->createPaymentInstruction($instruction);
                     $cart->setPaymentInstruction($instruction);
-                    $this->getCartManager()->persistCart($cart);
+                    $this->persistCurrentCart($cart);
                 }
                 return array(
                         'form' => $form->createView()
@@ -212,7 +212,7 @@ class WizardController extends AbstractWizardController
     public function paymentAction()
     {
         $em = $this->getDoctrine()->getManagerForClass($this->getPaymentOptionsClass());
-        $cart = $this->getCartManager()->getCurrentCart();
+        $cart = $this->getCurrentCart();
         if($cart->isPayed()){
            return $this->redirect($this->getWizard()->getNextStepUrl());
         }
@@ -252,7 +252,7 @@ class WizardController extends AbstractWizardController
             $result = $ppc->deposit($currentpayment->getId(), $currentpayment->getTargetAmount());
             if (Result::STATUS_SUCCESS === $result->getStatus()) {
                 $cart->setPayed(true);
-                $this->getCartManager()->setCurrentCart($cart);
+                $this->persistCurrentCart($cart);
                 return $this->redirect($this->getWizard()->getNextStepUrl());
             } else {
                 throw new \RuntimeException('Transaction was not successful: ' . $result->getReasonCode());
@@ -279,7 +279,7 @@ class WizardController extends AbstractWizardController
 
                 if ($action instanceof VisitUrl) {
                     $cart->setPaymentInstruction($instruction);
-                    $this->getCartManager()->setCurrentCart($cart);
+                    $this->persistCurrentCart($cart);
                     return new RedirectResponse($action->getUrl());
                 }
 
@@ -311,7 +311,7 @@ class WizardController extends AbstractWizardController
     /**
      * @Route("/summary", name="wizard_summary")
      * @Template
-     * @Wizard(name="summary", number=4, validationMethod="summaryValidation")
+     * @Wizard(name="summary", number=5, validationMethod="summaryValidation")
      */
     public function summaryAction()
     {
