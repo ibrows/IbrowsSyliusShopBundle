@@ -44,6 +44,14 @@ class IbrowsSyliusShopBundle extends Bundle
 
             new \Ibrows\Bundle\WizardAnnotationBundle\IbrowsWizardAnnotationBundle(),
 
+            new \Sonata\BlockBundle\SonataBlockBundle(),
+            new \Sonata\jQueryBundle\SonatajQueryBundle(),
+            new \Sonata\AdminBundle\SonataAdminBundle(),
+            new \Sonata\DoctrineORMAdminBundle\SonataDoctrineORMAdminBundle(),
+            new \Ibrows\Bundle\SonataAdminAnnotationBundle\IbrowsSonataAdminAnnotationBundle(),
+            new \Knp\Bundle\MenuBundle\KnpMenuBundle(),
+
+
             new \Ibrows\SyliusShopBundle\IbrowsSyliusShopBundle()
         );
     }

@@ -1,0 +1,2 @@
+fos_user:
+  user_class: %ibrows_sylius_shop.user.class%

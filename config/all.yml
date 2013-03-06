@@ -1,5 +1,7 @@
 # Imports
 parameters:
+  ibrows_sylius_shop.user.class: Ibrows\SyliusShopBundle\Entity\BaseUser
+
   ibrows_sylius_shop.deliveryaddress.class: Ibrows\SyliusShopBundle\Entity\Address
   ibrows_sylius_shop.invoiceaddress.class: Ibrows\SyliusShopBundle\Entity\Address
 
@@ -7,9 +9,11 @@ parameters:
   ibrows_sylius_shop.paymentoptions.class: Ibrows\SyliusShopBundle\Entity\PaymentOptions
 
 imports:
+  - { resource: fos_user.yml }
   - { resource: cart.yml }
   - { resource: resource.yml }
   - { resource: inventory.yml } 
   - { resource: payment.yml }  
   - { resource: doctrine.yml }
-   
+  - { resource: sonataadmin.yml }
+  - { resource: sonataadmin_services.yml }   
