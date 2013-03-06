@@ -53,7 +53,9 @@ class WizardController extends AbstractWizardController
      */
     public function authAction(Request $request)
     {
-        $cart = $this->getCurrentCart();
+        $cartManager = $this->getCurrentCartManager();
+        $cart = $cartManager->getCart();
+
         $wizard = $this->getWizard();
 
         $authForm = $this->createForm($this->getAuthType(), null, array(
@@ -69,19 +71,19 @@ class WizardController extends AbstractWizardController
 
         if ("POST" == $request->getMethod()) {
             if ($request->request->get($authDeleteSubmitName)) {
-                if (($authDelete = $this->authDelete($cart)) instanceof Response) {
+                if (($authDelete = $this->authDelete($cartManager)) instanceof Response) {
                     return $authDelete;
                 }
             }
 
             if ($request->request->get($authSubmitName)) {
-                if (($authByEmail = $this->authByEmail($request, $authForm, $cart, $wizard)) instanceof Response) {
+                if (($authByEmail = $this->authByEmail($request, $authForm, $cartManager, $wizard)) instanceof Response) {
                     return $authByEmail;
                 }
             }
 
             if ($request->request->get($loginSubmitName)) {
-                $this->authByUsernameAndPassword($request, $loginSubmitName);
+                $this->authByUsernameAndPassword($request, $loginForm);
             }
         }
 
