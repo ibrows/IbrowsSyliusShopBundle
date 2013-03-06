@@ -29,6 +29,8 @@
         "sonata-project/intl-bundle": "2.1.*@dev",
 
         "ibrows/wizard-annotation-bundle": "1.*@dev",
+        "ibrows/sonata-admin-annotation-bundle": "1.*@dev",
+
         "ibrows/payment-saferpay-bundle": "dev-master"
     },
    "repositories": [
