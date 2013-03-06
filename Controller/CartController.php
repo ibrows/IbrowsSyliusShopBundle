@@ -33,13 +33,12 @@ class CartController extends AbstractController
      */
     public function summaryAction(Request $request)
     {
-
-        $manager = $this->getCartManager();
-        $cart = $this->getCurrentCart();
+        $manager = $this->getCurrentCartManager();
+        $cart = $manager->getCart();
         $form = $this->createForm('sylius_cart', $cart);
 
         if ($request->getMethod() == 'POST' && $request->request->get('sylius_cart') != null && $form->bind($request)->isValid()) {
-            $manager->setCurrentCart($cart);
+            $manager->persistCart();
 
             /* @var $dispatcher EventDispatcherInterface */
             $dispatcher = $this->get('event_dispatcher');
@@ -60,7 +59,7 @@ class CartController extends AbstractController
      */
     public function clearAction()
     {
-        $this->getCartManager()->clearCurrentCart();
+        $this->getCurrentCartManager()->clearCurrentCart();
 
         /* @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */
         $dispatcher = $this->container->get('event_dispatcher');

@@ -39,20 +39,23 @@ class CartItemController extends AbstractController
      */
     public function addAction(Request $request)
     {
-
-        $cartmanger = $this->getCartManager();
+        $cartmanger = $this->getCurrentCartManager();
         $item = $cartmanger->createNewItem();
         $dispatcher = $this->container->get('event_dispatcher');
+
         try {
             $item = $cartmanger->resolve($item, $request);
         } catch (ItemResolvingException $exception) {
             $dispatcher->dispatch(SyliusCartEvents::ITEM_ADD_ERROR, new FlashEvent($exception->getMessage()));
             throw $exception;
         }
-        $cartmanger->addItem($item);
-        $dispatcher->dispatch(SyliusCartEvents::ITEM_ADD_COMPLETED, new FlashEvent());
-        return $this->forwardByRoute($this->getCartSummaryRoute());
 
+        $cartmanger->addItem($item);
+        $cartmanger->persistCart();
+
+        $dispatcher->dispatch(SyliusCartEvents::ITEM_ADD_COMPLETED, new FlashEvent());
+
+        return $this->forwardByRoute($this->getCartSummaryRoute());
     }
 
     /**
@@ -68,9 +71,10 @@ class CartItemController extends AbstractController
      */
     public function removeAction($id)
     {
-        $cartmanger = $this->getCartManager();
-        $cart = $this->getCurrentCart();
-        $item = $this->findOr404($cartmanger->getItemRepository());
+        $cartmanger = $this->getCurrentCartManager();
+        $cart = $cartmanger->getCart();
+
+        $item = $this->findOr404($cartmanger->getItemObjectRepo());
 
         /* @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */
         $dispatcher = $this->container->get('event_dispatcher');
@@ -79,7 +83,9 @@ class CartItemController extends AbstractController
             $dispatcher->dispatch(SyliusCartEvents::ITEM_REMOVE_ERROR, new FlashEvent());
             throw new \Exception('item not found: ' . $id);
         }
+
         $cartmanger->removeItem($item);
+        $cartmanger->persistCart();
 
         $dispatcher->dispatch(SyliusCartEvents::ITEM_REMOVE_COMPLETED, new FlashEvent());
 

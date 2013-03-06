@@ -27,30 +27,6 @@ use Symfony\Component\HttpFoundation\Request;
 abstract class AbstractWizardController extends AbstractController
 {
     /**
-     * @return string
-     */
-    public function getInvoiceAddressClass()
-    {
-        return $this->container->getParameter('ibrows_sylius_shop.invoiceaddress.class');
-    }
-
-    /**
-     * @return string
-     */
-    public function getDeliveryAddressClass()
-    {
-        return $this->container->getParameter('ibrows_sylius_shop.deliveryaddress.class');
-    }
-
-    /**
-     * @return string
-     */
-    public function getPaymentOptionsClass()
-    {
-        return $this->container->getParameter('ibrows_sylius_shop.paymentoptions.class');
-    }
-
-    /**
      * @return bool|Response
      */
     public function basketValidation()
@@ -205,6 +181,30 @@ abstract class AbstractWizardController extends AbstractController
     protected function getDeliveryAddressType()
     {
         return new DeliveryAddressType();
+    }
+
+    /**
+     * @return string
+     */
+    public function getInvoiceAddressClass()
+    {
+        return $this->container->getParameter('ibrows_sylius_shop.invoiceaddress.class');
+    }
+
+    /**
+     * @return string
+     */
+    public function getDeliveryAddressClass()
+    {
+        return $this->container->getParameter('ibrows_sylius_shop.deliveryaddress.class');
+    }
+
+    /**
+     * @return string
+     */
+    public function getPaymentOptionsClass()
+    {
+        return $this->container->getParameter('ibrows_sylius_shop.paymentoptions.class');
     }
 
     /**

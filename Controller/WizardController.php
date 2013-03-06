@@ -128,7 +128,7 @@ class WizardController extends AbstractWizardController
                 $om->persist($invoiceaddress);
                 $om->persist($deliveryAddress);
 
-                $this->getCartManager()->setCurrentCart($cart);
+                $this->persistCurrentCart();
             }
         }
 
@@ -300,7 +300,7 @@ class WizardController extends AbstractWizardController
     public function notificationAction()
     {
         $cart = $this->getCurrentCart();
-        $this->getCartManager()->closeCart();
+        $this->getCurrentCartManager()->closeCart();
         return array(
             'cart' => $cart
         );

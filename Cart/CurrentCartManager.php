@@ -47,7 +47,7 @@ class CurrentCartManager extends CartManager
     /**
      * @return CurrentCartManager
      */
-    protected  function clearCurrentCart()
+    public function clearCurrentCart()
     {
         $this->provider->abandonCart();
         return $this;

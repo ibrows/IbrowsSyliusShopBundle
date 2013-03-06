@@ -92,7 +92,15 @@ abstract class AbstractController extends Controller
     }
 
     /**
-     * @return CurrentCartManager
+     * @return CartInterface
+     */
+    protected function getCurrentCart()
+    {
+        return $this->getCurrentCartManager()->getCart();
+    }
+
+    /**
+     * @return CartManager
      */
     protected function persistCurrentCart()
     {

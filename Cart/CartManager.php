@@ -17,22 +17,22 @@ class CartManager
     /**
      * @var ObjectManager
      */
-    protected $cartManager;
+    protected $cartObjectManager;
 
     /**
      * @var ObjectRepository
      */
-    protected $cartRepo;
+    protected $cartObjectRepo;
 
     /**
      * @var ObjectManager
      */
-    protected $itemManager;
+    protected $itemObjectManager;
 
     /**
      * @var ObjectRepository
      */
-    protected $itemRepo;
+    protected $itemObjectRepo;
 
     /**
      * @var ItemResolverInterface
@@ -45,23 +45,23 @@ class CartManager
     protected $cart;
 
     /**
-     * @param ObjectManager $cartManager
-     * @param ObjectRepository $cartRepo
-     * @param ObjectManager $itemManager
-     * @param ObjectRepository $itemRepo
+     * @param ObjectManager $cartObjectManager
+     * @param ObjectRepository $cartObjectRepo
+     * @param ObjectManager $itemObjectManager
+     * @param ObjectRepository $itemObjectRepo
      * @param ItemResolverInterface $resolver
      */
     public function __construct(
-        ObjectManager $cartManager,
-        ObjectRepository $cartRepo,
-        ObjectManager $itemManager,
-        ObjectRepository $itemRepo,
+        ObjectManager $cartObjectManager,
+        ObjectRepository $cartObjectRepo,
+        ObjectManager $itemObjectManager,
+        ObjectRepository $itemObjectRepo,
         ItemResolverInterface $resolver
     ){
-        $this->cartManager = $cartManager;
-        $this->cartRepo = $cartRepo;
-        $this->itemManager = $itemManager;
-        $this->itemRepo = $itemRepo;
+        $this->cartObjectManager = $cartObjectManager;
+        $this->cartObjectRepo = $cartObjectRepo;
+        $this->itemObjectManager = $itemObjectManager;
+        $this->itemObjectRepo = $itemObjectRepo;
         $this->resolver = $resolver;
     }
 
@@ -71,7 +71,7 @@ class CartManager
      */
     public function addItem(CartItemInterface $item)
     {
-        $this->getCart()->addItem($item);
+        $this->getCart(true)->addItem($item);
         return $this;
     }
 
@@ -81,7 +81,7 @@ class CartManager
      */
     public function removeItem(CartItemInterface $item)
     {
-        $this->getCart()->removeItem($item);
+        $this->getCart(true)->removeItem($item);
         return $this;
     }
 
@@ -90,11 +90,11 @@ class CartManager
      */
     public function persistCart()
     {
-        $cart = $this->getCart();
+        $cart = $this->getCart(true);
         $this->refreshCart($cart);
 
-        $this->cartManager->persist($cart);
-        $this->cartManager->flush();
+        $this->cartObjectManager->persist($cart);
+        $this->cartObjectManager->flush();
 
         return $this;
     }
@@ -114,6 +114,7 @@ class CartManager
      */
     public function closeCart()
     {
+        $this->setCart(null);
         // TODO serialize items - save all infos from ProductInterface to Cart
         return $this;
     }
@@ -123,7 +124,7 @@ class CartManager
      */
     public function createNewItem()
     {
-        $class = $this->itemRepository->getClassName();
+        $class = $this->itemObjectRepo->getClassName();
         return new $class();
     }
 
@@ -131,7 +132,7 @@ class CartManager
      * @param CartInterface $cart
      * @return CartManager
      */
-    public function setCart(CartInterface $cart)
+    public function setCart(CartInterface $cart = null)
     {
         $this->cart = $cart;
         return $this;
@@ -141,19 +142,51 @@ class CartManager
      * @return CartInterface
      * @throws \BadMethodCallException
      */
-    protected function getCart()
+    public function getCart($throwException = false)
     {
-        if(!$this->cart){
+        if(!$this->cart && true === $throwException){
             throw new \BadMethodCallException("Use setCart first!");
         }
         return $this->cart;
     }
 
     /**
+     * @return ObjectManager
+     */
+    public function getCartObjectManager()
+    {
+        return $this->cartObjectManager;
+    }
+
+    /**
+     * @return ObjectRepository
+     */
+    public function getCartObjectRepo()
+    {
+        return $this->cartObjectRepo;
+    }
+
+    /**
+     * @return ObjectManager
+     */
+    public function getItemObjectManager()
+    {
+        return $this->itemObjectManager;
+    }
+
+    /**
+     * @return ObjectRepository
+     */
+    public function getItemObjectRepo()
+    {
+        return $this->itemObjectRepo;
+    }
+
+    /**
      * @return CartManager
      */
     protected function refreshCart(){
-        $this->getCart()->refreshCart();
+        $this->getCart(true)->refreshCart();
         return $this;
     }
 }
