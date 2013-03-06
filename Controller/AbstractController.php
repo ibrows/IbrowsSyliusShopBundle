@@ -2,31 +2,32 @@
 
 namespace Ibrows\SyliusShopBundle\Controller;
 
-use Doctrine\Common\Persistence\ObjectRepository;
+use Ibrows\SyliusShopBundle\Cart\CartManager;
+use Ibrows\SyliusShopBundle\Cart\CurrentCartManager;
 
-use Ibrows\SyliusShopBundle\Cart\BaseManager;
 use Ibrows\SyliusShopBundle\Repository\ProductRepository;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 
 use Ibrows\SyliusShopBundle\IbrowsSyliusShopBundle;
 
-use Sylius\Bundle\ResourceBundle\Controller\Configuration;
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use FOS\UserBundle\Model\UserManagerInterface;
 use FOS\UserBundle\Model\UserInterface;
 
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Persistence\ObjectRepository;
+
 abstract class AbstractController extends Controller
 {
-
-
     /**
      * @param ObjectRepository $repo
      * @param array $criteria
      * @return object
+     * @throws NotFoundHttpException
      */
     public function findOr404(ObjectRepository $repo, array $criteria = null)
     {
@@ -45,6 +46,15 @@ abstract class AbstractController extends Controller
         }
 
         return $resource;
+    }
+
+    /**
+     * @param string $name
+     * @return ObjectManager
+     */
+    protected function getObjectManager($name = null)
+    {
+        return $this->getDoctrine()->getManager($name);
     }
 
     /**
@@ -68,29 +78,25 @@ abstract class AbstractController extends Controller
     }
 
     /**
-     * Get current cart using the provider service.
-     *
-     * @return CartInterface
+     * @return CurrentCartManager
      */
-    protected function getCurrentCart()
-    {
-        return $this->getCartManager()->getCurrentCart();
+    protected function getCurrentCartManager(){
+        return $this->get('ibrows_syliusshop.currentcart.manager');
     }
 
     /**
-     * @return BaseManager
+     * @return CartManager
      */
     protected function getCartManager(){
         return $this->get('ibrows_syliusshop.cart.manager');
     }
 
     /**
-     * @param CartInterface $cart
-     * @return BaseManager
+     * @return CurrentCartManager
      */
-    protected function persistCart(CartInterface $cart)
+    protected function persistCurrentCart()
     {
-        return $this->getCartManager()->persistCart($cart);
+        return $this->getCurrentCartManager()->persistCart();
     }
 
     /**
