@@ -8,6 +8,6 @@ services:
       class: Ibrows\SyliusShopBundle\Admin\UserAdmin
       tags:
         - { name: sonata.admin, manager_type: orm, group: Shop, label: User, label_translator_strategy: sonata.admin.label.strategy.native}
-      arguments: [null, '%ibrows_sylius_shop.product.class%',  'IbrowsSyliusShopBundle:DefaultAdmin']      
+      arguments: [null, '%ibrows_sylius_shop.user.class%',  'IbrowsSyliusShopBundle:DefaultAdmin']      
       
  

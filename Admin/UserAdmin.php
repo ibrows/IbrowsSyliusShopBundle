@@ -73,7 +73,7 @@ class UserAdmin extends DefaultAdmin {
     protected function configureFormFields(FormMapper $formMapper) {
         $formMapper
                 ->with('General')
-                ->add('email', 'email', array('required' => true), array('template' => 'IbrowsPrintzessinBundle:Admin/CRUD:edit_string.html.twig', 'type' => 'string'))
+                ->add('email', 'email', array('required' => true))
                 ->add('plainPassword', 'password', array('required' => false))
                 //->add('plainPassword', 'repeated', array('first_name' => $this->trans('Password', array(), $this->translationDomain),'second_name' => $this->trans('Password', array(), $this->translationDomain),'required' => (!$this->getSubject()->getId() > 0), 'type' => 'password', 'error_bubbling' => false, 'invalid_message' => 'Password don\'t match each other'))
                 ->add('roles', 'choice', array('choices'=>$this->getRoles(), 'multiple' => true, 'required' => false, 'expanded' => true))
