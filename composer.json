@@ -21,14 +21,15 @@
         "sylius/inventory-bundle": "dev-master",
 
         "friendsofsymfony/user-bundle": "dev-master",
+        "stof/doctrine-extensions-bundle": "dev-master",
 
         "sonata-project/doctrine-orm-admin-bundle": "2.2.*@dev",
 
         "sonata-project/cache-bundle": "2.1.*@dev",
         "sonata-project/intl-bundle": "2.1.*@dev",
 
-        "ibrows/payment-saferpay-bundle": "dev-master",
-        "ibrows/wizard-annotation-bundle": "dev-master"
+        "ibrows/wizard-annotation-bundle": "1.*@dev",
+        "ibrows/payment-saferpay-bundle": "dev-master"
     },
    "repositories": [
         {
