@@ -148,25 +148,24 @@ class WizardController extends AbstractWizardController
         );
     }
 
-    /**
-     * @Route("/payment", name="wizard_payment")
-     * @Template
-     * @Wizard(name="payment", number=5, validationMethod="paymentValidation")
-     */
-    public function paymentAction()
-    {
-        $em = $this->getDoctrine()->getManagerForClass($this->getPaymentOptionsClass());
-        $cart = $this->getCartManager()->getCurrentCart();
-        if($cart->isPayed()){
-           return $this->redirect($this->getWizard()->getNextStepUrl());
-        }
 
+    /**
+     * @Route("/payment_instruction", name="wizard_payment_instruction")
+     * @Template
+     * @Wizard(name="payment_instruction", number=4, validationMethod="paymentInstructionValidation")
+     */
+    public function paymentInstructionAction(){
+        $em = $this->getDoctrine()->getManagerForClass($this->getPaymentOptionsClass());
+        $cart = $this->getCurrentCart();
         $invoiceaddress = $cart->getInvoiceAddress();
         $ppc = $this->get("payment.plugin_controller");
+
         /* @var $ppc PluginController   */
+        $instruction = $cart->getPaymentInstruction();
+
         $form = $this
-                ->createForm('jms_choose_payment_method', null,
-                        array('amount' => $cart->getTotal(), 'currency' => 'CHF', 'default_method' => null, // Optional
+        ->createForm('jms_choose_payment_method', null,
+                array('amount' => $cart->getTotal(), 'currency' => 'CHF', 'default_method' => null, // Optional
                         'predefined_data' => array(
                                 'saferpay' => array(
                                         'DESCRIPTION' => sprintf('Bestellnummer: %s', $cart->getId()),
@@ -184,7 +183,45 @@ class WizardController extends AbstractWizardController
                                         'EMAIL' => $invoiceaddress->getEmail()
                                 ),
                         ),
-                        ));
+                ));
+
+        if ($instruction == null) {
+            if ('POST' === $this->getRequest()->getMethod()) {
+                $form->bindRequest($this->getRequest());
+
+                if ($form->isValid()) {
+                    $instruction = $form->getData();
+                    $ppc->createPaymentInstruction($instruction);
+                    $cart->setPaymentInstruction($instruction);
+                    $this->persistCurrentCart($cart);
+                }
+                return array(
+                        'form' => $form->createView()
+                );
+            }
+
+
+        }
+        return array(
+                'form' => $form->createView()
+        );
+    }
+
+    /**
+     * @Route("/payment", name="wizard_payment")
+     * @Template
+     * @Wizard(name="payment", number=7, validationMethod="paymentValidation")
+     */
+    public function paymentAction()
+    {
+        $em = $this->getDoctrine()->getManagerForClass($this->getPaymentOptionsClass());
+        $cart = $this->getCurrentCart();
+        if($cart->isPayed()){
+           return $this->redirect($this->getWizard()->getNextStepUrl());
+        }
+
+        $ppc = $this->get("payment.plugin_controller");
+        /* @var $ppc PluginController   */
 
         $status = $this->getRequest()->query->get('status', false);
         if ($status == 'success') {
@@ -218,7 +255,7 @@ class WizardController extends AbstractWizardController
             $result = $ppc->deposit($currentpayment->getId(), $currentpayment->getTargetAmount());
             if (Result::STATUS_SUCCESS === $result->getStatus()) {
                 $cart->setPayed(true);
-                $this->getCartManager()->setCurrentCart($cart);
+                $this->persistCurrentCart($cart);
                 return $this->redirect($this->getWizard()->getNextStepUrl());
             } else {
                 throw new \RuntimeException('Transaction was not successful: ' . $result->getReasonCode());
@@ -226,24 +263,8 @@ class WizardController extends AbstractWizardController
         }
 
         $instruction = $cart->getPaymentInstruction();
-        if ($instruction == null) {
-            if ('POST' === $this->getRequest()->getMethod()) {
-                $form->bindRequest($this->getRequest());
-
-                if ($form->isValid()) {
-                    $instruction = $form->getData();
-                    $ppc->createPaymentInstruction($instruction);
-                    $cart->setPaymentInstruction($instruction);
-                    $this->getCartManager()->setCurrentCart($cart);
-
-                }
-                return array(
-                        'form' => $form->createView()
-                );
-            }
 
 
-        }
 
         if (null === $pendingTransaction = $instruction->getPendingTransaction()) {
             $payment = $ppc->createPayment($instruction->getId(), $instruction->getAmount() - $instruction->getDepositedAmount());
@@ -261,7 +282,7 @@ class WizardController extends AbstractWizardController
 
                 if ($action instanceof VisitUrl) {
                     $cart->setPaymentInstruction($instruction);
-                    $this->getCartManager()->setCurrentCart($cart);
+                    $this->persistCurrentCart($cart);
                     return new RedirectResponse($action->getUrl());
                 }
 
@@ -293,7 +314,7 @@ class WizardController extends AbstractWizardController
     /**
      * @Route("/summary", name="wizard_summary")
      * @Template
-     * @Wizard(name="summary", number=4, validationMethod="summaryValidation")
+     * @Wizard(name="summary", number=5, validationMethod="summaryValidation")
      */
     public function summaryAction()
     {
