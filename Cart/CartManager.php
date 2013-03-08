@@ -100,6 +100,14 @@ class CartManager
     }
 
     /**
+     * @return string
+     */
+    public function getCartItemClassName()
+    {
+        return $this->itemObjectRepo->getClassName();
+    }
+
+    /**
      * @param $item
      * @param Request $request
      * @return CartItemInterface
@@ -114,7 +122,7 @@ class CartManager
      */
     public function createNewItem()
     {
-        $class = $this->itemObjectRepo->getClassName();
+        $class = $this->getCartItemClassName();
         return new $class();
     }
 
