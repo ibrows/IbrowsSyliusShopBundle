@@ -69,8 +69,6 @@ class WizardController extends AbstractWizardController
             '_username' => $loginInformation->getLastUsername(),
             '_target_path' => 'wizard_auth',
             '_failure_path' => 'wizard_auth'
-        ), array(
-            'validation_groups' => array('sylius_wizard_login')
         ));
 
         $authError = $loginInformation->getAuthenticationError();
