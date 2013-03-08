@@ -8,6 +8,7 @@ use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface;
 use Sylius\Bundle\InventoryBundle\Checker\AvailabilityCheckerInterface;
 
 use Ibrows\SyliusShopBundle\Cart\Exception\CartItemNotOnStockException;
+use Ibrows\SyliusShopBundle\Cart\Exception\CartException;
 
 use Symfony\Component\HttpFoundation\Request;
 
@@ -99,6 +100,7 @@ class CartManager
 
     /**
      * @return CartManager
+     * @throws CartException
      */
     public function persistCart()
     {
