@@ -28,6 +28,7 @@
 			<argument type="service" id="sylius.manager.cart_item" />
 			<argument type="service" id="sylius.repository.cart_item" />
 			<argument type="service" id="sylius.cart_resolver" />
+            <argument type="service" id="sylius.availability_checker.default" />
         </service>
 
         <service id="ibrows_syliusshop.currentcart.manager" class="%ibrows_sylius_shop.currentcart.manager.class%" >
@@ -36,6 +37,7 @@
             <argument type="service" id="sylius.manager.cart_item" />
             <argument type="service" id="sylius.repository.cart_item" />
             <argument type="service" id="sylius.cart_resolver" />
+            <argument type="service" id="sylius.availability_checker.default" />
             <argument type="service" id="sylius.cart_provider" />
         </service>
 

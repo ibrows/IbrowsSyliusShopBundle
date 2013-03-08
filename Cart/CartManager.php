@@ -5,6 +5,10 @@ namespace Ibrows\SyliusShopBundle\Cart;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface;
 
+use Sylius\Bundle\InventoryBundle\Checker\AvailabilityCheckerInterface;
+
+use Ibrows\SyliusShopBundle\Cart\Exception\CartItemNotOnStockException;
+
 use Symfony\Component\HttpFoundation\Request;
 
 use Doctrine\Common\Persistence\ObjectManager;
@@ -40,6 +44,11 @@ class CartManager
     protected $resolver;
 
     /**
+     * @var AvailabilityCheckerInterface
+     */
+    protected $availabilityChecker;
+
+    /**
      * @var CartInterface
      */
     protected $cart;
@@ -50,19 +59,22 @@ class CartManager
      * @param ObjectManager $itemObjectManager
      * @param ObjectRepository $itemObjectRepo
      * @param ItemResolverInterface $resolver
+     * @param AvailabilityCheckerInterface $availablityChecker
      */
     public function __construct(
         ObjectManager $cartObjectManager,
         ObjectRepository $cartObjectRepo,
         ObjectManager $itemObjectManager,
         ObjectRepository $itemObjectRepo,
-        ItemResolverInterface $resolver
+        ItemResolverInterface $resolver,
+        AvailabilityCheckerInterface $availablityChecker
     ){
         $this->cartObjectManager = $cartObjectManager;
         $this->cartObjectRepo = $cartObjectRepo;
         $this->itemObjectManager = $itemObjectManager;
         $this->itemObjectRepo = $itemObjectRepo;
         $this->resolver = $resolver;
+        $this->availabilityChecker = $availablityChecker;
     }
 
     /**
@@ -90,13 +102,34 @@ class CartManager
      */
     public function persistCart()
     {
-        $cart = $this->getCart(true);
-        $this->refreshCart($cart);
+        $this->refreshCart();
+        $this->checkAvailability();
 
-        $this->cartObjectManager->persist($cart);
+        $this->cartObjectManager->persist($this->getCart(true));
         $this->cartObjectManager->flush();
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     * @throws CartItemNotOnStockException
+     */
+    public function checkAvailability()
+    {
+        $notOnStockItems = array();
+
+        foreach($this->getCart(true)->getItems() as $item){
+            if(!$this->availabilityChecker->isStockSufficient($item->getProduct(), $item->getQuantity())){
+                $notOnStockItems[] = $item;
+            }
+        }
+
+        if(count($notOnStockItems) > 0){
+            throw new CartItemNotOnStockException($notOnStockItems);
+        }
+
+        return true;
     }
 
     /**
@@ -137,6 +170,7 @@ class CartManager
     }
 
     /**
+     * @param bool $throwException
      * @return CartInterface
      * @throws \BadMethodCallException
      */

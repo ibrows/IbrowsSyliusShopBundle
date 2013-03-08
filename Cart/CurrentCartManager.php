@@ -5,6 +5,8 @@ namespace Ibrows\SyliusShopBundle\Cart;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface;
 
+use Sylius\Bundle\InventoryBundle\Checker\AvailabilityCheckerInterface;
+
 use Symfony\Component\HttpFoundation\Request;
 
 use Sylius\Bundle\CartBundle\Provider\CartProviderInterface;
@@ -26,6 +28,7 @@ class CurrentCartManager extends CartManager
      * @param ObjectManager $itemManager
      * @param ObjectRepository $itemRepo
      * @param ItemResolverInterface $resolver
+     * @param AvailabilityCheckerInterface $availablityChecker
      * @param CartProviderInterface $provider
      */
     public function __construct(
@@ -34,9 +37,10 @@ class CurrentCartManager extends CartManager
         ObjectManager $itemManager,
         ObjectRepository $itemRepo,
         ItemResolverInterface $resolver,
+        AvailabilityCheckerInterface $availablityChecker,
         CartProviderInterface $provider
     ){
-        parent::__construct($cartManager, $cartRepo, $itemManager, $itemRepo, $resolver);
+        parent::__construct($cartManager, $cartRepo, $itemManager, $itemRepo, $resolver, $availablityChecker);
 
         $this->provider = $provider;
         parent::setCart($provider->getCart());

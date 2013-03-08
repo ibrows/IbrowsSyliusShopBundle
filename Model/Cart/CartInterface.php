@@ -2,6 +2,8 @@
 
 namespace Ibrows\SyliusShopBundle\Model\Cart;
 
+use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface;
+
 use Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface;
 use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
 use Ibrows\SyliusShopBundle\Model\Delivery\DeliveryOptionsInterface;
@@ -15,6 +17,11 @@ use DateTime;
 
 interface CartInterface extends BaseCartInterface
 {
+    /**
+     * @return CartItemInterface[]
+     */
+    public function getItems();
+
     /**
      * @return string
      */
