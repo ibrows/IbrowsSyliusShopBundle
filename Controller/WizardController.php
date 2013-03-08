@@ -189,7 +189,7 @@ class WizardController extends AbstractWizardController
         /* @var $ppc PluginController */
         $instruction = $cart->getPaymentInstruction();
         $form = $this
-            ->createForm('jms_choose_payment_method', null,
+            ->createForm('jms_choose_payment_method', $instruction,
             array('amount' => $cart->getTotal(), 'currency' => 'CHF', 'default_method' => null, // Optional
                 'predefined_data' => array(
                     'saferpay' => array(
@@ -210,21 +210,21 @@ class WizardController extends AbstractWizardController
                 ),
             ));
 
-        if($instruction == null) {
-            if('POST' === $this->getRequest()->getMethod()) {
-                $form->bind($this->getRequest());
-                if($form->isValid()) {
-                    $instruction = $form->getData();
-                    $ppc->createPaymentInstruction($instruction);
-                    $cart->setPaymentInstruction($instruction);
-                    $this->persistCurrentCart($cart);
-                }
 
-                return array(
-                    'form' => $form->createView()
-                );
+        if('POST' === $this->getRequest()->getMethod()) {
+            $form->bind($this->getRequest());
+            if($form->isValid()) {
+                $instruction = $form->getData();
+                $ppc->createPaymentInstruction($instruction);
+                $cart->setPaymentInstruction($instruction);
+                $this->persistCurrentCart($cart);
             }
+
+            return array(
+                'form' => $form->createView()
+            );
         }
+
 
         return array(
             'form' => $form->createView()

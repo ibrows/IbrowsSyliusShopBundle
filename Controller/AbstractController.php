@@ -2,6 +2,8 @@
 
 namespace Ibrows\SyliusShopBundle\Controller;
 
+use Ibrows\SyliusShopBundle\Cart\Exception\CartItemNotOnStockException;
+
 use Ibrows\SyliusShopBundle\Cart\CartManager;
 use Ibrows\SyliusShopBundle\Cart\CurrentCartManager;
 
@@ -136,7 +138,18 @@ abstract class AbstractController extends Controller
      */
     protected function persistCurrentCart()
     {
-        return $this->getCurrentCartManager()->persistCart();
+        try {
+            return $this->getCurrentCartManager()->persistCart();
+        } catch (CartItemNotOnStockException $e) {
+            foreach($e->getCartItemsNotOnStock() as $itemNotOnStock){
+               $item = $itemNotOnStock->getItem();
+               $message = $item . ' ' . $item->getQuantityNotAvailable() . " not there...";
+               $this->get('session')->getFlashBag()->add('notice', $message);
+               $item->setQuantityToAvailable();
+            }
+            return $this->getCurrentCartManager()->persistCart();
+        }
+
     }
 
     /**

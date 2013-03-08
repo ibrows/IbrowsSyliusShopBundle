@@ -24,7 +24,7 @@ class CartItemNotOnStockException extends CartItemException
     /**
      * @return CartItemNotOnStock[]
      */
-    public function getCartItemNotOnStock()
+    public function getCartItemsNotOnStock()
     {
         return $this->cartItemsNotOnStock;
     }

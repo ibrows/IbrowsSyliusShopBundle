@@ -91,6 +91,14 @@ class CartItem extends BaseCartItem implements CartItemInterface
         return $this;
     }
 
+    public function getQuantityNotAvailable(){
+        return $this->getQuantity() - $this->getProduct()->getOnHand();
+    }
+
+    public function setQuantityToAvailable(){
+        return $this->setQuantity($this->getProduct()->getOnHand());
+    }
+
     /**
      * @return DateTime
      */
