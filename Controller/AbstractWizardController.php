@@ -3,13 +3,14 @@
 namespace Ibrows\SyliusShopBundle\Controller;
 
 use Ibrows\SyliusShopBundle\Cart\CartManager;
-use Ibrows\SyliusShopBundle\Cart\CurrentCartManager;
 
 use Ibrows\Bundle\WizardAnnotationBundle\Annotation\Wizard;
 use Ibrows\Bundle\WizardAnnotationBundle\Annotation\AnnotationHandler as WizardHandler;
 
 use Ibrows\SyliusShopBundle\Form\AuthType;
 use Ibrows\SyliusShopBundle\Form\LoginType;
+use Ibrows\SyliusShopBundle\Form\BasketType;
+use Ibrows\SyliusShopBundle\Form\BasketItemType;
 
 use Ibrows\SyliusShopBundle\Form\DeliveryAddressType;
 use Ibrows\SyliusShopBundle\Form\InvoiceAddressType;
