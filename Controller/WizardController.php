@@ -164,8 +164,7 @@ class WizardController extends AbstractWizardController
                 $om->persist($invoiceaddress);
                 $om->persist($deliveryAddress);
                 $this->persistCurrentCart();
-
-                $this->redirect($this->getWizard()->getNextStepUrl());
+                return $this->redirect($this->getWizard()->getNextStepUrl());
             }
         }
 
