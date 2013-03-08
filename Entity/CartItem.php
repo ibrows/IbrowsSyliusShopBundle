@@ -2,11 +2,11 @@
 
 namespace Ibrows\SyliusShopBundle\Entity;
 
-use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface as BaseCartItemInterface;
-
 use Ibrows\SyliusShopBundle\Model\Product\ProductInterface;
-use Sylius\Bundle\CartBundle\Model\CartItemInterface;
+use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface;
+
 use Sylius\Bundle\CartBundle\Entity\CartItem as BaseCartItem;
+use Sylius\Bundle\CartBundle\Model\CartItemInterface as BaseCartItemInterface;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -16,7 +16,7 @@ use DateTime;
  * @ORM\Entity
  * @ORM\Table(name="ibr_sylius_cart_item")
  */
-class CartItem extends BaseCartItem implements BaseCartItemInterface
+class CartItem extends BaseCartItem implements CartItemInterface
 {
     /**
      * @ORM\Id
@@ -61,10 +61,10 @@ class CartItem extends BaseCartItem implements BaseCartItemInterface
     }
 
     /**
-     * @param CartItemInterface $item
+     * @param BaseCartItemInterface $item
      * @return bool
      */
-    public function equals(CartItemInterface $item)
+    public function equals(BaseCartItemInterface $item)
     {
         return $this->product === $item->getProduct();
     }
