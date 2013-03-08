@@ -15,7 +15,7 @@ class IbrowsSyliusShopExtension extends Extension
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
 
-        $this->registerContainerParametersRecursive($container->getParameterBag()->get($this->getAlias()), $container);
+        //$this->registerContainerParametersRecursive($container->getParameterBag()->get($this->getAlias()), $container);
     }
 
     /**

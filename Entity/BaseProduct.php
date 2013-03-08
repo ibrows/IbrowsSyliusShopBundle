@@ -2,8 +2,7 @@
 
 namespace Ibrows\SyliusShopBundle\Entity;
 
-
-use Sylius\Bundle\InventoryBundle\Model\StockableInterface;
+use Ibrows\SyliusShopBundle\Model\Product\ProductInterface;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -13,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @author marcsteiner
  * BaseProduct without Variants
  */
-class BaseProduct  implements StockableInterface
+class BaseProduct implements ProductInterface
 {
     /**
      * @var int

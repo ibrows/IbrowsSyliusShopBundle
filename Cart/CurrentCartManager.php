@@ -20,6 +20,14 @@ class CurrentCartManager extends CartManager
      */
     protected $provider;
 
+    /**
+     * @param ObjectManager $cartManager
+     * @param ObjectRepository $cartRepo
+     * @param ObjectManager $itemManager
+     * @param ObjectRepository $itemRepo
+     * @param ItemResolverInterface $resolver
+     * @param CartProviderInterface $provider
+     */
     public function __construct(
         ObjectManager $cartManager,
         ObjectRepository $cartRepo,
@@ -45,6 +53,7 @@ class CurrentCartManager extends CartManager
     }
 
     /**
+     * @throws \BadMethodCallException
      * @return CartManager
      */
     public function closeCart()

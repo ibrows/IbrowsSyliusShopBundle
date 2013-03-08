@@ -4,7 +4,7 @@ namespace Ibrows\SyliusShopBundle\Entity;
 
 use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface as BaseCartItemInterface;
 
-use Sylius\Bundle\InventoryBundle\Model\StockableInterface;
+use Ibrows\SyliusShopBundle\Model\Product\ProductInterface;
 use Sylius\Bundle\CartBundle\Model\CartItemInterface;
 use Sylius\Bundle\CartBundle\Entity\CartItem as BaseCartItem;
 
@@ -26,8 +26,8 @@ class CartItem extends BaseCartItem implements BaseCartItemInterface
     protected $id;
 
     /**
-     * @var StockableInterface
-     * @ORM\ManyToOne(targetEntity="Sylius\Bundle\InventoryBundle\Model\StockableInterface")
+     * @var ProductInterface
+     * @ORM\ManyToOne(targetEntity="Ibrows\SyliusShopBundle\Model\Product\ProductInterface")
      */
     protected $product;
 
@@ -45,7 +45,7 @@ class CartItem extends BaseCartItem implements BaseCartItemInterface
     }
 
     /**
-     * @return StockableInterface
+     * @return ProductInterface
      */
     public function getProduct()
     {
@@ -53,9 +53,9 @@ class CartItem extends BaseCartItem implements BaseCartItemInterface
     }
 
     /**
-     * @param StockableInterface $product
+     * @param ProductInterface $product
      */
-    public function setProduct(StockableInterface $product)
+    public function setProduct(ProductInterface $product)
     {
         $this->product = $product;
     }
@@ -97,5 +97,13 @@ class CartItem extends BaseCartItem implements BaseCartItemInterface
     public function getDeliveredAt()
     {
         return $this->delivered;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->getProduct()->getName();
     }
 }

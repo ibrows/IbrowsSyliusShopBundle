@@ -33,10 +33,24 @@ class WizardController extends AbstractWizardController
      * @Template
      * @Wizard(name="basket", number=1, validationMethod="basketValidation")
      */
-    public function basketAction()
+    public function basketAction(Request $request)
     {
+        $basketForm = $this->createForm($this->getBasketType(), $this->getCurrentCart());
+
+        if("POST" == $request->getMethod()){
+            $basketForm->bind($request);
+            if($basketForm->isValid()){
+                $this->persistCurrentCart();
+
+                if($request->request->get('continue')){
+                    return $this->redirect($this->getWizard()->getNextStepUrl());
+                }
+            }
+        }
+
         return array(
-                'cart' => $this->getCurrentCart()
+            'basketForm' => $basketForm->createView(),
+            'cart' => $this->getCurrentCart()
         );
     }
 
@@ -65,6 +79,7 @@ class WizardController extends AbstractWizardController
 
         if ($user) {
             $cart->setEmail($user->getEmail());
+            $this->persistCurrentCart();
         }
 
 

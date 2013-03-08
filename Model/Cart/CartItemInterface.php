@@ -23,4 +23,9 @@ interface CartItemInterface extends BaseCartItemInterface
      * @return DateTime
      */
     public function getDeliveredAt();
+
+    /**
+     * @return string
+     */
+    public function getName();
 }
