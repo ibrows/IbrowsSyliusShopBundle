@@ -1,7 +1,6 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Controller;
-
 use JMS\Payment\CoreBundle\Entity\FinancialTransaction;
 use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
 use JMS\Payment\CoreBundle\Model\PaymentInterface;
@@ -37,7 +36,7 @@ class WizardController extends AbstractWizardController
     public function basketAction()
     {
         return array(
-            'cart' => $this->getCurrentCart()
+                'cart' => $this->getCurrentCart()
         );
     }
 
@@ -53,28 +52,37 @@ class WizardController extends AbstractWizardController
 
         $wizard = $this->getWizard();
 
-        $authForm = $this->createForm($this->getAuthType(), null, array(
-            'validation_groups' => array('sylius_wizard_auth')
-        ));
+        $authForm = $this
+                ->createForm($this->getAuthType(), null,
+                        array(
+                                'validation_groups' => array(
+                                        'sylius_wizard_auth'
+                                )
+                        ));
 
         $loginInformation = $this->getLoginInformation();
         $user = $loginInformation->getUser();
 
-        if($user){
+        if ($user) {
             $cart->setEmail($user->getEmail());
         }
 
-        $loginForm = $this->createForm($this->getLoginType(), array(
-            '_csrf_token' => $loginInformation->getCsrfToken(),
-            '_username' => $loginInformation->getLastUsername(),
-            '_target_path' => 'wizard_auth',
-            '_failure_path' => 'wizard_auth'
-        ), array(
-            'validation_groups' => array('sylius_wizard_login')
-        ));
+        $loginForm = $this
+                ->createForm($this->getLoginType(),
+                        array(
+                                '_csrf_token' => $loginInformation->getCsrfToken(),
+                                '_username' => $loginInformation->getLastUsername(),
+                                '_target_path' => 'wizard_auth',
+                                '_failure_path' => 'wizard_auth'
+                        ),
+                        array(
+                                'validation_groups' => array(
+                                        'sylius_wizard_login'
+                                )
+                        ));
 
         $authError = $loginInformation->getAuthenticationError();
-        if($authError){
+        if ($authError) {
             $loginForm->addError(new FormError($authError));
         }
 
@@ -96,12 +104,12 @@ class WizardController extends AbstractWizardController
         }
 
         return array(
-            'cart' => $cart,
-            'user' => $user,
-            'authForm' => $authForm->createView(),
-            'loginForm' => $loginForm->createView(),
-            'authSubmitName' => $authSubmitName,
-            'authDeleteSubmitName' => $authDeleteSubmitName
+                'cart' => $cart,
+                'user' => $user,
+                'authForm' => $authForm->createView(),
+                'loginForm' => $loginForm->createView(),
+                'authSubmitName' => $authSubmitName,
+                'authDeleteSubmitName' => $authDeleteSubmitName
         );
     }
 
@@ -117,20 +125,28 @@ class WizardController extends AbstractWizardController
         $invoiceaddress = $cart->getInvoiceAddress() ? : $this->getNewInvoiceAddress();
         $deliveryAddress = $cart->getDeliveryAddress() ? : $this->getNewDeliveryAddress();
 
-        $invoiceAddressForm = $this->createForm($this->getInvoiceAddressType(), $invoiceaddress, array(
-            'data_class' => $this->getInvoiceAddressClass(),
-            'validation_groups' => array('sylius_wizard_address')
-        ));
+        $invoiceAddressForm = $this
+                ->createForm($this->getInvoiceAddressType(), $invoiceaddress,
+                        array(
+                                'data_class' => $this->getInvoiceAddressClass(),
+                                'validation_groups' => array(
+                                        'sylius_wizard_address'
+                                )
+                        ));
 
-        $deliveryAddressForm = $this->createForm($this->getDeliveryAddressType(), $deliveryAddress, array(
-            'data_class' => $this->getDeliveryAddressClass(),
-            'validation_groups' => array('sylius_wizard_address')
-        ));
+        $deliveryAddressForm = $this
+                ->createForm($this->getDeliveryAddressType(), $deliveryAddress,
+                        array(
+                                'data_class' => $this->getDeliveryAddressClass(),
+                                'validation_groups' => array(
+                                        'sylius_wizard_address'
+                                )
+                        ));
 
-        if("POST" == $request->getMethod()) {
+        if ("POST" == $request->getMethod()) {
             $invoiceAddressForm->bind($request);
             $deliveryAddressForm->bind($request);
-            if($invoiceAddressForm->isValid() && $deliveryAddressForm->isValid()) {
+            if ($invoiceAddressForm->isValid() && $deliveryAddressForm->isValid()) {
                 $cart->setInvoiceAddress($invoiceaddress);
                 $cart->setDeliveryAddress($deliveryAddress);
 
@@ -143,18 +159,18 @@ class WizardController extends AbstractWizardController
         }
 
         return array(
-            'invoiceAddressForm' => $invoiceAddressForm->createView(),
-            'deliveryAddressForm' => $deliveryAddressForm->createView()
+                'invoiceAddressForm' => $invoiceAddressForm->createView(),
+                'deliveryAddressForm' => $deliveryAddressForm->createView()
         );
     }
-
 
     /**
      * @Route("/payment_instruction", name="wizard_payment_instruction")
      * @Template
      * @Wizard(name="payment_instruction", number=4, validationMethod="paymentInstructionValidation")
      */
-    public function paymentInstructionAction(){
+    public function paymentInstructionAction()
+    {
         $em = $this->getDoctrine()->getManagerForClass($this->getPaymentOptionsClass());
         $cart = $this->getCurrentCart();
         $invoiceaddress = $cart->getInvoiceAddress();
@@ -164,8 +180,8 @@ class WizardController extends AbstractWizardController
         $instruction = $cart->getPaymentInstruction();
 
         $form = $this
-        ->createForm('jms_choose_payment_method', null,
-                array('amount' => $cart->getTotal(), 'currency' => 'CHF', 'default_method' => null, // Optional
+                ->createForm('jms_choose_payment_method', null,
+                        array('amount' => $cart->getTotal(), 'currency' => 'CHF', 'default_method' => null, // Optional
                         'predefined_data' => array(
                                 'saferpay' => array(
                                         'DESCRIPTION' => sprintf('Bestellnummer: %s', $cart->getId()),
@@ -183,7 +199,7 @@ class WizardController extends AbstractWizardController
                                         'EMAIL' => $invoiceaddress->getEmail()
                                 ),
                         ),
-                ));
+                        ));
 
         if ($instruction == null) {
             if ('POST' === $this->getRequest()->getMethod()) {
@@ -200,7 +216,6 @@ class WizardController extends AbstractWizardController
                 );
             }
 
-
         }
         return array(
                 'form' => $form->createView()
@@ -216,99 +231,70 @@ class WizardController extends AbstractWizardController
     {
         $em = $this->getDoctrine()->getManagerForClass($this->getPaymentOptionsClass());
         $cart = $this->getCurrentCart();
-        if($cart->isPayed()){
-           return $this->redirect($this->getWizard()->getNextStepUrl());
+        if ($cart->isPayed()) {
+            return $this->redirect($this->getWizard()->getNextStepUrl());
         }
 
         $ppc = $this->get("payment.plugin_controller");
         /* @var $ppc PluginController   */
 
-        $status = $this->getRequest()->query->get('status', false);
-        if ($status == 'success') {
-            $instruction = $cart->getPaymentInstruction();
-            /* @var $instruction    PaymentInstruction */
-
-            $data = $instruction->getExtendedData();
-            $data->set('querydata', $this->getRequest()->query->get('DATA'));
-            $data->set('signature', $this->getRequest()->query->get('SIGNATURE'));
-            var_dump($status);
+        $instruction = $cart->getPaymentInstruction();
+        $data = $instruction->getExtendedData();
+        $data->set('querydata', $this->getRequest()->query->all());
+        $payment = null;
+        /* @var $payment  \JMS\Payment\CoreBundle\Entity\Payment */
+        if ($instruction->getPendingTransaction() != null) {
             $pendingTransaction = $instruction->getPendingTransaction();
-            /* @var $pendingTransaction  \JMS\Payment\CoreBundle\Entity\FinancialTransaction */
-            if ($pendingTransaction) {
-                $payment = $pendingTransaction->getPayment();
-                $pendingTransaction->setExtendedData($data);
+            $payment = $pendingTransaction->getPayment();
+        } else {
+            foreach ($instruction->getPayments() as $ipayment) {
+                if (PaymentInterface::STATE_NEW === $ipayment->getState()) {
+                    $payment = $ipayment;
+                }
+            }
+        }
+        if ($payment == null) {
+            $payment = $ppc->createPayment($instruction->getId(), $instruction->getAmount() - $instruction->getDepositedAmount());
+        }
 
-                if ($payment->getState() == PaymentInterface::STATE_APPROVING) {
-                    $result = $ppc->approve($payment->getId(), $payment->getTargetAmount());
-                    if (Result::STATUS_SUCCESS !== $result->getStatus()) {
-                        throw new \Exception('do approvment');
+        if ($payment->getState() == PaymentInterface::STATE_NEW || $payment->getState() == PaymentInterface::STATE_APPROVING) {
+
+            $result = $ppc->approve($payment->getId(), $payment->getTargetAmount());
+
+            if (Result::STATUS_PENDING === $result->getStatus()) {
+                $ex = $result->getPluginException();
+                if ($ex instanceof ActionRequiredException) {
+                    $action = $ex->getAction();
+
+                    if ($action instanceof VisitUrl) {
+                        $cart->setPaymentInstruction($instruction);
+                        $this->persistCurrentCart($cart);
+                        return new RedirectResponse($action->getUrl());
                     }
-                }
-            }
 
-
-            foreach($instruction->getPayments() as $payment){
-                if($payment->getApprovedAmount() > 0){
-                    $currentpayment = $payment;
+                    throw $ex;
                 }
+            } else if (Result::STATUS_SUCCESS !== $result->getStatus()) {
+                throw new \RuntimeException('Transaction approve was not successful: ' . $result->getReasonCode());
             }
-            $result = $ppc->deposit($currentpayment->getId(), $currentpayment->getTargetAmount());
+        }
+
+        if ($payment->getState() == PaymentInterface::STATE_APPROVED || $payment->getState() == PaymentInterface::STATE_DEPOSITING) {
+
+            $result = $ppc->deposit($payment->getId(), $payment->getTargetAmount());
             if (Result::STATUS_SUCCESS === $result->getStatus()) {
                 $cart->setPayed(true);
+                $cart->setPaymentInstruction($instruction);
                 $this->persistCurrentCart($cart);
                 return $this->redirect($this->getWizard()->getNextStepUrl());
             } else {
-                throw new \RuntimeException('Transaction was not successful: ' . $result->getReasonCode());
+                throw new \RuntimeException('Transaction deposit was not successful: ' . $result->getReasonCode());
             }
+
         }
 
-        $instruction = $cart->getPaymentInstruction();
+        throw new \Exception('Payment aborted', $payment->getState());
 
-
-
-        if (null === $pendingTransaction = $instruction->getPendingTransaction()) {
-            $payment = $ppc->createPayment($instruction->getId(), $instruction->getAmount() - $instruction->getDepositedAmount());
-        } else {
-            $payment = $pendingTransaction->getPayment();
-        }
-        /* @var $payment  \JMS\Payment\CoreBundle\Entity\Payment */
-
-        $result = $ppc->approve($payment->getId(), $payment->getTargetAmount());
-
-        if (Result::STATUS_PENDING === $result->getStatus()) {
-            $ex = $result->getPluginException();
-            if ($ex instanceof ActionRequiredException) {
-                $action = $ex->getAction();
-
-                if ($action instanceof VisitUrl) {
-                    $cart->setPaymentInstruction($instruction);
-                    $this->persistCurrentCart($cart);
-                    return new RedirectResponse($action->getUrl());
-                }
-
-                throw $ex;
-            }
-        } else if (Result::STATUS_SUCCESS !== $result->getStatus()) {
-            throw new \RuntimeException('Transaction was not successful: ' . $result->getReasonCode());
-        }
-
-        /*
-                $em = $this->getDoctrine()->getManagerForClass($this->getPaymentOptionsClass());
-
-
-                $form = $this->createForm(new PaymentOptionType(), $cart,  array('data_class' => 'Ibrows\SyliusShopBundle\Entity\Cart'));
-
-                $request = $this->getRequest();
-                if("POST" == $request->getMethod()){
-                    $form->bind($request);
-
-                    if($form->isValid()){
-                        $this->getCartManager()->setCurrentCart($cart);
-                    }
-                }
-
-                return array('form' => $form->createView());
-         */
     }
 
     /**
@@ -319,7 +305,7 @@ class WizardController extends AbstractWizardController
     public function summaryAction()
     {
         return array(
-            'cart' => $this->getCurrentCart()
+                'cart' => $this->getCurrentCart()
         );
     }
 
@@ -333,7 +319,7 @@ class WizardController extends AbstractWizardController
         $cart = $this->getCurrentCart();
         $this->getCurrentCartManager()->closeCart();
         return array(
-            'cart' => $cart
+                'cart' => $cart
         );
     }
 }
