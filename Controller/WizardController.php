@@ -1,6 +1,7 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Controller;
+
 use JMS\Payment\CoreBundle\Entity\FinancialTransaction;
 use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
 use JMS\Payment\CoreBundle\Model\PaymentInterface;
@@ -8,12 +9,16 @@ use JMS\Payment\CoreBundle\PluginController\PluginController;
 use JMS\Payment\CoreBundle\Plugin\Exception\ActionRequiredException;
 use JMS\Payment\CoreBundle\Plugin\Exception\Action\VisitUrl;
 use JMS\Payment\CoreBundle\PluginController\Result;
+
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+
 use Ibrows\SyliusShopBundle\Form\PaymentOptionType;
 use Ibrows\Bundle\WizardAnnotationBundle\Annotation\Wizard;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -294,7 +299,7 @@ class WizardController extends AbstractWizardController
                 throw new \RuntimeException('Transaction deposit was not successful: ' . $result->getReasonCode());
             }
         }
-        
+
         throw new \Exception('Payment aborted', $payment->getState());
     }
 
