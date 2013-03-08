@@ -31,7 +31,17 @@ class CurrentCartManager extends CartManager
         parent::__construct($cartManager, $cartRepo, $itemManager, $itemRepo, $resolver);
 
         $this->provider = $provider;
-        $this->setCart($provider->getCart());
+        parent::setCart($provider->getCart());
+    }
+
+    /**
+     * @param CartInterface $cart
+     * @return void
+     * @throws \BadMethodCallException
+     */
+    public function setCart(CartInterface $cart = null)
+    {
+        throw new \BadMethodCallException("You dont want to change the current cart");
     }
 
     /**
@@ -39,7 +49,14 @@ class CurrentCartManager extends CartManager
      */
     public function closeCart()
     {
-        parent::closeCart();
+        $cart = $this->getCart();
+        if($cart->isClosed()){
+            throw new \BadMethodCallException("Cart is already closed");
+        }
+
+        // TODO serialize items - save all infos from ProductInterface to Cart
+
+        $cart->setClosed();
         $this->clearCurrentCart();
         return $this;
     }
@@ -50,6 +67,7 @@ class CurrentCartManager extends CartManager
     public function clearCurrentCart()
     {
         $this->provider->abandonCart();
+        parent::setCart(null);
         return $this;
     }
 }
