@@ -49,10 +49,16 @@ class Cart extends BaseCart implements CartInterface
     protected $items;
 
     /**
-     * @var bool
+     * @var DateTime
      * @ORM\Column(type="datetime", nullable=true)
      */
-    protected $payed = null;
+    protected $payed;
+
+    /**
+     * @var DateTime
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    protected $closed;
 
     /**
      * @var InvoiceAddressInterface
@@ -220,14 +226,22 @@ class Cart extends BaseCart implements CartInterface
         $this->paymentOptions = $paymentOptions;
     }
 
+    /**
+     * @return PaymentInstructionInterface
+     */
     public function getPaymentInstruction()
     {
         return $this->paymentInstruction;
     }
 
-    public function setPaymentInstruction(PaymentInstructionInterface $instruction)
+    /**
+     * @param PaymentInstructionInterface $instruction
+     * @return PaymentInstructionInterface
+     */
+    public function setPaymentInstruction(PaymentInstructionInterface $instruction = null)
     {
         $this->paymentInstruction = $instruction;
+        return $this;
     }
 
     /**
@@ -258,5 +272,36 @@ class Cart extends BaseCart implements CartInterface
     public function getPayedAt()
     {
         return $this->payed;
+    }
+
+    /**
+     * @return DateTime
+     */
+    public function isClosed()
+    {
+        return $this->closed;
+    }
+
+    /**
+     * @param bool $flag
+     * @return Cart
+     */
+    public function setClosed($flag = true)
+    {
+        if(false === $flag){
+            $this->closed = null;
+        }else{
+            $this->closed = new DateTime;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return DateTime
+     */
+    public function getClosedAt()
+    {
+        return $this->closed;
     }
 }

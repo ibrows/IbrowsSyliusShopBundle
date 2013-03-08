@@ -5,7 +5,7 @@
 
     {% if cart.email %}
         {% if user %}
-            Angemeldet als {{ user.username }} | <a href="">Logout</a>
+            Angemeldet als {{ user.username }}
         {% else %}
             Aktuelle E-Mail: {{ cart.email }}
 
@@ -29,6 +29,5 @@
             <input class="btn" type="submit" name="login" value="login">
         </form>
     {% endif %}
-
 
 {% endblock content %}

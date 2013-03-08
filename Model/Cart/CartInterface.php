@@ -7,6 +7,8 @@ use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
 use Ibrows\SyliusShopBundle\Model\Delivery\DeliveryOptionsInterface;
 use Ibrows\SyliusShopBundle\Model\Payment\PaymentOptionsInterface;
 
+use JMS\Payment\CoreBundle\Model\PaymentInstructionInterface;
+
 use Sylius\Bundle\CartBundle\Model\CartInterface as BaseCartInterface;
 
 use DateTime;
@@ -69,6 +71,17 @@ interface CartInterface extends BaseCartInterface
     public function setPaymentOptions(PaymentOptionsInterface $paymentOptions = null);
 
     /**
+     * @return PaymentInstructionInterface
+     */
+    public function getPaymentInstruction();
+
+    /**
+     * @param PaymentInstructionInterface $instruction
+     * @return PaymentInstructionInterface
+     */
+    public function setPaymentInstruction(PaymentInstructionInterface $instruction = null);
+
+    /**
      * @param bool $flag
      * @return CartInterface
      */
@@ -83,4 +96,25 @@ interface CartInterface extends BaseCartInterface
      * @return DateTime
      */
     public function getPayedAt();
+
+    /**
+     * @param bool $flag
+     * @return CartInterface
+     */
+    public function setClosed($flag = true);
+
+    /**
+     * @return bool
+     */
+    public function isClosed();
+
+    /**
+     * @return DateTime
+     */
+    public function getClosedAt();
+
+    /**
+     * @return CartInterface
+     */
+    public function refreshCart();
 }

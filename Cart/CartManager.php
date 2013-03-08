@@ -110,16 +110,6 @@ class CartManager
     }
 
     /**
-     * @return CartManager
-     */
-    public function closeCart()
-    {
-        $this->setCart(null);
-        // TODO serialize items - save all infos from ProductInterface to Cart
-        return $this;
-    }
-
-    /**
      * @return CartItemInterface
      */
     public function createNewItem()

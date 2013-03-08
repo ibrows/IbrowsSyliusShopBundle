@@ -67,6 +67,7 @@ class WizardController extends AbstractWizardController
             $cart->setEmail($user->getEmail());
         }
 
+
         $loginForm = $this
                 ->createForm($this->getLoginType(),
                         array(
@@ -80,6 +81,7 @@ class WizardController extends AbstractWizardController
                                         'sylius_wizard_login'
                                 )
                         ));
+
 
         $authError = $loginInformation->getAuthenticationError();
         if ($authError) {
