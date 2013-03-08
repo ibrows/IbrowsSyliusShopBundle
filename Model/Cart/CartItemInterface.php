@@ -3,6 +3,7 @@
 namespace Ibrows\SyliusShopBundle\Model\Cart;
 
 use Sylius\Bundle\CartBundle\Model\CartItemInterface as BaseCartItemInterface;
+use Ibrows\SyliusShopBundle\Model\Product\ProductInterface;
 
 use DateTime;
 
@@ -28,4 +29,9 @@ interface CartItemInterface extends BaseCartItemInterface
      * @return string
      */
     public function getName();
+
+    /**
+     * @return ProductInterface
+     */
+    public function getProduct();
 }
