@@ -155,6 +155,30 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
+     * @return BasketType
+     */
+    protected function getBasketType()
+    {
+        return new BasketType($this->getBasketItemType());
+    }
+
+    /**
+     * @return BasketItemType
+     */
+    protected function getBasketItemType()
+    {
+        return new BasketItemType($this->getBasketItemDataClass());
+    }
+
+    /**
+     * @return string
+     */
+    protected function getBasketItemDataClass()
+    {
+        return get_class($this->getCurrentCartManager()->createNewItem());
+    }
+
+    /**
      * @return InvoiceAddressInterface
      */
     protected function getNewInvoiceAddress()
