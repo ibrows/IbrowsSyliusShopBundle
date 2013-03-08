@@ -12,14 +12,13 @@ use Ibrows\SyliusShopBundle\Login\LoginInformationInterface;
 
 use Ibrows\SyliusShopBundle\IbrowsSyliusShopBundle;
 
+use Ibrows\SyliusShopBundle\Cart\Exception\CartException;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
-
-use Symfony\Component\Security\Core\SecurityContextInterface;
 
 use FOS\UserBundle\Model\UserManagerInterface;
 use FOS\UserBundle\Model\UserInterface;
@@ -133,6 +132,7 @@ abstract class AbstractController extends Controller
 
     /**
      * @return CartManager
+     * @throws CartException
      */
     protected function persistCurrentCart()
     {
