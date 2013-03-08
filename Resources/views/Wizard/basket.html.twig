@@ -2,16 +2,16 @@
 
 {% block content %}
     <h1>Basket</h1>
-    <ul>
-        {% for item in cart.items %}
-            <li>
-                Product: {{ item }}
-                <ul>
-                    <li>Quantity: {{ item.quantity }}</li>
-                    <li>UnitPrice: {{ item.unitPrice }}</li>
-                    <li>Total: {{ item.total }}</li>
-                </ul>
-            </li>
-        {% endfor %}
-    </ul>
+    {% if cart.items|length <= 0 %}
+        <div>
+            Empty cart.
+        </div>
+    {% else %}
+        <form method="post" action="{{ url('wizard_basket') }}" {{ form_enctype(basketForm) }}>
+            <input type="submit" name="refresh" value="refresh">
+            <input type="submit" name="continue" value="continue">
+
+            {{ form_widget(basketForm) }}
+        </form>
+    {% endif %}
 {% endblock content %}
