@@ -186,8 +186,9 @@ class WizardController extends AbstractWizardController
 
         /* @var $ppc PluginController */
         $instruction = $cart->getPaymentInstruction();
+        //@todo setData to current payment...
         $form = $this
-                ->createForm('jms_choose_payment_method', $instruction,
+                ->createForm('jms_choose_payment_method', null,
                         array('amount' => $cart->getTotal(), 'currency' => 'CHF', 'default_method' => null, // Optional
                         'predefined_data' => array(
                                 'saferpay' => array(
