@@ -75,9 +75,10 @@ class WizardController extends AbstractWizardController
 
         $loginInformation = $this->getLoginInformation();
         $user             = $loginInformation->getUser();
-        if($user) {
+        if($user && !$cart->getEmail()) {
             $cart->setEmail($user->getEmail());
             $this->persistCurrentCart();
+            return $this->redirect($this->getWizard()->getNextStepUrl());
         }
 
         $loginForm = $this
