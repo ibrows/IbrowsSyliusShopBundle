@@ -90,7 +90,7 @@ abstract class AbstractWizardController extends AbstractController
     public function summaryValidation()
     {
         $cart = $this->getCurrentCart();
-        if(!$cart->setPaymentInstruction()){
+        if(!$cart->getPaymentInstruction()){
             return Wizard::REDIRECT_STEP_BACK;
         }
         return true;
