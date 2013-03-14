@@ -24,11 +24,9 @@ class ProductController extends AbstractController
      */
     public function listAction(Request $request)
     {
-
         $resources = $this->getProductRepository()->findBy(array(), array(), 100);
-
         return array(
-                'products' => $resources
+            'products' => $resources
         );
     }
     /**
@@ -37,10 +35,9 @@ class ProductController extends AbstractController
      */
     public function showAction($slug)
     {
-        $data = $this->findOr404($this->getProductRepository(),array('slug'=>$slug));
-
+        $data = $this->findOr404($this->getProductRepository(), array('slug' => $slug));
         return array(
-                'product' => $data
+            'product' => $data
         );
     }
 }

@@ -57,6 +57,15 @@ abstract class AbstractController extends Controller
     }
 
     /**
+     * @param string $className
+     * @return ObjectRepository
+     */
+    protected function getRepository($className)
+    {
+        return $this->getDoctrine()->getManagerForClass($className)->getRepository($className);
+    }
+
+    /**
      * @return LoginInformationInterface
      */
     protected function getLoginInformation()
