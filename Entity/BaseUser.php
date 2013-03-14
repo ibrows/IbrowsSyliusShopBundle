@@ -15,9 +15,14 @@ class BaseUser extends FOSUSer
      */
     protected $id;
 
+    /**
+     * @param string $email
+     * @return BaseUser
+     */
     public function setEmail($email)
     {
         parent::setEmail($email);
         $this->setUsername($email);
+        return $this;
     }
 }

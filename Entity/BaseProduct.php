@@ -106,8 +106,6 @@ class BaseProduct implements ProductInterface
      */
     protected $deletedAt;
 
-
-
     /**
      * Constructor.
      */
