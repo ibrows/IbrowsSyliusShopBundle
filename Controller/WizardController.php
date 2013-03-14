@@ -191,25 +191,30 @@ class WizardController extends AbstractWizardController
         $instruction = $cart->getPaymentInstruction();
         $form = $this
             ->createForm('jms_choose_payment_method', $instruction,
-            array('amount' => $cart->getTotal(), 'currency' => 'CHF', 'default_method' => null, // Optional
-                'predefined_data' => array(
-                    'saferpay' => array(
-                        'DESCRIPTION' => sprintf('Bestellnummer: %s', $cart->getId()),
-                        'ORDERID' => $cart->getId(),
-                        'SUCCESSLINK' => 'http://www.test.ch/?status=success',
-                        //$this->generateUrl('wizard_payment', array('status' => 'success'), true),
-                        'FAILLINK' => $this->generateUrl('wizard_payment', array('status' => 'fail'), true),
-                        'BACKLINK' => $this->generateUrl('wizard_payment', array(), true),
-                        'FIRSTNAME' => $invoiceaddress->getFirstname(),
-                        'LASTNAME' => $invoiceaddress->getLastname(),
-                        'STREET' => $invoiceaddress->getStreet(),
-                        'ZIP' => $invoiceaddress->getZip(),
-                        'CITY' => $invoiceaddress->getCity(),
-                        'COUNTRY' => $invoiceaddress->getCountry(),
-                        'EMAIL' => $invoiceaddress->getEmail()
-                    ),
-                ),
-            ));
+                array(
+                    'data_class' => get_class($instruction),
+                    'amount' => $cart->getTotal(),
+                    'currency' => 'CHF',
+                    'default_method' => null, // Optional
+                    'predefined_data' => array(
+                        'saferpay' => array(
+                            'DESCRIPTION' => sprintf('Bestellnummer: %s', $cart->getId()),
+                            'ORDERID' => $cart->getId(),
+                            'SUCCESSLINK' => 'http://www.test.ch/?status=success',
+                            //$this->generateUrl('wizard_payment', array('status' => 'success'), true),
+                            'FAILLINK' => $this->generateUrl('wizard_payment', array('status' => 'fail'), true),
+                            'BACKLINK' => $this->generateUrl('wizard_payment', array(), true),
+                            'FIRSTNAME' => $invoiceaddress->getFirstname(),
+                            'LASTNAME' => $invoiceaddress->getLastname(),
+                            'STREET' => $invoiceaddress->getStreet(),
+                            'ZIP' => $invoiceaddress->getZip(),
+                            'CITY' => $invoiceaddress->getCity(),
+                            'COUNTRY' => $invoiceaddress->getCountry(),
+                            'EMAIL' => $invoiceaddress->getEmail()
+                        ),
+                    )
+                )
+            );
 
 
         if('POST' === $this->getRequest()->getMethod()) {
@@ -233,9 +238,21 @@ class WizardController extends AbstractWizardController
     }
 
     /**
+     * @Route("/summary", name="wizard_summary")
+     * @Template
+     * @Wizard(name="summary", number=5, validationMethod="summaryValidation")
+     */
+    public function summaryAction()
+    {
+        return array(
+            'cart' => $this->getCurrentCart()
+        );
+    }
+
+    /**
      * @Route("/payment", name="wizard_payment")
      * @Template
-     * @Wizard(name="payment", number=7, validationMethod="paymentValidation")
+     * @Wizard(name="payment", number=6, validationMethod="paymentValidation")
      */
     public function paymentAction()
     {
@@ -304,21 +321,9 @@ class WizardController extends AbstractWizardController
     }
 
     /**
-     * @Route("/summary", name="wizard_summary")
-     * @Template
-     * @Wizard(name="summary", number=5, validationMethod="summaryValidation")
-     */
-    public function summaryAction()
-    {
-        return array(
-            'cart' => $this->getCurrentCart()
-        );
-    }
-
-    /**
      * @Route("/notification", name="wizard_notification")
      * @Template
-     * @Wizard(name="notification", number=6, validationMethod="notificationValidation")
+     * @Wizard(name="notification", number=7, validationMethod="notificationValidation")
      */
     public function notificationAction()
     {
