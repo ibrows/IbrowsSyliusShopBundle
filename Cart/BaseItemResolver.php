@@ -1,11 +1,13 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Cart;
+
+use Ibrows\SyliusShopBundle\Model\Product\ProductInterface;
+use Sylius\Bundle\InventoryBundle\Model\StockableInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Doctrine\Common\Persistence\ObjectRepository;
 
-use Sylius\Bundle\AssortmentBundle\Model\Variant\VariantInterface;
 use Sylius\Bundle\CartBundle\Model\CartItemInterface;
 use Sylius\Bundle\CartBundle\Resolver\ItemResolverInterface;
 use Sylius\Bundle\CartBundle\Resolver\ItemResolvingException;
@@ -38,11 +40,9 @@ class BaseItemResolver implements ItemResolverInterface
     private $availabilityChecker;
 
     /**
-     * Constructor.
-     *
-     * @param ObjectRepository             $productRepository
-     * @param string classname
-     * @param FormFactory                  $formFactory
+     * @param RegistryInterface $registry
+     * @param string $classname
+     * @param FormFactory $formFactory
      * @param AvailabilityCheckerInterface $availabilityChecker
      */
     public function __construct(RegistryInterface $registry, $classname, FormFactory $formFactory, AvailabilityCheckerInterface $availabilityChecker)
@@ -53,8 +53,6 @@ class BaseItemResolver implements ItemResolverInterface
         $this->availabilityChecker = $availabilityChecker;
     }
 
-
-
     /**
      * {@inheritdoc}
      *
@@ -63,7 +61,6 @@ class BaseItemResolver implements ItemResolverInterface
      */
     public function resolve(CartItemInterface $item, Request $request)
     {
-
         /*
          * We're getting here product id via query but you can easily override route
          * pattern and use attributes, which are available through request object.
@@ -72,6 +69,7 @@ class BaseItemResolver implements ItemResolverInterface
             throw new ItemResolvingException('Error while trying to add item to cart');
         }
 
+        /* @var ProductInterface $product */
         if (!$product = $this->productRepository->find($id)) {
             throw new ItemResolvingException('Requested product was not found');
         }
@@ -99,25 +97,24 @@ class BaseItemResolver implements ItemResolverInterface
     }
 
     /**
-     * @param VariantInterface $variant
+     * @param $stockable
+     * @param $quantity
      * @throws ItemResolvingException
      */
-    private function isStockSufficient($stockable, $quantity)
+    private function isStockSufficient(StockableInterface $stockable, $quantity)
     {
-
         if (!$this->availabilityChecker->isStockSufficient($stockable, $quantity)) {
             throw new ItemResolvingException('Selected item has not enough');
         }
     }
 
     /**
-     * @param VariantInterface $variant
+     * @param StockableInterface $stockable
      * @throws ItemResolvingException
      */
-    private function isStockAvailable($product)
+    private function isStockAvailable(StockableInterface $stockable)
     {
-
-        if (!$this->availabilityChecker->isStockAvailable($product)) {
+        if (!$this->availabilityChecker->isStockAvailable($stockable)) {
             throw new ItemResolvingException('Selected item is out of stock');
         }
     }
