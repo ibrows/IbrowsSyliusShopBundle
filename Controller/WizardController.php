@@ -56,7 +56,7 @@ class WizardController extends AbstractWizardController
     /**
      * @Route("/auth", name="wizard_auth")
      * @Template
-     * @Wizard(name="auth", number=2, validationMethod="authValidation")
+     * @Wizard(name="auth", number=2, validationMethod="authValidation", visible=false)
      */
     public function authAction(Request $request)
     {
