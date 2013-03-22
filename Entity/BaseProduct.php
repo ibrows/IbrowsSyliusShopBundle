@@ -50,7 +50,6 @@ class BaseProduct implements ProductInterface
      */
     protected $slug;
 
-
     /**
      * @var string
      * @ORM\Column(type="string")
