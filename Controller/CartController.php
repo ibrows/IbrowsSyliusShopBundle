@@ -1,21 +1,19 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Controller;
+
 use Ibrows\SyliusShopBundle\Controller\AbstractController;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Sylius\Bundle\CartBundle\SyliusCartEvents;
-use Sylius\Bundle\CartBundle\Event\CartItemEvent;
 use Sylius\Bundle\CartBundle\Event\FlashEvent;
-use Sylius\Bundle\CartBundle\Resolver\ItemResolvingException;
 
 /**
  * @Route("/cart")
@@ -61,7 +59,7 @@ class CartController extends AbstractController
     {
         $this->getCurrentCartManager()->clearCurrentCart();
 
-        /* @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */
+        /* @var $dispatcher EventDispatcherInterface */
         $dispatcher = $this->container->get('event_dispatcher');
         $dispatcher->dispatch(SyliusCartEvents::CART_CLEAR_COMPLETED, new FlashEvent());
 
