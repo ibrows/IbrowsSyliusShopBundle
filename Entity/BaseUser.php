@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 class BaseUser extends FOSUSer
 {
     /**
+     * @var int
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
