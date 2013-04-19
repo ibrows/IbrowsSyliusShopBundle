@@ -66,6 +66,12 @@ class Cart extends BaseCart implements CartInterface
      * @ORM\JoinColumn(name="invoice_address_id", referencedColumnName="id")
      */
     protected $invoiceAddress;
+    
+    /**
+     * @var InvoiceAddressInterface $invoiceAddressObj
+     * @ORM\Column(type="object", name="invoice_address_obj")
+     */
+    protected $invoiceAddressObj;
 
     /**
      * @var DeliveryAddressInterface
@@ -73,6 +79,12 @@ class Cart extends BaseCart implements CartInterface
      * @ORM\JoinColumn(name="payment_address_id", referencedColumnName="id")
      */
     protected $deliveryAddress;
+    
+    /**
+     * @var InvoiceAddressInterface $deliveryAddressObj
+     * @ORM\Column(type="object", name="delivery_address_obj")
+     */
+    protected $deliveryAddressObj;
 
     /**
      * @var DeliveryOptionsInterface
@@ -303,5 +315,51 @@ class Cart extends BaseCart implements CartInterface
     public function getClosedAt()
     {
         return $this->closed;
+    }
+    
+    /**
+     * Set invoiceAddressObj
+     *
+     * @param \stdClass $invoiceAddressObj
+     * @return Cart
+     */
+    public function setInvoiceAddressObj($invoiceAddressObj)
+    {
+        $this->invoiceAddressObj = $invoiceAddressObj;
+    
+        return $this;
+    }
+
+    /**
+     * Get invoiceAddressObj
+     *
+     * @return \stdClass 
+     */
+    public function getInvoiceAddressObj()
+    {
+        return $this->invoiceAddressObj;
+    }
+
+    /**
+     * Set deliveryAddressObj
+     *
+     * @param \stdClass $deliveryAddressObj
+     * @return Cart
+     */
+    public function setDeliveryAddressObj($deliveryAddressObj)
+    {
+        $this->deliveryAddressObj = $deliveryAddressObj;
+    
+        return $this;
+    }
+
+    /**
+     * Get deliveryAddressObj
+     *
+     * @return \stdClass 
+     */
+    public function getDeliveryAddressObj()
+    {
+        return $this->deliveryAddressObj;
     }
 }

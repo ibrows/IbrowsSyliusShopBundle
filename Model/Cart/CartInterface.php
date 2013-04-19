@@ -43,6 +43,17 @@ interface CartInterface extends BaseCartInterface
      * @return CartInterface
      */
     public function setInvoiceAddress(InvoiceAddressInterface $invoiceAddress = null);
+    
+    /**
+     * @return InvoiceAddressInterface
+     */
+    public function getInvoiceAddressObj();
+
+    /**
+     * @param InvoiceAddressInterface $invoiceAddressObj
+     * @return CartInterface
+     */
+    public function setInvoiceAddressObj(InvoiceAddressInterface $invoiceAddressObj = null);
 
     /**
      * @return DeliveryAddressInterface
@@ -55,6 +66,17 @@ interface CartInterface extends BaseCartInterface
      */
     public function setDeliveryAddress(DeliveryAddressInterface $deliveryAddress = null);
 
+    /**
+     * @return DeliveryAddressInterface
+     */
+    public function getDeliveryAddressObj();
+
+    /**
+     * @param DeliveryAddressInterface $deliveryAddressObj
+     * @return CartInterface
+     */
+    public function setDeliveryAddressObj(DeliveryAddressInterface $deliveryAddressObj = null);
+    
     /**
      * @return DeliveryOptionsInterface
      */
