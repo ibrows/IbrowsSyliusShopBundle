@@ -323,7 +323,7 @@ class Cart extends BaseCart implements CartInterface
      * @param \stdClass $invoiceAddressObj
      * @return Cart
      */
-    public function setInvoiceAddressObj($invoiceAddressObj)
+    public function setInvoiceAddressObj(InvoiceAddressInterface $invoiceAddressObj = Null)
     {
         $this->invoiceAddressObj = $invoiceAddressObj;
     
@@ -346,7 +346,7 @@ class Cart extends BaseCart implements CartInterface
      * @param \stdClass $deliveryAddressObj
      * @return Cart
      */
-    public function setDeliveryAddressObj($deliveryAddressObj)
+    public function setDeliveryAddressObj(DeliveryAddressInterface $deliveryAddressObj = Null)
     {
         $this->deliveryAddressObj = $deliveryAddressObj;
     
