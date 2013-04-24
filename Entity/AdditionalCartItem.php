@@ -3,7 +3,7 @@
 namespace Ibrows\SyliusShopBundle\Entity;
 use Ibrows\SyliusShopBundle\Model\Product\ProductInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface;
-
+use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Sylius\Bundle\CartBundle\Entity\CartItem as BaseCartItem;
 use Sylius\Bundle\CartBundle\Model\CartItemInterface as BaseCartItemInterface;
 
@@ -36,7 +36,7 @@ class AdditionalCartItem
      * Cart.
      *
      * @var CartInterface
-     * @ORM\ManyToOne(targetEntity="Ibrows\SyliusShopBundle\Model\Product\CartInterface")
+     * @ORM\ManyToOne(targetEntity="Sylius\Bundle\CartBundle\Model\CartInterface")
      */
     protected $cart;
 
