@@ -36,7 +36,7 @@ class AdditionalCartItem
      * Cart.
      *
      * @var CartInterface
-     * @ORM\ManyToOne(targetEntity="Sylius\Bundle\CartBundle\Model\CartInterface")
+     * @ORM\ManyToOne(targetEntity="Sylius\Bundle\CartBundle\Model\CartInterface",  inversedBy="additionalitems")
      */
     protected $cart;
 
