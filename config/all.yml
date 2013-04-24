@@ -1,5 +1,6 @@
 # Imports
 parameters:
+  ibrows_sylius_shop.user.role: ROLE_SHOP
   ibrows_sylius_shop.user.class: Ibrows\SyliusShopBundle\Entity\BaseUser
 
   ibrows_sylius_shop.deliveryaddress.class: Ibrows\SyliusShopBundle\Entity\Address

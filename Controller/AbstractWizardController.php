@@ -1,7 +1,6 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Controller;
-
 use Ibrows\SyliusShopBundle\Cart\CartManager;
 
 use Ibrows\Bundle\WizardAnnotationBundle\Annotation\Wizard;
@@ -43,7 +42,7 @@ abstract class AbstractWizardController extends AbstractController
      */
     public function authValidation()
     {
-        if($this->getCurrentCart()->isEmpty()){
+        if ($this->getCurrentCart()->isEmpty()) {
             return Wizard::REDIRECT_STEP_BACK;
         }
 
@@ -55,7 +54,7 @@ abstract class AbstractWizardController extends AbstractController
      */
     public function addressValidation()
     {
-        if(!$this->getCurrentCart()->getEmail()){
+        if (!$this->getCurrentCart()->getEmail()) {
             return Wizard::REDIRECT_STEP_BACK;
         }
         return true;
@@ -67,7 +66,7 @@ abstract class AbstractWizardController extends AbstractController
     public function paymentInstructionValidation()
     {
         $cart = $this->getCurrentCart();
-        if(!$cart->getDeliveryAddress() || !$cart->getInvoiceAddress()){
+        if (!$cart->getDeliveryAddress() || !$cart->getInvoiceAddress()) {
             return Wizard::REDIRECT_STEP_BACK;
         }
         return true;
@@ -78,7 +77,7 @@ abstract class AbstractWizardController extends AbstractController
     public function summaryValidation()
     {
         $cart = $this->getCurrentCart();
-        if(!$cart->getPaymentInstruction()){
+        if (!$cart->getPaymentInstruction()) {
             return Wizard::REDIRECT_STEP_BACK;
         }
         return true;
@@ -90,7 +89,7 @@ abstract class AbstractWizardController extends AbstractController
     public function paymentValidation()
     {
         $cart = $this->getCurrentCart();
-        if(!$cart->getPaymentInstruction()){
+        if (!$cart->getPaymentInstruction()) {
             return Wizard::REDIRECT_STEP_BACK;
         }
         return true;
@@ -102,128 +101,6 @@ abstract class AbstractWizardController extends AbstractController
     public function notificationValidation()
     {
         return true;
-    }
-
-    /**
-     * @param CartManager $cartManager
-     * @return CartManager
-     */
-    protected function authDelete(CartManager $cartManager)
-    {
-        $cartManager->getCart()->setEmail(null);
-        return $cartManager->persistCart();
-    }
-
-    /**
-     * @param Request $request
-     * @param FormInterface $authForm
-     * @param CartManager $cartManager
-     * @param WizardHandler $wizard
-     * @return RedirectResponse|void
-     */
-    protected function authByEmail(Request $request, FormInterface $authForm, CartManager $cartManager, WizardHandler $wizard)
-    {
-        $authForm->bind($request);
-        if($authForm->isValid()){
-            $email = $authForm->get('email')->getData();
-            if($this->getFOSUserManager()->findUserByEmail($email)){
-                $authForm->addError(new FormError(
-                    $this->translateWithPrefix("user.emailallreadyexisting", array('%email%' => $email), "validators")
-                ));
-            }else{
-                $cartManager->getCart()->setEmail($email);
-                $cartManager->persistCart();
-                return $this->redirect($wizard->getNextStepUrl());
-            }
-        }
-    }
-
-    /**
-     * @return AuthType
-     */
-    protected function getAuthType()
-    {
-        return new AuthType();
-    }
-
-    /**
-     * @return LoginType
-     */
-    protected function getLoginType()
-    {
-        return new LoginType();
-    }
-
-    /**
-     * @return BasketType
-     */
-    protected function getBasketType()
-    {
-        return new BasketType($this->getBasketItemType());
-    }
-
-    /**
-     * @return BasketItemType
-     */
-    protected function getBasketItemType()
-    {
-        return new BasketItemType($this->getBasketItemDataClass());
-    }
-
-    /**
-     * @return string
-     */
-    protected function getBasketItemDataClass()
-    {
-        return get_class($this->getCurrentCartManager()->createNewItem());
-    }
-
-    /**
-     * @return InvoiceAddressInterface
-     */
-    protected function getNewInvoiceAddress()
-    {
-        return new Address();
-    }
-
-    /**
-     * @return InvoiceAddressInterface
-     */
-    protected function getNewDeliveryAddress()
-    {
-        return new Address();
-    }
-
-    /**
-     * @return InvoiceAddressType
-     */
-    protected function getInvoiceAddressType()
-    {
-        return new InvoiceAddressType();
-    }
-
-    /**
-     * @return DeliveryAddressType
-     */
-    protected function getDeliveryAddressType()
-    {
-        return new DeliveryAddressType();
-    }
-
-    /**
-     * @return string
-     */
-    public function getInvoiceAddressClass()
-    {
-        return $this->container->getParameter('ibrows_sylius_shop.invoiceaddress.class');
-    }
-
-    /**
-     * @return string
-     */
-    public function getDeliveryAddressClass()
-    {
-        return $this->container->getParameter('ibrows_sylius_shop.deliveryaddress.class');
     }
 
     /**

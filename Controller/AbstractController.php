@@ -1,7 +1,6 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Controller;
-
 use Ibrows\SyliusShopBundle\Cart\Exception\CartItemNotOnStockException;
 
 use Ibrows\SyliusShopBundle\Cart\CartManager;
@@ -11,6 +10,16 @@ use Ibrows\SyliusShopBundle\Repository\ProductRepository;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 
 use Ibrows\SyliusShopBundle\Login\LoginInformationInterface;
+use Ibrows\SyliusShopBundle\Form\AuthType;
+use Ibrows\SyliusShopBundle\Form\LoginType;
+use Ibrows\SyliusShopBundle\Form\BasketType;
+use Ibrows\SyliusShopBundle\Form\BasketItemType;
+
+use Ibrows\SyliusShopBundle\Form\DeliveryAddressType;
+use Ibrows\SyliusShopBundle\Form\InvoiceAddressType;
+
+use Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface;
+use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
 
 use Ibrows\SyliusShopBundle\IbrowsSyliusShopBundle;
 
@@ -42,15 +51,14 @@ abstract class AbstractController extends Controller
         $id = $this->getRequest()->get('id');
 
         if (null === $criteria) {
-            $criteria = array('id'=> $id);
+            $criteria = array(
+                    'id' => $id
+            );
         }
 
         if (!$resource = $repo->findOneBy($criteria)) {
-            throw $this->createNotFoundException(sprintf(
-                'Requested Entity "%s" with id "%s" does not exist',
-                $repo->getClassName(),
-                $id
-            ));
+            throw $this
+                    ->createNotFoundException(sprintf('Requested Entity "%s" with id "%s" does not exist', $repo->getClassName(), $id));
         }
 
         return $resource;
@@ -122,14 +130,16 @@ abstract class AbstractController extends Controller
     /**
      * @return CurrentCartManager
      */
-    protected function getCurrentCartManager(){
+    protected function getCurrentCartManager()
+    {
         return $this->get('ibrows_syliusshop.currentcart.manager');
     }
 
     /**
      * @return CartManager
      */
-    protected function getCartManager(){
+    protected function getCartManager()
+    {
         return $this->get('ibrows_syliusshop.cart.manager');
     }
 
@@ -150,11 +160,11 @@ abstract class AbstractController extends Controller
         try {
             return $this->getCurrentCartManager()->persistCart();
         } catch (CartItemNotOnStockException $e) {
-            foreach($e->getCartItemsNotOnStock() as $itemNotOnStock){
-               $item = $itemNotOnStock->getItem();
-               $message = $item . ' ' . $item->getQuantityNotAvailable() . " not there...";
-               $this->get('session')->getFlashBag()->add('notice', $message);
-               $item->setQuantityToAvailable();
+            foreach ($e->getCartItemsNotOnStock() as $itemNotOnStock) {
+                $item = $itemNotOnStock->getItem();
+                $message = $item . ' ' . $item->getQuantityNotAvailable() . " not there...";
+                $this->get('session')->getFlashBag()->add('notice', $message);
+                $item->setQuantityToAvailable();
             }
             return $this->getCurrentCartManager()->persistCart();
         }
@@ -168,7 +178,7 @@ abstract class AbstractController extends Controller
     {
         $registry = $this->get('doctrine');
         $classname = $this->container->getParameter('ibrows_sylius_shop.product.class');
-        $manager = $registry->getManagerForClass( $classname );
+        $manager = $registry->getManagerForClass($classname);
         return $manager->getRepository($classname);
     }
 
@@ -197,7 +207,7 @@ abstract class AbstractController extends Controller
      */
     protected function translateWithPrefix($id, array $parameters = array(), $domain = null, $locale = null)
     {
-        $id = $this->getTranslationPrefix().'.'.$id;
+        $id = $this->getTranslationPrefix() . '.' . $id;
         return $this->getTranslator()->trans($id, $parameters, $domain, $locale);
     }
 
@@ -216,4 +226,125 @@ abstract class AbstractController extends Controller
     {
         return IbrowsSyliusShopBundle::TRANSLATION_PREFIX;
     }
+
+    /**
+     * @param CartManager $cartManager
+     * @return CartManager
+     */
+    protected function authDelete(CartManager $cartManager)
+    {
+        $cartManager->getCart()->setEmail(null);
+        return $cartManager->persistCart();
+    }
+
+    /**
+     * @param Request $request
+     * @param FormInterface $authForm
+     * @param CartManager $cartManager
+     * @param WizardHandler $wizard
+     * @return RedirectResponse|void
+     */
+    protected function authByEmail(Request $request, FormInterface $authForm, CartManager $cartManager, WizardHandler $wizard)
+    {
+        $authForm->bind($request);
+        if ($authForm->isValid()) {
+            $email = $authForm->get('email')->getData();
+            if ($this->getFOSUserManager()->findUserByEmail($email)) {
+                $authForm->addError(new FormError($this->translateWithPrefix("user.emailallreadyexisting", array('%email%' => $email), "validators")));
+            } else {
+                $cartManager->getCart()->setEmail($email);
+                $cartManager->persistCart();
+                return $this->redirect($wizard->getNextStepUrl());
+            }
+        }
+    }
+
+    /**
+     * @return AuthType
+     */
+    protected function getAuthType()
+    {
+        return new AuthType();
+    }
+
+    /**
+     * @return LoginType
+     */
+    protected function getLoginType()
+    {
+        return new LoginType();
+    }
+
+    /**
+     * @return BasketType
+     */
+    protected function getBasketType()
+    {
+        return new BasketType($this->getBasketItemType());
+    }
+
+    /**
+     * @return BasketItemType
+     */
+    protected function getBasketItemType()
+    {
+        return new BasketItemType($this->getBasketItemDataClass());
+    }
+
+    /**
+     * @return string
+     */
+    protected function getBasketItemDataClass()
+    {
+        return get_class($this->getCurrentCartManager()->createNewItem());
+    }
+
+    /**
+     * @return InvoiceAddressInterface
+     */
+    protected function getNewInvoiceAddress()
+    {
+        return new Address();
+    }
+
+    /**
+     * @return InvoiceAddressInterface
+     */
+    protected function getNewDeliveryAddress()
+    {
+        return new Address();
+    }
+
+    /**
+     * @return InvoiceAddressType
+     */
+    protected function getInvoiceAddressType()
+    {
+        return new InvoiceAddressType();
+    }
+
+    /**
+     * @return DeliveryAddressType
+     */
+    protected function getDeliveryAddressType()
+    {
+        return new DeliveryAddressType();
+    }
+
+    /**
+     * @return string
+     */
+    public function getInvoiceAddressClass()
+    {
+        return $this->container->getParameter('ibrows_sylius_shop.invoiceaddress.class');
+    }
+
+    /**
+     * @return string
+     */
+    public function getDeliveryAddressClass()
+    {
+        return $this->container->getParameter('ibrows_sylius_shop.deliveryaddress.class');
+    }
+
 }

@@ -1,0 +1,19 @@
+{% extends 'IbrowsSyliusShopBundle::baselayout.html.twig' %}
+{% block content %}
+    <h1>Anmeldung</h1>
+
+    	<div class="row-fluid">
+
+			<div class="span6 with-login">
+		        <h4>Register</h4>
+		        <form action="{{ path(app.request.get('_route')) }}" method="post" {{ form_enctype(registerform) }} novalidate>
+		           	 {{ form_widget(userform) }}
+		            {{ form_widget(registerform) }}
+		            <div class="row-fluid">
+		            	<input class="button_buy span3" type="submit" name="register" value="register">
+		            </div>
+		        </form>
+			</div>
+        </div>
+
+{% endblock  %}
