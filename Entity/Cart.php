@@ -49,6 +49,13 @@ class Cart extends BaseCart implements CartInterface
     protected $items;
 
     /**
+     * @var Collection
+     * @ORM\OneToMany(targetEntity="AdditionalCartItem", mappedBy="cart", cascade="all", orphanRemoval=true)
+     * @ORM\JoinColumn(name="item_addiational_id", referencedColumnName="id")
+     */
+    protected $additionalitems;
+
+    /**
      * @var DateTime
      * @ORM\Column(type="datetime", nullable=true)
      */
@@ -66,7 +73,7 @@ class Cart extends BaseCart implements CartInterface
      * @ORM\JoinColumn(name="invoice_address_id", referencedColumnName="id")
      */
     protected $invoiceAddress;
-    
+
     /**
      * @var InvoiceAddressInterface $invoiceAddressObj
      * @ORM\Column(type="object", name="invoice_address_obj")
@@ -79,7 +86,7 @@ class Cart extends BaseCart implements CartInterface
      * @ORM\JoinColumn(name="payment_address_id", referencedColumnName="id")
      */
     protected $deliveryAddress;
-    
+
     /**
      * @var InvoiceAddressInterface $deliveryAddressObj
      * @ORM\Column(type="object", name="delivery_address_obj")
@@ -106,6 +113,21 @@ class Cart extends BaseCart implements CartInterface
      */
     private $paymentInstruction;
 
+
+    public function calculateTotal()
+    {
+        $this->total = 0;
+
+        foreach ($this->items as $item) {
+            $item->calculateTotal();
+            $this->total += $item->getTotal();
+        }
+        foreach ($this->additionalitems as $item) {
+            $item->calculateTotal();
+            $this->total += $item->getTotal();
+        }
+    }
+
     /**
      * @return Cart
      */
@@ -114,6 +136,41 @@ class Cart extends BaseCart implements CartInterface
         $this->setTotalItems($this->countItems());
         return $this;
     }
+
+    /**
+     * @param CartItemInterface $item
+     * @return Cart
+     */
+    public function addAddiationalItem(CartItemInterface $item){
+        $this->additionalitems->add($item);
+        $this->refreshCart();
+        return $this;
+    }
+
+    /**
+     * @param CartItemInterface $item
+     * @return Cart
+     */
+    public function removeAddiationalItem(CartItemInterface $item){
+        $this->additionalitems->remove($item);
+        $this->refreshCart();
+        return $this;
+    }
+
+    /**
+     * @param Collection|CartItemInterface[] $items
+     * @return Cart
+     */
+    public function setAdditionalItems(Collection $items){
+        foreach($this->items as $item){
+            $this->removeItem($item);
+        }
+        foreach($items as $item){
+            $this->addItem($item);
+        }
+        return $this;
+    }
+
 
     /**
      * @param CartItemInterface $item
@@ -316,7 +373,7 @@ class Cart extends BaseCart implements CartInterface
     {
         return $this->closed;
     }
-    
+
     /**
      * Set invoiceAddressObj
      *
@@ -326,14 +383,14 @@ class Cart extends BaseCart implements CartInterface
     public function setInvoiceAddressObj(InvoiceAddressInterface $invoiceAddressObj = Null)
     {
         $this->invoiceAddressObj = $invoiceAddressObj;
-    
+
         return $this;
     }
 
     /**
      * Get invoiceAddressObj
      *
-     * @return \stdClass 
+     * @return \stdClass
      */
     public function getInvoiceAddressObj()
     {
@@ -349,14 +406,14 @@ class Cart extends BaseCart implements CartInterface
     public function setDeliveryAddressObj(DeliveryAddressInterface $deliveryAddressObj = Null)
     {
         $this->deliveryAddressObj = $deliveryAddressObj;
-    
+
         return $this;
     }
 
     /**
      * Get deliveryAddressObj
      *
-     * @return \stdClass 
+     * @return \stdClass
      */
     public function getDeliveryAddressObj()
     {
