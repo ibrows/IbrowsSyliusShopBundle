@@ -46,7 +46,7 @@ class WizardController extends AbstractWizardController
                 }
             }
         }
-
+        $this->getCurrentCartManager()->addBestPriceDeliveryOption();
         return array(
                 'basketForm' => $basketForm->createView(),
                 'cart' => $this->getCurrentCart()

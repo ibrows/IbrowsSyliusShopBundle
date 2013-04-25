@@ -1,6 +1,8 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Entity;
+use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
+
 use Ibrows\SyliusShopBundle\Model\Product\ProductInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
@@ -14,8 +16,9 @@ use DateTime;
 /**
  * @ORM\Entity
  * @ORM\Table(name="ibr_sylius_cart_additional_item")
+ * @ORM\InheritanceType("JOINED")
  */
-class AdditionalCartItem
+class AdditionalCartItem implements AdditionalCartItemInterface
 {
     /**
      * @ORM\Id
@@ -64,7 +67,7 @@ class AdditionalCartItem
     }
 
     /**
-     * @return CartInterface
+     * @return string
      */
     public function getText()
     {
@@ -72,9 +75,9 @@ class AdditionalCartItem
     }
 
     /**
-     * @param CartInterface $text
+     * @param string $text
      */
-    public function setText(CartInterface $text)
+    public function setText($text)
     {
         $this->text = $text;
         return $this;
@@ -91,7 +94,7 @@ class AdditionalCartItem
     /**
      * @param CartInterface $cart
      */
-    public function setCart(CartInterface $cart)
+    public function setCart(CartInterface $cart = null)
     {
         $this->cart = $cart;
         return $this;

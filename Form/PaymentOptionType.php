@@ -2,7 +2,6 @@
 
 namespace Ibrows\SyliusShopBundle\Form;
 
-use Ibrows\SyliusShopBundle\Entity\DeliveryOptions;
 
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Form\FormBuilderInterface;

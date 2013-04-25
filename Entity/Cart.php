@@ -2,6 +2,8 @@
 
 namespace Ibrows\SyliusShopBundle\Entity;
 
+use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
+
 use JMS\Payment\CoreBundle\Model\PaymentInstructionInterface;
 
 use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
@@ -10,7 +12,7 @@ use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 
 use Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface;
 use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
-use Ibrows\SyliusShopBundle\Model\Delivery\DeliveryOptionsInterface;
+use Ibrows\SyliusShopBundle\Model\Delivery\DeliveryOptionInterface;
 use Ibrows\SyliusShopBundle\Model\Payment\PaymentOptionsInterface;
 
 use Sylius\Bundle\CartBundle\Model\CartItemInterface;
@@ -94,11 +96,11 @@ class Cart extends BaseCart implements CartInterface
     protected $deliveryAddressObj;
 
     /**
-     * @var DeliveryOptionsInterface
-     * @ORM\OneToOne(targetEntity="Ibrows\SyliusShopBundle\Model\Delivery\DeliveryOptionsInterface")
+     * @var DeliveryOptionInterface
+     * @ORM\OneToOne(targetEntity="Ibrows\SyliusShopBundle\Model\Delivery\DeliveryOptionInterface")
      * @ORM\JoinColumn(name="delivery_options_id", referencedColumnName="id")
      */
-    protected $deliveryOptions;
+    protected $deliveryOption;
 
     /**
      * @var PaymentOptionsInterface
@@ -123,8 +125,7 @@ class Cart extends BaseCart implements CartInterface
             $this->total += $item->getTotal();
         }
         foreach ($this->additionalitems as $item) {
-            $item->calculateTotal();
-            $this->total += $item->getTotal();
+            $this->total += $item->getPrice();
         }
     }
 
@@ -138,27 +139,33 @@ class Cart extends BaseCart implements CartInterface
     }
 
     /**
-     * @param CartItemInterface $item
+     * @param AdditionalCartItemInterface $item
      * @return Cart
      */
-    public function addAddiationalItem(CartItemInterface $item){
+    public function addAddiationalItem(AdditionalCartItemInterface $item){
+        if($item instanceof DeliveryOptionInterface){
+            $this->setDeliveryOption($item);
+        }
         $this->additionalitems->add($item);
         $this->refreshCart();
         return $this;
     }
 
     /**
-     * @param CartItemInterface $item
+     * @param AdditionalCartItemInterface $item
      * @return Cart
      */
-    public function removeAddiationalItem(CartItemInterface $item){
+    public function removeAddiationalItem(AdditionalCartItemInterface $item){
+        if($item instanceof DeliveryOptionInterface){
+            $this->deliveryOption = null;
+        }
         $this->additionalitems->remove($item);
         $this->refreshCart();
         return $this;
     }
 
     /**
-     * @param Collection|CartItemInterface[] $items
+     * @param Collection|AdditionalCartItemInterface[] $items
      * @return Cart
      */
     public function setAdditionalItems(Collection $items){
@@ -171,7 +178,13 @@ class Cart extends BaseCart implements CartInterface
         return $this;
     }
 
-
+    /**
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getAdditionalItems()
+    {
+        return $this->additionalitems;
+    }
     /**
      * @param CartItemInterface $item
      * @return Cart
@@ -261,20 +274,24 @@ class Cart extends BaseCart implements CartInterface
     }
 
     /**
-     * @return DeliveryOptionsInterface
+     * @return DeliveryOptionInterface
      */
-    public function getDeliveryOptions()
+    public function getDeliveryOption()
     {
-        return $this->deliveryOptions;
+        return $this->deliveryOption;
     }
 
     /**
-     * @param DeliveryOptionsInterface $deliveryOptions
+     * @param DeliveryOptionInterface $DeliveryOption
      * @return Cart
      */
-    public function setDeliveryOptions(DeliveryOptionsInterface $deliveryOptions = null)
+    public function setDeliveryOption(DeliveryOptionInterface $deliveryOption = null)
     {
-        $this->deliveryOptions = $deliveryOptions;
+        if($deliveryOption == null && $this->deliveryOption != null){
+            //remove current
+            $this->removeAddiationalItem($item);
+        }
+        $this->deliveryOption = $deliveryOption;
         return $this;
     }
 

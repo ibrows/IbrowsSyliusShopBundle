@@ -22,6 +22,8 @@ class CurrentCartManager extends CartManager
      */
     protected $provider;
 
+    protected $additionalservices;
+
     /**
      * @param ObjectManager $cartManager
      * @param ObjectRepository $cartRepo
@@ -44,7 +46,40 @@ class CurrentCartManager extends CartManager
 
         $this->provider = $provider;
         parent::setCart($provider->getCart());
+        $this->additionalservices = array();
     }
+
+    public function addAdditionalService($service){
+        $type = $service->getType();
+        if(!key_exists($type, $this->additionalservices)){
+            $this->additionalservices[$type] = array();
+        }
+        $this->additionalservices[$type][] = $service;
+    }
+
+    public function addBestPriceDeliveryOption(){
+        $options = $this->getDeliveryOptions();
+        usort($options, function($a,$b){
+            if ($a->getPrice() == $b->getPrice())
+                return 0;
+            return ($a->getPrice() > $b->getPrice()) ? 1 : -1;
+        });
+        reset($options);
+        $best = current($options);
+        $this->addAdditionalItem($best);
+    }
+
+    public function getDeliveryOptions(){
+        $items = array();
+        foreach($this->additionalservices['delivery'] as $delivery){
+            if($delivery->isPossible($this->getCart(true))){
+                $items = $items + $delivery->getPossibleAdditionalCartItems($this->getCart(true));
+            }
+        }
+        return $items;
+    }
+
+
 
     /**
      * @param CartInterface $cart

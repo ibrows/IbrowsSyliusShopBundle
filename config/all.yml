@@ -6,7 +6,7 @@ parameters:
   ibrows_sylius_shop.deliveryaddress.class: Ibrows\SyliusShopBundle\Entity\Address
   ibrows_sylius_shop.invoiceaddress.class: Ibrows\SyliusShopBundle\Entity\Address
 
-  ibrows_sylius_shop.deliveryoptions.class: Ibrows\SyliusShopBundle\Entity\DeliveryOptions
+  ibrows_sylius_shop.deliveryoption.class: Ibrows\SyliusShopBundle\Entity\DeliveryOption
   ibrows_sylius_shop.paymentoptions.class: Ibrows\SyliusShopBundle\Entity\PaymentOptions
 
 imports:

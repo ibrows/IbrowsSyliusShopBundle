@@ -2,6 +2,8 @@
 
 namespace Ibrows\SyliusShopBundle\Cart;
 
+use Ibrows\SyliusShopBundle\Entity\AdditionalCartItem;
+
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface;
 
@@ -76,6 +78,17 @@ class CartManager
         $this->itemObjectRepo = $itemObjectRepo;
         $this->resolver = $resolver;
         $this->availabilityChecker = $availablityChecker;
+
+    }
+
+    /**
+     * @param AdditionalCartItem $item
+     * @return CartManager
+     */
+    public function addAdditionalItem(AdditionalCartItem $item)
+    {
+        $this->getCart(true)->addAddiationalItem($item);
+        return $this;
     }
 
     /**
@@ -111,6 +124,16 @@ class CartManager
         $this->cartObjectManager->flush();
 
         return $this;
+    }
+
+    public function getDelivery(){
+        $taggedServices = $this->getContainer()->findTaggedServiceIds(
+                'ibrows_syliusshop.delivery'
+        );
+        foreach ($taggedServices as $id => $attributes) {
+
+
+        }
     }
 
     /**
