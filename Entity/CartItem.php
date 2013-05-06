@@ -54,10 +54,12 @@ class CartItem extends BaseCartItem implements CartItemInterface
 
     /**
      * @param ProductInterface $product
+     * @return CartItem
      */
     public function setProduct(ProductInterface $product)
     {
         $this->product = $product;
+        return $this;
     }
 
     /**
