@@ -17,6 +17,7 @@ use Ibrows\SyliusShopBundle\Form\BasketItemType;
 
 use Ibrows\SyliusShopBundle\Form\DeliveryAddressType;
 use Ibrows\SyliusShopBundle\Form\InvoiceAddressType;
+use Ibrows\SyliusShopBundle\Entity\Address;
 
 use Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface;
 use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
