@@ -20,19 +20,19 @@ use DateTime;
 interface CartInterface extends BaseCartInterface
 {
     /**
-     * @param CartItemInterface $item
-     * @return Cart
+     * @param AdditionalCartItemInterface $item
+     * @return CartInterface
      */
     public function addAddiationalItem(AdditionalCartItemInterface $item);
     /**
-     * @param CartItemInterface $item
-     * @return Cart
+     * @param AdditionalCartItemInterface $item
+     * @return CartInterface
      */
     public function removeAddiationalItem(AdditionalCartItemInterface $item);
 
     /**
      * @param Collection|AdditionalCartItemInterface[] $items
-     * @return Cart
+     * @return CartInterface
      */
     public function setAdditionalItems(Collection $items);
 
