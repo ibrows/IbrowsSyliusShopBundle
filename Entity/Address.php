@@ -25,61 +25,64 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
 
     /**
      * @var string $firstname
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
+     * @Assert\NotBlank(groups={"ibr_sylius_shop"})
      */
     protected $firstname;
 
     /**
      * @var string $lastname
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
+     * @Assert\NotBlank(groups={"ibr_sylius_shop"})
      */
     protected $lastname;
 
     /**
      * @var string $company
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
+     * @Assert\NotBlank(groups={"ibr_sylius_shop"})
      */
     protected $company;
 
     /**
      * @var string $street
-     * @ORM\Column(type="string")
-     * @Assert\NotBlank
+     * @ORM\Column(type="string", nullable=true)
+     * @Assert\NotBlank(groups={"ibr_sylius_shop"})
      */
     protected $street;
 
     /**
      * @var string $zip
-     * @ORM\Column(type="string")
-     * @Assert\NotBlank
+     * @ORM\Column(type="string", nullable=true)
+     * @Assert\NotBlank(groups={"ibr_sylius_shop"})
      */
     protected $zip;
 
     /**
      * @var string $city
-     * @ORM\Column(type="string")
-     * @Assert\NotBlank
+     * @ORM\Column(type="string", nullable=true)
+     * @Assert\NotBlank(groups={"ibr_sylius_shop"})
      */
     protected $city;
 
     /**
      * @var string $country
-     * @ORM\Column(type="string")
-     * @Assert\Country
+     * @ORM\Column(type="string", nullable=true)
+     * @Assert\Country(groups={"ibr_sylius_shop"})
      */
     protected $country;
 
     /**
      * @var string $phone
-     * @ORM\Column( type="string")
-     * @Assert\NotBlank
+     * @ORM\Column( type="string", nullable=true)
+     * @Assert\NotBlank(groups={"ibr_sylius_shop"})
      */
     protected $phone;
 
     /**
      * @var string $email
-     * @ORM\Column(type="string")
-     * @Assert\Email
+     * @ORM\Column(type="string", nullable=true)
+     * @Assert\Email(groups={"ibr_sylius_shop"})
      */
     protected $email;
 
