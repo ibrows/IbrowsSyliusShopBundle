@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="fos_user")
  */
-class BaseUser extends FOSUser
+class User extends FOSUser
 {
     /**
      * @var int
@@ -21,7 +21,7 @@ class BaseUser extends FOSUser
 
     /**
      * @param string $email
-     * @return BaseUser
+     * @return User
      */
     public function setEmail($email)
     {
