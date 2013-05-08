@@ -168,7 +168,8 @@ class WizardController extends AbstractWizardController
 
         return array(
                 'invoiceAddressForm' => $invoiceAddressForm->createView(),
-                'deliveryAddressForm' => $deliveryAddressForm->createView()
+                'deliveryAddressForm' => $deliveryAddressForm->createView(),
+                'cart' => $cart
         );
     }
 
