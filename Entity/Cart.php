@@ -3,24 +3,17 @@
 namespace Ibrows\SyliusShopBundle\Entity;
 
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
-
 use JMS\Payment\CoreBundle\Model\PaymentInstructionInterface;
-
 use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
-
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
-
 use Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface;
 use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
 use Ibrows\SyliusShopBundle\Model\Delivery\DeliveryOptionInterface;
 use Ibrows\SyliusShopBundle\Model\Payment\PaymentOptionsInterface;
-
 use Sylius\Bundle\CartBundle\Model\CartItemInterface;
 use Sylius\Bundle\CartBundle\Entity\Cart as BaseCart;
-
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
 use DateTime;
 
 /**
@@ -41,19 +34,23 @@ class Cart extends BaseCart implements CartInterface
      * @var string
      * @ORM\Column(type="string", nullable=true)
      */
+    protected $currency;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */
     protected $email;
 
     /**
      * @var Collection
-     * @ORM\OneToMany(targetEntity="CartItem", mappedBy="cart", cascade="all", orphanRemoval=true)
-     * @ORM\JoinColumn(name="item_id", referencedColumnName="id")
+     * @ORM\OneToMany(targetEntity="Ibrows\SyliusShopBundle\Model\CartItemInterface", mappedBy="cart", cascade="all", orphanRemoval=true)
      */
     protected $items;
 
     /**
      * @var Collection
-     * @ORM\OneToMany(targetEntity="AdditionalCartItem", mappedBy="cart", cascade="all", orphanRemoval=true)
-     * @ORM\JoinColumn(name="item_addiational_id", referencedColumnName="id")
+     * @ORM\OneToMany(targetEntity="Ibrows\SyliusShopBundle\Model\AdditionalCartItemInterface", mappedBy="cart", cascade="all", orphanRemoval=true)
      */
     protected $additionalitems;
 
@@ -85,7 +82,7 @@ class Cart extends BaseCart implements CartInterface
     /**
      * @var DeliveryAddressInterface
      * @ORM\OneToOne(targetEntity="Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface")
-     * @ORM\JoinColumn(name="payment_address_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="delivery_address_id", referencedColumnName="id")
      */
     protected $deliveryAddress;
 
@@ -115,11 +112,9 @@ class Cart extends BaseCart implements CartInterface
      */
     private $paymentInstruction;
 
-
     public function calculateTotal()
     {
-        $this->total = 0;
-
+        $this->total = 0.0;
         foreach ($this->items as $item) {
             $item->calculateTotal();
             $this->total += $item->getTotal();
@@ -282,8 +277,8 @@ class Cart extends BaseCart implements CartInterface
     }
 
     /**
-     * @param DeliveryOptionInterface $DeliveryOption
-     * @return Cart
+     * @param DeliveryOptionInterface $deliveryOption
+     * @return CartInterface
      */
     public function setDeliveryOption(DeliveryOptionInterface $deliveryOption = null)
     {
@@ -379,7 +374,6 @@ class Cart extends BaseCart implements CartInterface
         }else{
             $this->closed = new DateTime;
         }
-
         return $this;
     }
 
@@ -392,15 +386,12 @@ class Cart extends BaseCart implements CartInterface
     }
 
     /**
-     * Set invoiceAddressObj
-     *
-     * @param \stdClass $invoiceAddressObj
-     * @return Cart
+     * @param InvoiceAddressInterface $invoiceAddressObj
+     * @return CartInterface
      */
-    public function setInvoiceAddressObj(InvoiceAddressInterface $invoiceAddressObj = Null)
+    public function setInvoiceAddressObj(InvoiceAddressInterface $invoiceAddressObj = null)
     {
         $this->invoiceAddressObj = $invoiceAddressObj;
-
         return $this;
     }
 
@@ -415,25 +406,39 @@ class Cart extends BaseCart implements CartInterface
     }
 
     /**
-     * Set deliveryAddressObj
-     *
-     * @param \stdClass $deliveryAddressObj
-     * @return Cart
+     * @param DeliveryAddressInterface $deliveryAddressObj
+     * @return CartInterface
      */
-    public function setDeliveryAddressObj(DeliveryAddressInterface $deliveryAddressObj = Null)
+    public function setDeliveryAddressObj(DeliveryAddressInterface $deliveryAddressObj = null)
     {
         $this->deliveryAddressObj = $deliveryAddressObj;
-
         return $this;
     }
 
     /**
      * Get deliveryAddressObj
-     *
      * @return \stdClass
      */
     public function getDeliveryAddressObj()
     {
         return $this->deliveryAddressObj;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    /**
+     * @param string $currency
+     * @return Cart
+     */
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
+        return $this;
     }
 }
