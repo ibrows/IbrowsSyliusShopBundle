@@ -5,18 +5,15 @@ namespace Ibrows\SyliusShopBundle\Cart;
 use Ibrows\SyliusShopBundle\Model\Product\ProductInterface;
 use Sylius\Bundle\InventoryBundle\Model\StockableInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
-
 use Doctrine\Common\Persistence\ObjectRepository;
-
 use Sylius\Bundle\CartBundle\Model\CartItemInterface;
 use Sylius\Bundle\CartBundle\Resolver\ItemResolverInterface;
 use Sylius\Bundle\CartBundle\Resolver\ItemResolvingException;
 use Sylius\Bundle\InventoryBundle\Checker\AvailabilityCheckerInterface;
-
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\Request;
 
-class BaseItemResolver implements ItemResolverInterface
+abstract class BaseItemResolver implements ItemResolverInterface
 {
     /**
      * Product manager.
