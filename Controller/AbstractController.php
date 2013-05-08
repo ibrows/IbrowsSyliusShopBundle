@@ -25,12 +25,16 @@ use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
 use Ibrows\SyliusShopBundle\IbrowsSyliusShopBundle;
 
 use Ibrows\SyliusShopBundle\Cart\Exception\CartException;
-
+use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Form\FormInterface;
+use Ibrows\Bundle\WizardAnnotationBundle\Annotation\AnnotationHandler as WizardHandler;
+use Symfony\Component\Form\FormError;
 
 use FOS\UserBundle\Model\UserManagerInterface;
 use FOS\UserBundle\Model\UserInterface;
@@ -314,6 +318,14 @@ abstract class AbstractController extends Controller
     protected function getNewDeliveryAddress()
     {
         return new Address();
+    }
+
+    /**
+     * @return PaymentInstruction
+     */
+    protected function getNewPaymentInstruction()
+    {
+        return new PaymentInstruction();
     }
 
     /**
