@@ -5,7 +5,7 @@ use Ibrows\SyliusShopBundle\Cart\Exception\CartItemNotOnStockException;
 
 use Ibrows\SyliusShopBundle\Cart\CartManager;
 use Ibrows\SyliusShopBundle\Cart\CurrentCartManager;
-
+use Ibrows\SyliusShopBundle\Form\SummaryType;
 use Ibrows\SyliusShopBundle\Repository\ProductRepository;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 
@@ -156,11 +156,16 @@ abstract class AbstractController extends Controller
         return $this->getCurrentCartManager()->getCart();
     }
 
-    /**
-     * @return CartManager
-     * @throws CartException
-     */
     protected function persistCurrentCart()
+    {
+        $this->persistCart($this->getCurrentCart());
+    }
+
+    /**
+     * @param CartInterface $cart
+     * @return CartManager
+     */
+    protected function persistCart(CartInterface $cart)
     {
         try {
             return $this->getCurrentCartManager()->persistCart();
@@ -171,9 +176,8 @@ abstract class AbstractController extends Controller
                 $this->get('session')->getFlashBag()->add('notice', $message);
                 $item->setQuantityToAvailable();
             }
-            return $this->getCurrentCartManager()->persistCart();
+            $this->persistCart($cart);
         }
-
     }
 
     /**
@@ -278,6 +282,11 @@ abstract class AbstractController extends Controller
     protected function getLoginType()
     {
         return new LoginType();
+    }
+
+    protected function getSummaryType()
+    {
+        return new SummaryType();
     }
 
     /**
