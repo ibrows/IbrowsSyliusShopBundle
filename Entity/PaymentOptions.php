@@ -1,8 +1,8 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Entity;
-use Ibrows\SyliusShopBundle\Model\Payment\PaymentOptionsInterface;
 
+use Ibrows\SyliusShopBundle\Model\Payment\PaymentOptionsInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -12,6 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 class PaymentOptions implements PaymentOptionsInterface
 {
     /**
+     * @var int
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -24,25 +25,37 @@ class PaymentOptions implements PaymentOptionsInterface
      */
     protected $name;
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
-        return $this->getName();
+        return (string)$this->getName();
     }
 
+    /**
+     * @return integer
+     */
     public function getId()
     {
         return $this->id;
     }
 
+    /**
+     * @return string
+     */
     public function getName()
     {
         return $this->name;
     }
 
+    /**
+     * @param string $name
+     * @return PaymentOptions
+     */
     public function setName($name)
     {
         $this->name = $name;
         return $this;
     }
-
 }
