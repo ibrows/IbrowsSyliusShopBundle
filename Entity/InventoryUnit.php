@@ -1,10 +1,9 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Entity;
+
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
-
 use Sylius\Bundle\InventoryBundle\Entity\InventoryUnit as BaseInventoryUnit;
-
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -13,7 +12,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class InventoryUnit extends BaseInventoryUnit
 {
-
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -22,8 +20,6 @@ class InventoryUnit extends BaseInventoryUnit
     protected $id;
 
     /**
-     * Cart.
-     *
      * @var CartInterface
      */
     protected $cart;
@@ -31,19 +27,24 @@ class InventoryUnit extends BaseInventoryUnit
     public function __construct()
     {
         parent::__construct();
-
         $this->shippingState = ShipmentItemInterface::STATE_READY;
     }
 
+    /**
+     * @return CartInterface
+     */
     public function getCart()
     {
         return $this->cart;
     }
 
+    /**
+     * @param CartInterface $cart
+     * @return InventoryUnit
+     */
     public function setCart(CartInterface $cart)
     {
         $this->cart = $cart;
         return $this;
     }
-
 }
