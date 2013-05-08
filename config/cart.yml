@@ -4,9 +4,9 @@ sylius_cart:
   resolver: ibrows_syliusshop.cart.resolver
   classes:
     cart:
-      model: Ibrows\SyliusShopBundle\Entity\Cart
+      model: %ibrows_sylius_shop.cart.class%
       repository: Ibrows\SyliusShopBundle\Repository\CartRepository
     item:
-      model: Ibrows\SyliusShopBundle\Entity\CartItem
+      model: %ibrows_sylius_shop.cartitem.class%
       form: Sylius\Bundle\CartBundle\Form\Type\CartItemType 
       repository: Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository
