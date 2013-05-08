@@ -36,8 +36,6 @@ class AdditionalCartItem implements AdditionalCartItemInterface
     protected $text;
 
     /**
-     * Cart.
-     *
      * @var CartInterface
      * @ORM\ManyToOne(targetEntity="Sylius\Bundle\CartBundle\Model\CartInterface",  inversedBy="additionalitems")
      */
