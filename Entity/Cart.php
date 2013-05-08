@@ -15,6 +15,7 @@ use Sylius\Bundle\CartBundle\Entity\Cart as BaseCart;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use DateTime;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
@@ -67,6 +68,13 @@ class Cart extends BaseCart implements CartInterface
     protected $closed;
 
     /**
+     * @var DateTime
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Assert\NotNull(groups={"sylius_wizard_summary"})
+     */
+    protected $termsAndConditions;
+
+    /**
      * @var InvoiceAddressInterface
      * @ORM\OneToOne(targetEntity="Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface")
      * @ORM\JoinColumn(name="invoice_address_id", referencedColumnName="id")
@@ -107,10 +115,11 @@ class Cart extends BaseCart implements CartInterface
     protected $paymentOptions;
 
     /**
-     *  @var PaymentInstructionInterface
-     *  @ORM\OneToOne(targetEntity="JMS\Payment\CoreBundle\Model\PaymentInstructionInterface")
+     * @var PaymentInstructionInterface
+     * @ORM\OneToOne(targetEntity="JMS\Payment\CoreBundle\Model\PaymentInstructionInterface")
+     * @ORM\JoinColumn(name="payment_instructions_id", referencedColumnName="id")
      */
-    private $paymentInstruction;
+    protected $paymentInstruction;
 
     public function calculateTotal()
     {
@@ -439,6 +448,36 @@ class Cart extends BaseCart implements CartInterface
     public function setCurrency($currency)
     {
         $this->currency = $currency;
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function isTermsAndConditions()
+    {
+        return $this->termsAndConditions !== null;
+    }
+
+    /**
+     * @return DateTime
+     */
+    public function getTermsAndConditionsAt()
+    {
+        return $this->termsAndConditions;
+    }
+
+    /**
+     * @param bool $flag
+     * return Cart
+     */
+    public function setTermsAndConditions($flag = true)
+    {
+        if(false === $flag){
+            $this->termsAndConditions = null;
+        }else{
+            $this->termsAndConditions = new DateTime;
+        }
         return $this;
     }
 }
