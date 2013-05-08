@@ -165,4 +165,20 @@ interface CartInterface extends BaseCartInterface
      * @return CartInterface
      */
     public function refreshCart();
+
+    /**
+     * @return bool
+     */
+    public function isTermsAndConditions();
+
+    /**
+     * @return DateTime
+     */
+    public function getTermsAndConditionsAt();
+
+    /**
+     * @param bool $flag
+     * @return CartInterface
+     */
+    public function setTermsAndConditions($flag = true);
 }
