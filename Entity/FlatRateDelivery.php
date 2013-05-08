@@ -9,9 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="ibr_sylius_delivery_option_free")
  */
-class FlatRateDelivery  extends AdditionalCartItem implements DeliveryOptionInterface
+class FlatRateDelivery extends AdditionalCartItem implements DeliveryOptionInterface
 {
-
     /**
      * Total value.
      * @ORM\Column(type="decimal", scale=2, precision=11)
@@ -19,11 +18,18 @@ class FlatRateDelivery  extends AdditionalCartItem implements DeliveryOptionInte
      */
     protected $minTotal;
 
+    /**
+     * @return float
+     */
     public function getMinTotal()
     {
         return $this->minTotal;
     }
 
+    /**
+     * @param $minTotal
+     * @return FlatRateDelivery
+     */
     public function setMinTotal($minTotal)
     {
         $this->minTotal = $minTotal;
