@@ -9,6 +9,7 @@ use JMS\Payment\CoreBundle\PluginController\PluginController;
 use JMS\Payment\CoreBundle\Plugin\Exception\ActionRequiredException;
 use JMS\Payment\CoreBundle\Plugin\Exception\Action\VisitUrl;
 use JMS\Payment\CoreBundle\PluginController\Result;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -138,7 +139,7 @@ class WizardController extends AbstractWizardController
         $invoiceAddressForm = $this
                 ->createForm($this->getInvoiceAddressType(), $invoiceaddress,
                         array(
-                                'data_class' => $this->getInvoiceAddressClass(),
+                                'data_class' => get_class($invoiceaddress),
                                 'validation_groups' => array(
                                         'sylius_wizard_address'
                                 )
@@ -147,7 +148,7 @@ class WizardController extends AbstractWizardController
         $deliveryAddressForm = $this
                 ->createForm($this->getDeliveryAddressType(), $deliveryAddress,
                         array(
-                                'data_class' => $this->getDeliveryAddressClass(),
+                                'data_class' => get_class($deliveryAddress),
                                 'validation_groups' => array(
                                         'sylius_wizard_address'
                                 )
@@ -189,41 +190,39 @@ class WizardController extends AbstractWizardController
 
         $instruction = $cart->getPaymentInstruction() ?: $this->getNewPaymentInstruction($cart);
 
-        $form = $this->createForm('jms_choose_payment_method', $instruction,
-            array(
-                'data_class' => null,
-                'amount' => $cart->getTotal(),
-                'currency' => 'CHF',
-                'default_method' => null, // Optional
-                'predefined_data' => array(
-                    'saferpay' => array(
-                        'DESCRIPTION' => sprintf('Bestellnummer: %s', $cart->getId()),
-                        'ORDERID' => $cart->getId(),
-                        'SUCCESSLINK' => $this->generateUrl('wizard_notification'),
-                        //$this->generateUrl('wizard_payment', array('status' => 'success'), true),
-                        'FAILLINK' => $this->generateUrl('wizard_payment', array('status' => 'fail')),
-                        'BACKLINK' => $this->generateUrl('wizard_payment', array()),
-                        'FIRSTNAME' => $invoiceaddress->getFirstname(),
-                        'LASTNAME' => $invoiceaddress->getLastname(),
-                        'STREET' => $invoiceaddress->getStreet(),
-                        'ZIP' => $invoiceaddress->getZip(),
-                        'CITY' => $invoiceaddress->getCity(),
-                        'COUNTRY' => $invoiceaddress->getCountry(),
-                        'EMAIL' => $invoiceaddress->getEmail()
-                    ),
-                )
+        $form = $this->createForm('jms_choose_payment_method', $instruction, array(
+            'data_class' => null,
+            'amount' => $cart->getTotal(),
+            'currency' => 'CHF',
+            'default_method' => null, // Optional
+            'predefined_data' => array(
+                'saferpay' => array(
+                    'DESCRIPTION' => sprintf('Bestellnummer: %s', $cart->getId()),
+                    'ORDERID' => $cart->getId(),
+                    'SUCCESSLINK' => $this->generateUrl('wizard_payment', array(), UrlGeneratorInterface::ABSOLUTE_URL),
+                    'FAILLINK' => $this->generateUrl('wizard_payment', array('status' => 'fail'), UrlGeneratorInterface::ABSOLUTE_URL),
+                    'BACKLINK' => $this->generateUrl('wizard_payment', array(), UrlGeneratorInterface::ABSOLUTE_URL),
+                    'FIRSTNAME' => $invoiceaddress->getFirstname(),
+                    'LASTNAME' => $invoiceaddress->getLastname(),
+                    'STREET' => $invoiceaddress->getStreet(),
+                    'ZIP' => $invoiceaddress->getZip(),
+                    'CITY' => $invoiceaddress->getCity(),
+                    'COUNTRY' => $invoiceaddress->getCountry(),
+                    'EMAIL' => $invoiceaddress->getEmail()
+                ),
             )
-        );
+        ));
 
         if ('POST' === $this->getRequest()->getMethod()) {
             $form->bind($this->getRequest());
             if ($form->isValid()) {
+
                 $ppc = $this->get("payment.plugin_controller");
                 $instruction = $form->getData();
 
                 $ppc->createPaymentInstruction($instruction);
                 $cart->setPaymentInstruction($instruction);
-                $this->persistCurrentCart($cart);
+                $this->persistCurrentCart();
 
                 return $this->redirect($this->getWizard()->getNextStepUrl());
             }
@@ -241,8 +240,31 @@ class WizardController extends AbstractWizardController
      */
     public function summaryAction()
     {
+        $cart = $this->getCurrentCart();
+        $cart->setTermsAndConditions(false);
+        $this->persistCurrentCart();
+
+        $form = $this->createForm($this->getSummaryType(), $cart, array(
+            'validation_groups' => array(
+                'sylius_wizard_summary'
+            )
+        ));
+
+        $request = $this->getRequest();
+
+        if('POST' === $request->getMethod()){
+            $form->bind($request);
+            if ($form->isValid()) {
+
+                $this->persistCurrentCart();
+
+                return $this->redirect($this->getWizard()->getNextStepUrl());
+            }
+        }
+
         return array(
-            'cart' => $this->getCurrentCart()
+            'form' => $form->createView(),
+            'cart' => $cart
         );
     }
 
@@ -254,8 +276,9 @@ class WizardController extends AbstractWizardController
     public function paymentAction()
     {
         $em = $this->getDoctrine()->getManagerForClass($this->getPaymentOptionsClass());
+
         $cart = $this->getCurrentCart();
-        if ($cart->isPayed()) {
+        if($cart->isPayed()){
             return $this->redirect($this->getWizard()->getNextStepUrl());
         }
 
@@ -290,7 +313,7 @@ class WizardController extends AbstractWizardController
                     $action = $ex->getAction();
                     if ($action instanceof VisitUrl) {
                         $cart->setPaymentInstruction($instruction);
-                        $this->persistCurrentCart($cart);
+                        $this->persistCurrentCart();
 
                         return new RedirectResponse($action->getUrl());
                     }
@@ -306,7 +329,7 @@ class WizardController extends AbstractWizardController
             if (Result::STATUS_SUCCESS === $result->getStatus()) {
                 $cart->setPayed(true);
                 $cart->setPaymentInstruction($instruction);
-                $this->persistCurrentCart($cart);
+                $this->persistCurrentCart();
 
                 return $this->redirect($this->getWizard()->getNextStepUrl());
             } else {
