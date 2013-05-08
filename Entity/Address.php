@@ -26,63 +26,63 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
     /**
      * @var string $firstname
      * @ORM\Column(type="string", nullable=true)
-     * @Assert\NotBlank(groups={"ibr_sylius_shop"})
+     * @Assert\NotBlank(groups={"sylius_wizard_address"})
      */
     protected $firstname;
 
     /**
      * @var string $lastname
      * @ORM\Column(type="string", nullable=true)
-     * @Assert\NotBlank(groups={"ibr_sylius_shop"})
+     * @Assert\NotBlank(groups={"sylius_wizard_address"})
      */
     protected $lastname;
 
     /**
      * @var string $company
      * @ORM\Column(type="string", nullable=true)
-     * @Assert\NotBlank(groups={"ibr_sylius_shop"})
+     * @Assert\NotBlank(groups={"sylius_wizard_address"})
      */
     protected $company;
 
     /**
      * @var string $street
      * @ORM\Column(type="string", nullable=true)
-     * @Assert\NotBlank(groups={"ibr_sylius_shop"})
+     * @Assert\NotBlank(groups={"sylius_wizard_address"})
      */
     protected $street;
 
     /**
      * @var string $zip
      * @ORM\Column(type="string", nullable=true)
-     * @Assert\NotBlank(groups={"ibr_sylius_shop"})
+     * @Assert\NotBlank(groups={"sylius_wizard_address"})
      */
     protected $zip;
 
     /**
      * @var string $city
      * @ORM\Column(type="string", nullable=true)
-     * @Assert\NotBlank(groups={"ibr_sylius_shop"})
+     * @Assert\NotBlank(groups={"sylius_wizard_address"})
      */
     protected $city;
 
     /**
      * @var string $country
      * @ORM\Column(type="string", nullable=true)
-     * @Assert\Country(groups={"ibr_sylius_shop"})
+     * @Assert\Country(groups={"sylius_wizard_address"})
      */
     protected $country;
 
     /**
      * @var string $phone
      * @ORM\Column( type="string", nullable=true)
-     * @Assert\NotBlank(groups={"ibr_sylius_shop"})
+     * @Assert\NotBlank(groups={"sylius_wizard_address"})
      */
     protected $phone;
 
     /**
      * @var string $email
      * @ORM\Column(type="string", nullable=true)
-     * @Assert\Email(groups={"ibr_sylius_shop"})
+     * @Assert\Email(groups={"sylius_wizard_address"})
      */
     protected $email;
 
