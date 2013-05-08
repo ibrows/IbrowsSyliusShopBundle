@@ -1,0 +1,24 @@
+<?php
+
+namespace Ibrows\SyliusShopBundle\Form;
+
+use Symfony\Component\Form\FormBuilderInterface;
+
+class SummaryType extends AbstractType
+{
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+            ->add('termsandconditions', 'checkbox')
+        ;
+    }
+
+    public function getName()
+    {
+        return 'ibr_sylius_summary';
+    }
+}
