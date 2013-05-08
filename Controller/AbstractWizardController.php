@@ -89,7 +89,7 @@ abstract class AbstractWizardController extends AbstractController
     public function paymentValidation()
     {
         $cart = $this->getCurrentCart();
-        if (!$cart->getPaymentInstruction()) {
+        if (!$cart->isTermsAndConditions()) {
             return Wizard::REDIRECT_STEP_BACK;
         }
         return true;
@@ -100,6 +100,10 @@ abstract class AbstractWizardController extends AbstractController
      */
     public function notificationValidation()
     {
+        $cart = $this->getCurrentCart();
+        if (!$cart->isPayed()) {
+            return Wizard::REDIRECT_STEP_BACK;
+        }
         return true;
     }
 
