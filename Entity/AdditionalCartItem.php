@@ -17,6 +17,7 @@ use DateTime;
  * @ORM\Entity
  * @ORM\Table(name="ibr_sylius_cart_additional_item")
  * @ORM\InheritanceType("JOINED")
+ * @ORM\DiscriminatorMap({"additionalcartitem": "Ibrows\DivoBundle\Entity\AdditionalCartItem", "flatratedelivery": "Ibrows\SyliusShopBundle\Entity\FlatRateDelivery"})
  */
 class AdditionalCartItem implements AdditionalCartItemInterface
 {
@@ -28,9 +29,7 @@ class AdditionalCartItem implements AdditionalCartItemInterface
     protected $id;
 
     /**
-     * Cart.
-     *
-     * @var CartInterface
+     * @var string
      * @ORM\Column(type="string")
      */
     protected $text;
