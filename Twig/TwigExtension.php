@@ -41,7 +41,7 @@ class TwigExtension extends \Twig_Extension
      */
     public function getCurrentCart()
     {
-       return $this->currentCartManager->getCart(true);
+       return $this->currentCartManager->getCart();
     }
 
     /**
