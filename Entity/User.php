@@ -3,10 +3,13 @@
 namespace Ibrows\SyliusShopBundle\Entity;
 
 use FOS\UserBundle\Entity\User as FOSUser;
-
 use Doctrine\ORM\Mapping as ORM;
 
-class BaseUser extends FOSUSer
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="fos_user")
+ */
+class BaseUser extends FOSUser
 {
     /**
      * @var int

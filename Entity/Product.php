@@ -3,16 +3,15 @@
 namespace Ibrows\SyliusShopBundle\Entity;
 
 use Ibrows\SyliusShopBundle\Model\Product\ProductInterface;
-
 use Symfony\Component\Validator\Constraints as Assert;
-
 use Doctrine\ORM\Mapping as ORM;
+use DateTime;
 
 /**
- * @author marcsteiner
- * BaseProduct without Variants
+ * @ORM\Entity
+ * @ORM\Table(name="ibr_sylius_product")
  */
-class BaseProduct implements ProductInterface
+class Product implements ProductInterface
 {
     /**
      * @var int
