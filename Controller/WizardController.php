@@ -3,6 +3,7 @@
 namespace Ibrows\SyliusShopBundle\Controller;
 use JMS\Payment\CoreBundle\Entity\FinancialTransaction;
 use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
+use JMS\Payment\CoreBundle\Form\ChoosePaymentMethodType;
 use JMS\Payment\CoreBundle\Model\PaymentInterface;
 use JMS\Payment\CoreBundle\PluginController\PluginController;
 use JMS\Payment\CoreBundle\Plugin\Exception\ActionRequiredException;
@@ -166,6 +167,8 @@ class WizardController extends AbstractWizardController
             }
         }
 
+
+
         return array(
                 'invoiceAddressForm' => $invoiceAddressForm->createView(),
                 'deliveryAddressForm' => $deliveryAddressForm->createView(),
@@ -177,56 +180,57 @@ class WizardController extends AbstractWizardController
      * @Route("/payment_instruction", name="wizard_payment_instruction")
      * @Template
      * @Wizard(name="payment_instruction", number=4, validationMethod="paymentInstructionValidation")
+     * @todo setData to current payment...
      */
     public function paymentInstructionAction()
     {
         $cart = $this->getCurrentCart();
         $invoiceaddress = $cart->getInvoiceAddress();
-        $ppc = $this->get("payment.plugin_controller");
 
-        /* @var $ppc PluginController */
-        $instruction = $cart->getPaymentInstruction();
-        //@todo setData to current payment...
-        $form = $this
-            ->createForm('jms_choose_payment_method', $instruction,
-                array(
-                    'data_class' => get_class($instruction),
-                    'amount' => $cart->getTotal(),
-                    'currency' => 'CHF',
-                    'default_method' => null, // Optional
-                    'predefined_data' => array(
-                        'saferpay' => array(
-                            'DESCRIPTION' => sprintf('Bestellnummer: %s', $cart->getId()),
-                            'ORDERID' => $cart->getId(),
-                            'SUCCESSLINK' => 'http://www.test.ch/?status=success',
-                            //$this->generateUrl('wizard_payment', array('status' => 'success'), true),
-                            'FAILLINK' => $this->generateUrl('wizard_payment', array('status' => 'fail'), true),
-                            'BACKLINK' => $this->generateUrl('wizard_payment', array(), true),
-                            'FIRSTNAME' => $invoiceaddress->getFirstname(),
-                            'LASTNAME' => $invoiceaddress->getLastname(),
-                            'STREET' => $invoiceaddress->getStreet(),
-                            'ZIP' => $invoiceaddress->getZip(),
-                            'CITY' => $invoiceaddress->getCity(),
-                            'COUNTRY' => $invoiceaddress->getCountry(),
-                            'EMAIL' => $invoiceaddress->getEmail()
-                        ),
-                    )
+        $instruction = $cart->getPaymentInstruction() ?: $this->getNewPaymentInstruction($cart);
+
+        $form = $this->createForm('jms_choose_payment_method', $instruction,
+            array(
+                'data_class' => null,
+                'amount' => $cart->getTotal(),
+                'currency' => 'CHF',
+                'default_method' => null, // Optional
+                'predefined_data' => array(
+                    'saferpay' => array(
+                        'DESCRIPTION' => sprintf('Bestellnummer: %s', $cart->getId()),
+                        'ORDERID' => $cart->getId(),
+                        'SUCCESSLINK' => $this->generateUrl('wizard_notification'),
+                        //$this->generateUrl('wizard_payment', array('status' => 'success'), true),
+                        'FAILLINK' => $this->generateUrl('wizard_payment', array('status' => 'fail')),
+                        'BACKLINK' => $this->generateUrl('wizard_payment', array()),
+                        'FIRSTNAME' => $invoiceaddress->getFirstname(),
+                        'LASTNAME' => $invoiceaddress->getLastname(),
+                        'STREET' => $invoiceaddress->getStreet(),
+                        'ZIP' => $invoiceaddress->getZip(),
+                        'CITY' => $invoiceaddress->getCity(),
+                        'COUNTRY' => $invoiceaddress->getCountry(),
+                        'EMAIL' => $invoiceaddress->getEmail()
+                    ),
                 )
-            );
+            )
+        );
 
         if ('POST' === $this->getRequest()->getMethod()) {
             $form->bind($this->getRequest());
             if ($form->isValid()) {
+                $ppc = $this->get("payment.plugin_controller");
                 $instruction = $form->getData();
+
                 $ppc->createPaymentInstruction($instruction);
                 $cart->setPaymentInstruction($instruction);
                 $this->persistCurrentCart($cart);
+
                 return $this->redirect($this->getWizard()->getNextStepUrl());
             }
         }
 
         return array(
-                'form' => $form->createView()
+            'form' => $form->createView()
         );
     }
 
@@ -324,7 +328,7 @@ class WizardController extends AbstractWizardController
         $this->getCurrentCartManager()->closeCart();
 
         return array(
-                'cart' => $cart
+            'cart' => $cart
         );
     }
 }
