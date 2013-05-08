@@ -309,7 +309,8 @@ abstract class AbstractController extends Controller
      */
     protected function getNewInvoiceAddress()
     {
-        return new Address();
+        $className = $this->getInvoiceAddressClass();
+        return new $className();
     }
 
     /**
@@ -317,15 +318,18 @@ abstract class AbstractController extends Controller
      */
     protected function getNewDeliveryAddress()
     {
-        return new Address();
+        $className = $this->getDeliveryAddressClass();
+        return new $className();
     }
 
     /**
+     * @param CartInterface $cart
      * @return PaymentInstruction
      */
-    protected function getNewPaymentInstruction()
+    protected function getNewPaymentInstruction(CartInterface $cart)
     {
-        return new PaymentInstruction();
+        $className = $this->getParameter('ibrows_sylius_shop.paymentinstructions.class');
+        return new $className($cart->getTotalItems(), 'CHF', null);
     }
 
     /**
