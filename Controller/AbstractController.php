@@ -75,7 +75,16 @@ abstract class AbstractController extends Controller
      */
     protected function getRepository($className)
     {
-        return $this->getDoctrine()->getManagerForClass($className)->getRepository($className);
+        return $this->getManagerForClass($className)->getRepository($className);
+    }
+
+    /**
+     * @param string $className
+     * @return ObjectManager
+     */
+    protected function getManagerForClass($className)
+    {
+        return $this->getDoctrine()->getManagerForClass($className);
     }
 
     /**
