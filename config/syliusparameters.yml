@@ -15,3 +15,5 @@ parameters:
   ibrows_sylius_shop.cart.class: Ibrows\SyliusShopBundle\Entity\Cart
   ibrows_sylius_shop.cartitem.class: Ibrows\SyliusShopBundle\Entity\CartItem
   ibrows_sylius_shop.additionalcartitem.class: Ibrows\SyliusShopBundle\Entity\AdditionalCartItem
+
+  ibrows_sylius_shop.hinclude.defaultTemplate: IbrowsSyliusShopBundle::hinclude.html.twig

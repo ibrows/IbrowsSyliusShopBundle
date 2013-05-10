@@ -56,6 +56,8 @@
 
         <service id="ibrows_syliusshop.twig.extension" class="Ibrows\SyliusShopBundle\Twig\TwigExtension">
             <argument type="service" id="ibrows_syliusshop.currentcart.manager" />
+            <argument>%ibrows_sylius_shop.hinclude.defaultTemplate%</argument>
+            <argument>%kernel.charset%</argument>
             <tag name="twig.extension" />
         </service>
     </services>
