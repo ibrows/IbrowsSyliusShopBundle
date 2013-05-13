@@ -2,6 +2,7 @@
 
 namespace Ibrows\SyliusShopBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 use JMS\Payment\CoreBundle\Model\PaymentInstructionInterface;
 use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
@@ -83,7 +84,7 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @var InvoiceAddressInterface $invoiceAddressObj
-     * @ORM\Column(type="object", name="invoice_address_obj")
+     * @ORM\Column(type="object", name="invoice_address_obj", nullable=true)
      */
     protected $invoiceAddressObj;
 
@@ -96,7 +97,7 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @var InvoiceAddressInterface $deliveryAddressObj
-     * @ORM\Column(type="object", name="delivery_address_obj")
+     * @ORM\Column(type="object", name="delivery_address_obj", nullable=true)
      */
     protected $deliveryAddressObj;
 
@@ -120,6 +121,14 @@ class Cart extends BaseCart implements CartInterface
      * @ORM\JoinColumn(name="payment_instructions_id", referencedColumnName="id")
      */
     protected $paymentInstruction;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->items = new ArrayCollection();
+        $this->additionalitems = new ArrayCollection();
+    }
 
     public function calculateTotal()
     {
