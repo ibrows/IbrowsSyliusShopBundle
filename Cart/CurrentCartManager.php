@@ -2,6 +2,7 @@
 
 namespace Ibrows\SyliusShopBundle\Cart;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface;
 
@@ -14,6 +15,7 @@ use Sylius\Bundle\CartBundle\Resolver\ItemResolverInterface;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Common\Collections\Collection;
 
 class CurrentCartManager extends CartManager
 {
@@ -23,6 +25,16 @@ class CurrentCartManager extends CartManager
     protected $provider;
 
     protected $additionalservices = array();
+
+    /**
+     * @var CartSerializerInterface[]|Collection
+     */
+    protected $cartSerializers;
+
+    /**
+     * @var CartItemSerializerInterface[]|Collection
+     */
+    protected $cartItemSerializers;
 
     /**
      * @param ObjectManager $cartManager
@@ -46,7 +58,50 @@ class CurrentCartManager extends CartManager
 
         $this->provider = $provider;
         parent::setCart($provider->getCart());
+
         $this->additionalservices = array();
+        $this->cartItemSerializers = new ArrayCollection();
+        $this->cartSerializers = new ArrayCollection();
+    }
+
+    /**
+     * @param CartSerializerInterface $serializer
+     * @return CurrentCartManager
+     */
+    public function addCartSerializer(CartSerializerInterface $serializer)
+    {
+        $this->cartSerializers->add($serializer);
+        return $this;
+    }
+
+    /**
+     * @param CartSerializerInterface $serializer
+     * @return CurrentCartManager
+     */
+    public function removeCartSerializer(CartSerializerInterface $serializer)
+    {
+        $this->cartSerializers->removeElement($serializer);
+        return $this;
+    }
+
+    /**
+     * @param CartItemSerializerInterface $serializer
+     * @return CurrentCartManager
+     */
+    public function addCartItemSerializer(CartItemSerializerInterface $serializer)
+    {
+        $this->cartItemSerializers->add($serializer);
+        return $this;
+    }
+
+    /**
+     * @param CartItemSerializerInterface $serializer
+     * @return CurrentCartManager
+     */
+    public function removeCartItemSerializer(CartItemSerializerInterface $serializer)
+    {
+        $this->cartItemSerializers->removeElement($serializer);
+        return $this;
     }
 
     /**
@@ -105,8 +160,8 @@ class CurrentCartManager extends CartManager
             throw new \BadMethodCallException("Cart is already closed");
         }
 
-        // TODO serialize items - save all infos from ProductInterface to Cart
-
+        $this->serializeCart($cart);
+        $this->serializeCartItems($cart);
 
         $cart->setClosed();
         $this->clearCurrentCart();
@@ -121,5 +176,33 @@ class CurrentCartManager extends CartManager
         $this->provider->abandonCart();
         parent::setCart(null);
         return $this;
+    }
+
+    /**
+     * @param CartInterface $cart
+     */
+    protected function serializeCart(CartInterface $cart)
+    {
+        foreach($this->cartSerializers as $serializer){
+            if(true === $serializer->accept($cart)){
+                $serializer->close($cart);
+                return;
+            }
+        }
+    }
+
+    /**
+     * @param CartInterface $cart
+     */
+    protected function serializeCartItems(CartInterface $cart)
+    {
+        foreach($cart->getItems() as $item){
+            foreach($this->cartItemSerializers as $serializer){
+                if(true === $serializer->accept($item)){
+                    $serializer->close($item);
+                    break;
+                }
+            }
+        }
     }
 }

@@ -8,19 +8,25 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class CompilerPass implements CompilerPassInterface
 {
-    private $interfaces;
+    /**
+     * @var array
+     */
+    protected $interfaces;
 
+    /**
+     * @param array $interfaces
+     */
     public function __construct(array $interfaces)
     {
         $this->interfaces = $interfaces;
     }
 
     /**
-     * {@inheritdoc}
+     * @param ContainerBuilder $container
+     * @throws \RuntimeException
      */
     public function process(ContainerBuilder $container)
     {
-
         if (!$container->hasDefinition('doctrine.orm.listeners.resolve_target_entity')) {
             throw new \RuntimeException('Cannot find Doctrine RTE');
         }
@@ -40,6 +46,44 @@ class CompilerPass implements CompilerPassInterface
         $taggedServices = $container->findTaggedServiceIds('ibrows_syliusshop.additionalitemservice');
         foreach ($taggedServices as $id => $attributes) {
             $currentcartdef->addMethodCall('addAdditionalService', array(new Reference($id)));
+        }
+
+        $this->addTaggedCartSerializers($container);
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     */
+    protected function addTaggedCartSerializers(ContainerBuilder $container)
+    {
+        if(!$container->hasDefinition('ibrows_syliusshop.currentcart.manager')) {
+            return;
+        }
+
+        $currentCartManagerDefinition = $container->getDefinition(
+            'ibrows_syliusshop.currentcart.manager'
+        );
+
+        $taggedCartSerializers = $container->findTaggedServiceIds(
+            'ibrows_syliusshop.serializer.cart'
+        );
+
+        foreach($taggedCartSerializers as $id => $attributes){
+            $currentCartManagerDefinition->addMethodCall(
+                'addCartSerializer',
+                array(new Reference($id))
+            );
+        }
+
+        $taggedCartItemSerializers = $container->findTaggedServiceIds(
+            'ibrows_syliusshop.serializer.cartitem'
+        );
+
+        foreach($taggedCartItemSerializers as $id => $attributes){
+            $currentCartManagerDefinition->addMethodCall(
+                'addCartItemSerializer',
+                array(new Reference($id))
+            );
         }
     }
 
