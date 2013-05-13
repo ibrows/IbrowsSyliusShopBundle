@@ -186,7 +186,6 @@ class CurrentCartManager extends CartManager
         foreach($this->cartSerializers as $serializer){
             if(true === $serializer->accept($cart)){
                 $serializer->close($cart);
-                return;
             }
         }
     }
@@ -200,7 +199,6 @@ class CurrentCartManager extends CartManager
             foreach($this->cartItemSerializers as $serializer){
                 if(true === $serializer->accept($item)){
                     $serializer->close($item);
-                    break;
                 }
             }
         }
