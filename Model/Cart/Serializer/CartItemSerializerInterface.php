@@ -1,6 +1,6 @@
 <?php
 
-namespace Ibrows\SyliusShopBundle\Cart;
+namespace Ibrows\SyliusShopBundle\Model\Cart\Serializer;
 
 use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface;
 

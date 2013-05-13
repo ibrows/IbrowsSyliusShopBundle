@@ -2,7 +2,7 @@
 
 namespace Ibrows\SyliusShopBundle\Cart\Serializer;
 
-use Ibrows\SyliusShopBundle\Cart\CartItemSerializerInterface;
+use Ibrows\SyliusShopBundle\Model\Cart\Serializer\CartItemSerializerInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface;
 
 class ProductCartItemSerializer implements CartItemSerializerInterface
