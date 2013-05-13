@@ -102,10 +102,10 @@ interface CartInterface extends BaseCartInterface
     public function getDeliveryOption();
 
     /**
-     * @param DeliveryOptionInterface $DeliveryOption
+     * @param DeliveryOptionInterface $deliveryOption
      * @return CartInterface
      */
-    public function setDeliveryOption(DeliveryOptionInterface $DeliveryOption = null);
+    public function setDeliveryOption(DeliveryOptionInterface $deliveryOption = null);
 
     /**
      * @return PaymentOptionsInterface
