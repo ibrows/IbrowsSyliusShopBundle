@@ -22,7 +22,7 @@ class CurrentCartManager extends CartManager
      */
     protected $provider;
 
-    protected $additionalservices;
+    protected $additionalservices = array();
 
     /**
      * @param ObjectManager $cartManager
@@ -49,9 +49,12 @@ class CurrentCartManager extends CartManager
         $this->additionalservices = array();
     }
 
+    /**
+     * @param $service
+     */
     public function addAdditionalService($service){
         $type = $service->getType();
-        if(!key_exists($type, $this->additionalservices)){
+        if(!array_key_exists($type, $this->additionalservices)){
             $this->additionalservices[$type] = array();
         }
         $this->additionalservices[$type][] = $service;
@@ -103,6 +106,7 @@ class CurrentCartManager extends CartManager
         }
 
         // TODO serialize items - save all infos from ProductInterface to Cart
+
 
         $cart->setClosed();
         $this->clearCurrentCart();
