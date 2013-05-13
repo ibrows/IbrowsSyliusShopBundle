@@ -127,6 +127,9 @@ class CurrentCartManager extends CartManager
         $this->addAdditionalItem($best);
     }
 
+    /**
+     * @return array
+     */
     public function getDeliveryOptions(){
         $items = array();
         foreach($this->additionalservices['delivery'] as $delivery){
@@ -136,8 +139,6 @@ class CurrentCartManager extends CartManager
         }
         return $items;
     }
-
-
 
     /**
      * @param CartInterface $cart
