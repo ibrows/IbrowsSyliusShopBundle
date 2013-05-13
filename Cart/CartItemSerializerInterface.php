@@ -16,5 +16,5 @@ interface CartItemSerializerInterface
      * @param CartItemInterface $item
      * @return void
      */
-    public function close(CartItemInterface $item);
+    public function serialize(CartItemInterface $item);
 }

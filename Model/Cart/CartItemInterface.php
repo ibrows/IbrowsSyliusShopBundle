@@ -39,5 +39,16 @@ interface CartItemInterface extends BaseCartItemInterface
      * @param ProductInterface $product
      * @return CartItemInterface
      */
-    public function setProduct(ProductInterface $product);
+    public function setProduct(ProductInterface $product = null);
+
+    /**
+     * @param ProductInterface $product
+     * @return CartItemInterface
+     */
+    public function setProductObj(ProductInterface $product = null);
+
+    /**
+     * @return ProductInterface
+     */
+    public function getProductObj();
 }

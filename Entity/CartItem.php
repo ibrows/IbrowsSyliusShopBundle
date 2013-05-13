@@ -32,6 +32,12 @@ class CartItem extends BaseCartItem implements CartItemInterface
     protected $product;
 
     /**
+     * @var ProductInterface $productObj
+     * @ORM\Column(type="object", name="product_obj", nullable=true)
+     */
+    protected $productObj;
+
+    /**
      * @var DateTime
      * @ORM\Column(type="datetime", nullable=true)
      */
@@ -56,9 +62,27 @@ class CartItem extends BaseCartItem implements CartItemInterface
      * @param ProductInterface $product
      * @return CartItem
      */
-    public function setProduct(ProductInterface $product)
+    public function setProduct(ProductInterface $product = null)
     {
         $this->product = $product;
+        return $this;
+    }
+
+    /**
+     * @return ProductInterface
+     */
+    public function getProductObj()
+    {
+        return $this->productObj;
+    }
+
+    /**
+     * @param ProductInterface $product
+     * @return CartItem
+     */
+    public function setProductObj(ProductInterface $product = null)
+    {
+        $this->productObj = $product;
         return $this;
     }
 
@@ -93,12 +117,19 @@ class CartItem extends BaseCartItem implements CartItemInterface
         return $this;
     }
 
+    /**
+     * @return int
+     */
     public function getQuantityNotAvailable(){
         return $this->getQuantity() - $this->getProduct()->getOnHand();
     }
 
+    /**
+     * @return CartItem
+     */
     public function setQuantityToAvailable(){
-        return $this->setQuantity($this->getProduct()->getOnHand());
+        $this->setQuantity($this->getProduct()->getOnHand());
+        return $this;
     }
 
     /**

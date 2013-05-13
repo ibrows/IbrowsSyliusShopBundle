@@ -153,17 +153,22 @@ class CurrentCartManager extends CartManager
      * @throws \BadMethodCallException
      * @return CartManager
      */
-    public function closeCart()
+    public function closeCart($peristCart = true)
     {
         $cart = $this->getCart();
         if($cart->isClosed()){
             throw new \BadMethodCallException("Cart is already closed");
         }
 
-        $this->serializeCart($cart);
         $this->serializeCartItems($cart);
+        $this->serializeCart($cart);
 
         $cart->setClosed();
+
+        if(true === $peristCart){
+            $this->persistCart();
+        }
+
         $this->clearCurrentCart();
         return $this;
     }
@@ -185,7 +190,7 @@ class CurrentCartManager extends CartManager
     {
         foreach($this->cartSerializers as $serializer){
             if(true === $serializer->accept($cart)){
-                $serializer->close($cart);
+                $serializer->serialize($cart);
             }
         }
     }
@@ -198,7 +203,7 @@ class CurrentCartManager extends CartManager
         foreach($cart->getItems() as $item){
             foreach($this->cartItemSerializers as $serializer){
                 if(true === $serializer->accept($item)){
-                    $serializer->close($item);
+                    $serializer->serialize($item);
                 }
             }
         }
