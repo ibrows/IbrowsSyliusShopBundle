@@ -293,6 +293,9 @@ abstract class AbstractController extends Controller
         return new LoginType();
     }
 
+    /**
+     * @return SummaryType
+     */
     protected function getSummaryType()
     {
         return new SummaryType();
