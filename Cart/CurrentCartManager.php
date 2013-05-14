@@ -4,7 +4,9 @@ namespace Ibrows\SyliusShopBundle\Cart;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
-use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface;
+
+use Ibrows\SyliusShopBundle\Model\Cart\Serializer\CartSerializerInterface;
+use Ibrows\SyliusShopBundle\Model\Cart\Serializer\CartItemSerializerInterface;
 
 use Sylius\Bundle\InventoryBundle\Checker\AvailabilityCheckerInterface;
 
