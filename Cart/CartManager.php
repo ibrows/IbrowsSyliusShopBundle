@@ -2,6 +2,7 @@
 
 namespace Ibrows\SyliusShopBundle\Cart;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Ibrows\SyliusShopBundle\Entity\AdditionalCartItem;
 
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
@@ -18,6 +19,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 
 use Sylius\Bundle\CartBundle\Resolver\ItemResolverInterface;
+use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartStrategyInterface;
+use Doctrine\Common\Collections\Collection;
 
 class CartManager
 {
@@ -57,6 +60,11 @@ class CartManager
     protected $cart;
 
     /**
+     * @var CartStrategyInterface[]|Collection
+     */
+    protected $strategies;
+
+    /**
      * @param ObjectManager $cartObjectManager
      * @param ObjectRepository $cartObjectRepo
      * @param ObjectManager $itemObjectManager
@@ -78,7 +86,35 @@ class CartManager
         $this->itemObjectRepo = $itemObjectRepo;
         $this->resolver = $resolver;
         $this->availabilityChecker = $availablityChecker;
+        $this->strategies = new ArrayCollection();
+    }
 
+    /**
+     * @param CartStrategyInterface $strategy
+     * @return CartManager
+     */
+    public function addStrategy(CartStrategyInterface $strategy)
+    {
+        $this->strategies->add($strategy);
+        return $this;
+    }
+
+    /**
+     * @param CartStrategyInterface $strategy
+     * @return CartManager
+     */
+    public function removeStrategy(CartStrategyInterface $strategy)
+    {
+        $this->strategies->removeElement($strategy);
+        return $this;
+    }
+
+    /**
+     * @return Collection|CartStrategyInterface[]
+     */
+    public function getStrategies()
+    {
+        return $this->strategies;
     }
 
     /**
@@ -117,23 +153,16 @@ class CartManager
      */
     public function persistCart()
     {
+        $cart = $this->getCart(true);
+
         $this->refreshCart();
         $this->checkAvailability();
 
-        $this->cartObjectManager->persist($this->getCart(true));
-        $this->cartObjectManager->flush();
+        $om = $this->cartObjectManager;
+        $om->persist($cart);
+        $om->flush();
 
         return $this;
-    }
-
-    public function getDelivery(){
-        $taggedServices = $this->getContainer()->findTaggedServiceIds(
-                'ibrows_syliusshop.delivery'
-        );
-        foreach ($taggedServices as $id => $attributes) {
-
-
-        }
     }
 
     /**
@@ -143,7 +172,6 @@ class CartManager
     public function checkAvailability()
     {
         $notOnStockItems = array();
-
         foreach($this->getCart(true)->getItems() as $item){
             if(!$this->availabilityChecker->isStockSufficient($item->getProduct(), $item->getQuantity())){
                 $notOnStockItems[] = $item;
@@ -239,11 +267,20 @@ class CartManager
         return $this->itemObjectRepo;
     }
 
-    /**
-     * @return CartManager
-     */
     protected function refreshCart(){
-        $this->getCart(true)->refreshCart();
-        return $this;
+        $cart = $this->getCart(true);
+
+        $cart->refreshCart();
+        $this->computeStrategies();
+    }
+
+    protected function computeStrategies()
+    {
+        $cart = $this->getCart(true);
+        foreach($this->strategies as $strategy){
+            if($strategy->accept($cart)){
+                $strategy->compute($cart);
+            }
+        }
     }
 }

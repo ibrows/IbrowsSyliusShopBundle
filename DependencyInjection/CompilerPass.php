@@ -41,14 +41,8 @@ class CompilerPass implements CompilerPassInterface
             $resolveTargetEntityListener->addTag('doctrine.event_listener', array('event' => 'loadClassMetadata'));
         }
 
-        //$cartdef = $container->getDefinition('ibrows_syliusshop.cart.manager');
-        $currentcartdef = $container->getDefinition('ibrows_syliusshop.currentcart.manager');
-        $taggedServices = $container->findTaggedServiceIds('ibrows_syliusshop.additionalitemservice');
-        foreach ($taggedServices as $id => $attributes) {
-            $currentcartdef->addMethodCall('addAdditionalService', array(new Reference($id)));
-        }
-
         $this->addTaggedCartSerializers($container);
+        $this->addTaggedCartStrategies($container);
     }
 
     /**
@@ -82,6 +76,43 @@ class CompilerPass implements CompilerPassInterface
         foreach($taggedCartItemSerializers as $id => $attributes){
             $currentCartManagerDefinition->addMethodCall(
                 'addCartItemSerializer',
+                array(new Reference($id))
+            );
+        }
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     */
+    protected function addTaggedCartStrategies(ContainerBuilder $container)
+    {
+        if(
+            !$container->hasDefinition('ibrows_syliusshop.currentcart.manager')
+            OR
+            !$container->hasDefinition('ibrows_syliusshop.cart.manager')
+        ){
+            return;
+        }
+
+        $cartManagerDefinition = $container->getDefinition(
+            'ibrows_syliusshop.cart.manager'
+        );
+
+        $currentCartManagerDefinition = $container->getDefinition(
+            'ibrows_syliusshop.currentcart.manager'
+        );
+
+        $taggedCartStrategies = $container->findTaggedServiceIds(
+            'ibrows_syliusshop.cart.strategy'
+        );
+
+        foreach($taggedCartStrategies as $id => $attributes){
+            $cartManagerDefinition->addMethodCall(
+                'addStrategy',
+                array(new Reference($id))
+            );
+            $currentCartManagerDefinition->addMethodCall(
+                'addStrategy',
                 array(new Reference($id))
             );
         }
