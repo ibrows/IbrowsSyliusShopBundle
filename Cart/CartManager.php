@@ -268,9 +268,7 @@ class CartManager
     }
 
     protected function refreshCart(){
-        $cart = $this->getCart(true);
-
-        $cart->refreshCart();
+        $this->getCart(true)->refreshCart();
         $this->computeStrategies();
     }
 
@@ -278,8 +276,8 @@ class CartManager
     {
         $cart = $this->getCart(true);
         foreach($this->strategies as $strategy){
-            if($strategy->accept($cart)){
-                $strategy->compute($cart);
+            if($strategy->accept($cart, $this)){
+                $strategy->compute($cart, $this);
             }
         }
     }

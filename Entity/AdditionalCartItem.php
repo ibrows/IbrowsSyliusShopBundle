@@ -16,8 +16,6 @@ use DateTime;
 /**
  * @ORM\Entity
  * @ORM\Table(name="ibr_sylius_cart_additional_item")
- * @ORM\InheritanceType("JOINED")
- * @ORM\DiscriminatorMap({"additionalcartitem": "Ibrows\DivoBundle\Entity\AdditionalCartItem", "flatratedelivery": "Ibrows\SyliusShopBundle\Entity\FlatRateDelivery"})
  */
 class AdditionalCartItem implements AdditionalCartItemInterface
 {
@@ -29,30 +27,41 @@ class AdditionalCartItem implements AdditionalCartItemInterface
     protected $id;
 
     /**
+     * @var CartInterface
+     * @ORM\ManyToOne(targetEntity="Sylius\Bundle\CartBundle\Model\CartInterface", inversedBy="additionalitems")
+     */
+    protected $cart;
+
+    /**
+     * @var float
+     * @ORM\Column(type="decimal", scale=2, precision=11)
+     */
+    protected $price;
+
+    /**
      * @var string
      * @ORM\Column(type="string")
      */
     protected $text;
 
     /**
-     * @var CartInterface
-     * @ORM\ManyToOne(targetEntity="Sylius\Bundle\CartBundle\Model\CartInterface",  inversedBy="additionalitems")
+     * @var string
+     * @ORM\Column(type="string", name="strategy_identifier")
      */
-    protected $cart;
+    protected $strategyIdentifier;
 
     /**
-     * Total value.
-     * @ORM\Column(type="decimal", scale=2, precision=11)
-     * @var float
+     * @var array
+     * @ORM\Column(type="json_array", name="strategy_data")
      */
-    protected $price;
+    protected $strategyData = array();
 
     /**
      * @return string
      */
     public function __toString()
     {
-        return $this->getText();
+        return (string)$this->getText();
     }
 
     /**
@@ -61,23 +70,6 @@ class AdditionalCartItem implements AdditionalCartItemInterface
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * @return string
-     */
-    public function getText()
-    {
-        return $this->text;
-    }
-
-    /**
-     * @param string $text
-     */
-    public function setText($text)
-    {
-        $this->text = $text;
-        return $this;
     }
 
     /**
@@ -90,10 +82,47 @@ class AdditionalCartItem implements AdditionalCartItemInterface
 
     /**
      * @param CartInterface $cart
+     * @return CartInterface
      */
     public function setCart(CartInterface $cart = null)
     {
         $this->cart = $cart;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStrategyIdentifier()
+    {
+        return $this->strategyIdentifier;
+    }
+
+    /**
+     * @param string $identifier
+     * @return AdditionalCartItem
+     */
+    public function setStrategyIdentifier($identifier)
+    {
+        $this->strategyIdentifier = $identifier;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getStrategyData()
+    {
+        return $this->strategyData;
+    }
+
+    /**
+     * @param array $data
+     * @return AdditionalCartItem
+     */
+    public function setStrategyData(array $data = array())
+    {
+        $this->strategyData = $data;
         return $this;
     }
 
@@ -107,6 +136,7 @@ class AdditionalCartItem implements AdditionalCartItemInterface
 
     /**
      * @param float $price
+     * @return AdditionalCartItem
      */
     public function setPrice($price)
     {
@@ -114,4 +144,21 @@ class AdditionalCartItem implements AdditionalCartItemInterface
         return $this;
     }
 
+    /**
+     * @return string
+     */
+    public function getText()
+    {
+        return $this->text;
+    }
+
+    /**
+     * @param string $text
+     * @return AdditionalCartItem
+     */
+    public function setText($text)
+    {
+        $this->text = $text;
+        return $this;
+    }
 }

@@ -4,36 +4,43 @@ namespace Ibrows\SyliusShopBundle\Model\Cart;
 
 interface AdditionalCartItemInterface
 {
+    /**
+     * @return string
+     */
+    public function __toString();
 
     /**
-     * Returns associated cart.
-     *
      * @return CartInterface
      */
     public function getCart();
 
     /**
-     * Sets cart.
-     *
      * @param CartInterface
+     * @return AdditionalCartItemInterface
      */
     public function setCart(CartInterface $cart = null);
 
-    public function __toString();
     /**
-     * @return int
+     * @return string
      */
-    public function getId();
+    public function getStrategyIdentifier();
 
     /**
-     * @return CartInterface
+     * @param string $identifier
+     * @return AdditionalCartItemInterface
      */
-    public function getText();
+    public function setStrategyIdentifier($identifier);
 
     /**
-     * @param string $text
+     * @return array
      */
-    public function setText($text);
+    public function getStrategyData();
+
+    /**
+     * @param array $data
+     * @return AdditionalCartItemInterface
+     */
+    public function setStrategyData(array $data);
 
     /**
      * @return float
@@ -42,6 +49,18 @@ interface AdditionalCartItemInterface
 
     /**
      * @param float $price
+     * @return AdditionalCartItemInterface
      */
     public function setPrice($price);
+
+    /**
+     * @return string
+     */
+    public function getText();
+
+    /**
+     * @param string $text
+     * @return AdditionalCartItemInterface
+     */
+    public function setText($text);
 }

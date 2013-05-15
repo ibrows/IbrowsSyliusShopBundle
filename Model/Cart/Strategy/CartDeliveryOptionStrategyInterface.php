@@ -2,9 +2,9 @@
 
 namespace Ibrows\SyliusShopBundle\Model\Cart\Strategy;
 
-use Sylius\Bundle\CartBundle\Model\CartInterface;
+use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 
-interface CartDeliveryOptionStrategyInterface extends CartDeliveryOptionStrategyInterface
+interface CartDeliveryOptionStrategyInterface extends CartStrategyInterface
 {
     /**
      * @param CartInterface $cart

@@ -54,14 +54,9 @@ class CompilerPass implements CompilerPassInterface
             return;
         }
 
-        $currentCartManagerDefinition = $container->getDefinition(
-            'ibrows_syliusshop.currentcart.manager'
-        );
+        $currentCartManagerDefinition = $container->getDefinition('ibrows_syliusshop.currentcart.manager');
 
-        $taggedCartSerializers = $container->findTaggedServiceIds(
-            'ibrows_syliusshop.serializer.cart'
-        );
-
+        $taggedCartSerializers = $container->findTaggedServiceIds('ibrows_syliusshop.serializer.cart');
         foreach($taggedCartSerializers as $id => $attributes){
             $currentCartManagerDefinition->addMethodCall(
                 'addCartSerializer',
@@ -69,10 +64,7 @@ class CompilerPass implements CompilerPassInterface
             );
         }
 
-        $taggedCartItemSerializers = $container->findTaggedServiceIds(
-            'ibrows_syliusshop.serializer.cartitem'
-        );
-
+        $taggedCartItemSerializers = $container->findTaggedServiceIds('ibrows_syliusshop.serializer.cartitem');
         foreach($taggedCartItemSerializers as $id => $attributes){
             $currentCartManagerDefinition->addMethodCall(
                 'addCartItemSerializer',
@@ -94,19 +86,20 @@ class CompilerPass implements CompilerPassInterface
             return;
         }
 
-        $cartManagerDefinition = $container->getDefinition(
-            'ibrows_syliusshop.cart.manager'
-        );
+        $cartManagerDefinition = $container->getDefinition('ibrows_syliusshop.cart.manager');
+        $currentCartManagerDefinition = $container->getDefinition('ibrows_syliusshop.currentcart.manager');
 
-        $currentCartManagerDefinition = $container->getDefinition(
-            'ibrows_syliusshop.currentcart.manager'
-        );
-
-        $taggedCartStrategies = $container->findTaggedServiceIds(
-            'ibrows_syliusshop.cart.strategy'
-        );
-
+        $taggedCartStrategies = $container->findTaggedServiceIds('ibrows_syliusshop.cart.strategy');
         foreach($taggedCartStrategies as $id => $attributes){
+            $strategyServiceDefintion = $container->getDefinition($id);
+            $strategyServiceDefintion->addMethodCall(
+                'setAdditionalCartItemClass',
+                array($container->getParameter('ibrows_sylius_shop.additionalcartitem.class'))
+            );
+            $strategyServiceDefintion->addMethodCall(
+                'setServiceId',
+                array($id)
+            );
             $cartManagerDefinition->addMethodCall(
                 'addStrategy',
                 array(new Reference($id))

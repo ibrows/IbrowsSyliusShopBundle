@@ -4,13 +4,12 @@ namespace Ibrows\SyliusShopBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
+use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartStrategyInterface;
 use JMS\Payment\CoreBundle\Model\PaymentInstructionInterface;
 use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface;
 use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
-use Ibrows\SyliusShopBundle\Model\Delivery\DeliveryOptionInterface;
-use Ibrows\SyliusShopBundle\Model\Payment\PaymentOptionsInterface;
 use Sylius\Bundle\CartBundle\Model\CartItemInterface;
 use Sylius\Bundle\CartBundle\Entity\Cart as BaseCart;
 use Doctrine\Common\Collections\Collection;
@@ -45,16 +44,16 @@ class Cart extends BaseCart implements CartInterface
     protected $email;
 
     /**
-     * @var Collection
+     * @var Collection|CartItemInterface[]
      * @ORM\OneToMany(targetEntity="Ibrows\SyliusShopBundle\Model\CartItemInterface", mappedBy="cart", cascade="all", orphanRemoval=true)
      */
     protected $items;
 
     /**
-     * @var Collection
+     * @var Collection|AdditionalCartItemInterface[]
      * @ORM\OneToMany(targetEntity="Ibrows\SyliusShopBundle\Model\AdditionalCartItemInterface", mappedBy="cart", cascade="all", orphanRemoval=true)
      */
-    protected $additionalitems;
+    protected $additionalItems;
 
     /**
      * @var DateTime
@@ -102,20 +101,6 @@ class Cart extends BaseCart implements CartInterface
     protected $deliveryAddressObj;
 
     /**
-     * @var DeliveryOptionInterface
-     * @ORM\OneToOne(targetEntity="Ibrows\SyliusShopBundle\Model\Delivery\DeliveryOptionInterface")
-     * @ORM\JoinColumn(name="delivery_options_id", referencedColumnName="id")
-     */
-    protected $deliveryOption;
-
-    /**
-     * @var PaymentOptionsInterface
-     * @ORM\OneToOne(targetEntity="Ibrows\SyliusShopBundle\Model\Payment\PaymentOptionsInterface")
-     * @ORM\JoinColumn(name="payment_options_id", referencedColumnName="id")
-     */
-    protected $paymentOptions;
-
-    /**
      * @var PaymentInstructionInterface
      * @ORM\OneToOne(targetEntity="JMS\Payment\CoreBundle\Model\PaymentInstructionInterface")
      * @ORM\JoinColumn(name="payment_instructions_id", referencedColumnName="id")
@@ -125,11 +110,13 @@ class Cart extends BaseCart implements CartInterface
     public function __construct()
     {
         parent::__construct();
-
         $this->items = new ArrayCollection();
-        $this->additionalitems = new ArrayCollection();
+        $this->additionalItems = new ArrayCollection();
     }
 
+    /**
+     * @return Cart
+     */
     public function calculateTotal()
     {
         $this->total = 0.0;
@@ -137,9 +124,10 @@ class Cart extends BaseCart implements CartInterface
             $item->calculateTotal();
             $this->total += $item->getTotal();
         }
-        foreach ($this->additionalitems as $item) {
+        foreach ($this->additionalItems as $item) {
             $this->total += $item->getPrice();
         }
+        return $this;
     }
 
     /**
@@ -155,12 +143,9 @@ class Cart extends BaseCart implements CartInterface
      * @param AdditionalCartItemInterface $item
      * @return Cart
      */
-    public function addAddiationalItem(AdditionalCartItemInterface $item){
-        if($item instanceof DeliveryOptionInterface){
-            $this->setDeliveryOption($item);
-        }
-        $this->additionalitems->add($item);
-        $this->refreshCart();
+    public function addAdditionalItem(AdditionalCartItemInterface $item){
+        $this->additionalItems->add($item);
+        $item->setCart($this);
         return $this;
     }
 
@@ -168,54 +153,33 @@ class Cart extends BaseCart implements CartInterface
      * @param AdditionalCartItemInterface $item
      * @return Cart
      */
-    public function removeAddiationalItem(AdditionalCartItemInterface $item){
-        if($item instanceof DeliveryOptionInterface){
-            $this->deliveryOption = null;
-        }
-        $this->additionalitems->remove($item);
-        $this->refreshCart();
+    public function removeAdditionalItem(AdditionalCartItemInterface $item){
+        $this->additionalItems->removeElement($item);
+        $item->setCart(null);
         return $this;
     }
 
     /**
-     * @param Collection|AdditionalCartItemInterface[] $items
-     * @return Cart
+     * @param CartStrategyInterface $strategy
+     * @return AdditionalCartItemInterface[]
      */
-    public function setAdditionalItems(Collection $items){
-        foreach($this->items as $item){
-            $this->removeItem($item);
+    public function getAdditionalItemsByStrategy(CartStrategyInterface $strategy)
+    {
+        $items = array();
+        foreach($this->additionalItems as $item){
+            if($item->getStrategyIdentifier() == $strategy->getServiceId()){
+                $items[] = $item;
+            }
         }
-        foreach($items as $item){
-            $this->addItem($item);
-        }
-        return $this;
+        return $items;
     }
 
     /**
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection|AdditionalCartItemInterface[]
      */
     public function getAdditionalItems()
     {
-        return $this->additionalitems;
-    }
-    /**
-     * @param CartItemInterface $item
-     * @return Cart
-     */
-    public function addItem(CartItemInterface $item){
-        parent::addItem($item);
-        $this->refreshCart();
-        return $this;
-    }
-
-    /**
-     * @param CartItemInterface $item
-     * @return Cart
-     */
-    public function removeItem(CartItemInterface $item){
-        parent::removeItem($item);
-        $this->refreshCart();
-        return $this;
+        return $this->additionalItems;
     }
 
     /**
@@ -284,45 +248,6 @@ class Cart extends BaseCart implements CartInterface
     {
         $this->deliveryAddress = $deliveryAddress;
         return $this;
-    }
-
-    /**
-     * @return DeliveryOptionInterface
-     */
-    public function getDeliveryOption()
-    {
-        return $this->deliveryOption;
-    }
-
-    /**
-     * @param DeliveryOptionInterface $deliveryOption
-     * @return CartInterface
-     */
-    public function setDeliveryOption(DeliveryOptionInterface $deliveryOption = null)
-    {
-        if($deliveryOption == null && $this->deliveryOption != null){
-            //remove current
-            $this->removeAddiationalItem($item);
-        }
-        $this->deliveryOption = $deliveryOption;
-        return $this;
-    }
-
-    /**
-     * @return PaymentOptionsInterface
-     */
-    public function getPaymentOptions()
-    {
-        return $this->paymentOptions;
-    }
-
-    /**
-     * @param PaymentOptionsInterface $paymentOptions
-     * @return Cart
-     */
-    public function setPaymentOptions(PaymentOptionsInterface $paymentOptions = null)
-    {
-        $this->paymentOptions = $paymentOptions;
     }
 
     /**
@@ -478,7 +403,7 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @param bool $flag
-     * return Cart
+     * @return Cart
      */
     public function setTermsAndConditions($flag = true)
     {

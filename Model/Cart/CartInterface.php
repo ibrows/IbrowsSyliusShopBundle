@@ -8,6 +8,7 @@ use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface;
 
 use Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface;
 use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
+use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartStrategyInterface;
 use Ibrows\SyliusShopBundle\Model\Delivery\DeliveryOptionInterface;
 use Ibrows\SyliusShopBundle\Model\Payment\PaymentOptionsInterface;
 
@@ -23,23 +24,23 @@ interface CartInterface extends BaseCartInterface
      * @param AdditionalCartItemInterface $item
      * @return CartInterface
      */
-    public function addAddiationalItem(AdditionalCartItemInterface $item);
+    public function addAdditionalItem(AdditionalCartItemInterface $item);
     /**
      * @param AdditionalCartItemInterface $item
      * @return CartInterface
      */
-    public function removeAddiationalItem(AdditionalCartItemInterface $item);
-
-    /**
-     * @param Collection|AdditionalCartItemInterface[] $items
-     * @return CartInterface
-     */
-    public function setAdditionalItems(Collection $items);
+    public function removeAdditionalItem(AdditionalCartItemInterface $item);
 
     /**
      * @return AdditionalCartItemInterface[]
      */
     public function getAdditionalItems();
+
+    /**
+     * @param CartStrategyInterface $strategy
+     * @return AdditionalCartItemInterface[]
+     */
+    public function getAdditionalItemsByStrategy(CartStrategyInterface $strategy);
 
     /**
      * @return string
@@ -95,28 +96,6 @@ interface CartInterface extends BaseCartInterface
      * @return CartInterface
      */
     public function setDeliveryAddressObj(DeliveryAddressInterface $deliveryAddressObj = null);
-
-    /**
-     * @return DeliveryOptionInterface
-     */
-    public function getDeliveryOption();
-
-    /**
-     * @param DeliveryOptionInterface $deliveryOption
-     * @return CartInterface
-     */
-    public function setDeliveryOption(DeliveryOptionInterface $deliveryOption = null);
-
-    /**
-     * @return PaymentOptionsInterface
-     */
-    public function getPaymentOptions();
-
-    /**
-     * @param PaymentOptionsInterface $paymentOptions
-     * @return CartInterface
-     */
-    public function setPaymentOptions(PaymentOptionsInterface $paymentOptions = null);
 
     /**
      * @return PaymentInstructionInterface
