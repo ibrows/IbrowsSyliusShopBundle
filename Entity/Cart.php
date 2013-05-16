@@ -65,19 +65,19 @@ class Cart extends BaseCart implements CartInterface
      * @var int
      * @ORM\Column(type="integer", name="total_additional_items")
      */
-    protected $totalAdditionalItems;
+    protected $totalAdditionalItems = 0;
 
     /**
      * @var float
      * @ORM\Column(type="decimal", scale=2, precision=11, name="additional_items_price_total")
      */
-    protected $additionalItemsPriceTotal;
+    protected $additionalItemsPriceTotal = 0.0;
 
     /**
      * @var float
      * @ORM\Column(type="decimal", scale=2, precision=11, name="items_price_total")
      */
-    protected $itemsPriceTotal;
+    protected $itemsPriceTotal = 0.0;
 
     /**
      * @var DateTime
