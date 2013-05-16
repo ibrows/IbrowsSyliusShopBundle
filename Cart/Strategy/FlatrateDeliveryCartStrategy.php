@@ -6,7 +6,7 @@ use Ibrows\SyliusShopBundle\Cart\CartManager;
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 
-abstract class FlatrateDeliveryCartStrategy extends AbstractCartStrategy
+abstract class FlatrateDeliveryCartStrategy extends AbstractDeliveryCartStrategy
 {
     /**
      * @var array
@@ -29,8 +29,6 @@ abstract class FlatrateDeliveryCartStrategy extends AbstractCartStrategy
      */
     public function compute(CartInterface $cart, CartManager $cartManager)
     {
-        $this->removeAdditionCartItems($cart);
-
         $steps = $this->steps;
         if(!$steps){
             return;
@@ -48,18 +46,21 @@ abstract class FlatrateDeliveryCartStrategy extends AbstractCartStrategy
             $oldStepCosts = $stepCosts;
         }
 
+        $costs = 100;
+
         $item = $this->createAdditionalCartItem();
         $item->setPrice($costs);
-        $item->setText($this->getItemText($cart, $cartManager, $item));
+        $item->setText($this->getItemText($costs, $cart, $cartManager, $item));
 
-        $cart->addAdditionalItem($item);
+        $cartManager->addAdditionalItem($item);
     }
 
     /**
+     * @param float $costs
      * @param CartInterface $cart
      * @param CartManager $cartManager
      * @param AdditionalCartItemInterface $item
      * @return string
      */
-    abstract protected function getItemText(CartInterface $cart, CartManager $cartManager, AdditionalCartItemInterface $item);
+    abstract protected function getItemText($costs, CartInterface $cart, CartManager $cartManager, AdditionalCartItemInterface $item);
 }

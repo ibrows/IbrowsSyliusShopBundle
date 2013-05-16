@@ -41,6 +41,7 @@ class CurrentCartManager extends CartManager
      * @param ObjectRepository $cartRepo
      * @param ObjectManager $itemManager
      * @param ObjectRepository $itemRepo
+     * @param ObjectRepository $additionalItemObjectRepo
      * @param ItemResolverInterface $resolver
      * @param AvailabilityCheckerInterface $availablityChecker
      * @param CartProviderInterface $provider
@@ -50,11 +51,12 @@ class CurrentCartManager extends CartManager
         ObjectRepository $cartRepo,
         ObjectManager $itemManager,
         ObjectRepository $itemRepo,
+        ObjectRepository $additionalItemObjectRepo,
         ItemResolverInterface $resolver,
         AvailabilityCheckerInterface $availablityChecker,
         CartProviderInterface $provider
     ){
-        parent::__construct($cartManager, $cartRepo, $itemManager, $itemRepo, $resolver, $availablityChecker);
+        parent::__construct($cartManager, $cartRepo, $itemManager, $itemRepo, $additionalItemObjectRepo, $resolver, $availablityChecker);
 
         $this->provider = $provider;
         parent::setCart($provider->getCart());

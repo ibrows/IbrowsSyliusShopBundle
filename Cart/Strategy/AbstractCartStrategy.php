@@ -2,6 +2,7 @@
 
 namespace Ibrows\SyliusShopBundle\Cart\Strategy;
 
+use Ibrows\SyliusShopBundle\Cart\CartManager;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartStrategyInterface;
@@ -56,12 +57,14 @@ abstract class AbstractCartStrategy implements CartStrategyInterface
 
     /**
      * @param CartInterface $cart
+     * @param CartManager $cartManager
+     * @return void
      */
-    protected function removeAdditionCartItems(CartInterface $cart)
+    public function removeAdditionCartItems(CartInterface $cart, CartManager $cartManager)
     {
         if($items = $cart->getAdditionalItemsByStrategy($this)){
             foreach($items as $item){
-                $cart->removeAdditionalItem($item);
+                $cartManager->removeAdditionalItem($item);
             }
         }
     }

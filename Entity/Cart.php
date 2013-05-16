@@ -44,6 +44,12 @@ class Cart extends BaseCart implements CartInterface
     protected $email;
 
     /**
+     * @var string
+     * @ORM\Column(type="string", name="delivery_option_strategy_service_id", nullable=true)
+     */
+    protected $deliveryOptionStrategyServiceId;
+
+    /**
      * @var Collection|CartItemInterface[]
      * @ORM\OneToMany(targetEntity="Ibrows\SyliusShopBundle\Model\CartItemInterface", mappedBy="cart", cascade="all", orphanRemoval=true)
      */
@@ -54,6 +60,24 @@ class Cart extends BaseCart implements CartInterface
      * @ORM\OneToMany(targetEntity="Ibrows\SyliusShopBundle\Model\AdditionalCartItemInterface", mappedBy="cart", cascade="all", orphanRemoval=true)
      */
     protected $additionalItems;
+
+    /**
+     * @var int
+     * @ORM\Column(type="integer", name="total_additional_items")
+     */
+    protected $totalAdditionalItems;
+
+    /**
+     * @var float
+     * @ORM\Column(type="decimal", scale=2, precision=11, name="additional_items_price_total")
+     */
+    protected $additionalItemsPriceTotal;
+
+    /**
+     * @var float
+     * @ORM\Column(type="decimal", scale=2, precision=11, name="items_price_total")
+     */
+    protected $itemsPriceTotal;
 
     /**
      * @var DateTime
@@ -119,14 +143,21 @@ class Cart extends BaseCart implements CartInterface
      */
     public function calculateTotal()
     {
-        $this->total = 0.0;
+        $itemsPriceTotal = 0.0;
         foreach ($this->items as $item) {
             $item->calculateTotal();
-            $this->total += $item->getTotal();
+            $itemsPriceTotal += $item->getTotal();
         }
+        $this->setItemsPriceTotal($itemsPriceTotal);
+
+        $additionalItemsPriceTotal = 0.0;
         foreach ($this->additionalItems as $item) {
-            $this->total += $item->getPrice();
+            $additionalItemsPriceTotal += $item->getPrice();
         }
+        $this->setAdditionalItemsPriceTotal($additionalItemsPriceTotal);
+
+        $this->setTotal($itemsPriceTotal + $additionalItemsPriceTotal);
+
         return $this;
     }
 
@@ -136,6 +167,7 @@ class Cart extends BaseCart implements CartInterface
     public function refreshCart(){
         $this->calculateTotal();
         $this->setTotalItems($this->countItems());
+        $this->setTotalAdditionalItems($this->countAdditionalItems());
         return $this;
     }
 
@@ -146,6 +178,7 @@ class Cart extends BaseCart implements CartInterface
     public function addAdditionalItem(AdditionalCartItemInterface $item){
         $this->additionalItems->add($item);
         $item->setCart($this);
+        $this->refreshCart();
         return $this;
     }
 
@@ -156,6 +189,29 @@ class Cart extends BaseCart implements CartInterface
     public function removeAdditionalItem(AdditionalCartItemInterface $item){
         $this->additionalItems->removeElement($item);
         $item->setCart(null);
+        $this->refreshCart();
+        return $this;
+    }
+
+    /**
+     * @param CartItemInterface $item
+     * @return Cart
+     */
+    public function addItem(CartItemInterface $item)
+    {
+        parent::addItem($item);
+        $this->refreshCart();
+        return $this;
+    }
+
+    /**
+     * @param CartItemInterface $item
+     * @return Cart
+     */
+    public function removeItem(CartItemInterface $item)
+    {
+        parent::removeItem($item);
+        $this->refreshCart();
         return $this;
     }
 
@@ -193,6 +249,22 @@ class Cart extends BaseCart implements CartInterface
         foreach($items as $item){
             $this->addItem($item);
         }
+        $this->refreshCart();
+        return $this;
+    }
+
+    /**
+     * @param Collection|CartItemInterface[] $items
+     * @return Cart
+     */
+    public function setAdditionalItems(Collection $items){
+        foreach($this->additionalItems as $item){
+            $this->removeAdditionalItem($item);
+        }
+        foreach($items as $item){
+            $this->addAdditionalItem($item);
+        }
+        $this->refreshCart();
         return $this;
     }
 
@@ -413,5 +485,85 @@ class Cart extends BaseCart implements CartInterface
             $this->termsAndConditions = new DateTime;
         }
         return $this;
+    }
+
+    /**
+     * @param string $serviceId
+     * @return Cart
+     */
+    public function setDeliveryOptionStrategyServiceId($serviceId)
+    {
+        $this->deliveryOptionStrategyServiceId = $serviceId;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDeliveryOptionStrategyServiceId()
+    {
+        return $this->deliveryOptionStrategyServiceId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTotalAdditionalItems()
+    {
+        return $this->totalAdditionalItems;
+    }
+
+    /**
+     * @param int $totalAdditionalItems
+     * @return Cart
+     */
+    public function setTotalAdditionalItems($totalAdditionalItems)
+    {
+        $this->totalAdditionalItems = $totalAdditionalItems;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    protected function countAdditionalItems()
+    {
+        return count($this->additionalItems);
+    }
+
+    /**
+     * @param float $total
+     * @return CartInterface
+     */
+    public function setItemsPriceTotal($total)
+    {
+        $this->itemsPriceTotal = $total;
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getItemsPriceTotal()
+    {
+        return $this->getItemsPriceTotal;
+    }
+
+    /**
+     * @param float $total
+     * @return CartInterface
+     */
+    public function setAdditionalItemsPriceTotal($total)
+    {
+        $this->additionalItemsPriceTotal = $total;
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getAdditionalItemsPriceTotal()
+    {
+        return $this->additionalItemsPriceTotal;
     }
 }

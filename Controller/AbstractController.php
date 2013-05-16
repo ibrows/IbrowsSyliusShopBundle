@@ -1,33 +1,26 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Controller;
+
 use Ibrows\SyliusShopBundle\Cart\Exception\CartItemNotOnStockException;
 
 use Ibrows\SyliusShopBundle\Cart\CartManager;
 use Ibrows\SyliusShopBundle\Cart\CurrentCartManager;
+use Ibrows\SyliusShopBundle\Form\DeliveryOptionStrategyType;
 use Ibrows\SyliusShopBundle\Form\SummaryType;
 use Ibrows\SyliusShopBundle\Repository\ProductRepository;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
-
 use Ibrows\SyliusShopBundle\Login\LoginInformationInterface;
 use Ibrows\SyliusShopBundle\Form\AuthType;
 use Ibrows\SyliusShopBundle\Form\LoginType;
 use Ibrows\SyliusShopBundle\Form\BasketType;
 use Ibrows\SyliusShopBundle\Form\BasketItemType;
-
 use Ibrows\SyliusShopBundle\Form\DeliveryAddressType;
 use Ibrows\SyliusShopBundle\Form\InvoiceAddressType;
-use Ibrows\SyliusShopBundle\Entity\Address;
-
 use Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface;
-use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
-
 use Ibrows\SyliusShopBundle\IbrowsSyliusShopBundle;
-
-use Ibrows\SyliusShopBundle\Cart\Exception\CartException;
 use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -35,13 +28,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormInterface;
 use Ibrows\Bundle\WizardAnnotationBundle\Annotation\AnnotationHandler as WizardHandler;
 use Symfony\Component\Form\FormError;
-
 use FOS\UserBundle\Model\UserManagerInterface;
 use FOS\UserBundle\Model\UserInterface;
 use FOS\UserBundle\Security\LoginManager;
-
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
+use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartDeliveryOptionStrategyInterface;
 
 abstract class AbstractController extends Controller
 {
@@ -299,6 +291,24 @@ abstract class AbstractController extends Controller
     protected function getSummaryType()
     {
         return new SummaryType();
+    }
+
+    /**
+     * @param CartManager $cartManager
+     * @return DeliveryOptionStrategyType
+     */
+    protected function getDeliveryOptionStrategyType(CartManager $cartManager)
+    {
+        return new DeliveryOptionStrategyType($this->getDeliveryOptionStrategies($cartManager));
+    }
+
+    /**
+     * @param CartManager $cartManager
+     * @return CartDeliveryOptionStrategyInterface[]
+     */
+    protected function getDeliveryOptionStrategies(CartManager $cartManager)
+    {
+        return $cartManager->getDeliveryOptionStrategies();
     }
 
     /**

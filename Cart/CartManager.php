@@ -4,23 +4,19 @@ namespace Ibrows\SyliusShopBundle\Cart;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Ibrows\SyliusShopBundle\Entity\AdditionalCartItem;
-
+use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface;
-
 use Sylius\Bundle\InventoryBundle\Checker\AvailabilityCheckerInterface;
-
 use Ibrows\SyliusShopBundle\Cart\Exception\CartItemNotOnStockException;
 use Ibrows\SyliusShopBundle\Cart\Exception\CartException;
-
 use Symfony\Component\HttpFoundation\Request;
-
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
-
 use Sylius\Bundle\CartBundle\Resolver\ItemResolverInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartStrategyInterface;
 use Doctrine\Common\Collections\Collection;
+use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartDeliveryOptionStrategyInterface;
 
 class CartManager
 {
@@ -43,6 +39,11 @@ class CartManager
      * @var ObjectRepository
      */
     protected $itemObjectRepo;
+
+    /**
+     * @var ObjectRepository
+     */
+    protected $additionalItemObjectRepo;
 
     /**
      * @var ItemResolverInterface
@@ -69,6 +70,7 @@ class CartManager
      * @param ObjectRepository $cartObjectRepo
      * @param ObjectManager $itemObjectManager
      * @param ObjectRepository $itemObjectRepo
+     * @param ObjectRepository $additionalItemObjectRepo
      * @param ItemResolverInterface $resolver
      * @param AvailabilityCheckerInterface $availablityChecker
      */
@@ -77,6 +79,7 @@ class CartManager
         ObjectRepository $cartObjectRepo,
         ObjectManager $itemObjectManager,
         ObjectRepository $itemObjectRepo,
+        ObjectRepository $additionalItemObjectRepo,
         ItemResolverInterface $resolver,
         AvailabilityCheckerInterface $availablityChecker
     ){
@@ -84,6 +87,7 @@ class CartManager
         $this->cartObjectRepo = $cartObjectRepo;
         $this->itemObjectManager = $itemObjectManager;
         $this->itemObjectRepo = $itemObjectRepo;
+        $this->additionalItemObjectRepo = $additionalItemObjectRepo;
         $this->resolver = $resolver;
         $this->availabilityChecker = $availablityChecker;
         $this->strategies = new ArrayCollection();
@@ -118,12 +122,29 @@ class CartManager
     }
 
     /**
+     * @return CartDeliveryOptionStrategyInterface[]
+     */
+    public function getDeliveryOptionStrategies()
+    {
+        $strategies = array();
+        foreach($this->strategies as $strategy){
+            if(
+                $strategy instanceof CartDeliveryOptionStrategyInterface &&
+                $strategy->isPossible($this->getCart(), $this)
+            ){
+                $strategies[] = $strategy;
+            }
+        }
+        return $strategies;
+    }
+
+    /**
      * @param AdditionalCartItem $item
      * @return CartManager
      */
     public function addAdditionalItem(AdditionalCartItem $item)
     {
-        $this->getCart(true)->addAddiationalItem($item);
+        $this->getCart(true)->addAdditionalItem($item);
         return $this;
     }
 
@@ -134,6 +155,7 @@ class CartManager
     public function addItem(CartItemInterface $item)
     {
         $this->getCart(true)->addItem($item);
+        $this->refreshCart();
         return $this;
     }
 
@@ -144,6 +166,17 @@ class CartManager
     public function removeItem(CartItemInterface $item)
     {
         $this->getCart(true)->removeItem($item);
+        $this->refreshCart();
+        return $this;
+    }
+
+    /**
+     * @param AdditionalCartItemInterface $item
+     * @return CartManager
+     */
+    public function removeAdditionalItem(AdditionalCartItemInterface $item)
+    {
+        $this->getCart(true)->removeAdditionalItem($item);
         return $this;
     }
 
@@ -194,6 +227,14 @@ class CartManager
     }
 
     /**
+     * @return string
+     */
+    public function getAdditionalCartItemClassName()
+    {
+        return $this->additionalItemObjectRepo->getClassName();
+    }
+
+    /**
      * @param $item
      * @param Request $request
      * @return CartItemInterface
@@ -210,6 +251,21 @@ class CartManager
     {
         $class = $this->getCartItemClassName();
         return new $class();
+    }
+
+    /**
+     * @param CartStrategyInterface $strategy
+     * @return AdditionalCartItemInterface
+     */
+    public function createNewAdditionalCartItem(CartStrategyInterface $strategy)
+    {
+        $class = $this->getAdditionalCartItemClassName();
+
+        /* @var $item AdditionalCartItemInterface */
+        $item = new $class();
+        $item->setStrategyIdentifier($strategy->getServiceId());
+
+        return $item;
     }
 
     /**
@@ -267,14 +323,25 @@ class CartManager
         return $this->itemObjectRepo;
     }
 
-    protected function refreshCart(){
-        $this->getCart(true)->refreshCart();
+    public function refreshCart(){
+        $cart = $this->getCart(true);
+        if($cart->isClosed()){
+            throw new \BadMethodCallException("Cart is already closed");
+        }
         $this->computeStrategies();
     }
 
-    protected function computeStrategies()
+    public function computeStrategies()
     {
         $cart = $this->getCart(true);
+        if($cart->isClosed()){
+            throw new \BadMethodCallException("Cart is already closed");
+        }
+
+        foreach($this->strategies as $strategy){
+            $strategy->removeAdditionCartItems($cart, $this);
+        }
+
         foreach($this->strategies as $strategy){
             if($strategy->accept($cart, $this)){
                 $strategy->compute($cart, $this);

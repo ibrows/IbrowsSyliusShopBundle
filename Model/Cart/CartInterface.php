@@ -25,11 +25,29 @@ interface CartInterface extends BaseCartInterface
      * @return CartInterface
      */
     public function addAdditionalItem(AdditionalCartItemInterface $item);
+
     /**
      * @param AdditionalCartItemInterface $item
      * @return CartInterface
      */
     public function removeAdditionalItem(AdditionalCartItemInterface $item);
+
+    /**
+     * @param Collection $items
+     * @return CartInterface
+     */
+    public function setAdditionalItems(Collection $items);
+
+    /**
+     * @return int
+     */
+    public function getTotalAdditionalItems();
+
+    /**
+     * @param int $total
+     * @return CartInterface
+     */
+    public function setTotalAdditionalItems($total);
 
     /**
      * @return AdditionalCartItemInterface[]
@@ -160,4 +178,37 @@ interface CartInterface extends BaseCartInterface
      * @return CartInterface
      */
     public function setTermsAndConditions($flag = true);
+
+    /**
+     * @param string $serviceId
+     * @return CartInterface
+     */
+    public function setDeliveryOptionStrategyServiceId($serviceId);
+
+    /**
+     * @return string
+     */
+    public function getDeliveryOptionStrategyServiceId();
+
+    /**
+     * @param float $total
+     * @return CartInterface
+     */
+    public function setItemsPriceTotal($total);
+
+    /**
+     * @return float
+     */
+    public function getItemsPriceTotal();
+
+    /**
+     * @param float $total
+     * @return CartInterface
+     */
+    public function setAdditionalItemsPriceTotal($total);
+
+    /**
+     * @return float
+     */
+    public function getAdditionalItemsPriceTotal();
 }

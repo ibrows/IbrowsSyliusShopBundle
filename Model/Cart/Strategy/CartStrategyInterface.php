@@ -10,7 +10,7 @@ interface CartStrategyInterface
     /**
      * @param CartInterface $cart
      * @param CartManager $cartManager
-     * @return void
+     * @return bool
      */
     public function accept(CartInterface $cart, CartManager $cartManager);
 
@@ -37,6 +37,13 @@ interface CartStrategyInterface
      * @return CartStrategyInterface
      */
     public function setAdditionalCartItemClass($className);
+
+    /**
+     * @param CartInterface $cart
+     * @param CartManager $cartManager
+     * @return void
+     */
+    public function removeAdditionCartItems(CartInterface $cart, CartManager $cartManager);
 
     /**
      * @return string

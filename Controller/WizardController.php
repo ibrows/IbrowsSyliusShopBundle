@@ -134,6 +134,7 @@ class WizardController extends AbstractWizardController
     public function addressAction(Request $request)
     {
         $cart = $this->getCurrentCart();
+        $cartManager = $this->getCurrentCartManager();
 
         $invoiceaddress = $cart->getInvoiceAddress() ? : $this->getNewInvoiceAddress();
         $deliveryAddress = $cart->getDeliveryAddress() ? : $this->getNewDeliveryAddress();
@@ -160,16 +161,34 @@ class WizardController extends AbstractWizardController
             )
         );
 
+        $deliveryOptionStrategyForm = $this->createForm(
+            $this->getDeliveryOptionStrategyType($cartManager),
+            $cart,
+            array(
+                'validation_groups' => array(
+                    'sylius_wizard_delivery_strategy'
+                )
+            )
+        );
+
         if ("POST" == $request->getMethod()) {
             $invoiceAddressForm->bind($request);
             $deliveryAddressForm->bind($request);
-            if ($invoiceAddressForm->isValid() && $deliveryAddressForm->isValid()) {
+            $deliveryOptionStrategyForm->bind($request);
+            if (
+                $invoiceAddressForm->isValid() &&
+                $deliveryAddressForm->isValid() &&
+                $deliveryOptionStrategyForm->isValid()
+            ) {
                 $cart->setInvoiceAddress($invoiceaddress);
                 $cart->setDeliveryAddress($deliveryAddress);
+
                 $om = $this->getObjectManager();
                 $om->persist($invoiceaddress);
                 $om->persist($deliveryAddress);
+
                 $this->persistCurrentCart();
+
                 return $this->redirect($this->getWizard()->getNextStepUrl());
             }
         }
@@ -177,6 +196,7 @@ class WizardController extends AbstractWizardController
         return array(
             'invoiceAddressForm' => $invoiceAddressForm->createView(),
             'deliveryAddressForm' => $deliveryAddressForm->createView(),
+            'deliveryOptionStrategyForm' => $deliveryOptionStrategyForm->createView(),
             'cart' => $cart
         );
     }

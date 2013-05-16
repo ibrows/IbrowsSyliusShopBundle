@@ -5,23 +5,23 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
         <parameters>
-        	<parameter key="ibrows_sylius_shop.delivery.flatrate.class">Ibrows\SyliusShopBundle\Delivery\Flatrate</parameter>
-        
         	<parameter key="ibrows_sylius_shop.cart.itemresolver.class">Ibrows\SyliusShopBundle\Cart\BaseItemResolver</parameter>
         	<parameter key="ibrows_sylius_shop.cart.manager.class">Ibrows\SyliusShopBundle\Cart\CartManager</parameter>
             <parameter key="ibrows_sylius_shop.currentcart.manager.class">Ibrows\SyliusShopBundle\Cart\CurrentCartManager</parameter>
-        	<parameter key="ibrows_sylius_shop.product.class">Ibrows\SyliusShopBundle\Entity\BaseProduct</parameter>
             <parameter key="ibrows_sylius_shop.logininformation.class">Ibrows\SyliusShopBundle\Login\LoginInformation</parameter>
          </parameters>
 
     <services>
-		<!--  delivery -->
-		<service id="ibrows_syliusshop.delivery.flatrate" class="%ibrows_sylius_shop.delivery.flatrate.class%" >
-			<argument type="service" id="doctrine" />
-            <tag name="ibrows_syliusshop.additionalitemservice" />
+        <!-- Cart -->
+        <service
+            id="ibrows_syliusshop.repository.additional_cart_item"
+            factory-service="doctrine.orm.default_entity_manager"
+            factory-method="getRepository"
+            class="%ibrows_sylius_shop.additionalcartitem.class%"
+        >
+            <argument>%ibrows_sylius_shop.additionalcartitem.class%</argument>
         </service>
 
-        <!-- Cart -->
         <service id="ibrows_syliusshop.cart.resolver" class="%ibrows_sylius_shop.cart.itemresolver.class%">
 			<argument type="service" id="doctrine" />
 			<argument type="string" >%ibrows_sylius_shop.product.class%</argument>
@@ -33,7 +33,8 @@
 			<argument type="service" id="sylius.manager.cart" />
 			<argument type="service" id="sylius.repository.cart" />
 			<argument type="service" id="sylius.manager.cart_item" />
-			<argument type="service" id="sylius.repository.cart_item" />
+            <argument type="service" id="sylius.repository.cart_item" />
+			<argument type="service" id="ibrows_syliusshop.repository.additional_cart_item" />
 			<argument type="service" id="sylius.cart_resolver" />
             <argument type="service" id="sylius.availability_checker.default" />
         </service>
@@ -43,6 +44,7 @@
             <argument type="service" id="sylius.repository.cart" />
             <argument type="service" id="sylius.manager.cart_item" />
             <argument type="service" id="sylius.repository.cart_item" />
+            <argument type="service" id="ibrows_syliusshop.repository.additional_cart_item" />
             <argument type="service" id="sylius.cart_resolver" />
             <argument type="service" id="sylius.availability_checker.default" />
             <argument type="service" id="sylius.cart_provider" />
