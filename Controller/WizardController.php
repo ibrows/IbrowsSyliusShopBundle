@@ -40,13 +40,12 @@ class WizardController extends AbstractWizardController
 
             if ($basketForm->isValid()) {
                 $this->persistCurrentCart();
+
                 if ($request->request->get('continue')) {
                     return $this->redirect($this->getWizard()->getNextStepUrl());
                 }
             }
         }
-
-        $this->persistCurrentCart();
 
         return array(
             'basketForm' => $basketForm->createView(),

@@ -27,16 +27,7 @@ class BasketItemType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name', null, array(
-                'disabled' => true
-            ))
             ->add('quantity')
-            ->add('unitPrice', null, array(
-                'disabled' => true
-            ))
-            ->add('total', null, array(
-                'disabled' => true
-            ))
         ;
     }
 
