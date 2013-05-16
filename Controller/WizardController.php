@@ -232,7 +232,8 @@ class WizardController extends AbstractWizardController
         }
 
         return array(
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'cart' => $cart
         );
     }
 

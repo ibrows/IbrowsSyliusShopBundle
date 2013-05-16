@@ -23,7 +23,7 @@ use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormError;
-
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
