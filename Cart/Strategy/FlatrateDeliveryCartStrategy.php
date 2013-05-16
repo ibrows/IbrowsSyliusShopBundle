@@ -46,8 +46,6 @@ abstract class FlatrateDeliveryCartStrategy extends AbstractDeliveryCartStrategy
             $oldStepCosts = $stepCosts;
         }
 
-        $costs = 100;
-
         $item = $this->createAdditionalCartItem();
         $item->setPrice($costs);
         $item->setText($this->getItemText($costs, $cart, $cartManager, $item));
