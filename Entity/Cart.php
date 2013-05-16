@@ -546,7 +546,7 @@ class Cart extends BaseCart implements CartInterface
      */
     public function getItemsPriceTotal()
     {
-        return $this->getItemsPriceTotal;
+        return $this->itemsPriceTotal;
     }
 
     /**
