@@ -8,10 +8,9 @@ use Doctrine\ORM\Mapping as ORM;
 use DateTime;
 
 /**
- * @ORM\Entity
- * @ORM\Table(name="ibr_sylius_product")
+ * @ORM\MappedSuperClass
  */
-class Product implements ProductInterface
+abstract class Product implements ProductInterface
 {
     /**
      * @var int
@@ -23,7 +22,7 @@ class Product implements ProductInterface
 
     /**
      * @var int
-     * @ORM\Column(type="integer", name="on_hand")
+     * @ORM\Column(type="integer")
      * @Assert\NotBlank
      * @Assert\Min(0)
      */
@@ -31,7 +30,7 @@ class Product implements ProductInterface
 
     /**
      * @var bool
-     * @ORM\Column(type="boolean", name="available_on_demand")
+     * @ORM\Column(type="boolean")
      */
     protected $availableOnDemand = false;
 
