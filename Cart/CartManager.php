@@ -328,6 +328,7 @@ class CartManager
         if($cart->isClosed()){
             throw new \BadMethodCallException("Cart is already closed");
         }
+        $cart->refreshCart();
         $this->computeStrategies();
     }
 
