@@ -3,33 +3,23 @@
 namespace Ibrows\SyliusShopBundle\Form;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Ibrows\SyliusShopBundle\Cart\CartManager;
 use Symfony\Component\Form\FormBuilderInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartDeliveryOptionStrategyInterface;
 
 class DeliveryOptionStrategyType extends AbstractType
 {
     /**
-     * @var CartDeliveryOptionStrategyInterface[]
+     * @var CartManager
      */
-    protected $strategies = array();
+    protected $cartManager = array();
 
     /**
-     * @param CartDeliveryOptionStrategyInterface[] $strategies
+     * @param CartManager $cartManager
      */
-    public function __construct(array $strategies)
+    public function __construct(CartManager $cartManager)
     {
-        $this->strategies = new ArrayCollection();
-        foreach($strategies as $strategy){
-            $this->addStrategy($strategy);
-        }
-    }
-
-    /**
-     * @param CartDeliveryOptionStrategyInterface $strategy
-     */
-    public function addStrategy(CartDeliveryOptionStrategyInterface $strategy)
-    {
-        $this->strategies->add($strategy);
+        $this->cartManager = $cartManager;
     }
 
     /**
@@ -39,8 +29,13 @@ class DeliveryOptionStrategyType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $strategyChoices = array();
-        foreach($this->strategies as $strategy){
-            $strategyChoices[$strategy->getServiceId()] = $strategy->getServiceId();
+        $cart = $this->cartManager->getCart();
+        foreach($this->cartManager->getDeliveryOptionStrategies() as $strategy){
+            $costs = 0.0;
+            foreach($strategy->compute($cart, $this->cartManager) as $item){
+                $costs += $item->getPrice();
+            }
+            $strategyChoices[$strategy->getServiceId()] = $strategy->getServiceId().' ('. $costs .')';
         }
 
         $builder->add('deliveryOptionStrategyServiceId', 'choice', array(

@@ -93,17 +93,19 @@ class CompilerPass implements CompilerPassInterface
         foreach($taggedCartStrategies as $id => $attributes){
             $strategyServiceDefintion = $container->getDefinition($id);
             $strategyServiceDefintion->addMethodCall(
-                'setAdditionalCartItemClass',
-                array($container->getParameter('ibrows_sylius_shop.additionalcartitem.class'))
+                'setAdditionalCartItemRepo',
+                array(new Reference('ibrows_syliusshop.repository.additional_cart_item'))
             );
             $strategyServiceDefintion->addMethodCall(
                 'setServiceId',
                 array($id)
             );
+
             $cartManagerDefinition->addMethodCall(
                 'addStrategy',
                 array(new Reference($id))
             );
+
             $currentCartManagerDefinition->addMethodCall(
                 'addStrategy',
                 array(new Reference($id))

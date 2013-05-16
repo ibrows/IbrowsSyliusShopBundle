@@ -4,6 +4,8 @@ namespace Ibrows\SyliusShopBundle\Model\Cart\Strategy;
 
 use Ibrows\SyliusShopBundle\Cart\CartManager;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
+use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
+use Doctrine\Common\Persistence\ObjectRepository;
 
 interface CartStrategyInterface
 {
@@ -17,9 +19,20 @@ interface CartStrategyInterface
     /**
      * @param CartInterface $cart
      * @param CartManager $cartManager
-     * @return void
+     * @return AdditionalCartItemInterface[]
      */
     public function compute(CartInterface $cart, CartManager $cartManager);
+
+    /**
+     * @param ObjectRepository $repo
+     * @return ObjectRepository
+     */
+    public function setAdditionalCartItemRepo(ObjectRepository $repo);
+
+    /**
+     * @return ObjectRepository
+     */
+    public function getAdditionalCartItemRepo();
 
     /**
      * @return string
@@ -31,22 +44,4 @@ interface CartStrategyInterface
      * @return CartStrategyInterface
      */
     public function setServiceId($id);
-
-    /**
-     * @param string $className
-     * @return CartStrategyInterface
-     */
-    public function setAdditionalCartItemClass($className);
-
-    /**
-     * @param CartInterface $cart
-     * @param CartManager $cartManager
-     * @return void
-     */
-    public function removeAdditionCartItems(CartInterface $cart, CartManager $cartManager);
-
-    /**
-     * @return string
-     */
-    public function getAdditionalCartItemClass();
 }

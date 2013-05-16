@@ -299,16 +299,7 @@ abstract class AbstractController extends Controller
      */
     protected function getDeliveryOptionStrategyType(CartManager $cartManager)
     {
-        return new DeliveryOptionStrategyType($this->getDeliveryOptionStrategies($cartManager));
-    }
-
-    /**
-     * @param CartManager $cartManager
-     * @return CartDeliveryOptionStrategyInterface[]
-     */
-    protected function getDeliveryOptionStrategies(CartManager $cartManager)
-    {
-        return $cartManager->getDeliveryOptionStrategies();
+        return new DeliveryOptionStrategyType($cartManager);
     }
 
     /**

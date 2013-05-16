@@ -340,12 +340,16 @@ class CartManager
         }
 
         foreach($this->strategies as $strategy){
-            $strategy->removeAdditionCartItems($cart, $this);
+            foreach($cart->getAdditionalItemsByStrategy($strategy) as $item){
+                $this->removeAdditionalItem($item);
+            }
         }
 
         foreach($this->strategies as $strategy){
             if($strategy->accept($cart, $this)){
-                $strategy->compute($cart, $this);
+                foreach($strategy->compute($cart, $this) as $item){
+                    $this->addAdditionalItem($item);
+                }
             }
         }
     }

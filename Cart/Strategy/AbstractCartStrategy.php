@@ -2,17 +2,16 @@
 
 namespace Ibrows\SyliusShopBundle\Cart\Strategy;
 
-use Ibrows\SyliusShopBundle\Cart\CartManager;
-use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartStrategyInterface;
+use Doctrine\Common\Persistence\ObjectRepository;
 
 abstract class AbstractCartStrategy implements CartStrategyInterface
 {
     /**
-     * @var string
+     * @var ObjectRepository
      */
-    protected $additionalCartItemClass;
+    protected $additionalCartItemRepo;
 
     /**
      * @var string
@@ -20,21 +19,21 @@ abstract class AbstractCartStrategy implements CartStrategyInterface
     protected $serviceId;
 
     /**
-     * @return string
+     * @param ObjectRepository $repo
+     * @return ObjectRepository
      */
-    public function getAdditionalCartItemClass()
+    public function setAdditionalCartItemRepo(ObjectRepository $repo)
     {
-        return $this->additionalCartItemClass;
+        $this->additionalCartItemRepo = $repo;
+        return $this;
     }
 
     /**
-     * @param string $additionalCartItemClass
-     * @return AbstractCartStrategy
+     * @return ObjectRepository
      */
-    public function setAdditionalCartItemClass($additionalCartItemClass)
+    public function getAdditionalCartItemRepo()
     {
-        $this->additionalCartItemClass = $additionalCartItemClass;
-        return $this;
+        return $this->additionalCartItemRepo;
     }
 
     /**
@@ -56,25 +55,11 @@ abstract class AbstractCartStrategy implements CartStrategyInterface
     }
 
     /**
-     * @param CartInterface $cart
-     * @param CartManager $cartManager
-     * @return void
-     */
-    public function removeAdditionCartItems(CartInterface $cart, CartManager $cartManager)
-    {
-        if($items = $cart->getAdditionalItemsByStrategy($this)){
-            foreach($items as $item){
-                $cartManager->removeAdditionalItem($item);
-            }
-        }
-    }
-
-    /**
      * @return AdditionalCartItemInterface
      */
     protected function createAdditionalCartItem()
     {
-        $className = $this->additionalCartItemClass;
+        $className = $this->additionalCartItemRepo->getClassName();
 
         /* @var AdditionalCartItemInterface $item */
         $item = new $className();

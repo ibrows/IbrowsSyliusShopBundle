@@ -25,13 +25,13 @@ abstract class FlatrateDeliveryCartStrategy extends AbstractDeliveryCartStrategy
     /**
      * @param CartInterface $cart
      * @param CartManager $cartManager
-     * @return void
+     * @return AdditionalCartItemInterface[]
      */
     public function compute(CartInterface $cart, CartManager $cartManager)
     {
         $steps = $this->steps;
         if(!$steps){
-            return;
+            return array();
         }
 
         $total = $cart->getTotal();
@@ -50,7 +50,7 @@ abstract class FlatrateDeliveryCartStrategy extends AbstractDeliveryCartStrategy
         $item->setPrice($costs);
         $item->setText($this->getItemText($costs, $cart, $cartManager, $item));
 
-        $cartManager->addAdditionalItem($item);
+        return array($item);
     }
 
     /**
