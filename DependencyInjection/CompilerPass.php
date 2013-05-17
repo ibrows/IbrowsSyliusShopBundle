@@ -56,7 +56,7 @@ class CompilerPass implements CompilerPassInterface
 
         $currentCartManagerDefinition = $container->getDefinition('ibrows_syliusshop.currentcart.manager');
 
-        $taggedCartSerializers = $container->findTaggedServiceIds('ibrows_syliusshop.serializer.cart');
+        $taggedCartSerializers = $this->findSortedByPriorityTaggedServiceIds($container, 'ibrows_syliusshop.serializer.cart');
         foreach($taggedCartSerializers as $id => $attributes){
             $currentCartManagerDefinition->addMethodCall(
                 'addCartSerializer',
@@ -64,7 +64,7 @@ class CompilerPass implements CompilerPassInterface
             );
         }
 
-        $taggedCartItemSerializers = $container->findTaggedServiceIds('ibrows_syliusshop.serializer.cartitem');
+        $taggedCartItemSerializers = $this->findSortedByPriorityTaggedServiceIds($container, 'ibrows_syliusshop.serializer.cartitem');
         foreach($taggedCartItemSerializers as $id => $attributes){
             $currentCartManagerDefinition->addMethodCall(
                 'addCartItemSerializer',
@@ -89,7 +89,7 @@ class CompilerPass implements CompilerPassInterface
         $cartManagerDefinition = $container->getDefinition('ibrows_syliusshop.cart.manager');
         $currentCartManagerDefinition = $container->getDefinition('ibrows_syliusshop.currentcart.manager');
 
-        $taggedCartStrategies = $container->findTaggedServiceIds('ibrows_syliusshop.cart.strategy');
+        $taggedCartStrategies = $this->findSortedByPriorityTaggedServiceIds($container, 'ibrows_syliusshop.cart.strategy');
         foreach($taggedCartStrategies as $id => $attributes){
             $strategyServiceDefintion = $container->getDefinition($id);
             $strategyServiceDefintion->addMethodCall(
@@ -113,4 +113,19 @@ class CompilerPass implements CompilerPassInterface
         }
     }
 
+    /**
+     * @param ContainerBuilder $container
+     * @param string $serviceId
+     * @return array
+     */
+    protected function findSortedByPriorityTaggedServiceIds(ContainerBuilder $container, $serviceId)
+    {
+        $taggedServices = $container->findTaggedServiceIds($serviceId);
+        uasort($taggedServices, function($a, $b) {
+            $a = isset($a[0]['priority']) ? $a[0]['priority'] : 0;
+            $b = isset($b[0]['priority']) ? $b[0]['priority'] : 0;
+            return $a > $b ? -1 : 1;
+        });
+        return $taggedServices;
+    }
 }

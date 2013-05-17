@@ -64,11 +64,11 @@
         </service>
 
         <service id="ibrows_syliusshop.cart.serializer.address" class="Ibrows\SyliusShopBundle\Cart\Serializer\AddressCartSerializer">
-            <tag name="ibrows_syliusshop.serializer.cart" />
+            <tag priority="-20" name="ibrows_syliusshop.serializer.cart" />
         </service>
 
         <service id="ibrows_syliusshop.cart.serializer.product" class="Ibrows\SyliusShopBundle\Cart\Serializer\ProductCartItemSerializer">
-            <tag name="ibrows_syliusshop.serializer.cartitem" />
+            <tag prioritiy="-20" name="ibrows_syliusshop.serializer.cartitem" />
         </service>
     </services>
 </container>
