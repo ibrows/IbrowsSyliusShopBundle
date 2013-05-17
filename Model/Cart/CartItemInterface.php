@@ -51,4 +51,37 @@ interface CartItemInterface extends BaseCartItemInterface
      * @return ProductInterface
      */
     public function getProductObj();
+
+    /**
+     * @return float
+     */
+    public function getTaxRate();
+
+    /**
+     * @param float $rate
+     * @return CartItemInterface
+     */
+    public function setTaxRate($rate);
+
+    /**
+     * @return float
+     */
+    public function getTaxPrice();
+
+    /**
+     * @param float $price
+     * @return CartItemInterface
+     */
+    public function setTaxPrice($price);
+
+    /**
+     * @return CartItemInterface
+     */
+    public function getTotalWithTaxPrice();
+
+    /**
+     * @param float $total
+     * @return CartItemInterface
+     */
+    public function setTotalWithTaxPrice($total);
 }

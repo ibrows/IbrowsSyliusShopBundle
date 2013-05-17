@@ -6,7 +6,7 @@ use Ibrows\SyliusShopBundle\Cart\CartManager;
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 
-abstract class FlatrateDeliveryCartStrategy extends AbstractDeliveryCartStrategy
+abstract class AbstractFlatrateDeliveryCartStrategy extends AbstractDeliveryCartStrategy
 {
     /**
      * @var array
@@ -34,7 +34,22 @@ abstract class FlatrateDeliveryCartStrategy extends AbstractDeliveryCartStrategy
             return array();
         }
 
-        $total = $cart->getTotal();
+        $costs = $this->getCosts($this->steps, $cart->getTotal());
+
+        $item = $this->createAdditionalCartItem();
+        $item->setPrice($costs);
+        $item->setText($this->getItemText($costs, $cart, $cartManager, $item));
+
+        return array($item);
+    }
+
+    /**
+     * @param array $steps
+     * @param float $total
+     * @return float
+     */
+    protected function getCosts(array $steps, $total)
+    {
         $costs = 0.0;
         $oldStepCosts = 0.0;
 
@@ -46,11 +61,7 @@ abstract class FlatrateDeliveryCartStrategy extends AbstractDeliveryCartStrategy
             $oldStepCosts = $stepCosts;
         }
 
-        $item = $this->createAdditionalCartItem();
-        $item->setPrice($costs);
-        $item->setText($this->getItemText($costs, $cart, $cartManager, $item));
-
-        return array($item);
+        return $costs;
     }
 
     /**

@@ -10,7 +10,8 @@ use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface;
 use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
-use Sylius\Bundle\CartBundle\Model\CartItemInterface;
+use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface;
+use Sylius\Bundle\CartBundle\Model\CartItemInterface as SyliusCartItemInterface;
 use Sylius\Bundle\CartBundle\Entity\Cart as BaseCart;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -146,7 +147,7 @@ class Cart extends BaseCart implements CartInterface
         $itemsPriceTotal = 0.0;
         foreach ($this->items as $item) {
             $item->calculateTotal();
-            $itemsPriceTotal += $item->getTotal();
+            $itemsPriceTotal += $item->getTotalWithTaxPrice();
         }
         $this->setItemsPriceTotal($itemsPriceTotal);
 
@@ -197,7 +198,7 @@ class Cart extends BaseCart implements CartInterface
      * @param CartItemInterface $item
      * @return Cart
      */
-    public function addItem(CartItemInterface $item)
+    public function addItem(SyliusCartItemInterface $item)
     {
         parent::addItem($item);
         $this->refreshCart();
@@ -208,7 +209,7 @@ class Cart extends BaseCart implements CartInterface
      * @param CartItemInterface $item
      * @return Cart
      */
-    public function removeItem(CartItemInterface $item)
+    public function removeItem(SyliusCartItemInterface $item)
     {
         parent::removeItem($item);
         $this->refreshCart();
