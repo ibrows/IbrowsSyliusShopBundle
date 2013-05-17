@@ -6,10 +6,10 @@ use FOS\UserBundle\Entity\User as FOSUser;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
+ * @ORM\MappedSuperClass
  * @ORM\Table(name="fos_user")
  */
-class User extends FOSUser
+abstract class User extends FOSUser
 {
     /**
      * @var int
