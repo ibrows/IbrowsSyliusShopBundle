@@ -57,12 +57,22 @@ class CurrentCartManager extends CartManager
         CartProviderInterface $provider
     ){
         parent::__construct($cartManager, $cartRepo, $itemManager, $itemRepo, $additionalItemObjectRepo, $resolver, $availablityChecker);
-
         $this->provider = $provider;
-        parent::setCart($provider->getCart());
-
         $this->cartItemSerializers = new ArrayCollection();
         $this->cartSerializers = new ArrayCollection();
+    }
+
+    /**
+     * @param bool $throwException
+     * @return CartInterface
+     * @throws \BadMethodCallException
+     */
+    public function getCart($throwException = false)
+    {
+        if(!$this->cart){
+            parent::setCart($this->provider->getCart());
+        }
+        return $this->cart;
     }
 
     /**
@@ -116,10 +126,11 @@ class CurrentCartManager extends CartManager
     }
 
     /**
+     * @param bool $persistCart
+     * @return CurrentCartManager
      * @throws \BadMethodCallException
-     * @return CartManager
      */
-    public function closeCart($peristCart = true)
+    public function closeCart($persistCart = true)
     {
         $cart = $this->getCart();
         if($cart->isClosed()){
@@ -130,9 +141,10 @@ class CurrentCartManager extends CartManager
         $this->serializeCart($cart);
 
         $cart->setClosed();
+        $cart->setLocked(true);
 
-        if(true === $peristCart){
-            $this->persistCart();
+        if(true === $persistCart){
+            $this->persistCart(false);
         }
 
         $this->clearCurrentCart();

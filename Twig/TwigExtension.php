@@ -3,6 +3,7 @@
 namespace Ibrows\SyliusShopBundle\Twig;
 
 use Ibrows\SyliusShopBundle\Cart\CurrentCartManager;
+use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 
 class TwigExtension extends \Twig_Extension
 {
@@ -70,7 +71,7 @@ class TwigExtension extends \Twig_Extension
      * @param \Twig_Environment $environment
      * @param string $uri
      * @param array $options
-     * @return Response
+     * @return string
      */
     public function renderHinclude(\Twig_Environment $environment, $uri, array $options = array())
     {

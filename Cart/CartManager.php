@@ -181,15 +181,17 @@ class CartManager
     }
 
     /**
+     * @param bool $refreshAndCheckAvailability
      * @return CartManager
-     * @throws CartException
      */
-    public function persistCart()
+    public function persistCart($refreshAndCheckAvailability = true)
     {
         $cart = $this->getCart(true);
 
-        $this->refreshCart();
-        $this->checkAvailability();
+        if(true === $refreshAndCheckAvailability){
+            $this->refreshCart();
+            $this->checkAvailability();
+        }
 
         $om = $this->cartObjectManager;
         $om->persist($cart);
