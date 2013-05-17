@@ -29,6 +29,9 @@ abstract class AbstractTaxCartStrategy extends AbstractCartStrategy
         foreach($cart->getItems() as $item){
             $item->setTaxRate($this->getTaxRateForItem($item, $cart, $cartManager));
         }
+        foreach($cart->getAdditionalItems() as $item){
+            $item->setTaxRate($this->getTaxRateForAdditionalItem($item, $cart, $cartManager));
+        }
         return array();
     }
 
@@ -39,4 +42,12 @@ abstract class AbstractTaxCartStrategy extends AbstractCartStrategy
      * @return float
      */
     abstract protected function getTaxRateForItem(CartItemInterface $item, CartInterface $cart, CartManager $cartManager);
+
+    /**
+     * @param AdditionalCartItemInterface $item
+     * @param CartInterface $cart
+     * @param CartManager $cartManager
+     * @return float
+     */
+    abstract protected function getTaxRateForAdditionalItem(AdditionalCartItemInterface $item, CartInterface $cart, CartManager $cartManager);
 }

@@ -76,9 +76,21 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @var float
+     * @ORM\Column(type="decimal", scale=2, precision=11, name="additional_items_price_total_with_tax")
+     */
+    protected $additionalItemsPriceTotalWithTax = 0.0;
+
+    /**
+     * @var float
      * @ORM\Column(type="decimal", scale=2, precision=11, name="items_price_total")
      */
     protected $itemsPriceTotal = 0.0;
+
+    /**
+     * @var float
+     * @ORM\Column(type="decimal", scale=2, precision=11, name="items_price_total_with_tax")
+     */
+    protected $itemsPriceTotalWithTax = 0.0;
 
     /**
      * @var DateTime
@@ -145,17 +157,24 @@ class Cart extends BaseCart implements CartInterface
     public function calculateTotal()
     {
         $itemsPriceTotal = 0.0;
+        $itemsPriceTotalWithTax = 0.0;
         foreach ($this->items as $item) {
             $item->calculateTotal();
-            $itemsPriceTotal += $item->getTotalWithTaxPrice();
+            $itemsPriceTotal += $item->getTotal();
+            $itemsPriceTotalWithTax += $item->getTotalWithTaxPrice();
         }
         $this->setItemsPriceTotal($itemsPriceTotal);
+        $this->setItemsPriceTotalWithTax($itemsPriceTotalWithTax);
 
         $additionalItemsPriceTotal = 0.0;
+        $additionalItemsPriceTotalWithTax = 0.0;
         foreach ($this->additionalItems as $item) {
+            $item->calculateTotal();
             $additionalItemsPriceTotal += $item->getPrice();
+            $additionalItemsPriceTotalWithTax += $item->getPriceWithTax();
         }
         $this->setAdditionalItemsPriceTotal($additionalItemsPriceTotal);
+        $this->setAdditionalItemsPriceTotalWithTax($additionalItemsPriceTotalWithTax);
 
         $this->setTotal($itemsPriceTotal + $additionalItemsPriceTotal);
 
@@ -566,5 +585,41 @@ class Cart extends BaseCart implements CartInterface
     public function getAdditionalItemsPriceTotal()
     {
         return $this->additionalItemsPriceTotal;
+    }
+
+    /**
+     * @return float
+     */
+    public function getAdditionalItemsPriceTotalWithTax()
+    {
+        return $this->additionalItemsPriceTotalWithTax;
+    }
+
+    /**
+     * @param float $additionalItemsPriceTotalWithTax
+     * @return Cart
+     */
+    public function setAdditionalItemsPriceTotalWithTax($additionalItemsPriceTotalWithTax)
+    {
+        $this->additionalItemsPriceTotalWithTax = $additionalItemsPriceTotalWithTax;
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getItemsPriceTotalWithTax()
+    {
+        return $this->itemsPriceTotalWithTax;
+    }
+
+    /**
+     * @param float $itemsPriceTotalWithTax
+     * @return Cart
+     */
+    public function setItemsPriceTotalWithTax($itemsPriceTotalWithTax)
+    {
+        $this->itemsPriceTotalWithTax = $itemsPriceTotalWithTax;
+        return $this;
     }
 }

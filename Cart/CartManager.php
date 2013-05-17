@@ -330,7 +330,6 @@ class CartManager
         if($cart->isClosed()){
             throw new \BadMethodCallException("Cart is already closed");
         }
-        $cart->refreshCart();
         $this->computeStrategies();
     }
 
@@ -347,11 +346,14 @@ class CartManager
             }
         }
 
+        $cart->refreshCart();
+
         foreach($this->strategies as $strategy){
             if($strategy->accept($cart, $this)){
                 foreach($strategy->compute($cart, $this) as $item){
                     $this->addAdditionalItem($item);
                 }
+                $cart->refreshCart();
             }
         }
     }

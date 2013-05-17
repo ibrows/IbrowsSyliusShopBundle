@@ -39,6 +39,24 @@ class AdditionalCartItem implements AdditionalCartItemInterface
     protected $price;
 
     /**
+     * @var float
+     * @ORM\Column(type="decimal", scale=2, precision=11, name="tax_rate")
+     */
+    protected $taxRate = 0.0;
+
+    /**
+     * @var float
+     * @ORM\Column(type="decimal", scale=2, precision=11, name="tax_price")
+     */
+    protected $taxPrice = 0.0;
+
+    /**
+     * @var float
+     * @ORM\Column(type="decimal", scale=2, precision=11, name="price_with_tax")
+     */
+    protected $priceWithTax = 0.0;
+
+    /**
      * @var string
      * @ORM\Column(type="string")
      */
@@ -62,6 +80,16 @@ class AdditionalCartItem implements AdditionalCartItemInterface
     public function __toString()
     {
         return (string)$this->getText();
+    }
+
+    public function calculateTotal()
+    {
+        $price = $this->getPrice();
+        $taxRate = $this->getTaxRate();
+        $taxPrice = $price*$taxRate;
+
+        $this->setTaxPrice($taxPrice);
+        $this->setPriceWithTax($price+$taxPrice);
     }
 
     /**
@@ -159,6 +187,60 @@ class AdditionalCartItem implements AdditionalCartItemInterface
     public function setText($text)
     {
         $this->text = $text;
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getTaxPrice()
+    {
+        return $this->taxPrice;
+    }
+
+    /**
+     * @param float $taxPrice
+     * @return AdditionalCartItem
+     */
+    public function setTaxPrice($taxPrice)
+    {
+        $this->taxPrice = $taxPrice;
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getTaxRate()
+    {
+        return $this->taxRate;
+    }
+
+    /**
+     * @param float $taxRate
+     * @return AdditionalCartItem
+     */
+    public function setTaxRate($taxRate)
+    {
+        $this->taxRate = $taxRate;
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getPriceWithTax()
+    {
+        return $this->priceWithTax;
+    }
+
+    /**
+     * @param float $priceWithTax
+     * @return AdditionalCartItem
+     */
+    public function setPriceWithTax($priceWithTax)
+    {
+        $this->priceWithTax = $priceWithTax;
         return $this;
     }
 }

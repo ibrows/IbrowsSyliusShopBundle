@@ -63,4 +63,39 @@ interface AdditionalCartItemInterface
      * @return AdditionalCartItemInterface
      */
     public function setText($text);
+
+    /**
+     * @return float
+     */
+    public function getTaxRate();
+
+    /**
+     * @param float $rate
+     * @return AdditionalCartItemInterface
+     */
+    public function setTaxRate($rate);
+
+    /**
+     * @return float
+     */
+    public function getTaxPrice();
+
+    /**
+     * @param float $price
+     * @return AdditionalCartItemInterface
+     */
+    public function setTaxPrice($price);
+
+    /**
+     * @return float
+     */
+    public function getPriceWithTax();
+
+    /**
+     * @param float $total
+     * @return AdditionalCartItemInterface
+     */
+    public function setPriceWithTax($price);
+
+    public function calculateTotal();
 }

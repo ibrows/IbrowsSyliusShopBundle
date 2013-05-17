@@ -75,7 +75,7 @@ interface CartItemInterface extends BaseCartItemInterface
     public function setTaxPrice($price);
 
     /**
-     * @return CartItemInterface
+     * @return float
      */
     public function getTotalWithTaxPrice();
 
