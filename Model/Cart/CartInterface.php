@@ -191,6 +191,17 @@ interface CartInterface extends BaseCartInterface
     public function getDeliveryOptionStrategyServiceId();
 
     /**
+     * @param string $serviceId
+     * @return CartInterface
+     */
+    public function setPaymentStrategyServiceId($serviceId);
+
+    /**
+     * @return string
+     */
+    public function getPaymentStrategyServiceId();
+
+    /**
      * @param float $total
      * @return CartInterface
      */

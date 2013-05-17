@@ -51,6 +51,12 @@ class Cart extends BaseCart implements CartInterface
     protected $deliveryOptionStrategyServiceId;
 
     /**
+     * @var string
+     * @ORM\Column(type="string", name="payment_strategy_service_id", nullable=true)
+     */
+    protected $paymentStrategyServiceId;
+
+    /**
      * @var Collection|CartItemInterface[]
      * @ORM\OneToMany(targetEntity="Ibrows\SyliusShopBundle\Model\CartItemInterface", mappedBy="cart", cascade="all", orphanRemoval=true)
      */
@@ -620,6 +626,24 @@ class Cart extends BaseCart implements CartInterface
     public function setItemsPriceTotalWithTax($itemsPriceTotalWithTax)
     {
         $this->itemsPriceTotalWithTax = $itemsPriceTotalWithTax;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPaymentStrategyServiceId()
+    {
+        return $this->paymentStrategyServiceId;
+    }
+
+    /**
+     * @param string $paymentStrategyServiceId
+     * @return Cart
+     */
+    public function setPaymentStrategyServiceId($paymentStrategyServiceId)
+    {
+        $this->paymentStrategyServiceId = $paymentStrategyServiceId;
         return $this;
     }
 }
