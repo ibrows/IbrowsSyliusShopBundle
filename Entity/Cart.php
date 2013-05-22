@@ -700,4 +700,18 @@ class Cart extends BaseCart implements CartInterface
         $this->itemsPriceTotalTax = $itemsPriceTotalTax;
         return $this;
     }
+
+    /**
+     * @param integer $itemId
+     * @return CartItemInterface
+     */
+    public function getItemById($itemId)
+    {
+        foreach($this->items as $item){
+            if($item->getId() == $itemId){
+                return $item;
+            }
+        }
+        return null;
+    }
 }

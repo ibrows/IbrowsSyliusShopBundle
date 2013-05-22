@@ -266,4 +266,10 @@ interface CartInterface extends BaseCartInterface
      * @return CartInterface
      */
     public function setItemsPriceTotalTax($itemsPriceTotalTax);
+
+    /**
+     * @param integer $itemId
+     * @return CartItemInterface
+     */
+    public function getItemById($itemId);
 }
