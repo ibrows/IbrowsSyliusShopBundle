@@ -6,7 +6,7 @@ use FOS\UserBundle\Entity\User as FOSUser;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\MappedSuperClass
+ * @ORM\MappedSuperclass
  * @ORM\Table(name="fos_user")
  */
 abstract class User extends FOSUser
