@@ -18,6 +18,7 @@ use Ibrows\SyliusShopBundle\Form\BasketItemType;
 use Ibrows\SyliusShopBundle\Form\DeliveryAddressType;
 use Ibrows\SyliusShopBundle\Form\InvoiceAddressType;
 use Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface;
+use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
 use Ibrows\SyliusShopBundle\IbrowsSyliusShopBundle;
 use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -34,6 +35,7 @@ use FOS\UserBundle\Security\LoginManager;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartDeliveryOptionStrategyInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 abstract class AbstractController extends Controller
 {
@@ -336,7 +338,7 @@ abstract class AbstractController extends Controller
     }
 
     /**
-     * @return InvoiceAddressInterface
+     * @return DeliveryAddressInterface
      */
     protected function getNewDeliveryAddress()
     {
