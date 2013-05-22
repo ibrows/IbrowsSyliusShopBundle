@@ -40,7 +40,6 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
     /**
      * @var string $company
      * @ORM\Column(type="string", nullable=true)
-     * @Assert\NotBlank(groups={"sylius_wizard_address"})
      */
     protected $company;
 
@@ -69,13 +68,13 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
      * @var string $country
      * @ORM\Column(type="string", nullable=true)
      * @Assert\Country(groups={"sylius_wizard_address"})
+     * @Assert\NotBlank(groups={"sylius_wizard_address"})
      */
     protected $country;
 
     /**
      * @var string $phone
      * @ORM\Column( type="string", nullable=true)
-     * @Assert\NotBlank(groups={"sylius_wizard_address"})
      */
     protected $phone;
 
