@@ -102,13 +102,13 @@ class Cart extends BaseCart implements CartInterface
      * @var float
      * @ORM\Column(type="decimal", scale=2, precision=11, name="items_price_total_tax")
      */
-    protected $itemsPriceTotalTax;
+    protected $itemsPriceTotalTax = 0.0;
 
     /**
      * @var float
      * @ORM\Column(type="decimal", scale=2, precision=11, name="additional_items_price_total_tax")
      */
-    protected $additionalItemsPriceTotalTax;
+    protected $additionalItemsPriceTotalTax = 0.0;
 
     /**
      * @var DateTime
