@@ -39,7 +39,8 @@ class DeliveryOptionStrategyType extends AbstractType
         }
 
         $builder->add('deliveryOptionStrategyServiceId', 'choice', array(
-            'choices' => $strategyChoices
+            'choices' => $strategyChoices,
+            'expanded' => true
         ));
     }
 
