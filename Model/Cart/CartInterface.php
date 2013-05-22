@@ -213,6 +213,11 @@ interface CartInterface extends BaseCartInterface
     public function getItemsPriceTotal();
 
     /**
+     * @return CartItemInterface[]
+     */
+    public function getItems();
+
+    /**
      * @param float $total
      * @return CartInterface
      */
