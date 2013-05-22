@@ -244,4 +244,26 @@ interface CartInterface extends BaseCartInterface
      * @return CartInterface
      */
     public function getAdditionalItemsPriceTotalWithTax();
+
+    /**
+     * @return float
+     */
+    public function getAdditionalItemsPriceTotalTax();
+
+    /**
+     * @param float $additionalItemsPriceTotalTax
+     * @return CartInterface
+     */
+    public function setAdditionalItemsPriceTotalTax($additionalItemsPriceTotalTax);
+
+    /**
+     * @return float
+     */
+    public function getItemsPriceTotalTax();
+
+    /**
+     * @param float $itemsPriceTotalTax
+     * @return CartInterface
+     */
+    public function setItemsPriceTotalTax($itemsPriceTotalTax);
 }

@@ -99,6 +99,18 @@ class Cart extends BaseCart implements CartInterface
     protected $itemsPriceTotalWithTax = 0.0;
 
     /**
+     * @var float
+     * @ORM\Column(type="decimal", scale=2, precision=11, name="items_price_total_tax")
+     */
+    protected $itemsPriceTotalTax;
+
+    /**
+     * @var float
+     * @ORM\Column(type="decimal", scale=2, precision=11, name="additional_items_price_total_tax")
+     */
+    protected $additionalItemsPriceTotalTax;
+
+    /**
      * @var DateTime
      * @ORM\Column(type="datetime", nullable=true)
      */
@@ -164,23 +176,29 @@ class Cart extends BaseCart implements CartInterface
     {
         $itemsPriceTotal = 0.0;
         $itemsPriceTotalWithTax = 0.0;
+        $itemsPriceTotalTax = 0.0;
         foreach ($this->items as $item) {
             $item->calculateTotal();
             $itemsPriceTotal += $item->getTotal();
             $itemsPriceTotalWithTax += $item->getTotalWithTaxPrice();
+            $itemsPriceTotalTax += $item->getTaxPrice();
         }
         $this->setItemsPriceTotal($itemsPriceTotal);
         $this->setItemsPriceTotalWithTax($itemsPriceTotalWithTax);
+        $this->setItemsPriceTotalTax($itemsPriceTotalTax);
 
         $additionalItemsPriceTotal = 0.0;
         $additionalItemsPriceTotalWithTax = 0.0;
+        $additionalItemsPriceTax = 0.0;
         foreach ($this->additionalItems as $item) {
             $item->calculateTotal();
             $additionalItemsPriceTotal += $item->getPrice();
             $additionalItemsPriceTotalWithTax += $item->getPriceWithTax();
+            $additionalItemsPriceTax += $item->getTaxPrice();
         }
         $this->setAdditionalItemsPriceTotal($additionalItemsPriceTotal);
         $this->setAdditionalItemsPriceTotalWithTax($additionalItemsPriceTotalWithTax);
+        $this->setAdditionalItemsPriceTotalTax($additionalItemsPriceTax);
 
         $this->setTotal($itemsPriceTotal + $additionalItemsPriceTotal);
 
@@ -644,6 +662,42 @@ class Cart extends BaseCart implements CartInterface
     public function setPaymentStrategyServiceId($paymentStrategyServiceId)
     {
         $this->paymentStrategyServiceId = $paymentStrategyServiceId;
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getAdditionalItemsPriceTotalTax()
+    {
+        return $this->additionalItemsPriceTotalTax;
+    }
+
+    /**
+     * @param float $additionalItemsPriceTotalTax
+     * @return Cart
+     */
+    public function setAdditionalItemsPriceTotalTax($additionalItemsPriceTotalTax)
+    {
+        $this->additionalItemsPriceTotalTax = $additionalItemsPriceTotalTax;
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getItemsPriceTotalTax()
+    {
+        return $this->itemsPriceTotalTax;
+    }
+
+    /**
+     * @param float $itemsPriceTotalTax
+     * @return Cart
+     */
+    public function setItemsPriceTotalTax($itemsPriceTotalTax)
+    {
+        $this->itemsPriceTotalTax = $itemsPriceTotalTax;
         return $this;
     }
 }
