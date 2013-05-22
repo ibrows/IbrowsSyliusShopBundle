@@ -135,8 +135,8 @@ class WizardController extends AbstractWizardController
         $cart = $this->getCurrentCart();
         $cartManager = $this->getCurrentCartManager();
 
-        $invoiceaddress = $cart->getInvoiceAddress() ? : $this->getNewInvoiceAddress();
-        $deliveryAddress = $cart->getDeliveryAddress() ? : $this->getNewDeliveryAddress();
+        $invoiceaddress = $cart->getInvoiceAddress() ?: $this->getNewInvoiceAddress();
+        $deliveryAddress = $cart->getDeliveryAddress() ?: $this->getNewDeliveryAddress();
 
         $invoiceAddressForm = $this->createForm(
             $this->getInvoiceAddressType(),
