@@ -2,6 +2,7 @@
 
 namespace Ibrows\SyliusShopBundle\Entity;
 
+use Ibrows\SyliusShopBundle\Model\Address\AddressInterface;
 use Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface;
 use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
 
@@ -281,5 +282,24 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
             $template = preg_replace('!%%' . $var . '%%!', $value, $template);
         }
         return preg_replace("!\n+\s*\n+!","\n",$template);
+    }
+
+    /**
+     * @param AddressInterface $address
+     * @return bool
+     */
+    public function compare(AddressInterface $address)
+    {
+        return(
+            $this->getCity() == $address->getCity() &&
+            $this->getCompany() == $address->getCompany() &&
+            $this->getCountry() == $address->getCountry() &&
+            $this->getEmail() == $address->getEmail() &&
+            $this->getFirstname() == $address->getFirstname() &&
+            $this->getPhone() == $address->getPhone() &&
+            $this->getLastname() == $address->getLastname() &&
+            $this->getStreet() == $address->getStreet() &&
+            $this->getZip() == $address->getZip()
+        );
     }
 }

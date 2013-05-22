@@ -135,14 +135,14 @@ class WizardController extends AbstractWizardController
         $cart = $this->getCurrentCart();
         $cartManager = $this->getCurrentCartManager();
 
-        $invoiceaddress = $cart->getInvoiceAddress() ?: $this->getNewInvoiceAddress();
+        $invoiceAddress = $cart->getInvoiceAddress() ?: $this->getNewInvoiceAddress();
         $deliveryAddress = $cart->getDeliveryAddress() ?: $this->getNewDeliveryAddress();
 
         $invoiceAddressForm = $this->createForm(
             $this->getInvoiceAddressType(),
-            $invoiceaddress,
+            $invoiceAddress,
             array(
-                'data_class' => get_class($invoiceaddress),
+                'data_class' => get_class($invoiceAddress),
                 'validation_groups' => array(
                     'sylius_wizard_address'
                 )
@@ -164,31 +164,52 @@ class WizardController extends AbstractWizardController
             $this->getDeliveryOptionStrategyType($cartManager),
             $cart,
             array(
+                'data_class' => get_class($cart),
                 'validation_groups' => array(
                     'sylius_wizard_delivery_strategy'
                 )
             )
         );
 
+        $invoiceSameAsDeliveryForm = $this->createForm(
+            $this->getInvoiceSameAsDeliveryType(),
+            array(
+                'invoiceSameAsDelivery' => $invoiceAddress->compare($deliveryAddress)
+            ),
+            array(
+                'attr' => array(
+                    'data-invoice-same-as-delivery' => true
+                )
+            )
+        );
+
         if ("POST" == $request->getMethod()) {
             $invoiceAddressForm->bind($request);
-            $deliveryAddressForm->bind($request);
             $deliveryOptionStrategyForm->bind($request);
+            $invoiceSameAsDeliveryForm->bind($request);
             if (
                 $invoiceAddressForm->isValid() &&
-                $deliveryAddressForm->isValid() &&
-                $deliveryOptionStrategyForm->isValid()
+                $deliveryOptionStrategyForm->isValid() &&
+                $invoiceSameAsDeliveryForm->isValid()
             ) {
-                $cart->setInvoiceAddress($invoiceaddress);
-                $cart->setDeliveryAddress($deliveryAddress);
 
-                $om = $this->getObjectManager();
-                $om->persist($invoiceaddress);
-                $om->persist($deliveryAddress);
+                $invoiceSameAsDelivery = (bool)$invoiceSameAsDeliveryForm->get('invoiceSameAsDelivery')->getData();
+                if($invoiceSameAsDelivery){
+                    $deliveryAddress = clone $invoiceAddress;
+                }
 
-                $this->persistCurrentCart();
+                if($invoiceSameAsDelivery OR ($deliveryAddressForm->bind($request) && $deliveryAddressForm->isValid())){
+                    $cart->setInvoiceAddress($invoiceAddress);
+                    $cart->setDeliveryAddress($deliveryAddress);
 
-                return $this->redirect($this->getWizard()->getNextStepUrl());
+                    $om = $this->getObjectManager();
+                    $om->persist($invoiceAddress);
+                    $om->persist($deliveryAddress);
+
+                    $this->persistCurrentCart();
+
+                    return $this->redirect($this->getWizard()->getNextStepUrl());
+                }
             }
         }
 
@@ -196,6 +217,7 @@ class WizardController extends AbstractWizardController
             'invoiceAddressForm' => $invoiceAddressForm->createView(),
             'deliveryAddressForm' => $deliveryAddressForm->createView(),
             'deliveryOptionStrategyForm' => $deliveryOptionStrategyForm->createView(),
+            'invoiceSameAsDeliveryForm' => $invoiceSameAsDeliveryForm->createView(),
             'cart' => $cart
         );
     }

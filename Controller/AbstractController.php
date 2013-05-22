@@ -7,6 +7,7 @@ use Ibrows\SyliusShopBundle\Cart\Exception\CartItemNotOnStockException;
 use Ibrows\SyliusShopBundle\Cart\CartManager;
 use Ibrows\SyliusShopBundle\Cart\CurrentCartManager;
 use Ibrows\SyliusShopBundle\Form\DeliveryOptionStrategyType;
+use Ibrows\SyliusShopBundle\Form\InvoiceSameAsDeliveryType;
 use Ibrows\SyliusShopBundle\Form\SummaryType;
 use Ibrows\SyliusShopBundle\Repository\ProductRepository;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
@@ -277,6 +278,11 @@ abstract class AbstractController extends Controller
     protected function getAuthType()
     {
         return new AuthType();
+    }
+
+    protected function getInvoiceSameAsDeliveryType()
+    {
+        return new InvoiceSameAsDeliveryType();
     }
 
     /**

@@ -2,6 +2,8 @@
 
 namespace Ibrows\SyliusShopBundle\Model\Address;
 
+use Entities\Address;
+
 interface AddressInterface
 {
     /**
@@ -102,4 +104,10 @@ interface AddressInterface
      * @return string
      */
     public function getZip();
+
+    /**
+     * @param AddressInterface $address
+     * @return bool
+     */
+    public function compare(AddressInterface $address);
 }
