@@ -34,34 +34,15 @@ abstract class AbstractFlatrateDeliveryCartStrategy extends AbstractDeliveryCart
             return array();
         }
 
-        $costs = $this->getCosts($this->steps, $cart->getTotal());
-
-        $item = $this->createAdditionalCartItem();
-        $item->setPrice($costs);
-        $item->setText($this->getItemText($costs, $cart, $cartManager, $item));
-
-        return array($item);
-    }
-
-    /**
-     * @param array $steps
-     * @param float $total
-     * @return float
-     */
-    protected function getCosts(array $steps, $total)
-    {
-        $costs = 0.0;
-        $oldStepCosts = 0.0;
-
-        foreach($steps as $minTotal => $stepCosts){
-            if($total < $minTotal){
-                $costs = $oldStepCosts;
-                break;
-            }
-            $oldStepCosts = $stepCosts;
+        $costs = $this->getStepCosts($this->steps, $cart->getTotal());
+        if($costs != 0){
+            $item = $this->createAdditionalCartItem();
+            $item->setPrice($costs);
+            $item->setText($this->getItemText($costs, $cart, $cartManager, $item));
+            return array($item);
         }
 
-        return $costs;
+        return array();
     }
 
     /**
