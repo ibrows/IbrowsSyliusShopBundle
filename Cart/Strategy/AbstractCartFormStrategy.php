@@ -16,6 +16,11 @@ abstract class AbstractCartFormStrategy extends AbstractCartStrategy implements 
      * @var bool
      */
     protected $isParentVisible = true;
+    
+    /**
+     * @var string
+     */
+    protected $defaultTranslationDomain = "Forms";
 
     /**
      * @return bool
@@ -90,18 +95,38 @@ abstract class AbstractCartFormStrategy extends AbstractCartStrategy implements 
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
-     */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
-
-    }
-
-    /**
      * @return string|null|FormTypeInterface
      */
     public function getParent()
     {
         return 'form';
+    }
+    
+    /**
+     * @return string
+     */
+    public function getDefaultTranslationDomain()
+    {
+        return $this->defaultTranslationDomain;
+    }
+
+    /**
+     * @param string $domain
+     * @return AbstractCartFormStrategy
+     */
+    public function setDefaultTranslationDomain($domain)
+    {
+        $this->defaultTranslationDomain = $domain;
+        return $this;
+    }
+    
+    /**
+     * @param OptionsResolverInterface $resolver
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults(array(
+            'translation_domain' => $this->getDefaultTranslationDomain(),
+        ));
     }
 }
