@@ -15,13 +15,46 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 abstract class AbstractDeliveryCartStrategy extends AbstractCartFormStrategy implements CartDeliveryOptionStrategyInterface
 {
     /**
+     * @var bool
+     */
+    protected $default = false;
+
+    /**
+     * @return boolean
+     */
+    public function isDefault()
+    {
+        return $this->default;
+    }
+
+    /**
+     * @param boolean $default
+     * @return AbstractDeliveryCartStrategy
+     */
+    public function setDefault($default)
+    {
+        $this->default = $default;
+        return $this;
+    }
+
+    /**
      * @param CartInterface $cart
      * @param CartManager $cartManager
      * @return bool
      */
     public function accept(CartInterface $cart, CartManager $cartManager)
     {
-        return $cart->getDeliveryOptionStrategyServiceId() == $this->getServiceId();
+        $selectedServiceId = $cart->getDeliveryOptionStrategyServiceId();
+        if($selectedServiceId == $this->getServiceId()){
+            return true;
+        }
+
+        if(!$selectedServiceId && $this->isDefault()){
+            $cart->setDeliveryOptionStrategyServiceId($this->getServiceId());
+            return true;
+        }
+
+        return false;
     }
 
     /**
