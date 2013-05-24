@@ -33,6 +33,7 @@ class WizardController extends AbstractWizardController
         $deleteSubmitName = 'delete';
 
         $cart = $this->getCurrentCart();
+        $cartManager = $this->getCurrentCartManager();
         $basketForm = $this->createForm($this->getBasketType(), $cart);
 
         if ("POST" == $request->getMethod()) {
@@ -46,7 +47,6 @@ class WizardController extends AbstractWizardController
                     ($deleteItems = $request->request->get($deleteSubmitName)) &&
                     is_array($deleteItems)
                 ) {
-                    $cartManager = $this->getCurrentCartManager();
                     foreach($deleteItems as $itemId => $formName){
                         if($item = $cart->getItemById($itemId)){
                             $cartManager->removeItem($item);
@@ -66,7 +66,8 @@ class WizardController extends AbstractWizardController
             'deleteSubmitName' => $deleteSubmitName,
             'continueSubmitName' => $continueSubmitName,
             'basketForm' => $basketForm->createView(),
-            'cart' => $this->getCurrentCart()
+            'cart' => $this->getCurrentCart(),
+            'deliveryCosts' => $cartManager->getSelectedDeliveryOptionStrategyServiceCosts()
         );
     }
 
