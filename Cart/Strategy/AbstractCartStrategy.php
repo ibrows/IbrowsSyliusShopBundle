@@ -19,6 +19,11 @@ abstract class AbstractCartStrategy implements CartStrategyInterface
     protected $serviceId;
 
     /**
+     * @var bool
+     */
+    protected $enabled = true;
+
+    /**
      * @param ObjectRepository $repo
      * @return ObjectRepository
      */
@@ -34,6 +39,24 @@ abstract class AbstractCartStrategy implements CartStrategyInterface
     public function getAdditionalCartItemRepo()
     {
         return $this->additionalCartItemRepo;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isEnabled()
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * @param boolean $enabled
+     * @return AbstractCartStrategy
+     */
+    public function setEnabled($enabled)
+    {
+        $this->enabled = $enabled;
+        return $this;
     }
 
     /**

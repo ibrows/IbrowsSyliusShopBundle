@@ -447,7 +447,7 @@ class CartManager
         $cart->refreshCart();
 
         foreach($this->strategies as $strategy){
-            if($strategy->accept($cart, $this)){
+            if($strategy->isEnabled() && $strategy->accept($cart, $this)){
                 foreach($strategy->compute($cart, $this) as $item){
                     $this->addAdditionalItem($item);
                 }
