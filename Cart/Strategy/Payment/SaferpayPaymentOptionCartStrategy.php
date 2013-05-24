@@ -11,6 +11,7 @@ use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Payment\HttpClient\GuzzleClient;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Payment\Saferpay\Saferpay;
 
@@ -152,7 +153,7 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
      * @param Context $context
      * @param CartInterface $cart
      * @param CartManager $cartManager
-     * @return PaymentFinishedResponse|ErrorRedirectResponse|SelfRedirectResponse
+     * @return RedirectResponse|PaymentFinishedResponse|ErrorRedirectResponse|SelfRedirectResponse
      */
     public function pay(Context $context, CartInterface $cart, CartManager $cartManager)
     {
@@ -165,11 +166,10 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
         $saferpay->setHttpClient(new GuzzleClient());
         $saferpay->setData($session->get($sessionKey));
 
-        if($request->query->get('status') == 'success'){
+        if($request->query->get('status') == PaymentFinishedResponse::STATUS_OK){
             if($saferpay->confirmPayment($request->query->get('DATA'), $request->query->get('SIGNATURE')) != ''){
                 if($saferpay->completePayment() != ''){
                     $session->remove($sessionKey);
-                    $cart->setPayed();
                     return new PaymentFinishedResponse();
                 }else{
                     return new PaymentFinishedResponse(PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_CONFIRMATION);
@@ -190,10 +190,10 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
             $errorRouteName = $context->getErrorRouteName();
 
             $url = $saferpay->initPayment($saferpay->getKeyValuePrototype()->all(array(
-                'AMOUNT' => $cart->getTotalWithTax(),
+                'AMOUNT' => round($cart->getTotalWithTax()*100),
                 'DESCRIPTION' => sprintf('Bestellnummer: %s', $cart->getId()),
                 'ORDERID' => $cart->getId(),
-                'SUCCESSLINK' => $this->getRouter()->generate($currentRouteName, array('status' => 'success'), true),
+                'SUCCESSLINK' => $this->getRouter()->generate($currentRouteName, array('status' => PaymentFinishedResponse::STATUS_OK), true),
                 'FAILLINK' => $this->getRouter()->generate($errorRouteName, array('status' => 'fail'), true),
                 'BACKLINK' => $this->getRouter()->generate($errorRouteName, array('status' => 'abort'), true),
                 'FIRSTNAME' => $invoiceAddress->getFirstname(),
@@ -211,7 +211,7 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
             $session->set($sessionKey, $saferpay->getData());
 
             if($url != ''){
-                return new ErrorRedirectResponse(array('status' => 'error'));
+                return new RedirectResponse($url);
             }else{
                 return new ErrorRedirectResponse(array('status' => 'connectionerror'));
             }

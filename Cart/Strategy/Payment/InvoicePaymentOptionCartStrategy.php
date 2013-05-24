@@ -53,7 +53,7 @@ class InvoicePaymentOptionCartStrategy extends AbstractPaymentOptionCartStrategy
      * @param Context $context
      * @param CartInterface $cart
      * @param CartManager $cartManager
-     * @return PaymentFinishedResponse|ErrorRedirectResponse|SelfRedirectResponse
+     * @return RedirectResponse|PaymentFinishedResponse|ErrorRedirectResponse|SelfRedirectResponse
      */
     public function pay(Context $context, CartInterface $cart, CartManager $cartManager)
     {

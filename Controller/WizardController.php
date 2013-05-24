@@ -3,6 +3,10 @@
 namespace Ibrows\SyliusShopBundle\Controller;
 
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Context;
+use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\ErrorRedirectResponse;
+use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\PaymentFinishedResponse;
+use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\SelfRedirectResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Form\FormError;
 use Ibrows\Bundle\WizardAnnotationBundle\Annotation\Wizard;
@@ -345,7 +349,8 @@ class WizardController extends AbstractWizardController
             'deliveryOption' => $deliveryOption,
             'paymentOption' => $paymentOption,
             'summaryForm' => $summaryForm->createView(),
-            'cart' => $cart
+            'cart' => $cart,
+            'status' => $request->get('status')
         );
     }
 
@@ -367,9 +372,27 @@ class WizardController extends AbstractWizardController
         $paymentOptionStrategyService = $cartManager->getSelectedPaymentOptionStrategyService();
         $response = $paymentOptionStrategyService->pay($context, $cart, $cartManager);
 
-        var_dump($response);
+        switch(true){
+            case $response instanceof RedirectResponse:
+                return $response;
+            break;
+            case $response instanceof ErrorRedirectResponse:
+                return new RedirectResponse($this->generateUrl($context->getErrorRouteName(), $response->getParameters()));
+            break;
+            case $response instanceof PaymentFinishedResponse:
+                if($response->getStatus() == $response::STATUS_OK){
+                    $cart->setPayed();
+                    $this->persistCart($cartManager);
+                    return $this->redirect($this->getWizard()->getNextStepUrl());
+                }
+                return new RedirectResponse($this->generateUrl($context->getErrorRouteName(), array('status' => $response->getErrorCode())));
+            break;
+            case $response instanceof SelfRedirectResponse:
+                return $this->redirect($this->generateUrl($context->getCurrentRouteName(), $response->getParameters()));
+            break;
+        }
 
-        die('end');
+        throw $this->createNotFoundException("ResponseType for PaymentGateway not found");
     }
 
     /**
