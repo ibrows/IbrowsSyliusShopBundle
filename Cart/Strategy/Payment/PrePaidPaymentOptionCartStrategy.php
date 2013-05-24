@@ -5,13 +5,13 @@ namespace Ibrows\SyliusShopBundle\Cart\Strategy\Payment;
 use Ibrows\SyliusShopBundle\Cart\CartManager;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\ErrorRedirectResponse;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\PaymentFinishedResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\SelfRedirectResponse;
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
-class InvoicePaymentOptionCartStrategy extends AbstractPaymentOptionCartStrategy
+class PrePaidPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrategy
 {
     /**
      * @param CartInterface $cart

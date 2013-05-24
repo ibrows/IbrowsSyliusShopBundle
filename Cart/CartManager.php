@@ -196,7 +196,7 @@ class CartManager
     }
 
     /**
-     * @return CartPaymentOptionStrategyInterface
+     * @return CartDeliveryOptionStrategyInterface
      */
     public function getSelectedDeliveryOptionStrategyService()
     {
@@ -205,6 +205,35 @@ class CartManager
             return null;
         }
         return $this->getPossibleDeliveryOptionStrategyById($serviceId);
+    }
+
+    /**
+     * @return array
+     */
+    public function getSelectedDeliveryOptionStrategyServiceCosts()
+    {
+        $costs = array(
+            'total' => 0.00,
+            'tax' => 0.00,
+            'totalWithTax' => 0.00
+        );
+
+        $strategy = $this->getSelectedDeliveryOptionStrategyService();
+        if(!$strategy){
+            return $costs;
+        }
+
+        foreach($this->getCart()->getAdditionalItemsByStrategy($strategy) as $item){
+            $costs['total'] += $item->getPrice();
+            $costs['tax'] += $item->getTaxPrice();
+            $costs['totalWithTax'] += $item->getPriceWithTax();
+        }
+
+        array_walk($costs, function(&$price){
+            $price = number_format($price, 2);
+        });
+
+        return $costs;
     }
 
     /**

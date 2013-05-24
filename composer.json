@@ -38,7 +38,6 @@
             "type": "vcs",
             "url":  "git://github.com/ibrows/SyliusCartBundle.git"
         }
-
     ], 
     "autoload": {
         "psr-0": { "Ibrows\\SyliusShopBundle": "" }

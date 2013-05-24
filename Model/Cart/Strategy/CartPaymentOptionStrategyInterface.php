@@ -7,7 +7,7 @@ use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouterInterface;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Context;
-use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\RedirectResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\PaymentFinishedResponse;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\ErrorRedirectResponse;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\SelfRedirectResponse;
