@@ -36,4 +36,15 @@ interface CartFormStrategyInterface extends CartStrategyInterface, FormTypeInter
      * @return CartFormStrategyInterface
      */
     public function setParentVisible($flag);
+    
+    /**
+     * @param string $domain
+     * @return CartFormStrategyInterface
+     */
+    public function setDefaultTranslationDomain($domain);
+    
+    /**
+     * @return string
+     */
+    public function getDefaultTranslationDomain();
 }
