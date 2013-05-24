@@ -3,23 +3,31 @@
 namespace Ibrows\SyliusShopBundle\Model\Cart;
 
 use Doctrine\Common\Collections\Collection;
-
 use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface;
-
 use Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface;
 use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartStrategyInterface;
-use Ibrows\SyliusShopBundle\Model\Delivery\DeliveryOptionInterface;
-use Ibrows\SyliusShopBundle\Model\Payment\PaymentOptionsInterface;
-
-use JMS\Payment\CoreBundle\Model\PaymentInstructionInterface;
-
 use Sylius\Bundle\CartBundle\Model\CartInterface as BaseCartInterface;
-
 use DateTime;
 
 interface CartInterface extends BaseCartInterface
 {
+    /**
+     * @return int
+     */
+    public function getId();
+
+    /**
+     * @return string
+     */
+    public function getCurrency();
+
+    /**
+     * @param string $currency
+     * @return CartInterface
+     */
+    public function setCurrency($currency);
+
     /**
      * @param AdditionalCartItemInterface $item
      * @return CartInterface
@@ -116,17 +124,6 @@ interface CartInterface extends BaseCartInterface
     public function setDeliveryAddressObj(DeliveryAddressInterface $deliveryAddressObj = null);
 
     /**
-     * @return PaymentInstructionInterface
-     */
-    public function getPaymentInstruction();
-
-    /**
-     * @param PaymentInstructionInterface $instruction
-     * @return PaymentInstructionInterface
-     */
-    public function setPaymentInstruction(PaymentInstructionInterface $instruction = null);
-
-    /**
      * @param bool $flag
      * @return CartInterface
      */
@@ -191,15 +188,37 @@ interface CartInterface extends BaseCartInterface
     public function getDeliveryOptionStrategyServiceId();
 
     /**
+     * @param array $data
+     * @return CartInterface
+     */
+    public function setDeliveryOptionStrategyServiceData(array $data = null);
+
+    /**
+     * @return array
+     */
+    public function getDeliveryOptionStrategyServiceData();
+
+    /**
      * @param string $serviceId
      * @return CartInterface
      */
-    public function setPaymentStrategyServiceId($serviceId);
+    public function setPaymentOptionStrategyServiceId($serviceId);
 
     /**
      * @return string
      */
-    public function getPaymentStrategyServiceId();
+    public function getPaymentOptionStrategyServiceId();
+
+    /**
+     * @param array $data
+     * @return CartInterface
+     */
+    public function setPaymentOptionStrategyServiceData(array $data = null);
+
+    /**
+     * @return array
+     */
+    public function getPaymentOptionStrategyServiceData();
 
     /**
      * @param float $total
@@ -277,4 +296,15 @@ interface CartInterface extends BaseCartInterface
      * @return CartItemInterface
      */
     public function getItemById($itemId);
+
+    /**
+     * @return float
+     */
+    public function getTotalWithTax();
+
+    /**
+     * @param float $totalWithTax
+     * @return CartInterface
+     */
+    public function setTotalWithTax($totalWithTax);
 }

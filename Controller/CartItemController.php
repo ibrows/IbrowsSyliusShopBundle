@@ -51,7 +51,7 @@ class CartItemController extends AbstractController
         }
 
         $cartmanger->addItem($item);
-        $cartmanger->persistCart();
+        $this->persistCart($cartmanger);
 
         $dispatcher->dispatch(SyliusCartEvents::ITEM_ADD_COMPLETED, new FlashEvent());
 

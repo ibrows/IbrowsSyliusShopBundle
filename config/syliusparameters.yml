@@ -7,11 +7,6 @@ parameters:
   ibrows_sylius_shop.deliveryaddress.class: Ibrows\SyliusShopBundle\Entity\Address
   ibrows_sylius_shop.invoiceaddress.class: Ibrows\SyliusShopBundle\Entity\Address
 
-  ibrows_sylius_shop.deliveryoptions.class: Ibrows\SyliusShopBundle\Entity\DeliveryOptions
-  ibrows_sylius_shop.paymentoptions.class: Ibrows\SyliusShopBundle\Entity\PaymentOptions
-
-  ibrows_sylius_shop.paymentinstructions.class: JMS\Payment\CoreBundle\Entity\PaymentInstruction
-
   ibrows_sylius_shop.cart.class: Ibrows\SyliusShopBundle\Entity\Cart
   ibrows_sylius_shop.cartitem.class: Ibrows\SyliusShopBundle\Entity\CartItem
   ibrows_sylius_shop.additionalcartitem.class: Ibrows\SyliusShopBundle\Entity\AdditionalCartItem

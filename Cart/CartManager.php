@@ -7,9 +7,9 @@ use Ibrows\SyliusShopBundle\Entity\AdditionalCartItem;
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface;
+use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartPaymentOptionStrategyInterface;
 use Sylius\Bundle\InventoryBundle\Checker\AvailabilityCheckerInterface;
 use Ibrows\SyliusShopBundle\Cart\Exception\CartItemNotOnStockException;
-use Ibrows\SyliusShopBundle\Cart\Exception\CartException;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
@@ -124,7 +124,7 @@ class CartManager
     /**
      * @return CartDeliveryOptionStrategyInterface[]
      */
-    public function getDeliveryOptionStrategies()
+    public function getPossibleDeliveryOptionStrategies()
     {
         $strategies = array();
         foreach($this->strategies as $strategy){
@@ -136,6 +136,75 @@ class CartManager
             }
         }
         return $strategies;
+    }
+
+    /**
+     * @param string $strategyId
+     * @return CartDeliveryOptionStrategyInterface
+     */
+    public function getPossibleDeliveryOptionStrategyById($strategyId)
+    {
+        foreach($this->getPossibleDeliveryOptionStrategies() as $strategy){
+            if($strategy->getServiceId() == $strategyId){
+                return $strategy;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param string $strategyId
+     * @return CartDeliveryOptionStrategyInterface
+     */
+    public function getPossiblePaymentOptionStrategyById($strategyId)
+    {
+        foreach($this->getPossiblePaymentOptionStrategies() as $strategy){
+            if($strategy->getServiceId() == $strategyId){
+                return $strategy;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @return CartPaymentOptionStrategyInterface[]
+     */
+    public function getPossiblePaymentOptionStrategies()
+    {
+        $strategies = array();
+        foreach($this->strategies as $strategy){
+            if(
+                $strategy instanceof CartPaymentOptionStrategyInterface &&
+                $strategy->isPossible($this->getCart(), $this)
+            ){
+                $strategies[] = $strategy;
+            }
+        }
+        return $strategies;
+    }
+
+    /**
+     * @return CartPaymentOptionStrategyInterface
+     */
+    public function getSelectedPaymentOptionStrategyService()
+    {
+        $serviceId = $this->getCart()->getPaymentOptionStrategyServiceId();
+        if(!$serviceId){
+            return null;
+        }
+        return $this->getPossiblePaymentOptionStrategyById($serviceId);
+    }
+
+    /**
+     * @return CartPaymentOptionStrategyInterface
+     */
+    public function getSelectedDeliveryOptionStrategyService()
+    {
+        $serviceId = $this->getCart()->getDeliveryOptionStrategyServiceId();
+        if(!$serviceId){
+            return null;
+        }
+        return $this->getPossibleDeliveryOptionStrategyById($serviceId);
     }
 
     /**

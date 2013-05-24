@@ -5,8 +5,6 @@ namespace Ibrows\SyliusShopBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartStrategyInterface;
-use JMS\Payment\CoreBundle\Model\PaymentInstructionInterface;
-use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface;
 use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
@@ -51,10 +49,22 @@ class Cart extends BaseCart implements CartInterface
     protected $deliveryOptionStrategyServiceId;
 
     /**
-     * @var string
-     * @ORM\Column(type="string", name="payment_strategy_service_id", nullable=true)
+     * @var array $deliveryOptionStrategyServiceData
+     * @ORM\Column(type="json_array", name="delivery_option_strategy_service_data", nullable=true)
      */
-    protected $paymentStrategyServiceId;
+    protected $deliveryOptionStrategyServiceData;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", name="payment_option_strategy_service_id", nullable=true)
+     */
+    protected $paymentOptionStrategyServiceId;
+
+    /**
+     * @var array $paymentOptionStrategyServiceData
+     * @ORM\Column(type="json_array", name="payment_option_strategy_service_data", nullable=true)
+     */
+    protected $paymentOptionStrategyServiceData;
 
     /**
      * @var Collection|CartItemInterface[]
@@ -73,6 +83,12 @@ class Cart extends BaseCart implements CartInterface
      * @ORM\Column(type="integer", name="total_additional_items")
      */
     protected $totalAdditionalItems = 0;
+
+    /**
+     * @var float
+     * @ORM\Column(type="decimal", scale=2, precision=11, name="total_with_tax")
+     */
+    protected $totalWithTax = 0.0;
 
     /**
      * @var float
@@ -124,7 +140,7 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @var DateTime
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="datetime", name="terms_and_conditions", nullable=true)
      * @Assert\NotNull(groups={"sylius_wizard_summary"})
      */
     protected $termsAndConditions;
@@ -154,13 +170,6 @@ class Cart extends BaseCart implements CartInterface
      * @ORM\Column(type="object", name="delivery_address_obj", nullable=true)
      */
     protected $deliveryAddressObj;
-
-    /**
-     * @var PaymentInstructionInterface
-     * @ORM\OneToOne(targetEntity="JMS\Payment\CoreBundle\Model\PaymentInstructionInterface")
-     * @ORM\JoinColumn(name="payment_instructions_id", referencedColumnName="id")
-     */
-    protected $paymentInstruction;
 
     public function __construct()
     {
@@ -201,6 +210,7 @@ class Cart extends BaseCart implements CartInterface
         $this->setAdditionalItemsPriceTotalTax($additionalItemsPriceTax);
 
         $this->setTotal($itemsPriceTotal + $additionalItemsPriceTotal);
+        $this->setTotalWithTax($itemsPriceTotalWithTax + $additionalItemsPriceTotalWithTax);
 
         return $this;
     }
@@ -367,24 +377,6 @@ class Cart extends BaseCart implements CartInterface
     }
 
     /**
-     * @return PaymentInstructionInterface
-     */
-    public function getPaymentInstruction()
-    {
-        return $this->paymentInstruction;
-    }
-
-    /**
-     * @param PaymentInstructionInterface $instruction
-     * @return PaymentInstructionInterface
-     */
-    public function setPaymentInstruction(PaymentInstructionInterface $instruction = null)
-    {
-        $this->paymentInstruction = $instruction;
-        return $this;
-    }
-
-    /**
      * @param bool $flag
      * @return Cart
      */
@@ -455,9 +447,7 @@ class Cart extends BaseCart implements CartInterface
     }
 
     /**
-     * Get invoiceAddressObj
-     *
-     * @return \stdClass
+     * @return InvoiceAddressInterface
      */
     public function getInvoiceAddressObj()
     {
@@ -648,24 +638,6 @@ class Cart extends BaseCart implements CartInterface
     }
 
     /**
-     * @return string
-     */
-    public function getPaymentStrategyServiceId()
-    {
-        return $this->paymentStrategyServiceId;
-    }
-
-    /**
-     * @param string $paymentStrategyServiceId
-     * @return Cart
-     */
-    public function setPaymentStrategyServiceId($paymentStrategyServiceId)
-    {
-        $this->paymentStrategyServiceId = $paymentStrategyServiceId;
-        return $this;
-    }
-
-    /**
      * @return float
      */
     public function getAdditionalItemsPriceTotalTax()
@@ -713,5 +685,76 @@ class Cart extends BaseCart implements CartInterface
             }
         }
         return null;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDeliveryOptionStrategyServiceData()
+    {
+        return $this->deliveryOptionStrategyServiceData;
+    }
+
+    /**
+     * @param array $data
+     * @return Cart
+     */
+    public function setDeliveryOptionStrategyServiceData(array $data = null)
+    {
+        $this->deliveryOptionStrategyServiceData = $data;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPaymentOptionStrategyServiceData()
+    {
+        return $this->paymentOptionStrategyServiceData;
+    }
+
+    /**
+     * @param array $data
+     * @return Cart
+     */
+    public function setPaymentOptionStrategyServiceData(array $data = null)
+    {
+        $this->paymentOptionStrategyServiceData = $data;
+        return $this;
+    }
+
+    /**
+     * @param string $serviceId
+     * @return CartInterface
+     */
+    public function setPaymentOptionStrategyServiceId($serviceId)
+    {
+        $this->paymentOptionStrategyServiceId = $serviceId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPaymentOptionStrategyServiceId()
+    {
+        return $this->paymentOptionStrategyServiceId;
+    }
+
+    /**
+     * @return float
+     */
+    public function getTotalWithTax()
+    {
+        return $this->totalWithTax;
+    }
+
+    /**
+     * @param float $totalWithTax
+     * @return Cart
+     */
+    public function setTotalWithTax($totalWithTax)
+    {
+        $this->totalWithTax = $totalWithTax;
+        return $this;
     }
 }

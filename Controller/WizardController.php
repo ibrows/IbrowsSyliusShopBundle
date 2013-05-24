@@ -2,14 +2,6 @@
 
 namespace Ibrows\SyliusShopBundle\Controller;
 
-use JMS\Payment\CoreBundle\Entity\FinancialTransaction;
-use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
-use JMS\Payment\CoreBundle\Model\PaymentInterface;
-use JMS\Payment\CoreBundle\Entity\Payment;
-use JMS\Payment\CoreBundle\PluginController\PluginController;
-use JMS\Payment\CoreBundle\Plugin\Exception\ActionRequiredException;
-use JMS\Payment\CoreBundle\Plugin\Exception\Action\VisitUrl;
-use JMS\Payment\CoreBundle\PluginController\Result;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -36,28 +28,29 @@ class WizardController extends AbstractWizardController
         $continueSubmitName = 'continue';
         $deleteSubmitName = 'delete';
 
-        if (
-            "POST" == $request->getMethod() &&
-            ($deleteItems = $request->request->get($deleteSubmitName)) &&
-            is_array($deleteItems)
-        ) {
-            $cartManager = $this->getCurrentCartManager();
-            $cart = $cartManager->getCart();
-            foreach($deleteItems as $itemId => $formName){
-                if($item = $cart->getItemById($itemId)){
-                    $cartManager->removeItem($item);
-                }
-            }
-            $this->persistCurrentCart();
-        }
-
-        $basketForm = $this->createForm($this->getBasketType(), $this->getCurrentCart());
+        $cart = $this->getCurrentCart();
+        $basketForm = $this->createForm($this->getBasketType(), $cart);
 
         if ("POST" == $request->getMethod()) {
             $basketForm->bind($request);
 
             if ($basketForm->isValid()) {
+
                 $this->persistCurrentCart();
+
+                if (
+                    ($deleteItems = $request->request->get($deleteSubmitName)) &&
+                    is_array($deleteItems)
+                ) {
+                    $cartManager = $this->getCurrentCartManager();
+                    foreach($deleteItems as $itemId => $formName){
+                        if($item = $cart->getItemById($itemId)){
+                            $cartManager->removeItem($item);
+                        }
+                    }
+                    $this->persistCurrentCart();
+                    $basketForm = $this->createForm($this->getBasketType(), $cart);
+                }
 
                 if ($request->request->get($continueSubmitName)) {
                     return $this->redirect($this->getWizard()->getNextStepUrl());
@@ -180,17 +173,6 @@ class WizardController extends AbstractWizardController
             )
         );
 
-        $deliveryOptionStrategyForm = $this->createForm(
-            $this->getDeliveryOptionStrategyType($cartManager),
-            $cart,
-            array(
-                'data_class' => get_class($cart),
-                'validation_groups' => array(
-                    'sylius_wizard_delivery_strategy'
-                )
-            )
-        );
-
         $invoiceSameAsDeliveryForm = $this->createForm(
             $this->getInvoiceSameAsDeliveryType(),
             array(
@@ -203,15 +185,46 @@ class WizardController extends AbstractWizardController
             )
         );
 
+        $deliveryOptionStrategyFormData = null;
+        $selectedDeliveryOptionStrategyServiceId = $cart->getDeliveryOptionStrategyServiceId();
+        if($selectedDeliveryOptionStrategyServiceId){
+            $selectedDeliveryOptionStrategyService = $cartManager
+                ->getPossibleDeliveryOptionStrategyById($selectedDeliveryOptionStrategyServiceId);
+            if($selectedDeliveryOptionStrategyService){
+                $deliveryOptionStrategyFormData = array(
+                    'strategyServiceId' => $selectedDeliveryOptionStrategyServiceId,
+                    $selectedDeliveryOptionStrategyService->getName() => $cart->getDeliveryOptionStrategyServiceData()
+                );
+            }
+        }
+
+        $deliveryOptionStrategyForm = $this->createForm(
+            $this->getDeliveryOptionStrategyType($cartManager),
+            $deliveryOptionStrategyFormData
+        );
+
         if ("POST" == $request->getMethod()) {
             $invoiceAddressForm->bind($request);
             $deliveryOptionStrategyForm->bind($request);
             $invoiceSameAsDeliveryForm->bind($request);
+
+            $deliveryOptionStrategyServiceId = $deliveryOptionStrategyForm->get('strategyServiceId')->getData();
+            $deliveryOptioStrategy = $cartManager->getPossibleDeliveryOptionStrategyById($deliveryOptionStrategyServiceId);
+
+            if(!$deliveryOptioStrategy){
+                $deliveryOptionStrategyForm->addError(new FormError('cart.strategy.delivery.notfound'));
+            }
+
             if (
+                $deliveryOptioStrategy &&
                 $invoiceAddressForm->isValid() &&
                 $deliveryOptionStrategyForm->isValid() &&
                 $invoiceSameAsDeliveryForm->isValid()
             ) {
+                $cart->setDeliveryOptionStrategyServiceId($deliveryOptioStrategy->getServiceId());
+                $cart->setDeliveryOptionStrategyServiceData(
+                    $deliveryOptionStrategyForm->get($deliveryOptioStrategy->getName())->getViewData()
+                );
 
                 $invoiceSameAsDelivery = (bool)$invoiceSameAsDeliveryForm->get('invoiceSameAsDelivery')->getData();
                 if($invoiceSameAsDelivery){
@@ -245,56 +258,53 @@ class WizardController extends AbstractWizardController
     /**
      * @Route("/payment_instruction", name="wizard_payment_instruction")
      * @Template
-     * @Wizard(name="payment_instruction", number=4, validationMethod="paymentInstructionValidation")
-     * @todo setData to current payment...
+     * @Wizard(name="payment_instruction", number=4, validationMethod="paymentinstructionValidation")
      */
-    public function paymentInstructionAction()
+    public function paymentinstructionAction(Request $request)
     {
-        $cart = $this->getCurrentCart();
-        $invoiceaddress = $cart->getInvoiceAddress();
+        $cartManager = $this->getCurrentCartManager();
+        $cart = $cartManager->getCart();
 
-        $instruction = $cart->getPaymentInstruction() ?: $this->getNewPaymentInstruction($cart);
+        $paymentOptionStrategyFormData = null;
+        $selectedPaymentOptionStrategyServiceId = $cart->getPaymentOptionStrategyServiceId();
+        if($selectedPaymentOptionStrategyServiceId){
+            $selectedPaymentOptionStrategyService = $cartManager
+                ->getPossiblePaymentOptionStrategyById($selectedPaymentOptionStrategyServiceId);
+            if($selectedPaymentOptionStrategyService){
+                $paymentOptionStrategyFormData = array(
+                    'strategyServiceId' => $selectedPaymentOptionStrategyServiceId,
+                    $selectedPaymentOptionStrategyService->getName() => $cart->getPaymentOptionStrategyServiceData()
+                );
+            }
+        }
 
-        $form = $this->createForm('jms_choose_payment_method', $instruction, array(
-            'data_class' => null,
-            'amount' => $cart->getTotal(),
-            'currency' => 'CHF',
-            'default_method' => null, // Optional
-            'predefined_data' => array(
-                'saferpay' => array(
-                    'DESCRIPTION' => sprintf('Bestellnummer: %s', $cart->getId()),
-                    'ORDERID' => $cart->getId(),
-                    'SUCCESSLINK' => $this->generateUrl('wizard_payment', array(), UrlGeneratorInterface::ABSOLUTE_URL),
-                    'FAILLINK' => $this->generateUrl('wizard_payment', array('status' => 'fail'), UrlGeneratorInterface::ABSOLUTE_URL),
-                    'BACKLINK' => $this->generateUrl('wizard_payment', array(), UrlGeneratorInterface::ABSOLUTE_URL),
-                    'FIRSTNAME' => $invoiceaddress->getFirstname(),
-                    'LASTNAME' => $invoiceaddress->getLastname(),
-                    'STREET' => $invoiceaddress->getStreet(),
-                    'ZIP' => $invoiceaddress->getZip(),
-                    'CITY' => $invoiceaddress->getCity(),
-                    'COUNTRY' => $invoiceaddress->getCountry(),
-                    'EMAIL' => $invoiceaddress->getEmail()
-                ),
-            )
-        ));
+        $paymentOptionStrategyForm = $this->createForm(
+            $this->getPaymentOptionStrategyType($cartManager),
+            $paymentOptionStrategyFormData
+        );
 
-        if ('POST' === $this->getRequest()->getMethod()) {
-            $form->bind($this->getRequest());
-            if ($form->isValid()) {
-                $ppc = $this->get("payment.plugin_controller");
-                $instruction = $form->getData();
+        if("POST" == $request->getMethod()){
+            $paymentOptionStrategyForm->bind($request);
+            if($paymentOptionStrategyForm->isValid()){
+                $paymentOptionStrategyServiceId = $paymentOptionStrategyForm->get('strategyServiceId')->getData();
+                $paymentOptionStrategy = $cartManager->getPossiblePaymentOptionStrategyById($paymentOptionStrategyServiceId);
 
-                $ppc->createPaymentInstruction($instruction);
-                $cart->setPaymentInstruction($instruction);
-                $this->persistCurrentCart();
-
-                return $this->redirect($this->getWizard()->getNextStepUrl());
+                if(!$paymentOptionStrategy){
+                    $paymentOptionStrategyForm->addError(new FormError('cart.strategy.payment.notfound'));
+                }else{
+                    $cart->setPaymentOptionStrategyServiceId($paymentOptionStrategy->getServiceId());
+                    $cart->setPaymentOptionStrategyServiceData(
+                        $paymentOptionStrategyForm->get($paymentOptionStrategy->getName())->getViewData()
+                    );
+                    $this->persistCurrentCart();
+                    return $this->redirect($this->getWizard()->getNextStepUrl());
+                }
             }
         }
 
         return array(
-            'form' => $form->createView(),
-            'cart' => $cart
+            'cart' => $cart,
+            'paymentOptionStrategyForm' => $paymentOptionStrategyForm->createView()
         );
     }
 
@@ -309,7 +319,7 @@ class WizardController extends AbstractWizardController
         $cart->setTermsAndConditions(false);
         $this->persistCurrentCart();
 
-        $form = $this->createForm($this->getSummaryType(), $cart, array(
+        $summaryForm = $this->createForm($this->getSummaryType(), $cart, array(
             'validation_groups' => array(
                 'sylius_wizard_summary'
             )
@@ -318,15 +328,23 @@ class WizardController extends AbstractWizardController
         $request = $this->getRequest();
 
         if('POST' === $request->getMethod()){
-            $form->bind($request);
-            if ($form->isValid()) {
+            $summaryForm->bind($request);
+            if ($summaryForm->isValid()) {
                 $this->persistCurrentCart();
                 return $this->redirect($this->getWizard()->getNextStepUrl());
             }
         }
 
+        $deliveryOption = $this->getCurrentCartManager()
+            ->getSelectedDeliveryOptionStrategyService()->getFullPaymentMethodName($cart);
+
+        $paymentOption = $this->getCurrentCartManager()
+            ->getSelectedPaymentOptionStrategyService()->getFullPaymentMethodName($cart);
+
         return array(
-            'form' => $form->createView(),
+            'deliveryOption' => $deliveryOption,
+            'paymentOption' => $paymentOption,
+            'summaryForm' => $summaryForm->createView(),
             'cart' => $cart
         );
     }
@@ -336,73 +354,17 @@ class WizardController extends AbstractWizardController
      * @Template
      * @Wizard(name="payment", number=6, validationMethod="paymentValidation")
      */
-    public function paymentAction()
+    public function paymentAction(Request $request)
     {
         $cart = $this->getCurrentCart();
-
         if($cart->isPayed()){
             return $this->redirect($this->getWizard()->getNextStepUrl());
         }
 
-        /* @var $ppc PluginController */
-        $ppc = $this->get("payment.plugin_controller");
-
-
-        $instruction = $cart->getPaymentInstruction();
-        $data = $instruction->getExtendedData();
-        $data->set('querydata', $this->getRequest()->query->all());
-
-        /* @var $payment Payment */
-        $payment = null;
-
-        if ($instruction->getPendingTransaction() != null) {
-            $pendingTransaction = $instruction->getPendingTransaction();
-            $payment = $pendingTransaction->getPayment();
-        } else {
-            foreach ($instruction->getPayments() as $ipayment) {
-                if (PaymentInterface::STATE_NEW === $ipayment->getState()) {
-                    $payment = $ipayment;
-                }
-            }
-        }
-
-        if ($payment == null) {
-            $payment = $ppc->createPayment($instruction->getId(), $instruction->getAmount() - $instruction->getDepositedAmount());
-        }
-
-        if ($payment->getState() == PaymentInterface::STATE_NEW || $payment->getState() == PaymentInterface::STATE_APPROVING) {
-            $result = $ppc->approve($payment->getId(), $payment->getTargetAmount());
-            if (Result::STATUS_PENDING === $result->getStatus()) {
-                $ex = $result->getPluginException();
-                if ($ex instanceof ActionRequiredException) {
-                    $action = $ex->getAction();
-                    if ($action instanceof VisitUrl) {
-                        $cart->setPaymentInstruction($instruction);
-                        $this->persistCurrentCart();
-
-                        return new RedirectResponse($action->getUrl());
-                    }
-                    throw $ex;
-                }
-            } else if (Result::STATUS_SUCCESS !== $result->getStatus()) {
-                throw new \RuntimeException('Transaction approve was not successful: ' . $result->getReasonCode());
-            }
-        }
-
-        if ($payment->getState() == PaymentInterface::STATE_APPROVED || $payment->getState() == PaymentInterface::STATE_DEPOSITING) {
-            $result = $ppc->deposit($payment->getId(), $payment->getTargetAmount());
-            if (Result::STATUS_SUCCESS === $result->getStatus()) {
-                $cart->setPayed(true);
-                $cart->setPaymentInstruction($instruction);
-                $this->persistCurrentCart();
-
-                return $this->redirect($this->getWizard()->getNextStepUrl());
-            } else {
-                throw new \RuntimeException('Transaction deposit was not successful: ' . $result->getReasonCode());
-            }
-        }
-
-        throw new \Exception('Payment aborted', $payment->getState());
+        $cartManager = $this->getCurrentCartManager();
+        $paymentOptionStrategyService = $cartManager->getSelectedPaymentOptionStrategyService();
+        $paymentOptionStrategyService->pay($request, $cart, $cartManager);
+        die('end');
     }
 
     /**

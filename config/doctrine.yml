@@ -13,5 +13,3 @@ doctrine:
       Ibrows\SyliusShopBundle\Model\CartInterface: %ibrows_sylius_shop.cart.class%
       Ibrows\SyliusShopBundle\Model\CartItemInterface: %ibrows_sylius_shop.cartitem.class%
       Ibrows\SyliusShopBundle\Model\AdditionalCartItemInterface: %ibrows_sylius_shop.additionalcartitem.class%
-      
-      JMS\Payment\CoreBundle\Model\PaymentInstructionInterface: %ibrows_sylius_shop.paymentinstructions.class%

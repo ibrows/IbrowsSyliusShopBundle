@@ -8,6 +8,7 @@ use Ibrows\SyliusShopBundle\Cart\CartManager;
 use Ibrows\SyliusShopBundle\Cart\CurrentCartManager;
 use Ibrows\SyliusShopBundle\Form\DeliveryOptionStrategyType;
 use Ibrows\SyliusShopBundle\Form\InvoiceSameAsDeliveryType;
+use Ibrows\SyliusShopBundle\Form\PaymentOptionStrategyType;
 use Ibrows\SyliusShopBundle\Form\SummaryType;
 use Ibrows\SyliusShopBundle\Repository\ProductRepository;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
@@ -21,7 +22,6 @@ use Ibrows\SyliusShopBundle\Form\InvoiceAddressType;
 use Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface;
 use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
 use Ibrows\SyliusShopBundle\IbrowsSyliusShopBundle;
-use JMS\Payment\CoreBundle\Entity\PaymentInstruction;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -35,8 +35,8 @@ use FOS\UserBundle\Model\UserInterface;
 use FOS\UserBundle\Security\LoginManager;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
-use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartDeliveryOptionStrategyInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 abstract class AbstractController extends Controller
 {
@@ -52,13 +52,12 @@ abstract class AbstractController extends Controller
 
         if (null === $criteria) {
             $criteria = array(
-                    'id' => $id
+                'id' => $id
             );
         }
 
         if (!$resource = $repo->findOneBy($criteria)) {
-            throw $this
-                    ->createNotFoundException(sprintf('Requested Entity "%s" with id "%s" does not exist', $repo->getClassName(), $id));
+            throw $this->createNotFoundException(sprintf('Requested Entity "%s" with id "%s" does not exist', $repo->getClassName(), $id));
         }
 
         return $resource;
@@ -160,19 +159,25 @@ abstract class AbstractController extends Controller
         return $this->getCurrentCartManager()->getCart();
     }
 
-    protected function persistCurrentCart()
+    /**
+     * @param bool $refreshAndCheckAvailability
+     */
+    protected function persistCurrentCart($refreshAndCheckAvailability = true)
     {
-        $this->persistCart($this->getCurrentCart());
+        $this->persistCart(
+            $this->getCurrentCartManager(),
+            $refreshAndCheckAvailability
+        );
     }
 
     /**
-     * @param CartInterface $cart
-     * @return CartManager
+     * @param CartManager $cartManager
+     * @param bool $refreshAndCheckAvailability
      */
-    protected function persistCart(CartInterface $cart)
+    protected function persistCart(CartManager $cartManager, $refreshAndCheckAvailability = true)
     {
         try {
-            return $this->getCurrentCartManager()->persistCart();
+            $cartManager->persistCart($refreshAndCheckAvailability);
         } catch (CartItemNotOnStockException $e) {
             foreach ($e->getCartItemsNotOnStock() as $itemNotOnStock) {
                 $item = $itemNotOnStock->getItem();
@@ -180,7 +185,7 @@ abstract class AbstractController extends Controller
                 $this->get('session')->getFlashBag()->add('notice', $message);
                 $item->setQuantityToAvailable();
             }
-            $this->persistCart($cart);
+            $this->persistCart($cartManager);
         }
     }
 
@@ -242,12 +247,11 @@ abstract class AbstractController extends Controller
 
     /**
      * @param CartManager $cartManager
-     * @return CartManager
      */
     protected function authDelete(CartManager $cartManager)
     {
         $cartManager->getCart()->setEmail(null);
-        return $cartManager->persistCart();
+        $this->persistCart($cartManager);
     }
 
     /**
@@ -266,7 +270,7 @@ abstract class AbstractController extends Controller
                 $authForm->addError(new FormError($this->translateWithPrefix("user.emailallreadyexisting", array('%email%' => $email), "validators")));
             } else {
                 $cartManager->getCart()->setEmail($email);
-                $cartManager->persistCart();
+                $this->persistCart($cartManager);
                 return $this->redirect($wizard->getNextStepUrl());
             }
         }
@@ -280,6 +284,9 @@ abstract class AbstractController extends Controller
         return new AuthType();
     }
 
+    /**
+     * @return InvoiceSameAsDeliveryType
+     */
     protected function getInvoiceSameAsDeliveryType()
     {
         return new InvoiceSameAsDeliveryType();
@@ -308,6 +315,15 @@ abstract class AbstractController extends Controller
     protected function getDeliveryOptionStrategyType(CartManager $cartManager)
     {
         return new DeliveryOptionStrategyType($cartManager);
+    }
+
+    /**
+     * @param CartManager $cartManager
+     * @return PaymentOptionStrategyType
+     */
+    protected function getPaymentOptionStrategyType(CartManager $cartManager)
+    {
+        return new PaymentOptionStrategyType($cartManager);
     }
 
     /**
@@ -353,16 +369,6 @@ abstract class AbstractController extends Controller
     }
 
     /**
-     * @param CartInterface $cart
-     * @return PaymentInstruction
-     */
-    protected function getNewPaymentInstruction(CartInterface $cart)
-    {
-        $className = $this->getParameter('ibrows_sylius_shop.paymentinstructions.class');
-        return new $className($cart->getTotalItems(), 'CHF', null);
-    }
-
-    /**
      * @return InvoiceAddressType
      */
     protected function getInvoiceAddressType()
@@ -394,4 +400,11 @@ abstract class AbstractController extends Controller
         return $this->container->getParameter('ibrows_sylius_shop.deliveryaddress.class');
     }
 
+    /**
+     * @return string
+     */
+    public function getPaymentOptionsClass()
+    {
+        return $this->container->getParameter('ibrows_sylius_shop.paymentoptions.class');
+    }
 }

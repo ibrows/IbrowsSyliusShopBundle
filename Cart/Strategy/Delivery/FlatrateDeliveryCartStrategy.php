@@ -1,12 +1,12 @@
 <?php
 
-namespace Ibrows\SyliusShopBundle\Cart\Strategy;
+namespace Ibrows\SyliusShopBundle\Cart\Strategy\Delivery;
 
 use Ibrows\SyliusShopBundle\Cart\CartManager;
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 
-abstract class AbstractFlatrateDeliveryCartStrategy extends AbstractDeliveryCartStrategy
+class FlatrateDeliveryCartStrategy extends AbstractDeliveryCartStrategy
 {
     /**
      * @var array
@@ -20,6 +20,16 @@ abstract class AbstractFlatrateDeliveryCartStrategy extends AbstractDeliveryCart
     {
         ksort($steps);
         $this->steps = $steps;
+    }
+
+    /**
+     * @param CartInterface $cart
+     * @param CartManager $cartManager
+     * @return bool
+     */
+    public function isPossible(CartInterface $cart, CartManager $cartManager)
+    {
+        return true;
     }
 
     /**
@@ -39,6 +49,9 @@ abstract class AbstractFlatrateDeliveryCartStrategy extends AbstractDeliveryCart
             $item = $this->createAdditionalCartItem();
             $item->setPrice($costs);
             $item->setText($this->getItemText($costs, $cart, $cartManager, $item));
+            $item->setStrategyData(array(
+                'costs' => $costs
+            ));
             return array($item);
         }
 
@@ -52,5 +65,8 @@ abstract class AbstractFlatrateDeliveryCartStrategy extends AbstractDeliveryCart
      * @param AdditionalCartItemInterface $item
      * @return string
      */
-    abstract protected function getItemText($costs, CartInterface $cart, CartManager $cartManager, AdditionalCartItemInterface $item);
+    protected function getItemText($costs, CartInterface $cart, CartManager $cartManager, AdditionalCartItemInterface $item)
+    {
+        return $this->getServiceId();
+    }
 }

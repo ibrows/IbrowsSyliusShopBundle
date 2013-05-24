@@ -2,8 +2,7 @@ imports:
   - { resource: fos_user.yml }
   - { resource: cart.yml }
   - { resource: resource.yml }
-  - { resource: inventory.yml } 
-  - { resource: payment.yml }  
+  - { resource: inventory.yml }
   - { resource: doctrine.yml }
   - { resource: sonataadmin.yml }
   - { resource: sonataadmin_services.yml }   

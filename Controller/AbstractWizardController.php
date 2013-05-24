@@ -63,7 +63,7 @@ abstract class AbstractWizardController extends AbstractController
     /**
      * @return bool|Response
      */
-    public function paymentInstructionValidation()
+    public function paymentinstructionValidation()
     {
         $cart = $this->getCurrentCart();
         if (
@@ -81,7 +81,7 @@ abstract class AbstractWizardController extends AbstractController
     public function summaryValidation()
     {
         $cart = $this->getCurrentCart();
-        if (!$cart->getPaymentInstruction()) {
+        if (!$cart->getPaymentOptionStrategyServiceId()) {
             return Wizard::REDIRECT_STEP_BACK;
         }
         return true;
@@ -109,14 +109,6 @@ abstract class AbstractWizardController extends AbstractController
             return Wizard::REDIRECT_STEP_BACK;
         }
         return true;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPaymentOptionsClass()
-    {
-        return $this->container->getParameter('ibrows_sylius_shop.paymentoptions.class');
     }
 
     /**

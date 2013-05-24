@@ -29,7 +29,6 @@ class IbrowsSyliusShopBundle extends Bundle
     public static function getBundles()
     {
         return array(
-            new \JMS\Payment\CoreBundle\JMSPaymentCoreBundle(),
             new \Payment\Bundle\SaferpayBundle\PaymentSaferpayBundle(),
             new \Ibrows\PaymentSaferpayBundle\IbrowsPaymentSaferpayBundle(),
 

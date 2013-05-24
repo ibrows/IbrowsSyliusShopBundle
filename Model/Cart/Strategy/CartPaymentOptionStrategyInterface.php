@@ -7,39 +7,32 @@ use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouterInterface;
 
-interface CartPaymentStrategyInterface extends CartStrategyInterface
+interface CartPaymentOptionStrategyInterface extends CartStrategyInterface, CartFormStrategyInterface
 {
     /**
      * @param Request $request
      * @param CartInterface $cart
      * @param CartManager $cartManager
-     * @return CartPaymentStrategyResponseInterface
+     * @return mixed
      */
     public function pay(Request $request, CartInterface $cart, CartManager $cartManager);
 
     /**
-     * @param CartInterface $cart
-     * @param CartManager $cartManager
      * @return bool
      */
-    public function isPossible(CartInterface $cart, CartManager $cartManager);
+    public function isTestMode();
+
+    /**
+     * @param bool $flag
+     * @return CartPaymentOptionStrategyInterface
+     */
+    public function setTestMode($flag);
 
     /**
      * @param RouterInterface $router
-     * @return CartPaymentStrategyInterface
+     * @return CartPaymentOptionStrategyInterface
      */
     public function setRouter(RouterInterface $router);
-
-    /**
-     * @param string $sessionKey
-     * @return CartPaymentStrategyInterface
-     */
-    public function setSessionKey($sessionKey);
-
-    /**
-     * @return string
-     */
-    public function getSessionKey();
 
     /**
      * @return RouterInterface
