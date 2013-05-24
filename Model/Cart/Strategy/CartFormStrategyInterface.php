@@ -24,7 +24,7 @@ interface CartFormStrategyInterface extends CartStrategyInterface, FormTypeInter
      * @param CartInterface $cart
      * @return string
      */
-    public function getFullPaymentMethodName(CartInterface $cart);
+    public function getFullName(CartInterface $cart);
 
     /**
      * @return bool

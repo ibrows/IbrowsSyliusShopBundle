@@ -234,11 +234,11 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
      * @param CartInterface $cart
      * @return string
      */
-    public function getFullPaymentMethodName(CartInterface $cart)
+    public function getFullName(CartInterface $cart)
     {
         $data = $cart->getPaymentOptionStrategyServiceData();
         if(!isset($data['method'])){
-            return parent::getFullPaymentMethodName($cart);
+            return parent::getFullName($cart);
         }
         return $this->getServiceId().'.'.$data['method'];
     }

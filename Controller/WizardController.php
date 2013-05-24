@@ -67,6 +67,7 @@ class WizardController extends AbstractWizardController
             'continueSubmitName' => $continueSubmitName,
             'basketForm' => $basketForm->createView(),
             'cart' => $this->getCurrentCart(),
+            'deliveryOptionStrategyService' => $cartManager->getSelectedDeliveryOptionStrategyService(),
             'deliveryCosts' => $cartManager->getSelectedDeliveryOptionStrategyServiceCosts()
         );
     }
@@ -341,10 +342,10 @@ class WizardController extends AbstractWizardController
         }
 
         $deliveryOption = $this->getCurrentCartManager()
-            ->getSelectedDeliveryOptionStrategyService()->getFullPaymentMethodName($cart);
+            ->getSelectedDeliveryOptionStrategyService()->getFullName($cart);
 
         $paymentOption = $this->getCurrentCartManager()
-            ->getSelectedPaymentOptionStrategyService()->getFullPaymentMethodName($cart);
+            ->getSelectedPaymentOptionStrategyService()->getFullName($cart);
 
         return array(
             'deliveryOption' => $deliveryOption,
