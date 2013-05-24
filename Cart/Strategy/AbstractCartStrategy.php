@@ -71,12 +71,13 @@ abstract class AbstractCartStrategy implements CartStrategyInterface
     /**
      * @param array $steps
      * @param mixed $step
+     * @param bool $firstAsZero
      * @return mixed
      */
-    protected function getStepCosts(array $steps, $step)
+    protected function getStepCosts(array $steps, $step, $firstAsZero = false)
     {
         $firstStep = reset($steps);
-        $costs = $firstStep ? $firstStep : 0;
+        $costs = !$firstAsZero && $firstStep ? $firstStep : 0;
         foreach($steps as $minTotal => $stepCosts){
             if($step < $minTotal){
                 break;
