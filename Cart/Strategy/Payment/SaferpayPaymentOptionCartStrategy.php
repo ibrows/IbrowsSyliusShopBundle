@@ -205,7 +205,7 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
                 'EMAIL' => $invoiceAddress->getEmail(),
                 //'GENDER' => $invoiceAddress->getTitle() == Address::TITLE_MISTER ? "M" : "F",
                 'PAYMENTMETHODS' => $providerSet,
-                'CURRENCY' => 'CHF'
+                'CURRENCY' => strtoupper($cart->getCurrency())
             )));
 
             $session->set($sessionKey, $saferpay->getData());
