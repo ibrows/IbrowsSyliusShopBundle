@@ -2,7 +2,7 @@
 
 namespace Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response;
 
-class SelfRedirectResponse extends AbstractRedirectResponse
+class ErrorRedirectResponse extends AbstractRedirectResponse
 {
 
 }

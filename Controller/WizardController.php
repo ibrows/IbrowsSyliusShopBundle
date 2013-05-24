@@ -2,9 +2,9 @@
 
 namespace Ibrows\SyliusShopBundle\Controller;
 
+use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Context;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Form\FormError;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Ibrows\Bundle\WizardAnnotationBundle\Annotation\Wizard;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -361,9 +361,14 @@ class WizardController extends AbstractWizardController
             return $this->redirect($this->getWizard()->getNextStepUrl());
         }
 
+        $context = new Context($request, 'wizard_payment', 'wizard_summary');
+
         $cartManager = $this->getCurrentCartManager();
         $paymentOptionStrategyService = $cartManager->getSelectedPaymentOptionStrategyService();
-        $paymentOptionStrategyService->pay($request, $cart, $cartManager);
+        $response = $paymentOptionStrategyService->pay($context, $cart, $cartManager);
+
+        var_dump($response);
+
         die('end');
     }
 
