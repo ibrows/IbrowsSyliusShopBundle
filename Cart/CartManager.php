@@ -196,7 +196,7 @@ class CartManager
     }
 
     /**
-     * @return CartPaymentOptionStrategyInterface
+     * @return CartDeliveryOptionStrategyInterface
      */
     public function getSelectedDeliveryOptionStrategyService()
     {
