@@ -125,6 +125,12 @@ class Cart extends BaseCart implements CartInterface
      * @ORM\Column(type="decimal", scale=2, precision=11, name="additional_items_price_total_tax")
      */
     protected $additionalItemsPriceTotalTax = 0.0;
+    
+    /**
+     * @var float
+     * @ORM\Column(type="decimal", scale=2, precision=11, name="total_tax")
+     */
+    protected $totalTax = 0.0;
 
     /**
      * @var DateTime
@@ -208,6 +214,8 @@ class Cart extends BaseCart implements CartInterface
         $this->setAdditionalItemsPriceTotal($additionalItemsPriceTotal);
         $this->setAdditionalItemsPriceTotalWithTax($additionalItemsPriceTotalWithTax);
         $this->setAdditionalItemsPriceTotalTax($additionalItemsPriceTax);
+        
+        $this->setTotalTax($this->getItemsPriceTotalTax() + $this->getAdditionalItemsPriceTotalTax());
 
         $this->setTotal($itemsPriceTotal + $additionalItemsPriceTotal);
         $this->setTotalWithTax($itemsPriceTotalWithTax + $additionalItemsPriceTotalWithTax);
@@ -755,6 +763,24 @@ class Cart extends BaseCart implements CartInterface
     public function setTotalWithTax($totalWithTax)
     {
         $this->totalWithTax = $totalWithTax;
+        return $this;
+    }
+    
+    /**
+     * @return float
+     */
+    public function getTotalTax()
+    {
+        return $this->totalTax;
+    }
+
+    /**
+     * @param float $totalTax
+     * @return Cart
+     */
+    public function setTotalTax($totalTax)
+    {
+        $this->totalTax = $totalTax;
         return $this;
     }
 }
