@@ -20,6 +20,11 @@ abstract class AbstractDeliveryCartStrategy extends AbstractCartFormStrategy imp
     protected $default = false;
 
     /**
+     * @var mixed
+     */
+    protected $deliveryConditions;
+
+    /**
      * @return boolean
      */
     public function isDefault()
@@ -34,6 +39,24 @@ abstract class AbstractDeliveryCartStrategy extends AbstractCartFormStrategy imp
     public function setDefault($default)
     {
         $this->default = $default;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDeliveryConditions()
+    {
+        return $this->deliveryConditions;
+    }
+
+    /**
+     * @param mixed $deliveryConditions
+     * @return AbstractDeliveryCartStrategy
+     */
+    public function setDeliveryConditions($deliveryConditions)
+    {
+        $this->deliveryConditions = $deliveryConditions;
         return $this;
     }
 
