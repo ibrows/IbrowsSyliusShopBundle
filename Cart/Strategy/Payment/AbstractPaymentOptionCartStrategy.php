@@ -22,9 +22,13 @@ abstract class AbstractPaymentOptionCartStrategy extends AbstractCartFormStrateg
 
     /**
      * @return RouterInterface
+     * @throws \Exception
      */
     public function getRouter()
     {
+        if(!$this->router){
+            throw new \Exception("Set Router first");
+        }
         return $this->router;
     }
 
