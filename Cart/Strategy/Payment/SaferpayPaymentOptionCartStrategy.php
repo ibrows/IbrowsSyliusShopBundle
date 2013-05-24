@@ -210,7 +210,7 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
 
             $session->set($sessionKey, $saferpay->getData());
 
-            if($url != ''){
+            if($url){
                 return new RedirectResponse($url);
             }else{
                 return new ErrorRedirectResponse(array('status' => 'connectionerror'));
