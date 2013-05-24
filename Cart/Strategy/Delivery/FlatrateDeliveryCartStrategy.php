@@ -44,13 +44,19 @@ class FlatrateDeliveryCartStrategy extends AbstractDeliveryCartStrategy
             return array();
         }
 
-        $costs = $this->getStepCosts($this->steps, $cart->getTotal());
+        $total = $cart->getTotal();
+        if($total <= 0){
+            return array();
+        }
+
+        $costs = $this->getStepCosts($this->steps, $total);
         if($costs != 0){
             $item = $this->createAdditionalCartItem();
             $item->setPrice($costs);
             $item->setText($this->getItemText($costs, $cart, $cartManager, $item));
             $item->setStrategyData(array(
-                'costs' => $costs
+                'costs' => $costs,
+                'total' => $total
             ));
             return array($item);
         }
