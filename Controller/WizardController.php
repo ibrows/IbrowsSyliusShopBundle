@@ -341,15 +341,12 @@ class WizardController extends AbstractWizardController
             }
         }
 
-        $deliveryOption = $this->getCurrentCartManager()
-            ->getSelectedDeliveryOptionStrategyService()->getFullName($cart);
-
-        $paymentOption = $this->getCurrentCartManager()
-            ->getSelectedPaymentOptionStrategyService()->getFullName($cart);
+        $deliveryOptionStrategy = $this->getCurrentCartManager()->getSelectedDeliveryOptionStrategyService();
+        $paymentOptionStrategy = $this->getCurrentCartManager()->getSelectedPaymentOptionStrategyService();
 
         return array(
-            'deliveryOption' => $deliveryOption,
-            'paymentOption' => $paymentOption,
+            'deliveryOptionStrategy' => $deliveryOptionStrategy,
+            'paymentOptionStrategy' => $paymentOptionStrategy,
             'summaryForm' => $summaryForm->createView(),
             'cart' => $cart,
             'status' => $request->get('status')

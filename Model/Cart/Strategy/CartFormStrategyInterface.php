@@ -21,12 +21,6 @@ interface CartFormStrategyInterface extends CartStrategyInterface, FormTypeInter
     public function __toString();
 
     /**
-     * @param CartInterface $cart
-     * @return string
-     */
-    public function getFullName(CartInterface $cart);
-
-    /**
      * @return bool
      */
     public function isParentVisible();

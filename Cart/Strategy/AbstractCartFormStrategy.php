@@ -68,15 +68,6 @@ abstract class AbstractCartFormStrategy extends AbstractCartStrategy implements 
     }
 
     /**
-     * @param CartInterface $cart
-     * @return string
-     */
-    public function getFullName(CartInterface $cart)
-    {
-        return $this->getServiceId();
-    }
-
-    /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
