@@ -44,4 +44,15 @@ interface CartStrategyInterface
      * @return CartStrategyInterface
      */
     public function setServiceId($id);
+
+    /**
+     * @return bool
+     */
+    public function isEnabled();
+
+    /**
+     * @param bool $flag
+     * @return mixed
+     */
+    public function setEnabled($flag);
 }

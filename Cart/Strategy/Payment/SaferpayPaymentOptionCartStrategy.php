@@ -180,6 +180,9 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
         }else{
             $invoiceAddress = $cart->getInvoiceAddress();
 
+            /**
+             * @todo use correct providerSet from Method Form
+             */
             if($this->isTestMode()){
                 $providerSet = 6;
             }else{
@@ -205,12 +208,12 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
                 'EMAIL' => $invoiceAddress->getEmail(),
                 //'GENDER' => $invoiceAddress->getTitle() == Address::TITLE_MISTER ? "M" : "F",
                 'PAYMENTMETHODS' => $providerSet,
-                'CURRENCY' => 'CHF'
+                'CURRENCY' => strtoupper($cart->getCurrency())
             )));
 
             $session->set($sessionKey, $saferpay->getData());
 
-            if($url != ''){
+            if($url){
                 return new RedirectResponse($url);
             }else{
                 return new ErrorRedirectResponse(array('status' => 'connectionerror'));
@@ -228,18 +231,5 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
             'choices' => $this->getPaymentMethods(),
             'expanded' => true
         ));
-    }
-
-    /**
-     * @param CartInterface $cart
-     * @return string
-     */
-    public function getFullName(CartInterface $cart)
-    {
-        $data = $cart->getPaymentOptionStrategyServiceData();
-        if(!isset($data['method'])){
-            return parent::getFullName($cart);
-        }
-        return $this->getServiceId().'.'.$data['method'];
     }
 }

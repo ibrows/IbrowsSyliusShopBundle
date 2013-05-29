@@ -2,6 +2,7 @@
 
 namespace Ibrows\SyliusShopBundle\Cart\Strategy;
 
+use Ibrows\SyliusShopBundle\Cart\CartManager;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartFormStrategyInterface;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -58,11 +59,12 @@ abstract class AbstractCartFormStrategy extends AbstractCartStrategy implements 
 
     /**
      * @param CartInterface $cart
-     * @return string
+     * @param CartManager $cartManager
+     * @return bool
      */
-    public function getFullName(CartInterface $cart)
+    public function isPossible(CartInterface $cart, CartManager $cartManager)
     {
-        return $this->getServiceId();
+        return true;
     }
 
     /**

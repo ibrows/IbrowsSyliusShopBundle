@@ -44,6 +44,7 @@ class TwigExtension extends \Twig_Extension
         return array(
             'getCurrentCartManager' => new \Twig_Function_Method($this, 'getCurrentCartManager'),
             'getCurrentCart' => new \Twig_Function_Method($this, 'getCurrentCart'),
+            'getCurrentCartCurrency' => new \Twig_Function_Method($this, 'getCurrentCartCurrency'),
             'ibr_render_hinclude' => new \Twig_Function_Method($this, 'renderHinclude', array(
                 'needs_environment' => true,
                 'is_safe' => array('html')
@@ -65,6 +66,14 @@ class TwigExtension extends \Twig_Extension
     public function getCurrentCart()
     {
        return $this->currentCartManager->getCart();
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrentCartCurrency()
+    {
+        return $this->currentCartManager->getCart()->getCurrency();
     }
 
     /**
