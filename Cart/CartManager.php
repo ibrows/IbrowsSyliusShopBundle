@@ -212,13 +212,29 @@ class CartManager
      */
     public function getSelectedDeliveryOptionStrategyServiceCosts()
     {
+        return $this->getStrategyServiceCostsByStrategy($this->getSelectedPaymentOptionStrategyService());
+    }
+
+    /**
+     * @return array
+     */
+    public function getSelectedPaymentOptionStrategyServiceCosts()
+    {
+        return $this->getStrategyServiceCostsByStrategy($this->getSelectedPaymentOptionStrategyService());
+    }
+
+    /**
+     * @param CartStrategyInterface $strategy
+     * @return array $costs
+     */
+    public function getStrategyServiceCostsByStrategy(CartStrategyInterface $strategy = null)
+    {
         $costs = array(
             'total' => 0.00,
             'tax' => 0.00,
             'totalWithTax' => 0.00
         );
 
-        $strategy = $this->getSelectedDeliveryOptionStrategyService();
         if(!$strategy){
             return $costs;
         }
@@ -228,10 +244,6 @@ class CartManager
             $costs['tax'] += $item->getTaxPrice();
             $costs['totalWithTax'] += $item->getPriceWithTax();
         }
-
-        array_walk($costs, function(&$price){
-            $price = number_format($price, 2);
-        });
 
         return $costs;
     }
