@@ -172,46 +172,13 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
                     $session->remove($sessionKey);
                     return new PaymentFinishedResponse();
                 }else{
-                    return new PaymentFinishedResponse(PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_CONFIRMATION);
+                    return new PaymentFinishedResponse(PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_COMPLETION);
                 }
             }else{
-                return new PaymentFinishedResponse(PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_COMPLETION);
+                return new PaymentFinishedResponse(PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_CONFIRMATION);
             }
         }else{
-            $invoiceAddress = $cart->getInvoiceAddress();
-
-            /**
-             * @todo use correct providerSet from Method Form
-             * @todo implement gender to adressinterface
-             */
-            if($this->isTestMode()){
-                $providerSet = 6;
-            }else{
-                $providerSet = 6;
-            }
-
-            $currentRouteName = $context->getCurrentRouteName();
-            $errorRouteName = $context->getErrorRouteName();
-
-            $url = $saferpay->initPayment($saferpay->getKeyValuePrototype()->all(array(
-                'AMOUNT' => round($cart->getTotalWithTax()*100),
-                'DESCRIPTION' => sprintf('Bestellnummer: %s', $cart->getId()),
-                'ORDERID' => $cart->getId(),
-                'SUCCESSLINK' => $this->getRouter()->generate($currentRouteName, array('status' => PaymentFinishedResponse::STATUS_OK), true),
-                'FAILLINK' => $this->getRouter()->generate($errorRouteName, array('status' => 'fail'), true),
-                'BACKLINK' => $this->getRouter()->generate($errorRouteName, array('status' => 'abort'), true),
-                'FIRSTNAME' => $invoiceAddress->getFirstname(),
-                'LASTNAME' => $invoiceAddress->getLastname(),
-                'STREET' => $invoiceAddress->getStreet(),
-                'ZIP' => $invoiceAddress->getZip(),
-                'CITY' => $invoiceAddress->getCity(),
-                'COUNTRY' => $invoiceAddress->getCountry(),
-                'EMAIL' => $invoiceAddress->getEmail(),
-                //'GENDER' => $invoiceAddress->getTitle() == Address::TITLE_MISTER ? "M" : "F",
-                'PAYMENTMETHODS' => $providerSet,
-                'CURRENCY' => strtoupper($cart->getCurrency())
-            )));
-
+            $url = $saferpay->initPayment($saferpay->getKeyValuePrototype()->all($this->getInitData($context, $cart)));
             $session->set($sessionKey, $saferpay->getData());
 
             if($url){
@@ -232,5 +199,57 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
             'choices' => $this->getPaymentMethods(),
             'expanded' => true
         ));
+    }
+
+    /**
+     * @param Context $context
+     * @param CartInterface $cart
+     * @return array
+     */
+    protected function getInitData(Context $context, CartInterface $cart)
+    {
+        $currentRouteName = $context->getCurrentRouteName();
+        $errorRouteName = $context->getErrorRouteName();
+        $invoiceAddress = $cart->getInvoiceAddress();
+        $router = $this->getRouter();
+
+        $providerSet = null;
+
+        if($this->isTestMode()){
+            $providerSet = 6;
+        }else{
+            $serviceData = $cart->getPaymentOptionStrategyServiceData();
+            if(isset($serviceData['method'])){
+                $providerSet = $serviceData['method'];
+            }
+        }
+
+        $initData = array(
+            'AMOUNT' => round($cart->getTotalWithTax()*100),
+            'DESCRIPTION' => sprintf('Bestellnummer: %s', $cart->getId()),
+            'ORDERID' => $cart->getId(),
+            'SUCCESSLINK' => $router->generate($currentRouteName, array('status' => PaymentFinishedResponse::STATUS_OK), true),
+            'FAILLINK' => $router->generate($errorRouteName, array('status' => 'fail'), true),
+            'BACKLINK' => $router->generate($errorRouteName, array('status' => 'abort'), true),
+            'FIRSTNAME' => $invoiceAddress->getFirstname(),
+            'LASTNAME' => $invoiceAddress->getLastname(),
+            'STREET' => $invoiceAddress->getStreet(),
+            'ZIP' => $invoiceAddress->getZip(),
+            'CITY' => $invoiceAddress->getCity(),
+            'COUNTRY' => $invoiceAddress->getCountry(),
+            'EMAIL' => $invoiceAddress->getEmail(),
+            'CURRENCY' => strtoupper($cart->getCurrency())
+        );
+
+        $gender = $invoiceAddress->isTitleMan() ? 'M' : $invoiceAddress->isTitleWoman() ? 'F' : null;
+        if($gender){
+            $initData['GENDER'] = $gender;
+        }
+
+        if($providerSet){
+            $initData['PAYMENTMETHODS'] = $providerSet;
+        }
+
+        return $initData;
     }
 }

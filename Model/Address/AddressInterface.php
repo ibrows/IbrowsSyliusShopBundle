@@ -2,10 +2,40 @@
 
 namespace Ibrows\SyliusShopBundle\Model\Address;
 
-use Entities\Address;
-
 interface AddressInterface
 {
+    const
+        TITLE_MAN = 'MAN',
+        TITLE_WOMAN = 'WOMAN',
+        TITEL_COMPANY = 'COMPANY'
+    ;
+
+    /**
+     * @return bool
+     */
+    public function isTitleMan();
+
+    /**
+     * @return bool
+     */
+    public function isTitleWoman();
+
+    /**
+     * @return bool
+     */
+    public function isTitleCompany();
+
+    /**
+     * @return string
+     */
+    public function getTitle();
+
+    /**
+     * @param string $title
+     * @return AddressInterface
+     */
+    public function setTitle($title);
+
     /**
      * @param string $city
      * @return AddressInterface

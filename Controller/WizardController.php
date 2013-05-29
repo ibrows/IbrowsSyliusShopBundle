@@ -383,6 +383,10 @@ class WizardController extends AbstractWizardController
                     $cart->setPayed();
                     $this->persistCart($cartManager);
                     return $this->redirect($this->getWizard()->getNextStepUrl());
+                }elseif($response->getStatus() == $response::STATUS_ERROR && $response->getErrorCode() == $response::ERROR_CONFIRMATION){
+                    $cart->setConfirmed();
+                    $this->persistCart($cartManager);
+                    return $this->redirect($this->getWizard()->getNextStepUrl());
                 }
                 return new RedirectResponse($this->generateUrl($context->getErrorRouteName(), array('status' => $response->getErrorCode())));
             break;

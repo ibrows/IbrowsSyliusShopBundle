@@ -39,6 +39,13 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
     protected $lastname;
 
     /**
+     * @var string $title
+     * @ORM\Column(type="string", nullable=true)
+     * @Assert\NotBlank(groups={"sylius_wizard_address"})
+     */
+    protected $title;
+
+    /**
      * @var string $company
      * @ORM\Column(type="string", nullable=true)
      */
@@ -299,7 +306,53 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
             $this->getPhone() == $address->getPhone() &&
             $this->getLastname() == $address->getLastname() &&
             $this->getStreet() == $address->getStreet() &&
-            $this->getZip() == $address->getZip()
+            $this->getZip() == $address->getZip() &&
+            $this->getTitle() == $address->getTitle() &&
+            $this->isTitleCompany() == $address->isTitleCompany() &&
+            $this->isTitleWoman() == $address->isTitleWoman() &&
+            $this->isTitleMan() == $address->isTitleMan()
         );
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTitleMan()
+    {
+        return $this->getTitle() == self::TITLE_MAN;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTitleWoman()
+    {
+        return $this->getTitle() == self::TITLE_WOMAN;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTitleCompany()
+    {
+        return $this->getTitle() == self::TITEL_COMPANY;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string $title
+     * @return AddressInterface
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+        return $this;
     }
 }

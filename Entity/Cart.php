@@ -142,6 +142,12 @@ class Cart extends BaseCart implements CartInterface
      * @var DateTime
      * @ORM\Column(type="datetime", nullable=true)
      */
+    protected $confirmed;
+
+    /**
+     * @var DateTime
+     * @ORM\Column(type="datetime", nullable=true)
+     */
     protected $closed;
 
     /**
@@ -782,5 +788,35 @@ class Cart extends BaseCart implements CartInterface
     {
         $this->totalTax = $totalTax;
         return $this;
+    }
+
+    /**
+     * @param bool $flag
+     * @return CartInterface
+     */
+    public function setConfirmed($flag = true)
+    {
+        if(false === $flag){
+            $this->confirmed = null;
+        }else{
+            $this->confirmed = new DateTime;
+        }
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isConfirmed()
+    {
+        return null !== $this->confirmed;
+    }
+
+    /**
+     * @return DateTime
+     */
+    public function getConfirmedAt()
+    {
+        return $this->confirmed;
     }
 }

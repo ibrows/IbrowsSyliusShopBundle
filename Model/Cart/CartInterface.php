@@ -143,6 +143,22 @@ interface CartInterface extends BaseCartInterface
      * @param bool $flag
      * @return CartInterface
      */
+    public function setConfirmed($flag = true);
+
+    /**
+     * @return bool
+     */
+    public function isConfirmed();
+
+    /**
+     * @return DateTime
+     */
+    public function getConfirmedAt();
+
+    /**
+     * @param bool $flag
+     * @return CartInterface
+     */
     public function setClosed($flag = true);
 
     /**
