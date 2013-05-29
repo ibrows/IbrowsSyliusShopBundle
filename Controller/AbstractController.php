@@ -37,6 +37,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Ibrows\SyliusShopBundle\Model\Address\AddressInterface;
 
 abstract class AbstractController extends Controller
 {
@@ -373,7 +374,10 @@ abstract class AbstractController extends Controller
      */
     protected function getInvoiceAddressType()
     {
-        return new InvoiceAddressType();
+        return new InvoiceAddressType(
+            $this->getInvoiceAddressTypeCountryChoices(),
+            $this->getInvoiceAddressTypePreferredCountryChoices(),
+            $this->getInvoiceAddressTypeTitleChoices());
     }
 
     /**
@@ -381,7 +385,87 @@ abstract class AbstractController extends Controller
      */
     protected function getDeliveryAddressType()
     {
-        return new DeliveryAddressType();
+        return new DeliveryAddressType(
+            $this->getDeliveryAddressTypeCountryChoices(),
+            $this->getDeliveryAddressTypePreferredCountryChoices(),
+            $this->getDeliveryAddressTypeTitleChoices()
+        );
+    }
+
+    /**
+     * @return array
+     */
+    protected function getInvoiceAddressTypeTitleChoices()
+    {
+        return $this->getAddressTypeTitleChoices();
+    }
+
+    /**
+     * @return array
+     */
+    protected function getInvoiceAddressTypePreferredCountryChoices()
+    {
+        return $this->getAddressTypePreferredCountryChoices();
+    }
+
+    /**
+     * @return array
+     */
+    protected function getInvoiceAddressTypeCountryChoices()
+    {
+        return $this->getAddressTypeCountryChoices();
+    }
+
+    /**
+     * @return array
+     */
+    protected function getDeliveryAddressTypeTitleChoices()
+    {
+        return $this->getAddressTypeTitleChoices();
+    }
+
+    /**
+     * @return array
+     */
+    protected function getDeliveryAddressTypePreferredCountryChoices()
+    {
+        return $this->getAddressTypePreferredCountryChoices();
+    }
+
+    /**
+     * @return array
+     */
+    protected function getDeliveryAddressTypeCountryChoices()
+    {
+        return $this->getAddressTypeCountryChoices();
+    }
+
+    /**
+     * @return array
+     */
+    protected function getAddressTypeCountryChoices()
+    {
+        return array();
+    }
+
+    /**
+     * @return array
+     */
+    protected function getAddressTypePreferredCountryChoices()
+    {
+        return array();
+    }
+
+    /**
+     * @return array
+     */
+    protected function getAddressTypeTitleChoices()
+    {
+        return array(
+            AddressInterface::TITLE_WOMAN => 'TITLE_WOMAN',
+            AddressInterface::TITLE_MAN => 'TITLE_MAN',
+            AddressInterface::TITEL_COMPANY => 'TITLE_COMPANY'
+        );
     }
 
     /**

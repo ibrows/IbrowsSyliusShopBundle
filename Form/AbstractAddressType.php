@@ -10,17 +10,31 @@ abstract class AbstractAddressType extends AbstractType
     /**
      * @var array
      */
-    protected $countryChoices = array();
+    protected $countryChoices;
 
     /**
      * @var array
      */
-    protected $preferredCountryChoices = array();
+    protected $preferredCountryChoices;
 
-    public function __construct(array $countryChoices = array(), array $preferredCountryChoices = array())
-    {
+    /**
+     * @var array
+     */
+    protected $titleChoices;
+
+    /**
+     * @param array $countryChoices
+     * @param array $preferredCountryChoices
+     * @param array $titleChoices
+     */
+    public function __construct(
+        array $countryChoices = array(),
+        array $preferredCountryChoices = array(),
+        array $titleChoices = array()
+    ){
         $this->countryChoices = $countryChoices;
         $this->preferredCountryChoices = $preferredCountryChoices;
+        $this->titleChoices = $titleChoices;
     }
 
     /**
@@ -38,6 +52,9 @@ abstract class AbstractAddressType extends AbstractType
         }
 
         $builder
+            ->add('title', 'choice', array(
+                'choices' => $this->titleChoices
+            ))
             ->add('firstname')
             ->add('lastname')
             ->add('company')
@@ -92,6 +109,24 @@ abstract class AbstractAddressType extends AbstractType
     public function setCountryChoices($countryChoices)
     {
         $this->countryChoices = $countryChoices;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTitleChoices()
+    {
+        return $this->titleChoices;
+    }
+
+    /**
+     * @param array $titleChoices
+     * @return AbstractAddressType
+     */
+    public function setTitleChoices($titleChoices)
+    {
+        $this->titleChoices = $titleChoices;
         return $this;
     }
 }
