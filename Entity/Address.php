@@ -355,4 +355,16 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
         $this->title = $title;
         return $this;
     }
+
+    /**
+     * @return array
+     */
+    public static function getTitles()
+    {
+        return array(
+            'TITLE_WOMAN' => self::TITLE_WOMAN,
+            'TITLE_MAN' => self::TITLE_MAN,
+            'TITLE_COMPANY' => self::TITLE_COMPANY
+        );
+    }
 }

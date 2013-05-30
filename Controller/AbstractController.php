@@ -37,7 +37,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Ibrows\SyliusShopBundle\Model\Address\AddressInterface;
+use Ibrows\SyliusShopBundle\Entity\Address;
 
 abstract class AbstractController extends Controller
 {
@@ -461,11 +461,7 @@ abstract class AbstractController extends Controller
      */
     protected function getAddressTypeTitleChoices()
     {
-        return array(
-            AddressInterface::TITLE_WOMAN => 'TITLE_WOMAN',
-            AddressInterface::TITLE_MAN => 'TITLE_MAN',
-            AddressInterface::TITLE_COMPANY => 'TITLE_COMPANY'
-        );
+        return array_flip(Address::getTitles());
     }
 
     /**

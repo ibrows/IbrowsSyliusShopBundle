@@ -37,6 +37,11 @@ interface AddressInterface
     public function setTitle($title);
 
     /**
+     * @return array
+     */
+    public static function getTitles();
+
+    /**
      * @param string $city
      * @return AddressInterface
      */
