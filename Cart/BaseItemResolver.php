@@ -13,7 +13,7 @@ use Sylius\Bundle\InventoryBundle\Checker\AvailabilityCheckerInterface;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\Request;
 
-abstract class BaseItemResolver implements ItemResolverInterface
+class BaseItemResolver implements ItemResolverInterface
 {
     /**
      * Product manager.
