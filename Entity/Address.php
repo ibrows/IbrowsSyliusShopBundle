@@ -335,7 +335,7 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
      */
     public function isTitleCompany()
     {
-        return $this->getTitle() == self::TITEL_COMPANY;
+        return $this->getTitle() == self::TITLE_COMPANY;
     }
 
     /**

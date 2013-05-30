@@ -7,7 +7,7 @@ interface AddressInterface
     const
         TITLE_MAN = 'MAN',
         TITLE_WOMAN = 'WOMAN',
-        TITEL_COMPANY = 'COMPANY'
+        TITLE_COMPANY = 'COMPANY'
     ;
 
     /**

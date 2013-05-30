@@ -464,7 +464,7 @@ abstract class AbstractController extends Controller
         return array(
             AddressInterface::TITLE_WOMAN => 'TITLE_WOMAN',
             AddressInterface::TITLE_MAN => 'TITLE_MAN',
-            AddressInterface::TITEL_COMPANY => 'TITLE_COMPANY'
+            AddressInterface::TITLE_COMPANY => 'TITLE_COMPANY'
         );
     }
 
