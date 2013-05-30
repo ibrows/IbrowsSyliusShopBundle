@@ -152,6 +152,12 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @var DateTime
+     * @ORM\Column(type="datetime")
+     */
+    protected $created;
+
+    /**
+     * @var DateTime
      * @ORM\Column(type="datetime", name="terms_and_conditions", nullable=true)
      * @Assert\NotNull(groups={"sylius_wizard_summary"})
      */
@@ -188,6 +194,7 @@ class Cart extends BaseCart implements CartInterface
         parent::__construct();
         $this->items = new ArrayCollection();
         $this->additionalItems = new ArrayCollection();
+        $this->setCreated();
     }
 
     /**
@@ -818,5 +825,32 @@ class Cart extends BaseCart implements CartInterface
     public function getConfirmedAt()
     {
         return $this->confirmed;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCreated()
+    {
+        return $this->created !== null;
+    }
+
+    public function getCreatedAt()
+    {
+        return $this->created;
+    }
+
+    /**
+     * @param bool $flag
+     * @return Cart
+     */
+    public function setCreated($flag = true)
+    {
+        if(false === $flag){
+            $this->created = null;
+        }else{
+            $this->created = new DateTime;
+        }
+        return $this;
     }
 }

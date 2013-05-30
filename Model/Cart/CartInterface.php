@@ -159,6 +159,22 @@ interface CartInterface extends BaseCartInterface
      * @param bool $flag
      * @return CartInterface
      */
+    public function setCreated($flag = true);
+
+    /**
+     * @return DateTime
+     */
+    public function getCreatedAt();
+
+    /**
+     * @return bool
+     */
+    public function isCreated();
+
+    /**
+     * @param bool $flag
+     * @return CartInterface
+     */
     public function setClosed($flag = true);
 
     /**
