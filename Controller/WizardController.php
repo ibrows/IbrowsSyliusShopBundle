@@ -349,6 +349,7 @@ class WizardController extends AbstractWizardController
             'paymentOptionStrategy' => $paymentOptionStrategy,
             'summaryForm' => $summaryForm->createView(),
             'cart' => $cart,
+            'cartManager' => $this->getCurrentCartManager(),
             'status' => $request->get('status')
         );
     }
