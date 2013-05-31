@@ -212,7 +212,7 @@ class CartManager
      */
     public function getSelectedDeliveryOptionStrategyServiceCosts()
     {
-        return $this->getStrategyServiceCostsByStrategy($this->getSelectedPaymentOptionStrategyService());
+        return $this->getStrategyServiceCostsByStrategy($this->getSelectedDeliveryOptionStrategyService());
     }
 
     /**
