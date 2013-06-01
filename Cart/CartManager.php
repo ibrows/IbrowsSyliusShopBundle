@@ -3,6 +3,7 @@
 namespace Ibrows\SyliusShopBundle\Cart;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Ibrows\SyliusShopBundle\Cart\Strategy\Costs;
 use Ibrows\SyliusShopBundle\Entity\AdditionalCartItem;
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
@@ -229,20 +230,15 @@ class CartManager
      */
     public function getStrategyServiceCostsByStrategy(CartStrategyInterface $strategy = null)
     {
-        $costs = array(
-            'total' => 0.00,
-            'tax' => 0.00,
-            'totalWithTax' => 0.00
-        );
-
+        $costs = new Costs();
         if(!$strategy){
             return $costs;
         }
 
         foreach($this->getCart()->getAdditionalItemsByStrategy($strategy) as $item){
-            $costs['total'] += $item->getPrice();
-            $costs['tax'] += $item->getTaxPrice();
-            $costs['totalWithTax'] += $item->getPriceWithTax();
+            $costs->setTotal($costs->getTotal()+$item->getPrice());
+            $costs->setTax($costs->getTax()+$item->getTaxPrice());
+            $costs->setTotalWithTax($costs->getTotalWithTax()+$item->getPriceWithTax());
         }
 
         return $costs;
