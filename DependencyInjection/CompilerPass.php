@@ -43,6 +43,7 @@ class CompilerPass implements CompilerPassInterface
 
         $this->addTaggedCartSerializers($container);
         $this->addTaggedCartStrategies($container);
+        $this->addTaggedCartCurrencyStrategies($container);
     }
 
     /**
@@ -108,6 +109,35 @@ class CompilerPass implements CompilerPassInterface
 
             $currentCartManagerDefinition->addMethodCall(
                 'addStrategy',
+                array(new Reference($id))
+            );
+        }
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     */
+    protected function addTaggedCartCurrencyStrategies(ContainerBuilder $container)
+    {
+        if(
+            !$container->hasDefinition('ibrows_syliusshop.currentcart.manager')
+            OR
+            !$container->hasDefinition('ibrows_syliusshop.cart.manager')
+        ){
+            return;
+        }
+
+        $cartManagerDefinition = $container->getDefinition('ibrows_syliusshop.cart.manager');
+        $currentCartManagerDefinition = $container->getDefinition('ibrows_syliusshop.currentcart.manager');
+
+        $taggedCartStrategies = $this->findSortedByPriorityTaggedServiceIds($container, 'ibrows_syliusshop.cart.currency.strategy');
+        foreach($taggedCartStrategies as $id => $attributes){
+            $cartManagerDefinition->addMethodCall(
+                'addCurrencyStrategy',
+                array(new Reference($id))
+            );
+            $currentCartManagerDefinition->addMethodCall(
+                'addCurrencyStrategy',
                 array(new Reference($id))
             );
         }

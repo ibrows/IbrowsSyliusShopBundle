@@ -72,7 +72,7 @@ class CurrentCartManager extends CartManager
         if(!$this->cart){
             parent::setCart($this->provider->getCart());
         }
-        return $this->cart;
+        return parent::getCart($throwException);
     }
 
     /**

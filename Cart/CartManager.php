@@ -8,6 +8,7 @@ use Ibrows\SyliusShopBundle\Entity\AdditionalCartItem;
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface;
+use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartCurrencyStrategyInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartPaymentOptionStrategyInterface;
 use Sylius\Bundle\InventoryBundle\Checker\AvailabilityCheckerInterface;
 use Ibrows\SyliusShopBundle\Cart\Exception\CartItemNotOnStockException;
@@ -67,6 +68,11 @@ class CartManager
     protected $strategies;
 
     /**
+     * @var CartCurrencyStrategyInterface[]|Collection
+     */
+    protected $currencyStrategies;
+
+    /**
      * @param ObjectManager $cartObjectManager
      * @param ObjectRepository $cartObjectRepo
      * @param ObjectManager $itemObjectManager
@@ -92,6 +98,7 @@ class CartManager
         $this->resolver = $resolver;
         $this->availabilityChecker = $availablityChecker;
         $this->strategies = new ArrayCollection();
+        $this->currencyStrategies = new ArrayCollection();
     }
 
     /**
@@ -128,10 +135,11 @@ class CartManager
     public function getPossibleDeliveryOptionStrategies()
     {
         $strategies = array();
+        $cart = $this->getCart(true);
         foreach($this->strategies as $strategy){
             if(
                 $strategy instanceof CartDeliveryOptionStrategyInterface &&
-                $strategy->isPossible($this->getCart(), $this)
+                $strategy->isPossible($cart, $this)
             ){
                 $strategies[] = $strategy;
             }
@@ -173,10 +181,11 @@ class CartManager
     public function getPossiblePaymentOptionStrategies()
     {
         $strategies = array();
+        $cart = $this->getCart(true);
         foreach($this->strategies as $strategy){
             if(
                 $strategy instanceof CartPaymentOptionStrategyInterface &&
-                $strategy->isPossible($this->getCart(), $this)
+                $strategy->isPossible($cart, $this)
             ){
                 $strategies[] = $strategy;
             }
@@ -235,7 +244,7 @@ class CartManager
             return $costs;
         }
 
-        foreach($this->getCart()->getAdditionalItemsByStrategy($strategy) as $item){
+        foreach($this->getCart(true)->getAdditionalItemsByStrategy($strategy) as $item){
             $costs->setTotal($costs->getTotal()+$item->getPrice());
             $costs->setTax($costs->getTax()+$item->getTaxPrice());
             $costs->setTotalWithTax($costs->getTotalWithTax()+$item->getPriceWithTax());
@@ -388,15 +397,66 @@ class CartManager
 
     /**
      * @param bool $throwException
-     * @return CartInterface
+     * @throws \LogicException
      * @throws \BadMethodCallException
+     * @return CartInterface
      */
     public function getCart($throwException = false)
     {
         if(!$this->cart && true === $throwException){
             throw new \BadMethodCallException("Use setCart first!");
         }
-        return $this->cart;
+
+        $cart = $this->cart;
+        $hasCurrency = (bool)$cart->getCurrency();
+
+        if(!$hasCurrency){
+            foreach($this->currencyStrategies as $currencyStrategy){
+                if($currencyStrategy->acceptAsDefaultCurrency($cart, $this)){
+                    $cart->setCurrency($currencyStrategy->getDefaultCurrency($cart, $this));
+                    $hasCurrency = true;
+                    $this->persistCart();
+                    break;
+                }
+            }
+        }
+
+        if(!$hasCurrency){
+            throw new \LogicException("No currency set on cart and no strategy could provide it");
+        }
+
+        return $cart;
+    }
+
+    /**
+     * @param string $toCurrency
+     * @return CartManager
+     * @throws \LogicException
+     */
+    public function changeCurrency($toCurrency)
+    {
+        $cart = $this->getCart(true);
+        $fromCurrency = $cart->getCurrency();
+
+        if($fromCurrency == $toCurrency){
+            return $this;
+        }
+
+        $foundStrategy = false;
+
+        foreach($this->currencyStrategies as $strategy){
+            if($strategy->acceptCurrencyChange($fromCurrency, $toCurrency, $cart, $this)){
+                $strategy->changeCurrency($fromCurrency, $toCurrency, $cart, $this);
+                $foundStrategy = true;
+                $this->persistCart();
+            }
+        }
+
+        if(!$foundStrategy){
+            throw new \LogicException("No currency strategy could provide currency change from $fromCurrency to $toCurrency");
+        }
+
+        return $this;
     }
 
     /**
@@ -462,5 +522,33 @@ class CartManager
                 $cart->refreshCart();
             }
         }
+    }
+
+    /**
+     * @return Collection|CartCurrencyStrategyInterface[]
+     */
+    public function getCurrencyStrategies()
+    {
+        return $this->currencyStrategies;
+    }
+
+    /**
+     * @param CartCurrencyStrategyInterface $strategy
+     * @return CartManager
+     */
+    public function addCurrencyStrategy(CartCurrencyStrategyInterface $strategy)
+    {
+        $this->currencyStrategies->add($strategy);
+        return $this;
+    }
+
+    /**
+     * @param CartCurrencyStrategyInterface $strategy
+     * @return CartManager
+     */
+    public function removeCurrencyStrategy(CartCurrencyStrategyInterface $strategy)
+    {
+        $this->currencyStrategies->removeElement($strategy);
+        return $this;
     }
 }
