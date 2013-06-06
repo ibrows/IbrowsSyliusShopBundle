@@ -24,7 +24,7 @@ abstract class Product implements ProductInterface
      * @var int
      * @ORM\Column(type="integer")
      * @Assert\NotBlank
-     * @Assert\Min(0)
+     * @Assert\Range(min=0)
      */
     protected $onHand = 0;
 
