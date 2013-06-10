@@ -182,11 +182,17 @@ abstract class AbstractController extends Controller
         } catch (CartItemNotOnStockException $e) {
             foreach ($e->getCartItemsNotOnStock() as $itemNotOnStock) {
                 $item = $itemNotOnStock->getItem();
+                if(!$item->getProduct()->isEnabled()){
+                    $message = $item . ' not found';
+                    $this->get('session')->getFlashBag()->add('notice', $message);
+                    $cartManager->removeItem($item);
+                    continue;
+                }
                 $message = $item . ' ' . $item->getQuantityNotAvailable() . " not there...";
                 $this->get('session')->getFlashBag()->add('notice', $message);
                 $item->setQuantityToAvailable();
             }
-            $this->persistCart($cartManager);
+            $cartManager->persistCart($refreshAndCheckAvailability);
         }
     }
 

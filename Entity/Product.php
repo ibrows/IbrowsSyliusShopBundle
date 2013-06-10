@@ -104,6 +104,12 @@ abstract class Product implements ProductInterface
     protected $deletedAt;
 
     /**
+     * @var boolean
+     * @ORM\Column(type="boolean")
+     */
+    protected $enabled = true;
+
+    /**
      * Constructor.
      */
     public function __construct()
@@ -339,13 +345,32 @@ abstract class Product implements ProductInterface
      */
     public function setAvailableOnDemand($availableOnDemand)
     {
-        $this->availableOnDemand = (bool)$availableOnDemand;
+        $this->availableOnDemand = (bool) $availableOnDemand;
     }
 
     /**
      * @return string
      */
-    public function __toString(){
-        return (string)$this->getInventoryName();
+    public function __toString()
+    {
+        return (string) $this->getInventoryName();
     }
+
+    /**
+     * @return boolean
+     */
+    public function isEnabled()
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * @param  $enabled
+     */
+    public function setEnabled($enabled)
+    {
+        $this->enabled = $enabled;
+        return $this;
+    }
+
 }

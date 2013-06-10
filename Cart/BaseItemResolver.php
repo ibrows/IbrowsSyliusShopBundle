@@ -12,6 +12,7 @@ use Sylius\Bundle\CartBundle\Resolver\ItemResolvingException;
 use Sylius\Bundle\InventoryBundle\Checker\AvailabilityCheckerInterface;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class BaseItemResolver implements ItemResolverInterface
 {
@@ -82,7 +83,11 @@ class BaseItemResolver implements ItemResolverInterface
         $item = $form->getData(); // Item instance, cool.
 
         // If all is ok with form, quantity and other stuff, simply return the item.
-        if ($form->isValid() && null !== $product) {
+        if ($form->isValid() ) {
+            if( null === $product || !$product->isEnabled()){
+                throw new ItemResolvingException('Requested product was not found or is disabled');
+            }
+
             $this->isStockAvailable($product);
             $this->isStockSufficient($product, $item->getQuantity());
             $item->setProduct($product);

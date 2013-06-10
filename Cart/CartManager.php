@@ -323,6 +323,10 @@ class CartManager
     {
         $notOnStockItems = array();
         foreach($this->getCart(true)->getItems() as $item){
+            if(!$item->getProduct()->isEnabled()){
+                $notOnStockItems[] = $item;
+                continue;
+            }
             if(!$this->availabilityChecker->isStockSufficient($item->getProduct(), $item->getQuantity())){
                 $notOnStockItems[] = $item;
             }
