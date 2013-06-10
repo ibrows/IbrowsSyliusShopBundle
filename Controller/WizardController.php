@@ -351,7 +351,7 @@ class WizardController extends AbstractWizardController
             'summaryForm' => $summaryForm->createView(),
             'cart' => $cart,
             'cartManager' => $this->getCurrentCartManager(),
-            'status' => $request->get('status')
+            'paymenterror' => $request->get('paymenterror')
         );
     }
 
@@ -373,6 +373,8 @@ class WizardController extends AbstractWizardController
         $paymentOptionStrategyService = $cartManager->getSelectedPaymentOptionStrategyService();
         $response = $paymentOptionStrategyService->pay($context, $cart, $cartManager);
 
+        var_dump($response);
+
         switch(true){
             case $response instanceof RedirectResponse:
                 return $response;
@@ -385,12 +387,25 @@ class WizardController extends AbstractWizardController
                     $cart->setPayed();
                     $this->persistCart($cartManager);
                     return $this->redirect($this->getWizard()->getNextStepUrl());
-                }elseif($response->getStatus() == $response::STATUS_ERROR && $response->getErrorCode() == $response::ERROR_CONFIRMATION){
-                    $cart->setConfirmed();
-                    $this->persistCart($cartManager);
-                    return $this->redirect($this->getWizard()->getNextStepUrl());
                 }
-                return new RedirectResponse($this->generateUrl($context->getErrorRouteName(), array('status' => $response->getErrorCode())));
+
+                if($response->getStatus() == $response::STATUS_ERROR){
+                    switch($response->getErrorCode()){
+                        case $response::ERROR_COMPLETION:
+                            $cart->setConfirmed();
+                            $this->persistCart($cartManager);
+                            return $this->redirect($this->getWizard()->getNextStepUrl());
+                        break;
+                        case $response::ERROR_CONFIRMATION:
+                            return $this->redirect($this->generateUrl($context->getErrorRouteName(), array('paymenterror' => 'confirmation')));
+                        break;
+                        case $response::ERROR_VALIDATION:
+                            return $this->redirect($this->generateUrl($context->getErrorRouteName(), array('paymenterror' => 'validation')));
+                        break;
+                    }
+                }
+
+                return $this->redirect($this->generateUrl($context->getErrorRouteName(), array('paymenterror' => 'general')));
             break;
             case $response instanceof SelfRedirectResponse:
                 return $this->redirect($this->generateUrl($context->getCurrentRouteName(), $response->getParameters()));
