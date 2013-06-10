@@ -37,24 +37,22 @@ class WizardController extends AbstractWizardController
         $basketForm = $this->createForm($this->getBasketType(), $cart);
 
         if ("POST" == $request->getMethod()) {
-            $basketForm->bind($request);
-
-            if ($basketForm->isValid()) {
-
-                $this->persistCurrentCart();
-
-                if (
-                    ($deleteItems = $request->request->get($deleteSubmitName)) &&
-                    is_array($deleteItems)
-                ) {
-                    foreach($deleteItems as $itemId => $formName){
-                        if($item = $cart->getItemById($itemId)){
-                            $cartManager->removeItem($item);
-                        }
+            if (
+                ($deleteItems = $request->request->get($deleteSubmitName)) &&
+                is_array($deleteItems)
+            ) {
+                foreach($deleteItems as $itemId => $formName){
+                    if($item = $cart->getItemById($itemId)){
+                        $cartManager->removeItem($item);
                     }
-                    $this->persistCurrentCart();
-                    $basketForm = $this->createForm($this->getBasketType(), $cart);
                 }
+                $this->persistCurrentCart();
+                $basketForm = $this->createForm($this->getBasketType(), $cart);
+            }
+
+            $basketForm->bind($request);
+            if ($basketForm->isValid()) {
+                $this->persistCurrentCart();
 
                 if ($request->request->get($continueSubmitName)) {
                     return $this->redirect($this->getWizard()->getNextStepUrl());
