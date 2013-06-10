@@ -8,7 +8,8 @@ class PaymentFinishedResponse
     const STATUS_ERROR = 'error';
 
     const ERROR_CONFIRMATION = 1;
-    const ERROR_COMPLETION = 1;
+    const ERROR_COMPLETION = 2;
+    const ERROR_VALIDATION = 3;
 
     /**
      * @var string

@@ -166,26 +166,40 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
         $saferpay->setHttpClient(new GuzzleClient());
         $saferpay->setData($session->get($sessionKey));
 
-        if($request->query->get('status') == PaymentFinishedResponse::STATUS_OK){
-            if($saferpay->confirmPayment($request->query->get('DATA'), $request->query->get('SIGNATURE')) != ''){
-                if($saferpay->completePayment() != ''){
+        $initData = $this->getInitData($context, $cart);
+
+        switch($request->query->get('status')){
+            case PaymentFinishedResponse::STATUS_OK:
+                if($saferpay->confirmPayment($request->query->get('DATA'), $request->query->get('SIGNATURE')) != ''){
+                    $confirmationData = $saferpay->getData()->getConfirmData();
                     $session->remove($sessionKey);
-                    return new PaymentFinishedResponse();
-                }else{
+
+                    if($confirmationData->get('AMOUNT') != $initData['AMOUNT'] OR $confirmationData->get('CURRENCY') != $initData['CURRENCY']){
+                        $saferpay->completePayment('Cancel');
+                        return new PaymentFinishedResponse(PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_VALIDATION);
+                    }
+
+                    if($saferpay->completePayment() != ''){
+                        return new PaymentFinishedResponse();
+                    }
+
                     return new PaymentFinishedResponse(PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_COMPLETION);
                 }
-            }else{
                 return new PaymentFinishedResponse(PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_CONFIRMATION);
-            }
-        }else{
-            $url = $saferpay->initPayment($saferpay->getKeyValuePrototype()->all($this->getInitData($context, $cart)));
-            $session->set($sessionKey, $saferpay->getData());
+            break;
+            case PaymentFinishedResponse::STATUS_ERROR:
+                $session->remove($sessionKey);
+                return new ErrorRedirectResponse(array('paymenterror' => $request->query->get('error')));
+            break;
+        }
 
-            if($url){
-                return new RedirectResponse($url);
-            }else{
-                return new ErrorRedirectResponse(array('status' => 'connectionerror'));
-            }
+        $url = $saferpay->initPayment($saferpay->getKeyValuePrototype()->all($initData));
+        $session->set($sessionKey, $saferpay->getData());
+
+        if($url){
+            return new RedirectResponse($url);
+        }else{
+            return new ErrorRedirectResponse(array('paymenterror' => 'connectionerror'));
         }
     }
 
@@ -209,7 +223,6 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
     protected function getInitData(Context $context, CartInterface $cart)
     {
         $currentRouteName = $context->getCurrentRouteName();
-        $errorRouteName = $context->getErrorRouteName();
         $invoiceAddress = $cart->getInvoiceAddress();
         $router = $this->getRouter();
 
@@ -229,8 +242,8 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
             'DESCRIPTION' => sprintf('Bestellnummer: %s', $cart->getId()),
             'ORDERID' => $cart->getId(),
             'SUCCESSLINK' => $router->generate($currentRouteName, array('status' => PaymentFinishedResponse::STATUS_OK), true),
-            'FAILLINK' => $router->generate($errorRouteName, array('status' => 'fail'), true),
-            'BACKLINK' => $router->generate($errorRouteName, array('status' => 'abort'), true),
+            'FAILLINK' => $router->generate($currentRouteName, array('status' => PaymentFinishedResponse::STATUS_ERROR, 'error' => 'fail'), true),
+            'BACKLINK' => $router->generate($currentRouteName, array('status' => PaymentFinishedResponse::STATUS_ERROR, 'error' => 'back'), true),
             'FIRSTNAME' => $invoiceAddress->getFirstname(),
             'LASTNAME' => $invoiceAddress->getLastname(),
             'STREET' => $invoiceAddress->getStreet(),
@@ -241,7 +254,7 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
             'CURRENCY' => strtoupper($cart->getCurrency())
         );
 
-        $gender = $invoiceAddress->isTitleMan() ? 'M' : $invoiceAddress->isTitleWoman() ? 'F' : null;
+        $gender = $invoiceAddress->isTitleMan() ? 'M' : ($invoiceAddress->isTitleWoman() ? 'F' : null);
         if($gender){
             $initData['GENDER'] = $gender;
         }
