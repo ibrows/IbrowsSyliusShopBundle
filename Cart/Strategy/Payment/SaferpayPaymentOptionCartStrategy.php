@@ -38,18 +38,25 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
     protected $sessionKey;
 
     /**
+     * @var bool
+     */
+    protected $doCompletePayment;
+
+    /**
      * @param Saferpay $saferpay
      * @param LoggerInterface $logger
      * @param array $paymentMethods
      * @param string $sessionKey
+     * @param bool $doCompletePayment
      */
-    public function __construct(Saferpay $saferpay, LoggerInterface $logger, array $paymentMethods, $sessionKey)
+    public function __construct(Saferpay $saferpay, LoggerInterface $logger, array $paymentMethods, $sessionKey, $doCompletePayment = true)
     {
         $this->saferpay = $saferpay;
         $this->logger = $logger;
         $this->paymentMethods = $paymentMethods;
         $this->sessionKey = $sessionKey;
         $this->setParentVisible(false);
+        $this->setDoCompletePayment($doCompletePayment);
     }
 
     /**
@@ -179,12 +186,13 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
                         return new PaymentFinishedResponse(PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_VALIDATION);
                     }
 
-                    if($saferpay->completePayment() != ''){
+                    if(true === $this->doCompletePayment() && $saferpay->completePayment() != ''){
                         return new PaymentFinishedResponse();
                     }
 
                     return new PaymentFinishedResponse(PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_COMPLETION);
                 }
+
                 return new PaymentFinishedResponse(PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_CONFIRMATION);
             break;
             case PaymentFinishedResponse::STATUS_ERROR:
@@ -264,5 +272,23 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
         }
 
         return $initData;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function doCompletePayment()
+    {
+        return $this->doCompletePayment;
+    }
+
+    /**
+     * @param boolean $doCompletePayment
+     * @return SaferpayPaymentOptionCartStrategy
+     */
+    public function setDoCompletePayment($doCompletePayment)
+    {
+        $this->doCompletePayment = $doCompletePayment;
+        return $this;
     }
 }
