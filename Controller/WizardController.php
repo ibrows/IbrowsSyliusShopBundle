@@ -371,8 +371,6 @@ class WizardController extends AbstractWizardController
         $paymentOptionStrategyService = $cartManager->getSelectedPaymentOptionStrategyService();
         $response = $paymentOptionStrategyService->pay($context, $cart, $cartManager);
 
-        var_dump($response);
-
         switch(true){
             case $response instanceof RedirectResponse:
                 return $response;
@@ -382,6 +380,7 @@ class WizardController extends AbstractWizardController
             break;
             case $response instanceof PaymentFinishedResponse:
                 if($response->getStatus() == $response::STATUS_OK){
+                    $cart->setConfirmed();
                     $cart->setPayed();
                     $this->persistCart($cartManager);
                     return $this->redirect($this->getWizard()->getNextStepUrl());
@@ -421,6 +420,8 @@ class WizardController extends AbstractWizardController
     public function notificationAction()
     {
         $cart = $this->getCurrentCart();
+
+        // Close card in notification because its not available any more after that step
         $this->getCurrentCartManager()->closeCart();
 
         return array(
