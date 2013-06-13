@@ -105,7 +105,7 @@ abstract class AbstractWizardController extends AbstractController
     public function notificationValidation()
     {
         $cart = $this->getCurrentCart();
-        if (!$cart->isPayed()) {
+        if (!$cart->isConfirmed()) {
             return Wizard::REDIRECT_STEP_BACK;
         }
         return true;
