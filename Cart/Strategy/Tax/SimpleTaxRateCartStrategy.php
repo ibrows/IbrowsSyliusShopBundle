@@ -20,8 +20,8 @@ class SimpleTaxRateCartStrategy extends AbstractCartStrategy
      */
     public function __construct($taxFactor = 0.08)
     {
-        if($taxRate > 1){
-            throw new \LogicException("TaxFactor is over 100%, sure? - Did you mean ". round(($taxRate/100), 2) ."?");
+        if($taxFactor > 1){
+            throw new \LogicException("TaxFactor is over 100%, sure? - Did you mean ". round(($taxFactor/100), 2) ."?");
         }
         $this->setTaxRate($taxFactor * 100);
     }
