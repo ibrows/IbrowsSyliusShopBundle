@@ -86,7 +86,7 @@ class AdditionalCartItem implements AdditionalCartItemInterface
     {
         $price = $this->getPrice();
         $taxRate = $this->getTaxRate();
-        $taxPrice = $price*$taxRate;
+        $taxPrice = $price*$taxRate / 100;
 
         $this->setTaxPrice($taxPrice);
         $this->setPriceWithTax($price+$taxPrice);
@@ -214,6 +214,14 @@ class AdditionalCartItem implements AdditionalCartItemInterface
     public function getTaxRate()
     {
         return $this->taxRate;
+    }
+
+    /**
+     * eg. 0.08
+     * @return number
+     */
+    public function getTaxFactor(){
+        return $this->taxRate / 100;
     }
 
     /**
