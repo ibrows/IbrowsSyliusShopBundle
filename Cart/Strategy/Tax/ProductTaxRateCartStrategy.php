@@ -42,19 +42,12 @@ class ProductTaxRateCartStrategy extends AbstractCartStrategy
         $totalpermwst = array();
         foreach ($cart->getItems() as $item) {
             $rate = $this->getTaxRateForItem($item, $cart, $cartManager);
-            if (array_key_exists("$rate", $totalpermwst)) {
-                $totalpermwst["$rate"] += $item->getTotal();
-            } else {
-                $totalpermwst["$rate"] = $item->getTotal();
-            }
             $item->setTaxRate($rate);
         }
-        $mixedrate = 0;
-        foreach($totalpermwst as $rate => $value){
-            $percent =   $value  / $cart->getTotal();
-            $mixedrate += $rate * $percent;
-        }
+        $cart->calculateTotal();
+        $mixedrate = $cart->getItemsPriceTotal() / $cart->getItemsPriceTotalTax();
         $mixedrate = round($mixedrate, 2,PHP_ROUND_HALF_UP);
+
         foreach ($cart->getAdditionalItems() as $item) {
             $item->setTaxRate($mixedrate);
         }

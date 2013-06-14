@@ -74,7 +74,7 @@ class CartItem extends BaseCartItem implements CartItemInterface
 
         $total = $this->getTotal();
         $taxRate = $this->getTaxRate();
-        $taxPrice = $total*$taxRate;
+        $taxPrice = $total*$taxRate / 100;
 
         $this->setTaxPrice($taxPrice);
         $this->setTotalWithTaxPrice($total+$taxPrice);
@@ -179,7 +179,7 @@ class CartItem extends BaseCartItem implements CartItemInterface
     }
 
     /**
-     * @return float
+     * @return float (eg. 8)
      */
     public function getTaxRate()
     {
@@ -187,13 +187,21 @@ class CartItem extends BaseCartItem implements CartItemInterface
     }
 
     /**
-     * @param float $taxRate
+     * @param float $taxRate (eg. 8)
      * @return CartItem
      */
     public function setTaxRate($taxRate)
     {
         $this->taxRate = $taxRate;
         return $this;
+    }
+
+    /**
+     * eg. 0.08
+     * @return number
+     */
+    public function getTaxFactor(){
+        return $this->taxRate / 100;
     }
 
     /**
