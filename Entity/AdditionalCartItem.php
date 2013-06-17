@@ -85,25 +85,23 @@ class AdditionalCartItem implements AdditionalCartItemInterface
      */
     public function __toString()
     {
-        return (string) $this->getText();
+        return (string)$this->getText();
     }
 
     public function calculateTotal()
     {
 
-        $total = $this->quantity * $this->unitPrice;
-        $taxfactor = $this->getTaxFactor();
+        $price = $this->getPrice();
+        $tax = $this->getTaxFactor();
 
-        if ($this->isTaxInclusive()) {
-            $this->totalWithTaxPrice = $total;
-            $this->total = ($total / ($taxfactor + 1));
-            $taxPrice = $this->totalWithTaxPrice - $this->total;
+        if($this->isTaxInclusive() ||  $price == 0 ){
+            $this->price =  ( $this->priceWithTax / ($tax + 1) );
+            $taxPrice = $this->priceWithTax - $this->price;
             $this->setTaxPrice($taxPrice);
-        } else {
-            $this->total = $total;
-            $taxPrice = $total * $taxfactor;
+        }else if($price > 0){
+            $taxPrice = $price*$tax;
             $this->setTaxPrice($taxPrice);
-            $this->totalWithTaxPrice = ($total + $taxPrice);
+            $this->setPriceWithTax($price+$taxPrice);
         }
     }
 
@@ -235,8 +233,7 @@ class AdditionalCartItem implements AdditionalCartItemInterface
      * eg. 0.08
      * @return number
      */
-    public function getTaxFactor()
-    {
+    public function getTaxFactor(){
         return $this->taxRate / 100;
     }
 
@@ -267,6 +264,7 @@ class AdditionalCartItem implements AdditionalCartItemInterface
         $this->priceWithTax = $priceWithTax;
         return $this;
     }
+
 
     /**
      * @return boolean

@@ -77,7 +77,7 @@ class QuantityDiscountStrategy extends AbstractCartStrategy
             }
 
             $item = $this->createAdditionalCartItem();
-            $item->setPrice($costs * -1);
+            $item->setPriceWithTax($costs * -1);
             $item->setText($this->getItemText($costs, $cart, $cartManager, $item));
             $item->setStrategyData(array('costs' => $costs, 'total' => $total));
             return array(
