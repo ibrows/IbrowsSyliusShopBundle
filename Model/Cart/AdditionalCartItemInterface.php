@@ -98,4 +98,16 @@ interface AdditionalCartItemInterface
     public function setPriceWithTax($price);
 
     public function calculateTotal();
+
+
+    /**
+     * @return boolean
+     */
+    public function isTaxInclusive();
+
+    /**
+     * @param boolean $mwstinclusive
+     * @return CartItemInterface
+    */
+    public function setTaxInclusive($taxInclusive);
 }

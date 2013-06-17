@@ -75,21 +75,36 @@ class AdditionalCartItem implements AdditionalCartItemInterface
     protected $strategyData = array();
 
     /**
+     * @var boolean
+     * @ORM\Column(type="boolean", name="tax_inclusive")
+     */
+    protected $taxInclusive = false;
+
+    /**
      * @return string
      */
     public function __toString()
     {
-        return (string)$this->getText();
+        return (string) $this->getText();
     }
 
     public function calculateTotal()
     {
-        $price = $this->getPrice();
-        $taxRate = $this->getTaxRate();
-        $taxPrice = $price*$taxRate / 100;
 
-        $this->setTaxPrice($taxPrice);
-        $this->setPriceWithTax($price+$taxPrice);
+        $total = $this->quantity * $this->unitPrice;
+        $taxfactor = $this->getTaxFactor();
+
+        if ($this->isTaxInclusive()) {
+            $this->totalWithTaxPrice = $total;
+            $this->total = ($total / ($taxfactor + 1));
+            $taxPrice = $this->totalWithTaxPrice - $this->total;
+            $this->setTaxPrice($taxPrice);
+        } else {
+            $this->total = $total;
+            $taxPrice = $total * $taxfactor;
+            $this->setTaxPrice($taxPrice);
+            $this->totalWithTaxPrice = ($total + $taxPrice);
+        }
     }
 
     /**
@@ -220,7 +235,8 @@ class AdditionalCartItem implements AdditionalCartItemInterface
      * eg. 0.08
      * @return number
      */
-    public function getTaxFactor(){
+    public function getTaxFactor()
+    {
         return $this->taxRate / 100;
     }
 
@@ -251,4 +267,23 @@ class AdditionalCartItem implements AdditionalCartItemInterface
         $this->priceWithTax = $priceWithTax;
         return $this;
     }
+
+    /**
+     * @return boolean
+     */
+    public function isTaxInclusive()
+    {
+        return $this->taxInclusive;
+    }
+
+    /**
+     * @param boolean $mwstinclusive
+     * @return \Ibrows\SyliusShopBundle\Entity\CartItem
+     */
+    public function setTaxInclusive($taxInclusive)
+    {
+        $this->taxInclusive = $taxInclusive;
+        return $this;
+    }
+
 }

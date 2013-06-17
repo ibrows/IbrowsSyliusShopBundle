@@ -302,7 +302,7 @@ abstract class Product implements ProductInterface
      */
     public function isInStock()
     {
-        return 0 < $this->onHand;
+        return (0 < $this->onHand || $this->availableOnDemand);
     }
 
     /**
@@ -355,7 +355,6 @@ abstract class Product implements ProductInterface
     {
         return (string) $this->getInventoryName();
     }
-
     /**
      * @return boolean
      */
@@ -372,5 +371,7 @@ abstract class Product implements ProductInterface
         $this->enabled = $enabled;
         return $this;
     }
+
+
 
 }
