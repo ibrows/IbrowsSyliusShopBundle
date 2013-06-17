@@ -16,14 +16,20 @@ class SimpleTaxRateCartStrategy extends AbstractCartStrategy
     protected $taxRate;
 
     /**
+     * @var boolean
+     */
+    protected $taxincl = false;
+
+    /**
      * @param float $taxRate
      */
-    public function __construct($taxFactor = 0.08)
+    public function __construct($taxFactor = 0.08, $taxincl = false)
     {
         if($taxFactor > 1){
             throw new \LogicException("TaxFactor is over 100%, sure? - Did you mean ". round(($taxFactor/100), 2) ."?");
         }
         $this->setTaxRate($taxFactor * 100);
+        $this->taxincl = $taxincl;
     }
 
     /**
@@ -63,9 +69,11 @@ class SimpleTaxRateCartStrategy extends AbstractCartStrategy
     {
         foreach($cart->getItems() as $item){
             $item->setTaxRate($this->getTaxRateForItem($item, $cart, $cartManager));
+            $item->setTaxInclusive($this->taxincl);
         }
         foreach($cart->getAdditionalItems() as $item){
             $item->setTaxRate($this->getTaxRateForAdditionalItem($item, $cart, $cartManager));
+            $item->setTaxInclusive($this->taxincl);
         }
         return array();
     }

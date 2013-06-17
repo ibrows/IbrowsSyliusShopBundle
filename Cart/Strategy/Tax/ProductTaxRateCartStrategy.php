@@ -15,11 +15,17 @@ class ProductTaxRateCartStrategy extends AbstractCartStrategy
     protected $taxRateMethod;
 
     /**
+     * @var boolean
+     */
+    protected $taxincl = false;
+
+    /**
      * @param float $taxRate
      */
-    public function __construct($taxRateMethod = 'getTaxRate')
+    public function __construct($taxRateMethod = 'getTaxRate', $taxincl = false)
     {
         $this->setTaxRateMethod($taxRateMethod);
+        $this->taxincl = $taxincl;
     }
 
     /**
@@ -42,13 +48,19 @@ class ProductTaxRateCartStrategy extends AbstractCartStrategy
         $totalpermwst = array();
         foreach ($cart->getItems() as $item) {
             $rate = $this->getTaxRateForItem($item, $cart, $cartManager);
+            $item->setTaxInclusive($this->getTaxincl());
             $item->setTaxRate($rate);
         }
         $cart->calculateTotal();
-        $mixedrate = $cart->getItemsPriceTotal() / $cart->getItemsPriceTotalTax();
-        $mixedrate = round($mixedrate, 2,PHP_ROUND_HALF_UP);
+        if ($cart->getItemsPriceTotalTax() == 0) {
+            $mixedrate = 0;
+        } else {
+            $mixedrate = $cart->getItemsPriceTotal() / $cart->getItemsPriceTotalTax();
+            $mixedrate = round($mixedrate, 2, PHP_ROUND_HALF_UP);
+        }
 
         foreach ($cart->getAdditionalItems() as $item) {
+            $item->setTaxInclusive($this->getTaxincl());
             $item->setTaxRate($mixedrate);
         }
 
@@ -66,7 +78,7 @@ class ProductTaxRateCartStrategy extends AbstractCartStrategy
         $method = $this->taxRateMethod;
         $product = $item->getProduct();
         if (method_exists($product, $method)) {
-            return floatval(''.$product->$method());
+            return floatval('' . $product->$method());
         }
         throw new \Exception('No Taxrate found:' . $product . '->' . $method);
     }
@@ -97,6 +109,23 @@ class ProductTaxRateCartStrategy extends AbstractCartStrategy
     public function setTaxRateMethod($taxRateMethod)
     {
         $this->taxRateMethod = $taxRateMethod;
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getTaxincl()
+    {
+        return $this->taxincl;
+    }
+
+    /**
+     * @param boolean $taxincl
+     */
+    public function setTaxincl($taxincl)
+    {
+        $this->taxincl = $taxincl;
         return $this;
     }
 

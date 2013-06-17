@@ -1,7 +1,6 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Entity;
-
 use Ibrows\SyliusShopBundle\Model\Product\ProductInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface;
 
@@ -80,22 +79,35 @@ class CartItem extends BaseCartItem implements CartItemInterface
     protected $totalWithTaxPrice = 0;
 
     /**
+     * @var boolean
+     * @ORM\Column(type="boolean", name="tax_inclusive")
+     */
+    protected $taxInclusive = false;
+
+    /**
      * @return string
      */
-    public function __toString(){
-        return (string)$this->product;
+    public function __toString()
+    {
+        return (string) $this->product;
     }
 
     public function calculateTotal()
     {
-        parent::calculateTotal();
+        $total = $this->quantity * $this->unitPrice;
+        $taxfactor = $this->getTaxFactor();
 
-        $total = $this->getTotal();
-        $taxRate = $this->getTaxRate();
-        $taxPrice = $total*$taxRate / 100;
-
-        $this->setTaxPrice($taxPrice);
-        $this->setTotalWithTaxPrice($total+$taxPrice);
+        if($this->isTaxInclusive()){
+            $this->totalWithTaxPrice = $total;
+            $this->total =  ( $total / ($taxfactor + 1) );
+            $taxPrice = $this->totalWithTaxPrice - $this->total;
+            $this->setTaxPrice($taxPrice);
+        }else{
+            $this->total = $total;
+            $taxPrice = $total * $taxfactor;
+            $this->setTaxPrice($taxPrice);
+            $this->totalWithTaxPrice = ($total + $taxPrice);
+        }
     }
 
     /**
@@ -113,6 +125,7 @@ class CartItem extends BaseCartItem implements CartItemInterface
     public function setProduct(ProductInterface $product = null)
     {
         $this->product = $product;
+        $this->setUnitPrice($product->getPrice());
         return $this;
     }
 
@@ -157,9 +170,9 @@ class CartItem extends BaseCartItem implements CartItemInterface
      */
     public function setDelivered($flag = true)
     {
-        if(false === $flag){
+        if (false === $flag) {
             $this->delivered = null;
-        }else{
+        } else {
             $this->delivered = new DateTime;
         }
         return $this;
@@ -168,14 +181,16 @@ class CartItem extends BaseCartItem implements CartItemInterface
     /**
      * @return int
      */
-    public function getQuantityNotAvailable(){
+    public function getQuantityNotAvailable()
+    {
         return $this->getQuantity() - $this->getProduct()->getOnHand();
     }
 
     /**
      * @return CartItem
      */
-    public function setQuantityToAvailable(){
+    public function setQuantityToAvailable()
+    {
         $this->setQuantity($this->getProduct()->getOnHand());
         return $this;
     }
@@ -218,7 +233,8 @@ class CartItem extends BaseCartItem implements CartItemInterface
      * eg. 0.08
      * @return number
      */
-    public function getTaxFactor(){
+    public function getTaxFactor()
+    {
         return $this->taxRate / 100;
     }
 
@@ -257,4 +273,23 @@ class CartItem extends BaseCartItem implements CartItemInterface
         $this->totalWithTaxPrice = $totalWithTaxPrice;
         return $this;
     }
+
+    /**
+     * @return boolean
+     */
+    public function isTaxInclusive()
+    {
+        return $this->taxInclusive;
+    }
+
+    /**
+     * @param boolean $mwstinclusive
+     * @return \Ibrows\SyliusShopBundle\Entity\CartItem
+     */
+    public function setTaxInclusive($taxInclusive)
+    {
+        $this->taxInclusive = $taxInclusive;
+        return $this;
+    }
+
 }

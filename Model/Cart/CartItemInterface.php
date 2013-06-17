@@ -1,7 +1,6 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Model\Cart;
-
 use Sylius\Bundle\CartBundle\Model\CartItemInterface as BaseCartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Product\ProductInterface;
 
@@ -84,6 +83,17 @@ interface CartItemInterface extends BaseCartItemInterface
      * @return CartItemInterface
      */
     public function setTotalWithTaxPrice($total);
+
+    /**
+     * @return boolean
+     */
+    public function isTaxInclusive();
+
+    /**
+     * @param boolean $mwstinclusive
+     * @return CartItemInterface
+     */
+    public function setTaxInclusive($taxInclusive);
 
     /**
      * @return int

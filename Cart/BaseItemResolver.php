@@ -91,7 +91,6 @@ class BaseItemResolver implements ItemResolverInterface
             $this->isStockAvailable($product);
             $this->isStockSufficient($product, $item->getQuantity());
             $item->setProduct($product);
-            $item->setUnitPrice($product->getPrice());
             return $item;
         }
 
