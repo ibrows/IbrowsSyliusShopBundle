@@ -34,25 +34,25 @@ class AdditionalCartItem implements AdditionalCartItemInterface
 
     /**
      * @var float
-     * @ORM\Column(type="decimal", scale=2, precision=11)
+     * @ORM\Column(type="decimal", scale=30, precision=65)
      */
     protected $price;
 
     /**
      * @var float
-     * @ORM\Column(type="decimal", scale=2, precision=11, name="tax_rate")
+     * @ORM\Column(type="decimal", scale=30, precision=65, name="tax_rate")
      */
     protected $taxRate = 0.0;
 
     /**
      * @var float
-     * @ORM\Column(type="decimal", scale=2, precision=11, name="tax_price")
+     * @ORM\Column(type="decimal", scale=30, precision=65, name="tax_price")
      */
     protected $taxPrice = 0.0;
 
     /**
      * @var float
-     * @ORM\Column(type="decimal", scale=2, precision=11, name="price_with_tax")
+     * @ORM\Column(type="decimal", scale=30, precision=65, name="price_with_tax")
      */
     protected $priceWithTax = 0.0;
 

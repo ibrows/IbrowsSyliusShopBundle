@@ -15,6 +15,24 @@ use DateTime;
 /**
  * @ORM\Entity
  * @ORM\Table(name="ibr_sylius_cart_item")
+ * @ORM\AttributeOverrides({
+ *      @ORM\AttributeOverride(name="unitPrice",
+ *          column=@ORM\Column(
+ *              name = "unit_price",
+ *              type = "decimal",
+ *              scale = 30,
+ *              precision = 65
+ *          )
+ *      ),
+ *      @ORM\AttributeOverride(name="total",
+ *          column=@ORM\Column(
+ *              name = "total",
+ *              type = "decimal",
+ *              scale = 30,
+ *              precision = 65
+ *          )
+ *      )
+ * })
  */
 class CartItem extends BaseCartItem implements CartItemInterface
 {
@@ -45,19 +63,19 @@ class CartItem extends BaseCartItem implements CartItemInterface
 
     /**
      * @var float
-     * @ORM\Column(type="decimal", scale=2, precision=11, name="tax_rate")
+     * @ORM\Column(type="decimal", scale=30, precision=65, name="tax_rate")
      */
     protected $taxRate = 0.0;
 
     /**
      * @var float
-     * @ORM\Column(type="decimal", scale=2, precision=11, name="tax_price")
+     * @ORM\Column(type="decimal", scale=30, precision=65, name="tax_price")
      */
     protected $taxPrice = 0;
 
     /**
      * @var float
-     * @ORM\Column(type="decimal", scale=2, precision=11, name="total_with_tax_price")
+     * @ORM\Column(type="decimal", scale=30, precision=65, name="total_with_tax_price")
      */
     protected $totalWithTaxPrice = 0;
 

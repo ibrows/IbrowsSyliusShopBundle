@@ -19,6 +19,16 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity
  * @ORM\Table(name="ibr_sylius_cart")
+ * @ORM\AttributeOverrides({
+ *      @ORM\AttributeOverride(name="total",
+ *          column=@ORM\Column(
+ *              name = "total",
+ *              type = "decimal",
+ *              scale = 30,
+ *              precision = 65
+ *          )
+ *      )
+ * })
  */
 class Cart extends BaseCart implements CartInterface
 {
@@ -86,49 +96,49 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @var float
-     * @ORM\Column(type="decimal", scale=2, precision=11, name="total_with_tax")
+     * @ORM\Column(type="decimal", scale=30, precision=65, name="total_with_tax")
      */
     protected $totalWithTax = 0.0;
 
     /**
      * @var float
-     * @ORM\Column(type="decimal", scale=2, precision=11, name="additional_items_price_total")
+     * @ORM\Column(type="decimal", scale=30, precision=65, name="additional_items_price_total")
      */
     protected $additionalItemsPriceTotal = 0.0;
 
     /**
      * @var float
-     * @ORM\Column(type="decimal", scale=2, precision=11, name="additional_items_price_total_with_tax")
+     * @ORM\Column(type="decimal", scale=30, precision=65, name="additional_items_price_total_with_tax")
      */
     protected $additionalItemsPriceTotalWithTax = 0.0;
 
     /**
      * @var float
-     * @ORM\Column(type="decimal", scale=2, precision=11, name="items_price_total")
+     * @ORM\Column(type="decimal", scale=30, precision=65, name="items_price_total")
      */
     protected $itemsPriceTotal = 0.0;
 
     /**
      * @var float
-     * @ORM\Column(type="decimal", scale=2, precision=11, name="items_price_total_with_tax")
+     * @ORM\Column(type="decimal", scale=30, precision=65, name="items_price_total_with_tax")
      */
     protected $itemsPriceTotalWithTax = 0.0;
 
     /**
      * @var float
-     * @ORM\Column(type="decimal", scale=2, precision=11, name="items_price_total_tax")
+     * @ORM\Column(type="decimal", scale=30, precision=65, name="items_price_total_tax")
      */
     protected $itemsPriceTotalTax = 0.0;
 
     /**
      * @var float
-     * @ORM\Column(type="decimal", scale=2, precision=11, name="additional_items_price_total_tax")
+     * @ORM\Column(type="decimal", scale=30, precision=65, name="additional_items_price_total_tax")
      */
     protected $additionalItemsPriceTotalTax = 0.0;
     
     /**
      * @var float
-     * @ORM\Column(type="decimal", scale=2, precision=11, name="total_tax")
+     * @ORM\Column(type="decimal", scale=30, precision=65, name="total_tax")
      */
     protected $totalTax = 0.0;
 
