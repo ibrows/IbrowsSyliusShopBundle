@@ -23,6 +23,8 @@ abstract class AbstractCartStrategy implements CartStrategyInterface
      */
     protected $enabled = true;
 
+    protected $taxincl = false;
+
     /**
      * @param ObjectRepository $repo
      * @return ObjectRepository
@@ -77,17 +79,38 @@ abstract class AbstractCartStrategy implements CartStrategyInterface
         return $this;
     }
 
+
+    /**
+     * @return boolean
+     */
+    public function getTaxincl()
+    {
+        return $this->taxincl;
+    }
+
+    /**
+     * @param boolean $taxincl
+     */
+    public function setTaxincl($taxincl)
+    {
+        $this->taxincl = $taxincl;
+        return $this;
+    }
+
     /**
      * @return AdditionalCartItemInterface
      */
-    protected function createAdditionalCartItem()
+    protected function createAdditionalCartItem($price = 0)
     {
         $className = $this->additionalCartItemRepo->getClassName();
 
         /* @var AdditionalCartItemInterface $item */
         $item = new $className();
         $item->setStrategyIdentifier($this->getServiceId());
-
+        if($this->getTaxincl())
+            $item->setPriceWithTax($price);
+        else
+            $item->setPrice($price);
         return $item;
     }
 

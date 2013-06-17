@@ -56,15 +56,16 @@ class QuantityDiscountStrategy extends AbstractCartStrategy
      */
     public function compute(CartInterface $cart, CartManager $cartManager)
     {
+
         $steps = $this->steps;
         if (!$steps) {
             return array();
         }
-
         $total = $this->getQuantity($cart);
         if ($total <= 0) {
             return array();
         }
+
 
         $costs = $this->getStepCosts($this->steps, $total, true);
         if ($costs != 0) {
@@ -75,9 +76,9 @@ class QuantityDiscountStrategy extends AbstractCartStrategy
                     $costs = self::roundfivers($costs);
                 }
             }
+            $costs = $costs * -1;
+            $item = $this->createAdditionalCartItem($costs);
 
-            $item = $this->createAdditionalCartItem();
-            $item->setPriceWithTax($costs * -1);
             $item->setText($this->getItemText($costs, $cart, $cartManager, $item));
             $item->setStrategyData(array('costs' => $costs, 'total' => $total));
             return array(

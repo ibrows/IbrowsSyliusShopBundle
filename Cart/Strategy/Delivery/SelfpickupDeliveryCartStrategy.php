@@ -67,13 +67,12 @@ class SelfpickupDeliveryCartStrategy extends AbstractDeliveryCartStrategy
         $costs = $this->getCostsForStore($store, $cart, $cartManager);
 
         if($costs){
-            $item = $this->createAdditionalCartItem();
+            $item = $this->createAdditionalCartItem($costs);
             $item->setText($this->getItemText($store, $costs, $cart, $cartManager));
             $item->setStrategyData(array(
                 'store' => $store,
                 'costs' => $costs
             ));
-            $item->setPrice($costs);
             return array($item);
         }
         return array();

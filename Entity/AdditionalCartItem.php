@@ -98,7 +98,7 @@ class AdditionalCartItem implements AdditionalCartItemInterface
             $this->price =  ( $this->priceWithTax / ($tax + 1) );
             $taxPrice = $this->priceWithTax - $this->price;
             $this->setTaxPrice($taxPrice);
-        }else if($price > 0){
+        }else {
             $taxPrice = $price*$tax;
             $this->setTaxPrice($taxPrice);
             $this->setPriceWithTax($price+$taxPrice);

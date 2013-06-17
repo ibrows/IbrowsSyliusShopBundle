@@ -14,14 +14,6 @@ class ProductTaxRateCartStrategy extends AbstractCartStrategy
      */
     protected $taxRateMethod;
 
-    /**
-     * @var boolean
-     */
-    protected $taxincl = false;
-
-    /**
-     * @param float $taxRate
-     */
     public function __construct($taxRateMethod = 'getTaxRate', $taxincl = false)
     {
         $this->setTaxRateMethod($taxRateMethod);
@@ -46,12 +38,15 @@ class ProductTaxRateCartStrategy extends AbstractCartStrategy
     public function compute(CartInterface $cart, CartManager $cartManager)
     {
         $totalpermwst = array();
+
         foreach ($cart->getItems() as $item) {
             $rate = $this->getTaxRateForItem($item, $cart, $cartManager);
             $item->setTaxInclusive($this->getTaxincl());
             $item->setTaxRate($rate);
         }
+
         $cart->calculateTotal();
+
         if ($cart->getItemsPriceTotalTax() == 0) {
             $mixedrate = 0;
         } else {
@@ -63,7 +58,6 @@ class ProductTaxRateCartStrategy extends AbstractCartStrategy
             $item->setTaxInclusive($this->getTaxincl());
             $item->setTaxRate($mixedrate);
         }
-
         return array();
     }
 
@@ -109,23 +103,6 @@ class ProductTaxRateCartStrategy extends AbstractCartStrategy
     public function setTaxRateMethod($taxRateMethod)
     {
         $this->taxRateMethod = $taxRateMethod;
-        return $this;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function getTaxincl()
-    {
-        return $this->taxincl;
-    }
-
-    /**
-     * @param boolean $taxincl
-     */
-    public function setTaxincl($taxincl)
-    {
-        $this->taxincl = $taxincl;
         return $this;
     }
 
