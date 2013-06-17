@@ -53,7 +53,7 @@ class WizardController extends AbstractWizardController
             $basketForm->bind($request);
             if ($basketForm->isValid()) {
                 $this->persistCurrentCart();
-
+                $basketForm = $this->createForm($this->getBasketType(), $cart);
                 if ($request->request->get($continueSubmitName)) {
                     return $this->redirect($this->getWizard()->getNextStepUrl());
                 }
