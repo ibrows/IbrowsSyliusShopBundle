@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use DateTime;
 
 /**
- * @ORM\MappedSuperClass
+ * @ORM\MappedSuperclass
  */
 abstract class Product implements ProductInterface
 {
@@ -36,7 +36,7 @@ abstract class Product implements ProductInterface
 
     /**
      * @var float
-     * @ORM\Column(type="decimal", scale=2, precision=11)
+     * @ORM\Column(type="decimal", scale=30, precision=65)
      * @Assert\NotBlank
      */
     protected $price = 0.00;
