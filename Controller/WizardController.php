@@ -1,7 +1,6 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Controller;
-
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Context;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\ErrorRedirectResponse;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\PaymentFinishedResponse;
@@ -15,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\Form\Form;
 
 /**
  * @Route("/wizard")
@@ -37,12 +37,9 @@ class WizardController extends AbstractWizardController
         $basketForm = $this->createForm($this->getBasketType(), $cart);
 
         if ("POST" == $request->getMethod()) {
-            if (
-                ($deleteItems = $request->request->get($deleteSubmitName)) &&
-                is_array($deleteItems)
-            ) {
-                foreach($deleteItems as $itemId => $formName){
-                    if($item = $cart->getItemById($itemId)){
+            if (($deleteItems = $request->request->get($deleteSubmitName)) && is_array($deleteItems)) {
+                foreach ($deleteItems as $itemId => $formName) {
+                    if ($item = $cart->getItemById($itemId)) {
                         $cartManager->removeItem($item);
                     }
                 }
@@ -61,12 +58,12 @@ class WizardController extends AbstractWizardController
         }
 
         return array(
-            'deleteSubmitName' => $deleteSubmitName,
-            'continueSubmitName' => $continueSubmitName,
-            'basketForm' => $basketForm->createView(),
-            'cart' => $this->getCurrentCart(),
-            'deliveryOptionStrategyService' => $cartManager->getSelectedDeliveryOptionStrategyService(),
-            'deliveryCosts' => $cartManager->getSelectedDeliveryOptionStrategyServiceCosts()
+                'deleteSubmitName' => $deleteSubmitName,
+                'continueSubmitName' => $continueSubmitName,
+                'basketForm' => $basketForm->createView(),
+                'cart' => $this->getCurrentCart(),
+                'deliveryOptionStrategyService' => $cartManager->getSelectedDeliveryOptionStrategyService(),
+                'deliveryCosts' => $cartManager->getSelectedDeliveryOptionStrategyServiceCosts()
         );
     }
 
@@ -82,10 +79,10 @@ class WizardController extends AbstractWizardController
         $wizard = $this->getWizard();
 
         $authForm = $this->createForm($this->getAuthType(), null, array(
-            'validation_groups' => array(
-                'sylius_wizard_auth'
-            )
-        ));
+                        'validation_groups' => array(
+                                'sylius_wizard_auth'
+                        )
+                ));
 
         $loginInformation = $this->getLoginInformation();
         $user = $loginInformation->getUser();
@@ -96,20 +93,18 @@ class WizardController extends AbstractWizardController
             return $this->redirect($this->getWizard()->getNextStepUrl());
         }
 
-        $loginForm = $this->createForm(
-            $this->getLoginType(),
-            array(
-                '_csrf_token' => $loginInformation->getCsrfToken(),
-                '_username' => $loginInformation->getLastUsername(),
-                '_target_path' => 'wizard_auth',
-                '_failure_path' => 'wizard_auth'
-            ),
-            array(
-                'validation_groups' => array(
-                    'sylius_wizard_login'
-                )
-            )
-        );
+        $loginForm = $this
+                ->createForm($this->getLoginType(),
+                        array(
+                                '_csrf_token' => $loginInformation->getCsrfToken(),
+                                '_username' => $loginInformation->getLastUsername(),
+                                '_target_path' => 'wizard_auth',
+                                '_failure_path' => 'wizard_auth'
+                        ), array(
+                                'validation_groups' => array(
+                                        'sylius_wizard_login'
+                                )
+                        ));
 
         $authError = $loginInformation->getAuthenticationError();
         if ($authError) {
@@ -133,12 +128,12 @@ class WizardController extends AbstractWizardController
         }
 
         return array(
-            'cart' => $cart,
-            'user' => $user,
-            'authForm' => $authForm->createView(),
-            'loginForm' => $loginForm->createView(),
-            'authSubmitName' => $authSubmitName,
-            'authDeleteSubmitName' => $authDeleteSubmitName
+                'cart' => $cart,
+                'user' => $user,
+                'authForm' => $authForm->createView(),
+                'loginForm' => $loginForm->createView(),
+                'authSubmitName' => $authSubmitName,
+                'authDeleteSubmitName' => $authDeleteSubmitName
         );
     }
 
@@ -152,90 +147,67 @@ class WizardController extends AbstractWizardController
         $cart = $this->getCurrentCart();
         $cartManager = $this->getCurrentCartManager();
 
-        $invoiceAddress = $cart->getInvoiceAddress() ?: $this->getNewInvoiceAddress();
-        $deliveryAddress = $cart->getDeliveryAddress() ?: $this->getNewDeliveryAddress();
+        $invoiceAddress = $cart->getInvoiceAddress() ? : $this->getNewInvoiceAddress();
+        $deliveryAddress = $cart->getDeliveryAddress() ? : $this->getNewDeliveryAddress();
 
-        $invoiceAddressForm = $this->createForm(
-            $this->getInvoiceAddressType(),
-            $invoiceAddress,
-            array(
-                'data_class' => get_class($invoiceAddress),
-                'validation_groups' => array(
-                    'sylius_wizard_address'
-                )
-            )
-        );
+        $invoiceAddressForm = $this
+                ->createForm($this->getInvoiceAddressType(), $invoiceAddress,
+                        array(
+                                'data_class' => get_class($invoiceAddress),
+                                'validation_groups' => array(
+                                        'sylius_wizard_address'
+                                )
+                        ));
 
-        $deliveryAddressForm = $this->createForm(
-            $this->getDeliveryAddressType(),
-            $deliveryAddress,
-            array(
-                'data_class' => get_class($deliveryAddress),
-                'validation_groups' => array(
-                    'sylius_wizard_address'
-                )
-            )
-        );
+        $deliveryAddressForm = $this
+                ->createForm($this->getDeliveryAddressType(), $deliveryAddress,
+                        array(
+                                'data_class' => get_class($deliveryAddress),
+                                'validation_groups' => array(
+                                        'sylius_wizard_address'
+                                )
+                        ));
 
-        $invoiceSameAsDeliveryForm = $this->createForm(
-            $this->getInvoiceSameAsDeliveryType(),
-            array(
-                'invoiceSameAsDelivery' => $invoiceAddress->compare($deliveryAddress)
-            ),
-            array(
-                'attr' => array(
-                    'data-invoice-same-as-delivery' => true
-                )
-            )
-        );
+        $invoiceSameAsDeliveryForm = $this
+                ->createForm($this->getInvoiceSameAsDeliveryType(), array(
+                                'invoiceSameAsDelivery' => $invoiceAddress->compare($deliveryAddress)
+                        ), array(
+                                'attr' => array(
+                                        'data-invoice-same-as-delivery' => true
+                                )
+                        ));
 
         $deliveryOptionStrategyFormData = null;
+        $selectedDeliveryOptionStrategyService = null;
         $selectedDeliveryOptionStrategyServiceId = $cart->getDeliveryOptionStrategyServiceId();
-        if($selectedDeliveryOptionStrategyServiceId){
-            $selectedDeliveryOptionStrategyService = $cartManager
-                ->getPossibleDeliveryOptionStrategyById($selectedDeliveryOptionStrategyServiceId);
-            if($selectedDeliveryOptionStrategyService){
+
+        if ($selectedDeliveryOptionStrategyServiceId) {
+            $selectedDeliveryOptionStrategyService = $cartManager->getPossibleDeliveryOptionStrategyById($selectedDeliveryOptionStrategyServiceId);
+            if ($selectedDeliveryOptionStrategyService) {
                 $deliveryOptionStrategyFormData = array(
-                    'strategyServiceId' => $selectedDeliveryOptionStrategyServiceId,
-                    $selectedDeliveryOptionStrategyService->getName() => $cart->getDeliveryOptionStrategyServiceData()
+                        'strategyServiceId' => $selectedDeliveryOptionStrategyServiceId,
+                        $selectedDeliveryOptionStrategyService->getName() => $cart->getDeliveryOptionStrategyServiceData()
                 );
             }
         }
 
-        $deliveryOptionStrategyForm = $this->createForm(
-            $this->getDeliveryOptionStrategyType($cartManager),
-            $deliveryOptionStrategyFormData
-        );
+        $deliveryOptionStrategyForm = $this->createForm($this->getDeliveryOptionStrategyType($cartManager), $deliveryOptionStrategyFormData);
 
         if ("POST" == $request->getMethod()) {
+            $validDeliveryOptionStrategyFormData = $this->bindDeliveryOptions($deliveryOptionStrategyForm);
+
             $invoiceAddressForm->bind($request);
-            $deliveryOptionStrategyForm->bind($request);
             $invoiceSameAsDeliveryForm->bind($request);
 
-            $deliveryOptionStrategyServiceId = $deliveryOptionStrategyForm->get('strategyServiceId')->getData();
-            $deliveryOptioStrategy = $cartManager->getPossibleDeliveryOptionStrategyById($deliveryOptionStrategyServiceId);
 
-            if(!$deliveryOptioStrategy){
-                $deliveryOptionStrategyForm->addError(new FormError('cart.strategy.delivery.notfound'));
-            }
+            if ($validDeliveryOptionStrategyFormData && $invoiceAddressForm->isValid() && $invoiceSameAsDeliveryForm->isValid()) {
 
-            if (
-                $deliveryOptioStrategy &&
-                $invoiceAddressForm->isValid() &&
-                $deliveryOptionStrategyForm->isValid() &&
-                $invoiceSameAsDeliveryForm->isValid()
-            ) {
-                $cart->setDeliveryOptionStrategyServiceId($deliveryOptioStrategy->getServiceId());
-                $cart->setDeliveryOptionStrategyServiceData(
-                    $deliveryOptionStrategyForm->get($deliveryOptioStrategy->getName())->getViewData()
-                );
-
-                $invoiceSameAsDelivery = (bool)$invoiceSameAsDeliveryForm->get('invoiceSameAsDelivery')->getData();
-                if($invoiceSameAsDelivery){
+                $invoiceSameAsDelivery = (bool) $invoiceSameAsDeliveryForm->get('invoiceSameAsDelivery')->getData();
+                if ($invoiceSameAsDelivery) {
                     $deliveryAddress = clone $invoiceAddress;
                 }
 
-                if($invoiceSameAsDelivery OR ($deliveryAddressForm->bind($request) && $deliveryAddressForm->isValid())){
+                if ($invoiceSameAsDelivery OR ($deliveryAddressForm->bind($request) && $deliveryAddressForm->isValid())) {
                     $cart->setInvoiceAddress($invoiceAddress);
                     $cart->setDeliveryAddress($deliveryAddress);
 
@@ -251,12 +223,38 @@ class WizardController extends AbstractWizardController
         }
 
         return array(
-            'invoiceAddressForm' => $invoiceAddressForm->createView(),
-            'deliveryAddressForm' => $deliveryAddressForm->createView(),
-            'deliveryOptionStrategyForm' => $deliveryOptionStrategyForm->createView(),
-            'invoiceSameAsDeliveryForm' => $invoiceSameAsDeliveryForm->createView(),
-            'cart' => $cart
+                'invoiceAddressForm' => $invoiceAddressForm->createView(),
+                'deliveryAddressForm' => $deliveryAddressForm->createView(),
+                'deliveryOptionStrategyForm' => $deliveryOptionStrategyForm->createView(),
+                'invoiceSameAsDeliveryForm' => $invoiceSameAsDeliveryForm->createView(),
+                'selectedDeliveryOptionStrategyService' => $selectedDeliveryOptionStrategyService,
+                'cart' => $cart
         );
+    }
+
+    /**
+     * @param Form $deliveryOptionStrategyForm
+     * @return boolean
+     */
+    protected function bindDeliveryOptions(Form $deliveryOptionStrategyForm)
+    {
+
+        $deliveryOptionStrategyServiceId = $deliveryOptionStrategyForm->get('strategyServiceId')->getData();
+        $deliveryOptioStrategy = $this->getCurrentCartManager()->getPossibleDeliveryOptionStrategyById($deliveryOptionStrategyServiceId);
+
+        if (!$deliveryOptioStrategy) {
+            $deliveryOptionStrategyForm->addError(new FormError('cart.strategy.delivery.notfound'));
+        }
+        $deliveryOptionStrategyForm->bind($this->getRequest());
+
+        if ($deliveryOptioStrategy && $deliveryOptionStrategyForm->isValid()) {
+            die();
+            $cart = $this->getCurrentCart();
+            $cart->setDeliveryOptionStrategyServiceId($deliveryOptioStrategy->getServiceId());
+            $cart->setDeliveryOptionStrategyServiceData($deliveryOptionStrategyForm->get($deliveryOptioStrategy->getName())->getViewData());
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -271,35 +269,29 @@ class WizardController extends AbstractWizardController
 
         $paymentOptionStrategyFormData = null;
         $selectedPaymentOptionStrategyServiceId = $cart->getPaymentOptionStrategyServiceId();
-        if($selectedPaymentOptionStrategyServiceId){
-            $selectedPaymentOptionStrategyService = $cartManager
-                ->getPossiblePaymentOptionStrategyById($selectedPaymentOptionStrategyServiceId);
-            if($selectedPaymentOptionStrategyService){
+        if ($selectedPaymentOptionStrategyServiceId) {
+            $selectedPaymentOptionStrategyService = $cartManager->getPossiblePaymentOptionStrategyById($selectedPaymentOptionStrategyServiceId);
+            if ($selectedPaymentOptionStrategyService) {
                 $paymentOptionStrategyFormData = array(
-                    'strategyServiceId' => $selectedPaymentOptionStrategyServiceId,
-                    $selectedPaymentOptionStrategyService->getName() => $cart->getPaymentOptionStrategyServiceData()
+                        'strategyServiceId' => $selectedPaymentOptionStrategyServiceId,
+                        $selectedPaymentOptionStrategyService->getName() => $cart->getPaymentOptionStrategyServiceData()
                 );
             }
         }
 
-        $paymentOptionStrategyForm = $this->createForm(
-            $this->getPaymentOptionStrategyType($cartManager),
-            $paymentOptionStrategyFormData
-        );
+        $paymentOptionStrategyForm = $this->createForm($this->getPaymentOptionStrategyType($cartManager), $paymentOptionStrategyFormData);
 
-        if("POST" == $request->getMethod()){
+        if ("POST" == $request->getMethod()) {
             $paymentOptionStrategyForm->bind($request);
-            if($paymentOptionStrategyForm->isValid()){
+            if ($paymentOptionStrategyForm->isValid()) {
                 $paymentOptionStrategyServiceId = $paymentOptionStrategyForm->get('strategyServiceId')->getData();
                 $paymentOptionStrategy = $cartManager->getPossiblePaymentOptionStrategyById($paymentOptionStrategyServiceId);
 
-                if(!$paymentOptionStrategy){
+                if (!$paymentOptionStrategy) {
                     $paymentOptionStrategyForm->addError(new FormError('cart.strategy.payment.notfound'));
-                }else{
+                } else {
                     $cart->setPaymentOptionStrategyServiceId($paymentOptionStrategy->getServiceId());
-                    $cart->setPaymentOptionStrategyServiceData(
-                        $paymentOptionStrategyForm->get($paymentOptionStrategy->getName())->getViewData()
-                    );
+                    $cart->setPaymentOptionStrategyServiceData($paymentOptionStrategyForm->get($paymentOptionStrategy->getName())->getViewData());
                     $this->persistCurrentCart();
                     return $this->redirect($this->getWizard()->getNextStepUrl());
                 }
@@ -307,8 +299,8 @@ class WizardController extends AbstractWizardController
         }
 
         return array(
-            'cart' => $cart,
-            'paymentOptionStrategyForm' => $paymentOptionStrategyForm->createView()
+                'cart' => $cart,
+                'paymentOptionStrategyForm' => $paymentOptionStrategyForm->createView()
         );
     }
 
@@ -324,14 +316,14 @@ class WizardController extends AbstractWizardController
         $this->persistCurrentCart();
 
         $summaryForm = $this->createForm($this->getSummaryType(), $cart, array(
-            'validation_groups' => array(
-                'sylius_wizard_summary'
-            )
-        ));
+                        'validation_groups' => array(
+                                'sylius_wizard_summary'
+                        )
+                ));
 
         $request = $this->getRequest();
 
-        if('POST' === $request->getMethod()){
+        if ('POST' === $request->getMethod()) {
             $summaryForm->bind($request);
             if ($summaryForm->isValid()) {
                 $this->persistCurrentCart();
@@ -342,14 +334,14 @@ class WizardController extends AbstractWizardController
         $cartManager = $this->getCurrentCartManager();
 
         return array(
-            'deliveryOptionStrategy' => $cartManager->getSelectedDeliveryOptionStrategyService(),
-            'paymentOptionStrategy' => $cartManager->getSelectedPaymentOptionStrategyService(),
-            'deliveryOptionStrategyData' => $cart->getDeliveryOptionStrategyServiceData(),
-            'paymentOptionStrategyData' => $cart->getPaymentOptionStrategyServiceData(),
-            'summaryForm' => $summaryForm->createView(),
-            'cart' => $cart,
-            'cartManager' => $this->getCurrentCartManager(),
-            'paymenterror' => $request->get('paymenterror')
+                'deliveryOptionStrategy' => $cartManager->getSelectedDeliveryOptionStrategyService(),
+                'paymentOptionStrategy' => $cartManager->getSelectedPaymentOptionStrategyService(),
+                'deliveryOptionStrategyData' => $cart->getDeliveryOptionStrategyServiceData(),
+                'paymentOptionStrategyData' => $cart->getPaymentOptionStrategyServiceData(),
+                'summaryForm' => $summaryForm->createView(),
+                'cart' => $cart,
+                'cartManager' => $this->getCurrentCartManager(),
+                'paymenterror' => $request->get('paymenterror')
         );
     }
 
@@ -361,7 +353,7 @@ class WizardController extends AbstractWizardController
     public function paymentAction(Request $request)
     {
         $cart = $this->getCurrentCart();
-        if($cart->isPayed()){
+        if ($cart->isPayed()) {
             return $this->redirect($this->getWizard()->getNextStepUrl());
         }
 
@@ -371,41 +363,47 @@ class WizardController extends AbstractWizardController
         $paymentOptionStrategyService = $cartManager->getSelectedPaymentOptionStrategyService();
         $response = $paymentOptionStrategyService->pay($context, $cart, $cartManager);
 
-        switch(true){
-            case $response instanceof RedirectResponse:
-                return $response;
+        switch (true) {
+        case $response instanceof RedirectResponse:
+            return $response;
             break;
-            case $response instanceof ErrorRedirectResponse:
-                return new RedirectResponse($this->generateUrl($context->getErrorRouteName(), $response->getParameters()));
+        case $response instanceof ErrorRedirectResponse:
+            return new RedirectResponse($this->generateUrl($context->getErrorRouteName(), $response->getParameters()));
             break;
-            case $response instanceof PaymentFinishedResponse:
-                if($response->getStatus() == $response::STATUS_OK){
+        case $response instanceof PaymentFinishedResponse:
+            if ($response->getStatus() == $response::STATUS_OK) {
+                $cart->setConfirmed();
+                $cart->setPayed();
+                $this->persistCart($cartManager);
+                return $this->redirect($this->getWizard()->getNextStepUrl());
+            }
+
+            if ($response->getStatus() == $response::STATUS_ERROR) {
+                switch ($response->getErrorCode()) {
+                case $response::ERROR_COMPLETION:
                     $cart->setConfirmed();
-                    $cart->setPayed();
                     $this->persistCart($cartManager);
                     return $this->redirect($this->getWizard()->getNextStepUrl());
+                    break;
+                case $response::ERROR_CONFIRMATION:
+                    return $this->redirect($this->generateUrl($context->getErrorRouteName(), array(
+                                            'paymenterror' => 'confirmation'
+                                    )));
+                    break;
+                case $response::ERROR_VALIDATION:
+                    return $this->redirect($this->generateUrl($context->getErrorRouteName(), array(
+                                            'paymenterror' => 'validation'
+                                    )));
+                    break;
                 }
+            }
 
-                if($response->getStatus() == $response::STATUS_ERROR){
-                    switch($response->getErrorCode()){
-                        case $response::ERROR_COMPLETION:
-                            $cart->setConfirmed();
-                            $this->persistCart($cartManager);
-                            return $this->redirect($this->getWizard()->getNextStepUrl());
-                        break;
-                        case $response::ERROR_CONFIRMATION:
-                            return $this->redirect($this->generateUrl($context->getErrorRouteName(), array('paymenterror' => 'confirmation')));
-                        break;
-                        case $response::ERROR_VALIDATION:
-                            return $this->redirect($this->generateUrl($context->getErrorRouteName(), array('paymenterror' => 'validation')));
-                        break;
-                    }
-                }
-
-                return $this->redirect($this->generateUrl($context->getErrorRouteName(), array('paymenterror' => 'general')));
+            return $this->redirect($this->generateUrl($context->getErrorRouteName(), array(
+                                    'paymenterror' => 'general'
+                            )));
             break;
-            case $response instanceof SelfRedirectResponse:
-                return $this->redirect($this->generateUrl($context->getCurrentRouteName(), $response->getParameters()));
+        case $response instanceof SelfRedirectResponse:
+            return $this->redirect($this->generateUrl($context->getCurrentRouteName(), $response->getParameters()));
             break;
         }
 
@@ -425,7 +423,7 @@ class WizardController extends AbstractWizardController
         $this->getCurrentCartManager()->closeCart();
 
         return array(
-            'cart' => $cart
+                'cart' => $cart
         );
     }
 }
