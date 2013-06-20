@@ -2,11 +2,14 @@
 doctrine:
   orm:
     resolve_target_entities:
-      Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface: %ibrows_sylius_shop.deliveryaddress.class%
-      Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface: %ibrows_sylius_shop.invoiceaddress.class%
+      Ibrows\SyliusShopBundle\Model\User\UserInterface: '%ibrows_sylius_shop.user.class%'
+    
+      Ibrows\SyliusShopBundle\Model\Address\AddressInterface: '%ibrows_sylius_shop.address.class%'
+      Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface: '%ibrows_sylius_shop.deliveryaddress.class%'
+      Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface: '%ibrows_sylius_shop.invoiceaddress.class%'
 
-      Ibrows\SyliusShopBundle\Model\Product\ProductInterface: %ibrows_sylius_shop.product.class%
+      Ibrows\SyliusShopBundle\Model\Product\ProductInterface: '%ibrows_sylius_shop.product.class%'
 
-      Ibrows\SyliusShopBundle\Model\CartInterface: %ibrows_sylius_shop.cart.class%
-      Ibrows\SyliusShopBundle\Model\CartItemInterface: %ibrows_sylius_shop.cartitem.class%
-      Ibrows\SyliusShopBundle\Model\AdditionalCartItemInterface: %ibrows_sylius_shop.additionalcartitem.class%
+      Ibrows\SyliusShopBundle\Model\CartInterface: '%ibrows_sylius_shop.cart.class%'
+      Ibrows\SyliusShopBundle\Model\CartItemInterface: '%ibrows_sylius_shop.cartitem.class%'
+      Ibrows\SyliusShopBundle\Model\AdditionalCartItemInterface: '%ibrows_sylius_shop.additionalcartitem.class%'

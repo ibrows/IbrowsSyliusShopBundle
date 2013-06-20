@@ -31,13 +31,13 @@ use Symfony\Component\Form\FormInterface;
 use Ibrows\Bundle\WizardAnnotationBundle\Annotation\AnnotationHandler as WizardHandler;
 use Symfony\Component\Form\FormError;
 use FOS\UserBundle\Model\UserManagerInterface;
-use FOS\UserBundle\Model\UserInterface;
 use FOS\UserBundle\Security\LoginManager;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Ibrows\SyliusShopBundle\Entity\Address;
+use Ibrows\SyliusShopBundle\Model\User\UserInterface;
 
 abstract class AbstractController extends Controller
 {

@@ -137,6 +137,31 @@ class WizardController extends AbstractWizardController
         );
     }
 
+
+    protected function getInvoiceAddress()
+    {
+        if ($this->getCurrentCart()->getInvoiceAddress()) {
+            return $this->getCurrentCart()->getInvoiceAddress();
+        }
+        if ($this->getUser() && $this->getUser()->getInvoiceAddress()) {
+            return $this->getUser()->getInvoiceAddress();
+        }
+
+        return $this->getNewInvoiceAddress();
+    }
+
+    protected function getDeliveryAddress()
+    {
+        if ($this->getCurrentCart()->getDeliveryAddress()) {
+            return $this->getCurrentCart()->getDeliveryAddress();
+        }
+        if ($this->getUser() && $this->getUser()->getDeliveryAddress()) {
+            return $this->getUser()->getDeliveryAddress();
+        }
+
+        return $this->getNewDeliveryAddress();
+    }
+
     /**
      * @Route("/address", name="wizard_address")
      * @Template
@@ -147,8 +172,7 @@ class WizardController extends AbstractWizardController
         $cart = $this->getCurrentCart();
         $cartManager = $this->getCurrentCartManager();
 
-        $invoiceAddress = $cart->getInvoiceAddress() ? : $this->getNewInvoiceAddress();
-        $deliveryAddress = $cart->getDeliveryAddress() ? : $this->getNewDeliveryAddress();
+        $invoiceAddress = $this->getInvoiceAddress();
 
         $invoiceAddressForm = $this
                 ->createForm($this->getInvoiceAddressType(), $invoiceAddress,
@@ -159,18 +183,10 @@ class WizardController extends AbstractWizardController
                                 )
                         ));
 
-        $deliveryAddressForm = $this
-                ->createForm($this->getDeliveryAddressType(), $deliveryAddress,
-                        array(
-                                'data_class' => get_class($deliveryAddress),
-                                'validation_groups' => array(
-                                        'sylius_wizard_address'
-                                )
-                        ));
 
         $invoiceSameAsDeliveryForm = $this
                 ->createForm($this->getInvoiceSameAsDeliveryType(), array(
-                                'invoiceSameAsDelivery' => $invoiceAddress->compare($deliveryAddress)
+                                'invoiceSameAsDelivery' => $invoiceAddress->compare($this->getDeliveryAddress())
                         ), array(
                                 'attr' => array(
                                         'data-invoice-same-as-delivery' => true
@@ -192,6 +208,7 @@ class WizardController extends AbstractWizardController
         }
 
         $deliveryOptionStrategyForm = $this->createForm($this->getDeliveryOptionStrategyType($cartManager), $deliveryOptionStrategyFormData);
+        $deliveryAddressForm = $this->handleDeliveryAddress(null);
 
         if ("POST" == $request->getMethod()) {
             $validDeliveryOptionStrategyFormData = $this->bindDeliveryOptions($deliveryOptionStrategyForm);
@@ -199,27 +216,27 @@ class WizardController extends AbstractWizardController
             $invoiceAddressForm->bind($request);
             $invoiceSameAsDeliveryForm->bind($request);
 
-
             if ($validDeliveryOptionStrategyFormData && $invoiceAddressForm->isValid() && $invoiceSameAsDeliveryForm->isValid()) {
 
                 $invoiceSameAsDelivery = (bool) $invoiceSameAsDeliveryForm->get('invoiceSameAsDelivery')->getData();
-                if ($invoiceSameAsDelivery) {
-                    $deliveryAddress = clone $invoiceAddress;
-                }
-
-                if ($invoiceSameAsDelivery OR ($deliveryAddressForm->bind($request) && $deliveryAddressForm->isValid())) {
+                $deliveryAddressForm = $this->handleDeliveryAddress($invoiceSameAsDelivery,$invoiceAddress);
+                if ($deliveryAddressForm === true) {
                     $cart->setInvoiceAddress($invoiceAddress);
-                    $cart->setDeliveryAddress($deliveryAddress);
+
+                    if($this->getUser()){
+                        $this->getUser()->setInvoiceAddress($cart->getInvoiceAddress());
+                        $this->getUser()->setDeliveryAddress($cart->getDeliveryAddress());
+                    }
 
                     $om = $this->getObjectManager();
                     $om->persist($invoiceAddress);
-                    $om->persist($deliveryAddress);
 
                     $this->persistCurrentCart();
 
                     return $this->redirect($this->getWizard()->getNextStepUrl());
                 }
             }
+            die('z');
         }
 
         return array(
@@ -230,6 +247,54 @@ class WizardController extends AbstractWizardController
                 'selectedDeliveryOptionStrategyService' => $selectedDeliveryOptionStrategyService,
                 'cart' => $cart
         );
+    }
+
+
+    /**
+     * returns true or the form if its not valid
+     *
+     * @param boolean $invoiceSameAsDelivery
+     * @return \Symfony\Component\Form\Form
+     */
+    protected function handleDeliveryAddress($invoiceSameAsDelivery = null, $invoiceAddress = null)
+    {
+        $formoptions = array(
+                                'data_class' => $this->getDeliveryAddressClass(),
+                                'validation_groups' => array(
+                                        'sylius_wizard_address'
+                                )
+                        );
+        $deliveryAddressForm = $this->createForm($this->getDeliveryAddressType(), $this->getDeliveryAddress(),$formoptions);
+        //before post
+        if ($invoiceSameAsDelivery === null) {
+            return $deliveryAddressForm;
+        }
+        if($invoiceAddress == null){
+            throw new \Exception('first bind invoiceaddress before use handleDeliveryAddress');
+        }
+
+        $currentcart = $this->getCurrentCart();
+
+        //same
+        if ($invoiceSameAsDelivery) {
+            $currentcart->setDeliveryAddress($invoiceAddress);
+            return true;
+        }
+
+        //different delivery
+
+        if ($currentcart->getDeliveryAddress() != null && $currentcart->getInvoiceAddress() != null && ($currentcart->getDeliveryAddress()->getId() == $currentcart->getInvoiceAddress()->getId())) {
+            $deliveryAddress = $this->getNewDeliveryAddress();
+            $deliveryAddressForm = $this->createForm($this->getDeliveryAddressType(), $deliveryAddress,$formoptions);
+        }
+        $deliveryAddressForm->bind($this->getRequest());
+        if (!$deliveryAddressForm->isValid()) {
+            return $deliveryAddressForm;
+        }
+
+        $currentcart->setDeliveryAddress($deliveryAddressForm->getData());
+        $this->getObjectManager()->persist($deliveryAddressForm->getData());
+        return true;
     }
 
     /**

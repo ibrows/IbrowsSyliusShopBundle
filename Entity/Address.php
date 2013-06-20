@@ -9,6 +9,7 @@ use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 use Doctrine\ORM\Mapping as ORM;
+use Ibrows\SyliusShopBundle\Model\User\UserInterface;
 
 /**
  * @ORM\Entity
@@ -92,6 +93,15 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
      * @Assert\Email(groups={"sylius_wizard_address"})
      */
     protected $email;
+
+
+    /**
+     * @var UserInterface
+     * @ORM\ManyToOne(targetEntity="\Ibrows\SyliusShopBundle\Model\User\UserInterface", inversedBy="addresses")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     */
+    protected $user;
+
 
     /**
      * @return int
@@ -336,6 +346,32 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
     public function isTitleCompany()
     {
         return $this->getTitle() == self::TITLE_COMPANY;
+    }
+
+    /**
+     * @param UserInterface $user
+     * @param bool $stopPropagation
+     * @return $this
+     */
+    public function setUser(UserInterface $user = null, $stopPropagation = false)
+    {
+        if(!$stopPropagation) {
+            if(!is_null($this->user)) {
+                $this->user->removeAddress($this, true);
+            }
+            if(!is_null($user)) {
+                $user->addAddress($this, true);
+            }
+        }
+        $this->user = $user;
+        return $this;
+    }
+    /**
+     * @return UserInterface
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 
     /**
