@@ -236,7 +236,6 @@ class WizardController extends AbstractWizardController
                     return $this->redirect($this->getWizard()->getNextStepUrl());
                 }
             }
-            die('z');
         }
 
         return array(
@@ -313,7 +312,6 @@ class WizardController extends AbstractWizardController
         $deliveryOptionStrategyForm->bind($this->getRequest());
 
         if ($deliveryOptioStrategy && $deliveryOptionStrategyForm->isValid()) {
-            die();
             $cart = $this->getCurrentCart();
             $cart->setDeliveryOptionStrategyServiceId($deliveryOptioStrategy->getServiceId());
             $cart->setDeliveryOptionStrategyServiceData($deliveryOptionStrategyForm->get($deliveryOptioStrategy->getName())->getViewData());
