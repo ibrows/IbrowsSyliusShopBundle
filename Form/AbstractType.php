@@ -7,6 +7,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 abstract class AbstractType extends BaseType
 {
+
     /**
      * @param OptionsResolverInterface $resolver
      */

@@ -164,6 +164,13 @@ abstract class AbstractController extends Controller
     }
 
     /**
+     * @return \Ibrows\SyliusShopBundle\Cart\CurrentCartManager
+     */
+    protected function closeCurrentCart(){
+        return $this->getCurrentCartManager()->closeCart();
+    }
+
+    /**
      * @param bool $refreshAndCheckAvailability
      */
     protected function persistCurrentCart($refreshAndCheckAvailability = true)

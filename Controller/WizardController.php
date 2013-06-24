@@ -485,7 +485,7 @@ class WizardController extends AbstractWizardController
         $cart = $this->getCurrentCart();
 
         // Close card in notification because its not available any more after that step
-        $this->getCurrentCartManager()->closeCart();
+        $this->closeCurrentCart();
 
         return array(
                 'cart' => $cart
