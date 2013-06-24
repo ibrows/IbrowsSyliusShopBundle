@@ -23,6 +23,9 @@ abstract class AbstractCartStrategy implements CartStrategyInterface
      */
     protected $enabled = true;
 
+    /**
+     * @var bool
+     */
     protected $taxincl = false;
 
     /**
