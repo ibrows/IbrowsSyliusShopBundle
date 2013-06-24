@@ -8,12 +8,14 @@ use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\SelfRedirectResponse;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\ErrorRedirectResponse;
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
-use Payment\HttpClient\GuzzleClient;
-use Psr\Log\LoggerInterface;
+use Payment\Bundle\SaferpayBundle\PayInitParameter\PayInitParameterFactory;
+use Payment\Saferpay\Data\PayConfirmParameterInterface;
+use Payment\Saferpay\Data\PayInitParameterInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Payment\Saferpay\Saferpay;
+use Payment\Saferpay\Data\PayInitParameterWithDataInterface;
 
 class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrategy
 {
@@ -23,19 +25,14 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
     protected $saferpay;
 
     /**
-     * @var LoggerInterface
+     * @var PayInitParameterFactory
      */
-    protected $logger;
+    protected $payInitParameterFactory;
 
     /**
      * @var array
      */
     protected $paymentMethods;
-
-    /**
-     * @var string
-     */
-    protected $sessionKey;
 
     /**
      * @var bool
@@ -44,17 +41,15 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
 
     /**
      * @param Saferpay $saferpay
-     * @param LoggerInterface $logger
+     * @param PayInitParameterFactory $payInitParameterFactory
      * @param array $paymentMethods
-     * @param string $sessionKey
      * @param bool $doCompletePayment
      */
-    public function __construct(Saferpay $saferpay, LoggerInterface $logger, array $paymentMethods, $sessionKey, $doCompletePayment = true)
+    public function __construct(Saferpay $saferpay, PayInitParameterFactory $payInitParameterFactory, array $paymentMethods, $doCompletePayment = true)
     {
         $this->saferpay = $saferpay;
-        $this->logger = $logger;
+        $this->payInitParameterFactory = $payInitParameterFactory;
         $this->paymentMethods = $paymentMethods;
-        $this->sessionKey = $sessionKey;
         $this->setParentVisible(false);
         $this->setDoCompletePayment($doCompletePayment);
     }
@@ -78,24 +73,6 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
     }
 
     /**
-     * @return LoggerInterface
-     */
-    public function getLogger()
-    {
-        return $this->logger;
-    }
-
-    /**
-     * @param LoggerInterface $logger
-     * @return SaferpayPaymentOptionCartStrategy
-     */
-    public function setLogger($logger = null)
-    {
-        $this->logger = $logger;
-        return $this;
-    }
-
-    /**
      * @return Saferpay
      */
     protected function getSaferpay()
@@ -107,27 +84,27 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
      * @param Saferpay $saferpay
      * @return SaferpayPaymentOptionCartStrategy
      */
-    protected function setSaferpay($saferpay)
+    protected function setSaferpay(Saferpay $saferpay)
     {
         $this->saferpay = $saferpay;
         return $this;
     }
 
     /**
-     * @return string
+     * @return boolean
      */
-    public function getSessionKey()
+    public function doCompletePayment()
     {
-        return $this->sessionKey;
+        return $this->doCompletePayment;
     }
 
     /**
-     * @param string $sessionKey
+     * @param boolean $doCompletePayment
      * @return SaferpayPaymentOptionCartStrategy
      */
-    public function setSessionKey($sessionKey)
+    public function setDoCompletePayment($doCompletePayment)
     {
-        $this->sessionKey = $sessionKey;
+        $this->doCompletePayment = $doCompletePayment;
         return $this;
     }
 
@@ -165,50 +142,49 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
     public function pay(Context $context, CartInterface $cart, CartManager $cartManager)
     {
         $request = $context->getRequest();
-        $session = $request->getSession();
-        $sessionKey = $this->getSessionKey();
-
         $saferpay = $this->getSaferpay();
-        $saferpay->setLogger($this->getLogger());
-        $saferpay->setHttpClient(new GuzzleClient());
-        $saferpay->setData($session->get($sessionKey));
-
-        $initData = $this->getInitData($context, $cart);
+        $payInitParameter = $this->getPayInitParameter($context, $cart);
 
         switch($request->query->get('status')){
             case PaymentFinishedResponse::STATUS_OK:
-                if($saferpay->confirmPayment($request->query->get('DATA'), $request->query->get('SIGNATURE')) != ''){
-                    $confirmationData = $saferpay->getData()->getConfirmData();
-                    $session->remove($sessionKey);
+                $payConfirmParameter = $saferpay->verifyPayConfirm($request->query->get('DATA'), $request->query->get('SIGNATURE'));
 
-                    if($confirmationData->get('AMOUNT') != $initData['AMOUNT'] OR $confirmationData->get('CURRENCY') != $initData['CURRENCY']){
-                        $saferpay->completePayment('Cancel');
-                        return new PaymentFinishedResponse(PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_VALIDATION);
+                if(true === $this->validatePayConfirmParameter($payConfirmParameter, $payInitParameter)){
+                    if(false === $this->doCompletePayment()){
+                        return new PaymentFinishedResponse(PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_COMPLETION);
                     }
 
-                    if(true === $this->doCompletePayment() && $saferpay->completePayment() != ''){
+                    $payCompleteResponse = $saferpay->payCompleteV2($payConfirmParameter, 'Settlement');
+                    if($payCompleteResponse->getResult() != '0'){
                         return new PaymentFinishedResponse();
                     }
 
                     return new PaymentFinishedResponse(PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_COMPLETION);
                 }
 
-                return new PaymentFinishedResponse(PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_CONFIRMATION);
+                $saferpay->payCompleteV2($payConfirmParameter, 'Cancel');
+                return new PaymentFinishedResponse(PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_VALIDATION);
             break;
             case PaymentFinishedResponse::STATUS_ERROR:
-                $session->remove($sessionKey);
                 return new ErrorRedirectResponse(array('paymenterror' => $request->query->get('error')));
             break;
         }
 
-        $url = $saferpay->initPayment($saferpay->getKeyValuePrototype()->all($initData));
-        $session->set($sessionKey, $saferpay->getData());
-
-        if($url){
+        if($url = $saferpay->createPayInit($payInitParameter)){
             return new RedirectResponse($url);
         }else{
             return new ErrorRedirectResponse(array('paymenterror' => 'connectionerror'));
         }
+    }
+
+    /**
+     * @param PayConfirmParameterInterface $payConfirmParameter
+     * @param PayInitParameterInterface $payInitParameter
+     * @return bool
+     */
+    protected function validatePayConfirmParameter(PayConfirmParameterInterface $payConfirmParameter, PayInitParameterInterface $payInitParameter)
+    {
+        return $payConfirmParameter->getAmount() == $payInitParameter->getAmount() && $payConfirmParameter->getCurrency() == $payInitParameter->getCurrency();
     }
 
     /**
@@ -226,10 +202,12 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
     /**
      * @param Context $context
      * @param CartInterface $cart
-     * @return array
+     * @return PayInitParameterWithDataInterface
      */
-    protected function getInitData(Context $context, CartInterface $cart)
+    protected function getPayInitParameter(Context $context, CartInterface $cart)
     {
+        $payInitParameter = $this->payInitParameterFactory->createPayInitParameter();
+
         $currentRouteName = $context->getCurrentRouteName();
         $invoiceAddress = $cart->getInvoiceAddress();
         $router = $this->getRouter();
@@ -237,58 +215,40 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
         $providerSet = null;
 
         if($this->isTestMode()){
-            $providerSet = 6;
+            $payInitParameter->setAccountid('99867-94913159');
+            $payInitParameter->setPaymentmethods(6);
         }else{
             $serviceData = $cart->getPaymentOptionStrategyServiceData();
             if(isset($serviceData['method'])){
-                $providerSet = $serviceData['method'];
+                $payInitParameter->setPaymentmethods($serviceData['method']);
             }
         }
 
-        $initData = array(
-            'AMOUNT' => round($cart->getTotalWithTax()*100),
-            'DESCRIPTION' => sprintf('Bestellnummer: %s', $cart->getId()),
-            'ORDERID' => $cart->getId(),
-            'SUCCESSLINK' => $router->generate($currentRouteName, array('status' => PaymentFinishedResponse::STATUS_OK), true),
-            'FAILLINK' => $router->generate($currentRouteName, array('status' => PaymentFinishedResponse::STATUS_ERROR, 'error' => 'fail'), true),
-            'BACKLINK' => $router->generate($currentRouteName, array('status' => PaymentFinishedResponse::STATUS_ERROR, 'error' => 'back'), true),
-            'FIRSTNAME' => $invoiceAddress->getFirstname(),
-            'LASTNAME' => $invoiceAddress->getLastname(),
-            'STREET' => $invoiceAddress->getStreet(),
-            'ZIP' => $invoiceAddress->getZip(),
-            'CITY' => $invoiceAddress->getCity(),
-            'COUNTRY' => $invoiceAddress->getCountry(),
-            'EMAIL' => $invoiceAddress->getEmail(),
-            'CURRENCY' => strtoupper($cart->getCurrency())
-        );
+        $payInitParameter
+            ->setAmount(round($cart->getTotalWithTax()*100))
+            ->setDescription(sprintf('Order %s', $cart->getId()))
+            ->setOrderid($cart->getId())
+            ->setSuccesslink($router->generate($currentRouteName, array('status' => PaymentFinishedResponse::STATUS_OK), true))
+            ->setFaillink($router->generate($currentRouteName, array('status' => PaymentFinishedResponse::STATUS_ERROR, 'error' => 'fail'), true))
+            ->setBacklink($router->generate($currentRouteName, array('status' => PaymentFinishedResponse::STATUS_ERROR, 'error' => 'back'), true))
+            ->setFirstname($invoiceAddress->getFirstname())
+            ->setLastname($invoiceAddress->getLastname())
+            ->setStreet($invoiceAddress->getStreet())
+            ->setZip($invoiceAddress->getZip())
+            ->setCity($invoiceAddress->getCity())
+            ->setCountry($invoiceAddress->getCountry())
+            ->setEmail($invoiceAddress->getEmail())
+            ->setCurrency(strtoupper($cart->getCurrency()))
+        ;
 
-        $gender = $invoiceAddress->isTitleMan() ? 'M' : ($invoiceAddress->isTitleWoman() ? 'F' : null);
-        if($gender){
-            $initData['GENDER'] = $gender;
+        if($invoiceAddress->isTitleWoman()){
+            $payInitParameter->setGender('F');
+        }elseif($invoiceAddress->isTitleMan()){
+            $payInitParameter->setGender('M');
+        }elseif($invoiceAddress->isTitleCompany()){
+            $payInitParameter->setGender('C');
         }
 
-        if($providerSet){
-            $initData['PAYMENTMETHODS'] = $providerSet;
-        }
-
-        return $initData;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function doCompletePayment()
-    {
-        return $this->doCompletePayment;
-    }
-
-    /**
-     * @param boolean $doCompletePayment
-     * @return SaferpayPaymentOptionCartStrategy
-     */
-    public function setDoCompletePayment($doCompletePayment)
-    {
-        $this->doCompletePayment = $doCompletePayment;
-        return $this;
+        return $payInitParameter;
     }
 }

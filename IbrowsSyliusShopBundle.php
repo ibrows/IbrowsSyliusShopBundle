@@ -30,7 +30,6 @@ class IbrowsSyliusShopBundle extends Bundle
     {
         return array(
             new \Payment\Bundle\SaferpayBundle\PaymentSaferpayBundle(),
-            new \Ibrows\PaymentSaferpayBundle\IbrowsPaymentSaferpayBundle(),
 
             new \FOS\UserBundle\FOSUserBundle(),
             new \FOS\RestBundle\FOSRestBundle(),
@@ -49,7 +48,6 @@ class IbrowsSyliusShopBundle extends Bundle
             new \Sonata\DoctrineORMAdminBundle\SonataDoctrineORMAdminBundle(),
             new \Ibrows\Bundle\SonataAdminAnnotationBundle\IbrowsSonataAdminAnnotationBundle(),
             new \Knp\Bundle\MenuBundle\KnpMenuBundle(),
-
 
             new \Ibrows\SyliusShopBundle\IbrowsSyliusShopBundle()
         );
