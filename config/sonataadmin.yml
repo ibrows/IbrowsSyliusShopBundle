@@ -14,31 +14,35 @@ sonata_doctrine_orm_admin:
               list:
                   array:      SonataAdminBundle:CRUD:list_array.html.twig
                   boolean:    SonataAdminBundle:CRUD:list_boolean.html.twig
-                  date:       SonataAdminBundle:CRUD:list_date.html.twig
-                  time:       SonataAdminBundle:CRUD:list_time.html.twig
-                  datetime:   SonataAdminBundle:CRUD:list_datetime.html.twig
+                  date:       SonataIntlBundle:CRUD:list_date.html.twig
+                  time:       SonataIntlBundle:CRUD:list_time.html.twig
+                  datetime:   SonataIntlBundle:CRUD:list_datetime.html.twig
                   text:       SonataAdminBundle:CRUD:base_list_field.html.twig
                   trans:      SonataAdminBundle:CRUD:list_trans.html.twig
                   string:     SonataAdminBundle:CRUD:base_list_field.html.twig
-                  smallint:   SonataAdminBundle:CRUD:base_list_field.html.twig
-                  bigint:     SonataAdminBundle:CRUD:base_list_field.html.twig
-                  integer:    SonataAdminBundle:CRUD:base_list_field.html.twig
-                  decimal:    SonataAdminBundle:CRUD:base_list_field.html.twig
+                  smallint:   SonataIntlBundle:CRUD:base_list_field.html.twig
+                  bigint:     SonataIntlBundle:CRUD:base_list_field.html.twig
+                  integer:    SonataIntlBundle:CRUD:base_list_field.html.twig
+                  decimal:    SonataIntlBundle:CRUD:base_list_field.html.twig
                   identifier: SonataAdminBundle:CRUD:base_list_field.html.twig
+                  currency:   SonataIntlBundle:CRUD:list_currency.html.twig
+                  percent:    SonataIntlBundle:CRUD:list_percent.html.twig
   
               show:
                   array:      SonataAdminBundle:CRUD:show_array.html.twig
                   boolean:    SonataAdminBundle:CRUD:show_boolean.html.twig
-                  date:       SonataAdminBundle:CRUD:show_date.html.twig
-                  time:       SonataAdminBundle:CRUD:show_time.html.twig
-                  datetime:   SonataAdminBundle:CRUD:show_datetime.html.twig
+                  date:       SonataIntlBundle:CRUD:show_date.html.twig
+                  time:       SonataIntlBundle:CRUD:show_time.html.twig
+                  datetime:   SonataIntlBundle:CRUD:show_datetime.html.twig
                   text:       SonataAdminBundle:CRUD:base_show_field.html.twig
                   trans:      SonataAdminBundle:CRUD:show_trans.html.twig
                   string:     SonataAdminBundle:CRUD:base_show_field.html.twig
-                  smallint:   SonataAdminBundle:CRUD:base_show_field.html.twig
-                  bigint:     SonataAdminBundle:CRUD:base_show_field.html.twig
-                  integer:    SonataAdminBundle:CRUD:base_show_field.html.twig
-                  decimal:    SonataAdminBundle:CRUD:base_show_field.html.twig
+                  smallint:   SonataIntlBundle:CRUD:base_show_field.html.twig
+                  bigint:     SonataIntlBundle:CRUD:base_show_field.html.twig
+                  integer:    SonataIntlBundle:CRUD:base_show_field.html.twig
+                  decimal:    SonataIntlBundle:CRUD:base_show_field.html.twig
+                  currency:   SonataIntlBundle:CRUD:show_currency.html.twig
+                  percent:    SonataIntlBundle:CRUD:show_percent.html.twig
 
 sonata_block:
     default_contexts: [cms]
