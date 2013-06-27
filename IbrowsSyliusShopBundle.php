@@ -3,7 +3,6 @@
 namespace Ibrows\SyliusShopBundle;
 
 use Ibrows\SyliusShopBundle\DependencyInjection\CompilerPass;
-
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -46,6 +45,8 @@ class IbrowsSyliusShopBundle extends Bundle
             new \Sonata\jQueryBundle\SonatajQueryBundle(),
             new \Sonata\AdminBundle\SonataAdminBundle(),
             new \Sonata\DoctrineORMAdminBundle\SonataDoctrineORMAdminBundle(),
+            new \Sonata\IntlBundle\SonataIntlBundle(),
+
             new \Ibrows\Bundle\SonataAdminAnnotationBundle\IbrowsSonataAdminAnnotationBundle(),
             new \Knp\Bundle\MenuBundle\KnpMenuBundle(),
 
