@@ -31,7 +31,7 @@
         "ibrows/wizard-annotation-bundle": "1.*",
         "ibrows/sonata-admin-annotation-bundle": "1.*",
 
-        "ibrows/payment-saferpay-bundle": "dev-dev"
+        "payment/saferpay-bundle": "dev-master"
     },
    "repositories": [
         {
