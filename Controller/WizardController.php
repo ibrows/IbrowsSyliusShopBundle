@@ -302,6 +302,7 @@ class WizardController extends AbstractWizardController
      */
     protected function bindDeliveryOptions(Form $deliveryOptionStrategyForm)
     {
+        $deliveryOptionStrategyForm->bind($this->getRequest());
 
         $deliveryOptionStrategyServiceId = $deliveryOptionStrategyForm->get('strategyServiceId')->getData();
         $deliveryOptioStrategy = $this->getCurrentCartManager()->getPossibleDeliveryOptionStrategyById($deliveryOptionStrategyServiceId);
@@ -309,7 +310,6 @@ class WizardController extends AbstractWizardController
         if (!$deliveryOptioStrategy) {
             $deliveryOptionStrategyForm->addError(new FormError('cart.strategy.delivery.notfound'));
         }
-        $deliveryOptionStrategyForm->bind($this->getRequest());
 
         if ($deliveryOptioStrategy && $deliveryOptionStrategyForm->isValid()) {
             $cart = $this->getCurrentCart();
