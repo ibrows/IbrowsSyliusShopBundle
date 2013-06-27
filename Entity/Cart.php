@@ -144,34 +144,34 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @var DateTime
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="datetime", name="payed_at", nullable=true)
      */
-    protected $payed;
+    protected $payedAt;
 
     /**
      * @var DateTime
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="datetime", name="confirmed_at", nullable=true)
      */
-    protected $confirmed;
+    protected $confirmedAt;
 
     /**
      * @var DateTime
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="datetime", name="closed_at", nullable=true)
      */
-    protected $closed;
+    protected $closedAt;
 
     /**
      * @var DateTime
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", name="created_at")
      */
-    protected $created;
+    protected $createdAt;
 
     /**
      * @var DateTime
-     * @ORM\Column(type="datetime", name="terms_and_conditions", nullable=true)
+     * @ORM\Column(type="datetime", name="terms_and_conditions_at", nullable=true)
      * @Assert\NotNull(groups={"sylius_wizard_summary"})
      */
-    protected $termsAndConditions;
+    protected $termsAndConditionsAt;
 
     /**
      * @var InvoiceAddressInterface
@@ -279,8 +279,8 @@ class Cart extends BaseCart implements CartInterface
     }
 
     /**
-     * @param CartItemInterface $item
-     * @return Cart
+     * @param SyliusCartItemInterface $item
+     * @return $this
      */
     public function addItem(SyliusCartItemInterface $item)
     {
@@ -290,8 +290,8 @@ class Cart extends BaseCart implements CartInterface
     }
 
     /**
-     * @param CartItemInterface $item
-     * @return Cart
+     * @param SyliusCartItemInterface $item
+     * @return $this
      */
     public function removeItem(SyliusCartItemInterface $item)
     {
@@ -339,7 +339,7 @@ class Cart extends BaseCart implements CartInterface
     }
 
     /**
-     * @param Collection|CartItemInterface[] $items
+     * @param Collection|AdditionalCartItemInterface[] $items
      * @return Cart
      */
     public function setAdditionalItems(Collection $items){
@@ -414,9 +414,9 @@ class Cart extends BaseCart implements CartInterface
     public function setPayed($flag = true)
     {
         if(false === $flag){
-            $this->payed = null;
+            $this->payedAt = null;
         }else{
-            $this->payed = new DateTime;
+            $this->payedAt = new DateTime;
         }
         return $this;
     }
@@ -426,7 +426,7 @@ class Cart extends BaseCart implements CartInterface
      */
     public function isPayed()
     {
-        return $this->payed !== null;
+        return $this->payedAt !== null;
     }
 
     /**
@@ -434,7 +434,7 @@ class Cart extends BaseCart implements CartInterface
      */
     public function getPayedAt()
     {
-        return $this->payed;
+        return $this->payedAt;
     }
 
     /**
@@ -442,7 +442,7 @@ class Cart extends BaseCart implements CartInterface
      */
     public function isClosed()
     {
-        return $this->closed;
+        return $this->closedAt;
     }
 
     /**
@@ -452,9 +452,9 @@ class Cart extends BaseCart implements CartInterface
     public function setClosed($flag = true)
     {
         if(false === $flag){
-            $this->closed = null;
+            $this->closedAt = null;
         }else{
-            $this->closed = new DateTime;
+            $this->closedAt = new DateTime;
         }
         return $this;
     }
@@ -464,7 +464,7 @@ class Cart extends BaseCart implements CartInterface
      */
     public function getClosedAt()
     {
-        return $this->closed;
+        return $this->closedAt;
     }
 
     /**
@@ -527,7 +527,7 @@ class Cart extends BaseCart implements CartInterface
      */
     public function isTermsAndConditions()
     {
-        return $this->termsAndConditions !== null;
+        return $this->termsAndConditionsAt !== null;
     }
 
     /**
@@ -535,7 +535,7 @@ class Cart extends BaseCart implements CartInterface
      */
     public function getTermsAndConditionsAt()
     {
-        return $this->termsAndConditions;
+        return $this->termsAndConditionsAt;
     }
 
     /**
@@ -545,9 +545,9 @@ class Cart extends BaseCart implements CartInterface
     public function setTermsAndConditions($flag = true)
     {
         if(false === $flag){
-            $this->termsAndConditions = null;
+            $this->termsAndConditionsAt = null;
         }else{
-            $this->termsAndConditions = new DateTime;
+            $this->termsAndConditionsAt = new DateTime;
         }
         return $this;
     }
@@ -814,9 +814,9 @@ class Cart extends BaseCart implements CartInterface
     public function setConfirmed($flag = true)
     {
         if(false === $flag){
-            $this->confirmed = null;
+            $this->confirmedAt = null;
         }else{
-            $this->confirmed = new DateTime;
+            $this->confirmedAt = new DateTime;
         }
         return $this;
     }
@@ -826,7 +826,7 @@ class Cart extends BaseCart implements CartInterface
      */
     public function isConfirmed()
     {
-        return null !== $this->confirmed;
+        return null !== $this->confirmedAt;
     }
 
     /**
@@ -834,7 +834,7 @@ class Cart extends BaseCart implements CartInterface
      */
     public function getConfirmedAt()
     {
-        return $this->confirmed;
+        return $this->confirmedAt;
     }
 
     /**
@@ -842,12 +842,15 @@ class Cart extends BaseCart implements CartInterface
      */
     public function isCreated()
     {
-        return $this->created !== null;
+        return $this->createdAt !== null;
     }
 
+    /**
+     * @return DateTime
+     */
     public function getCreatedAt()
     {
-        return $this->created;
+        return $this->createdAt;
     }
 
     /**
@@ -857,9 +860,9 @@ class Cart extends BaseCart implements CartInterface
     public function setCreated($flag = true)
     {
         if(false === $flag){
-            $this->created = null;
+            $this->createdAt = null;
         }else{
-            $this->created = new DateTime;
+            $this->createdAt = new DateTime;
         }
         return $this;
     }
