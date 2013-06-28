@@ -438,6 +438,9 @@ class WizardController extends AbstractWizardController
                 $cart->setConfirmed();
                 $cart->setPayed();
                 $this->persistCart($cartManager);
+
+                $this->doSomethingAfterPaymentFinished($response);
+
                 return $this->redirect($this->getWizard()->getNextStepUrl());
             }
 
@@ -446,14 +449,23 @@ class WizardController extends AbstractWizardController
                 case $response::ERROR_COMPLETION:
                     $cart->setConfirmed();
                     $this->persistCart($cartManager);
+
+                    $this->doSomethingAfterPaymentFinished($response);
+
                     return $this->redirect($this->getWizard()->getNextStepUrl());
                     break;
                 case $response::ERROR_CONFIRMATION:
+
+                    $this->doSomethingAfterPaymentFinished($response);
+
                     return $this->redirect($this->generateUrl($context->getErrorRouteName(), array(
                                             'paymenterror' => 'confirmation'
                                     )));
                     break;
                 case $response::ERROR_VALIDATION:
+
+                    $this->doSomethingAfterPaymentFinished($response);
+
                     return $this->redirect($this->generateUrl($context->getErrorRouteName(), array(
                                             'paymenterror' => 'validation'
                                     )));
@@ -489,4 +501,25 @@ class WizardController extends AbstractWizardController
                 'cart' => $cart
         );
     }
+
+    /**
+     * @param PaymentFinishedResponse $response
+     */
+    public function doSomethingAfterPaymentFinished(PaymentFinishedResponse $response) {
+        if ($response->getStatus() == $response::STATUS_OK) {
+
+        }
+
+        if ($response->getStatus() == $response::STATUS_ERROR) {
+            switch ($response->getErrorCode()) {
+                case $response::ERROR_COMPLETION:
+                    break;
+                case $response::ERROR_CONFIRMATION:
+                    break;
+                case $response::ERROR_VALIDATION:
+                    break;
+            }
+        }
+    }
+
 }
