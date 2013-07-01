@@ -211,7 +211,7 @@ class WizardController extends AbstractWizardController
         $deliveryAddressForm = $this->handleDeliveryAddress(null);
 
         if ("POST" == $request->getMethod()) {
-            if($this->saveAddressForm($request,$deliveryOptionStrategyForm,$invoiceAddressForm,$invoiceSameAsDeliveryForm)){
+            if($this->saveAddressForm($request,$deliveryOptionStrategyForm,$invoiceAddressForm,$invoiceSameAsDeliveryForm,$invoiceAddress)){
                 return $this->redirect($this->getWizard()->getNextStepUrl());
             }
         }
@@ -226,7 +226,7 @@ class WizardController extends AbstractWizardController
         );
     }
 
-    protected function saveAddressForm(Request $request,$deliveryOptionStrategyForm,$invoiceAddressForm,$invoiceSameAsDeliveryForm)
+    protected function saveAddressForm(Request $request,$deliveryOptionStrategyForm,$invoiceAddressForm,$invoiceSameAsDeliveryForm,$invoiceAddress)
     {
         $validDeliveryOptionStrategyFormData = $this->bindDeliveryOptions($deliveryOptionStrategyForm);
 
@@ -238,6 +238,7 @@ class WizardController extends AbstractWizardController
             $invoiceSameAsDelivery = (bool) $invoiceSameAsDeliveryForm->get('invoiceSameAsDelivery')->getData();
             $deliveryAddressForm = $this->handleDeliveryAddress($invoiceSameAsDelivery,$invoiceAddress);
             if ($deliveryAddressForm === true) {
+                $cart = $this->getCurrentCart();
                 $cart->setInvoiceAddress($invoiceAddress);
 
                 if($this->getUser()){
