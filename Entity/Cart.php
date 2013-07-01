@@ -135,7 +135,7 @@ class Cart extends BaseCart implements CartInterface
      * @ORM\Column(type="decimal", scale=30, precision=65, name="additional_items_price_total_tax")
      */
     protected $additionalItemsPriceTotalTax = 0.0;
-    
+
     /**
      * @var float
      * @ORM\Column(type="decimal", scale=30, precision=65, name="total_tax")
@@ -175,7 +175,7 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @var InvoiceAddressInterface
-     * @ORM\OneToOne(targetEntity="Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface")
+     * @ORM\ManyToOne(targetEntity="Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface")
      * @ORM\JoinColumn(name="invoice_address_id", referencedColumnName="id")
      */
     protected $invoiceAddress;
@@ -188,7 +188,7 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @var DeliveryAddressInterface
-     * @ORM\OneToOne(targetEntity="Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface")
+     * @ORM\ManyToOne(targetEntity="Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface")
      * @ORM\JoinColumn(name="delivery_address_id", referencedColumnName="id")
      */
     protected $deliveryAddress;
@@ -237,7 +237,7 @@ class Cart extends BaseCart implements CartInterface
         $this->setAdditionalItemsPriceTotal($additionalItemsPriceTotal);
         $this->setAdditionalItemsPriceTotalWithTax($additionalItemsPriceTotalWithTax);
         $this->setAdditionalItemsPriceTotalTax($additionalItemsPriceTax);
-        
+
         $this->setTotalTax($this->getItemsPriceTotalTax() + $this->getAdditionalItemsPriceTotalTax());
 
         $this->setTotal($itemsPriceTotal + $additionalItemsPriceTotal);
@@ -788,7 +788,7 @@ class Cart extends BaseCart implements CartInterface
         $this->totalWithTax = $totalWithTax;
         return $this;
     }
-    
+
     /**
      * @return float
      */
