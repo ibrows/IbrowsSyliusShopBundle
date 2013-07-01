@@ -211,30 +211,8 @@ class WizardController extends AbstractWizardController
         $deliveryAddressForm = $this->handleDeliveryAddress(null);
 
         if ("POST" == $request->getMethod()) {
-            $validDeliveryOptionStrategyFormData = $this->bindDeliveryOptions($deliveryOptionStrategyForm);
-
-            $invoiceAddressForm->bind($request);
-            $invoiceSameAsDeliveryForm->bind($request);
-
-            if ($validDeliveryOptionStrategyFormData && $invoiceAddressForm->isValid() && $invoiceSameAsDeliveryForm->isValid()) {
-
-                $invoiceSameAsDelivery = (bool) $invoiceSameAsDeliveryForm->get('invoiceSameAsDelivery')->getData();
-                $deliveryAddressForm = $this->handleDeliveryAddress($invoiceSameAsDelivery,$invoiceAddress);
-                if ($deliveryAddressForm === true) {
-                    $cart->setInvoiceAddress($invoiceAddress);
-
-                    if($this->getUser()){
-                        $this->getUser()->setInvoiceAddress($cart->getInvoiceAddress());
-                        $this->getUser()->setDeliveryAddress($cart->getDeliveryAddress());
-                    }
-
-                    $om = $this->getObjectManager();
-                    $om->persist($invoiceAddress);
-
-                    $this->persistCurrentCart();
-
-                    return $this->redirect($this->getWizard()->getNextStepUrl());
-                }
+            if($this->saveAddressForm($request,$deliveryOptionStrategyForm,$invoiceAddressForm,$invoiceSameAsDeliveryForm)){
+                return $this->redirect($this->getWizard()->getNextStepUrl());
             }
         }
 
@@ -248,6 +226,34 @@ class WizardController extends AbstractWizardController
         );
     }
 
+    protected function saveAddressForm(Request $request,$deliveryOptionStrategyForm,$invoiceAddressForm,$invoiceSameAsDeliveryForm)
+    {
+        $validDeliveryOptionStrategyFormData = $this->bindDeliveryOptions($deliveryOptionStrategyForm);
+
+        $invoiceAddressForm->bind($request);
+        $invoiceSameAsDeliveryForm->bind($request);
+
+        if ($validDeliveryOptionStrategyFormData && $invoiceAddressForm->isValid() && $invoiceSameAsDeliveryForm->isValid()) {
+
+            $invoiceSameAsDelivery = (bool) $invoiceSameAsDeliveryForm->get('invoiceSameAsDelivery')->getData();
+            $deliveryAddressForm = $this->handleDeliveryAddress($invoiceSameAsDelivery,$invoiceAddress);
+            if ($deliveryAddressForm === true) {
+                $cart->setInvoiceAddress($invoiceAddress);
+
+                if($this->getUser()){
+                    $this->getUser()->setInvoiceAddress($cart->getInvoiceAddress());
+                    $this->getUser()->setDeliveryAddress($cart->getDeliveryAddress());
+                }
+
+                $om = $this->getObjectManager();
+                $om->persist($invoiceAddress);
+
+                $this->persistCurrentCart();
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * returns true or the form if its not valid
