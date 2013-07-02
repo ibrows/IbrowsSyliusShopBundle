@@ -180,6 +180,7 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
             }
             return new ErrorRedirectResponse(array('paymenterror' => 'connectionerror'));
         }catch(\Exception $e){
+            throw $e;
             return new ErrorRedirectResponse(array('paymenterror' => 'connectionerror'));
         }
     }
@@ -223,11 +224,10 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
 
         if($this->isTestMode()){
             $payInitParameter->setAccountid('99867-94913159');
-            $payInitParameter->setPaymentmethods(6);
         }else{
             $serviceData = $cart->getPaymentOptionStrategyServiceData();
             if(isset($serviceData['method'])){
-                $payInitParameter->setPaymentmethods($serviceData['method']);
+                $payInitParameter->setPaymentmethods(array($serviceData['method']));
             }
         }
 
