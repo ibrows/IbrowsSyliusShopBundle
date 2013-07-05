@@ -137,6 +137,7 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
      * @param Context $context
      * @param CartInterface $cart
      * @param CartManager $cartManager
+     * @throws \Exception if createPayInit creates an exception
      * @return RedirectResponse|PaymentFinishedResponse|ErrorRedirectResponse|SelfRedirectResponse
      */
     public function pay(Context $context, CartInterface $cart, CartManager $cartManager)
@@ -180,7 +181,6 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
             }
             return new ErrorRedirectResponse(array('paymenterror' => 'connectionerror'));
         }catch(\Exception $e){
-            throw $e;
             return new ErrorRedirectResponse(array('paymenterror' => 'connectionerror'));
         }
     }
@@ -224,6 +224,7 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
 
         if($this->isTestMode()){
             $payInitParameter->setAccountid('99867-94913159');
+            $payInitParameter->setPaymentmethods(array($payInitParameter::PAYMENTMETHOD_SAFERPAY_TESTCARD));
         }else{
             $serviceData = $cart->getPaymentOptionStrategyServiceData();
             if(isset($serviceData['method'])){
@@ -249,11 +250,11 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
         ;
 
         if($invoiceAddress->isTitleWoman()){
-            $payInitParameter->setGender('F');
+            $payInitParameter->setGender($payInitParameter::GENDER_FEMALE);
         }elseif($invoiceAddress->isTitleMan()){
-            $payInitParameter->setGender('M');
+            $payInitParameter->setGender($payInitParameter::GENDER_MALE);
         }elseif($invoiceAddress->isTitleCompany()){
-            $payInitParameter->setGender('C');
+            $payInitParameter->setGender($payInitParameter::GENDER_COMPANY);
         }
 
         return $payInitParameter;
