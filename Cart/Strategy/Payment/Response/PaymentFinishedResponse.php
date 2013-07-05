@@ -22,13 +22,20 @@ class PaymentFinishedResponse
     protected $errorCode;
 
     /**
+     * @var array
+     */
+    protected $data;
+
+    /**
      * @param string $status
      * @param int $errorCode
+     * @param array $data
      */
-    public function __construct($status = self::STATUS_OK, $errorCode = null)
+    public function __construct($status = self::STATUS_OK, $errorCode = null, array $data = array())
     {
         $this->setStatus($status);
         $this->setErrorCode($errorCode);
+        $this->setData($data);
     }
 
     /**
@@ -64,6 +71,24 @@ class PaymentFinishedResponse
     public function setStatus($status)
     {
         $this->status = $status;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+
+    /**
+     * @param array $data
+     * @return PaymentFinishedResponse
+     */
+    public function setData($data)
+    {
+        $this->data = $data;
         return $this;
     }
 }

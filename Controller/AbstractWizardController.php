@@ -6,6 +6,8 @@ use Ibrows\SyliusShopBundle\Cart\CartManager;
 use Ibrows\Bundle\WizardAnnotationBundle\Annotation\Wizard;
 use Ibrows\Bundle\WizardAnnotationBundle\Annotation\AnnotationHandler as WizardHandler;
 
+use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Context;
+use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\PaymentFinishedResponse;
 use Ibrows\SyliusShopBundle\Form\AuthType;
 use Ibrows\SyliusShopBundle\Form\LoginType;
 use Ibrows\SyliusShopBundle\Form\BasketType;
@@ -109,6 +111,127 @@ abstract class AbstractWizardController extends AbstractController
             return Wizard::REDIRECT_STEP_BACK;
         }
         return true;
+    }
+
+    /**
+     * @param PaymentFinishedResponse $response
+     * @param Context $context
+     * @return RedirectResponse
+     */
+    protected function handlePaymentFinishedResponse(PaymentFinishedResponse $response, Context $context)
+    {
+        switch($response->getStatus()){
+            case $response::STATUS_OK:
+                return $this->handlePaymentFinishedResponseStatusOk($response, $context);
+                break;
+            case $response::STATUS_ERROR:
+                return $this->handlePaymentFinishedResponseStatusError($response, $context);
+                break;
+        }
+        return $this->handlePaymentFinishedResponseStatusUnknown($response, $context);
+    }
+
+    /**
+     * @param PaymentFinishedResponse $response
+     * @param Context $context
+     * @return RedirectResponse
+     */
+    protected function handlePaymentFinishedResponseStatusOk(PaymentFinishedResponse $response, Context $context)
+    {
+        $cart = $this->getCurrentCart();
+        $cartManager = $this->getCurrentCartManager();
+
+        $cart->setConfirmed();
+        $cart->setPayed();
+
+        $this->persistCart($cartManager);
+
+        return $this->redirect($this->getWizard()->getNextStepUrl());
+    }
+
+    /**
+     * @param PaymentFinishedResponse $response
+     * @param Context $context
+     * @return RedirectResponse
+     */
+    protected function handlePaymentFinishedResponseStatusError(PaymentFinishedResponse $response, Context $context)
+    {
+        switch($response->getErrorCode()){
+            case $response::ERROR_COMPLETION:
+                return $this->handlePaymentFinishedResponseStatusErrorCompletion($response, $context);
+                break;
+            case $response::ERROR_CONFIRMATION:
+                $this->handlePaymentFinishedResponseStatusErrorConfirmation($response, $context);
+                break;
+            case $response::ERROR_VALIDATION:
+                $this->handlePaymentFinishedResponseStatusErrorValidation($response, $context);
+                break;
+        }
+        return $this->handlePaymentFinishedResponseStatusErrorUnknown($response, $context);
+    }
+
+    /**
+     * @param PaymentFinishedResponse $response
+     * @param Context $context
+     * @return RedirectResponse
+     */
+    protected function handlePaymentFinishedResponseStatusErrorConfirmation(PaymentFinishedResponse $response, Context $context)
+    {
+        return $this->redirect($this->generateUrl($context->getErrorRouteName(), array(
+            'paymenterror' => 'confirmation'
+        )));
+    }
+
+    /**
+     * @param PaymentFinishedResponse $response
+     * @param Context $context
+     * @return RedirectResponse
+     */
+    protected function handlePaymentFinishedResponseStatusErrorValidation(PaymentFinishedResponse $response, Context $context)
+    {
+        return $this->redirect($this->generateUrl($context->getErrorRouteName(), array(
+            'paymenterror' => 'validation'
+        )));
+    }
+
+    /**
+     * @param PaymentFinishedResponse $response
+     * @param Context $context
+     * @return RedirectResponse
+     */
+    protected function handlePaymentFinishedResponseStatusErrorCompletion(PaymentFinishedResponse $response, Context $context)
+    {
+        $cart = $this->getCurrentCart();
+        $cartManager = $this->getCurrentCartManager();
+
+        $cart->setConfirmed();
+        $this->persistCart($cartManager);
+
+        return $this->redirect($this->getWizard()->getNextStepUrl());
+    }
+
+    /**
+     * @param PaymentFinishedResponse $response
+     * @param Context $context
+     * @return RedirectResponse
+     */
+    protected function handlePaymentFinishedResponseStatusErrorUnknown(PaymentFinishedResponse $response, Context $context)
+    {
+        return $this->redirect($this->generateUrl($context->getErrorRouteName(), array(
+            'paymenterror' => 'unknown'
+        )));
+    }
+
+    /**
+     * @param PaymentFinishedResponse $response
+     * @param Context $context
+     * @return RedirectResponse
+     */
+    protected function handlePaymentFinishedResponseStatusUnknown(PaymentFinishedResponse $response, Context $context)
+    {
+        return $this->redirect($this->generateUrl($context->getErrorRouteName(), array(
+            'paymenterror' => 'general'
+        )));
     }
 
     /**

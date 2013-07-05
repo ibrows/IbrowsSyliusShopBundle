@@ -1,6 +1,7 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Controller;
+
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Context;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\ErrorRedirectResponse;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\PaymentFinishedResponse;
@@ -440,53 +441,13 @@ class WizardController extends AbstractWizardController
         case $response instanceof ErrorRedirectResponse:
             return new RedirectResponse($this->generateUrl($context->getErrorRouteName(), $response->getParameters()));
             break;
-        case $response instanceof PaymentFinishedResponse:
-            if ($response->getStatus() == $response::STATUS_OK) {
-                $cart->setConfirmed();
-                $cart->setPayed();
-                $this->persistCart($cartManager);
-
-                $this->doSomethingAfterPaymentFinished($response);
-
-                return $this->redirect($this->getWizard()->getNextStepUrl());
-            }
-
-            if ($response->getStatus() == $response::STATUS_ERROR) {
-                switch ($response->getErrorCode()) {
-                case $response::ERROR_COMPLETION:
-                    $cart->setConfirmed();
-                    $this->persistCart($cartManager);
-
-                    $this->doSomethingAfterPaymentFinished($response);
-
-                    return $this->redirect($this->getWizard()->getNextStepUrl());
-                    break;
-                case $response::ERROR_CONFIRMATION:
-
-                    $this->doSomethingAfterPaymentFinished($response);
-
-                    return $this->redirect($this->generateUrl($context->getErrorRouteName(), array(
-                                            'paymenterror' => 'confirmation'
-                                    )));
-                    break;
-                case $response::ERROR_VALIDATION:
-
-                    $this->doSomethingAfterPaymentFinished($response);
-
-                    return $this->redirect($this->generateUrl($context->getErrorRouteName(), array(
-                                            'paymenterror' => 'validation'
-                                    )));
-                    break;
-                }
-            }
-
-            return $this->redirect($this->generateUrl($context->getErrorRouteName(), array(
-                                    'paymenterror' => 'general'
-                            )));
-            break;
         case $response instanceof SelfRedirectResponse:
             return $this->redirect($this->generateUrl($context->getCurrentRouteName(), $response->getParameters()));
             break;
+        case $response instanceof PaymentFinishedResponse:
+            return $this->handlePaymentFinishedResponse($response, $context);
+            break;
+
         }
 
         throw $this->createNotFoundException("ResponseType for PaymentGateway not found");
@@ -505,28 +466,8 @@ class WizardController extends AbstractWizardController
         $this->closeCurrentCart();
 
         return array(
-                'cart' => $cart
+            'cart' => $cart
         );
-    }
-
-    /**
-     * @param PaymentFinishedResponse $response
-     */
-    public function doSomethingAfterPaymentFinished(PaymentFinishedResponse $response) {
-        if ($response->getStatus() == $response::STATUS_OK) {
-
-        }
-
-        if ($response->getStatus() == $response::STATUS_ERROR) {
-            switch ($response->getErrorCode()) {
-                case $response::ERROR_COMPLETION:
-                    break;
-                case $response::ERROR_CONFIRMATION:
-                    break;
-                case $response::ERROR_VALIDATION:
-                    break;
-            }
-        }
     }
 
 }
