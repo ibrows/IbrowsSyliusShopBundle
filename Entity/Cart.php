@@ -917,7 +917,6 @@ class Cart extends BaseCart implements CartInterface
         foreach($payments as $payment) {
             $this->addPayment($payment);
         }
-        $this->refreshCart();
 
         return $this;
     }

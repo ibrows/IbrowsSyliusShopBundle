@@ -8,7 +8,7 @@ use Ibrows\Bundle\WizardAnnotationBundle\Annotation\AnnotationHandler as WizardH
 
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Context;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\PaymentFinishedResponse;
-use Ibrows\MyfensterBundle\Entity\Shop\Payment;
+use Ibrows\SyliusShopBundle\Entity\Payment;
 use Ibrows\SyliusShopBundle\Form\AuthType;
 use Ibrows\SyliusShopBundle\Form\LoginType;
 use Ibrows\SyliusShopBundle\Form\BasketType;

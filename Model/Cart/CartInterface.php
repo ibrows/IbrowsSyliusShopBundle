@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\Collection;
 use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface;
 use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
+use Ibrows\SyliusShopBundle\Model\Cart\Payment\PaymentInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartStrategyInterface;
 use Sylius\Bundle\CartBundle\Model\CartInterface as BaseCartInterface;
 use DateTime;
@@ -339,4 +340,29 @@ interface CartInterface extends BaseCartInterface
      * @return CartInterface
      */
     public function setTotalWithTax($totalWithTax);
+
+    /**
+     * @return Payments[]
+     */
+    public function getPayments();
+
+    /**
+     * @param PaymentInterface $payment
+     * @param bool $stopPropagation
+     * @return $this
+     */
+    public function addPayment(PaymentInterface $payment, $stopPropagation = false);
+
+    /**
+     * @param PaymentInterface $payment
+     * @param bool $stopPropagation
+     * @return $this
+     */
+    public function removePayment(PaymentInterface $payment, $stopPropagation = false);
+
+    /**
+     * @param Collection|PaymentInterFace[] $payments
+     * @return $this
+     */
+    public function setPayments(Collection $payments);
 }
