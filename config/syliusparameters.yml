@@ -4,6 +4,8 @@ parameters:
 
   ibrows_sylius_shop.product.class: Ibrows\SyliusShopBundle\Entity\Product
 
+  ibrows_sylius_shop.payment.class: Ibrows\SyliusShopBundle\Entity\Payment
+
   ibrows_sylius_shop.address.class: Ibrows\SyliusShopBundle\Entity\Address
   ibrows_sylius_shop.deliveryaddress.class: Ibrows\SyliusShopBundle\Entity\Address
   ibrows_sylius_shop.invoiceaddress.class: Ibrows\SyliusShopBundle\Entity\Address

@@ -153,21 +153,21 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
 
                     if(true === $this->validatePayConfirmParameter($payConfirmParameter, $payInitParameter)){
                         if(false === $this->doCompletePayment()){
-                            return new PaymentFinishedResponse(PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_COMPLETION);
+                            return new PaymentFinishedResponse(PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_COMPLETION, $payConfirmParameter->getData());
                         }
 
                         $payCompleteResponse = $saferpay->payCompleteV2($payConfirmParameter, 'Settlement');
                         if($payCompleteResponse->getResult() != '0'){
-                            return new PaymentFinishedResponse();
+                            return new PaymentFinishedResponse(null, null, $payConfirmParameter->getData());
                         }
 
-                        return new PaymentFinishedResponse(PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_COMPLETION);
+                        return new PaymentFinishedResponse(PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_COMPLETION, $payConfirmParameter->getData());
                     }
 
                     $saferpay->payCompleteV2($payConfirmParameter, 'Cancel');
-                    return new PaymentFinishedResponse(PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_VALIDATION);
+                    return new PaymentFinishedResponse(PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_VALIDATION, $payConfirmParameter->getData());
                 }catch(\Exception $e){
-                    return new PaymentFinishedResponse(PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_VALIDATION);
+                    return new PaymentFinishedResponse(PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_VALIDATION, $payConfirmParameter->getData());
                 }
             break;
             case PaymentFinishedResponse::STATUS_ERROR:

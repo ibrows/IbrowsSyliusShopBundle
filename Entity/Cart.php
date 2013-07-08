@@ -4,6 +4,7 @@ namespace Ibrows\SyliusShopBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
+use Ibrows\SyliusShopBundle\Model\Cart\Payment\PaymentInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartStrategyInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface;
@@ -199,9 +200,16 @@ class Cart extends BaseCart implements CartInterface
      */
     protected $deliveryAddressObj;
 
+    /**
+     * @var Collection|PaymentInterface[]
+     * @ORM\OneToMany(targetEntity="Ibrows\SyliusShopBundle\Model\Cart\Payment\PaymentInterface", mappedBy="cart", cascade="all", orphanRemoval=true)
+     */
+    protected $payments;
+
     public function __construct()
     {
         parent::__construct();
+        $this->payments = new ArrayCollection();
         $this->items = new ArrayCollection();
         $this->additionalItems = new ArrayCollection();
         $this->setCreated();
@@ -865,5 +873,60 @@ class Cart extends BaseCart implements CartInterface
             $this->createdAt = new DateTime;
         }
         return $this;
+    }
+
+    /**
+     * @param PaymentInterface $payment
+     * @param bool $stopPropagation
+     * @return $this
+     */
+    public function addPayment(PaymentInterface $payment, $stopPropagation = false)
+    {
+        $this->payments->add($payment);
+        if(!$stopPropagation) {
+            $payment->setCart($this, true);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param PaymentInterface $payment
+     * @param bool $stopPropagation
+     * @return $this
+     */
+    public function removePayment(PaymentInterface $payment, $stopPropagation = false)
+    {
+        $this->payments->removeElement($payment);
+        if(!$stopPropagation) {
+            $payment->setCart(null, true);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Collection|PaymentInterFace[] $payments
+     * @return $this
+     */
+    public function setPayments(Collection $payments)
+    {
+        foreach($this->payments as $payment) {
+            $this->removePayment($payment);
+        }
+        foreach($payments as $payment) {
+            $this->addPayment($payment);
+        }
+        $this->refreshCart();
+
+        return $this;
+    }
+
+    /**
+     * @return Payments[]
+     */
+    public function getPayments()
+    {
+        return $this->payments;
     }
 }

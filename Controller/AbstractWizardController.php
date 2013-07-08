@@ -8,6 +8,7 @@ use Ibrows\Bundle\WizardAnnotationBundle\Annotation\AnnotationHandler as WizardH
 
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Context;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\PaymentFinishedResponse;
+use Ibrows\MyfensterBundle\Entity\Shop\Payment;
 use Ibrows\SyliusShopBundle\Form\AuthType;
 use Ibrows\SyliusShopBundle\Form\LoginType;
 use Ibrows\SyliusShopBundle\Form\BasketType;
@@ -120,6 +121,8 @@ abstract class AbstractWizardController extends AbstractController
      */
     protected function handlePaymentFinishedResponse(PaymentFinishedResponse $response, Context $context)
     {
+        $this->savePaymentFinishedResponse($response);
+
         switch($response->getStatus()){
             case $response::STATUS_OK:
                 return $this->handlePaymentFinishedResponseStatusOk($response, $context);
@@ -129,6 +132,22 @@ abstract class AbstractWizardController extends AbstractController
                 break;
         }
         return $this->handlePaymentFinishedResponseStatusUnknown($response, $context);
+    }
+
+    /**
+     * @param PaymentFinishedResponse $response
+     */
+    public function savePaymentFinishedResponse(PaymentFinishedResponse $response)
+    {
+        $cart = $this->getCurrentCart();
+        $cartManager = $this->getCurrentCartManager();
+
+        $payment = new Payment();
+        $payment->setData($response->getData());
+
+        $cart->addPayment($payment);
+
+        $this->persistCart($cartManager);
     }
 
     /**
