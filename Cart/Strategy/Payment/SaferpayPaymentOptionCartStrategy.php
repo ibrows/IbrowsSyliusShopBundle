@@ -145,29 +145,31 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
         $request = $context->getRequest();
         $saferpay = $this->getSaferpay();
         $payInitParameter = $this->getPayInitParameter($context, $cart);
+        $PaymentFinishedResponseData = array('payInitParameter' => $payInitParameter->getData());
 
         switch($request->query->get('status')){
             case PaymentFinishedResponse::STATUS_OK:
                 try {
                     $payConfirmParameter = $saferpay->verifyPayConfirm($request->query->get('DATA'), $request->query->get('SIGNATURE'));
+                    $PaymentFinishedResponseData['payConfirmParameter'] = $payConfirmParameter->getData();
 
                     if(true === $this->validatePayConfirmParameter($payConfirmParameter, $payInitParameter)){
                         if(false === $this->doCompletePayment()){
-                            return new PaymentFinishedResponse(PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_COMPLETION, $payConfirmParameter->getData());
+                            return new PaymentFinishedResponse($this->getServiceId(), PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_COMPLETION, $cart->getPaymentOptionStrategyServiceData(), $PaymentFinishedResponseData);
                         }
 
                         $payCompleteResponse = $saferpay->payCompleteV2($payConfirmParameter, 'Settlement');
                         if($payCompleteResponse->getResult() != '0'){
-                            return new PaymentFinishedResponse(null, null, $payConfirmParameter->getData());
+                            return new PaymentFinishedResponse($this->getServiceId(), null, null, $cart->getPaymentOptionStrategyServiceData(), $PaymentFinishedResponseData);
                         }
 
-                        return new PaymentFinishedResponse(PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_COMPLETION, $payConfirmParameter->getData());
+                        return new PaymentFinishedResponse($this->getServiceId(), PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_COMPLETION, $cart->getPaymentOptionStrategyServiceData(), $PaymentFinishedResponseData);
                     }
 
                     $saferpay->payCompleteV2($payConfirmParameter, 'Cancel');
-                    return new PaymentFinishedResponse(PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_VALIDATION, $payConfirmParameter->getData());
+                    return new PaymentFinishedResponse($this->getServiceId(), PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_VALIDATION, $cart->getPaymentOptionStrategyServiceData(), $PaymentFinishedResponseData);
                 }catch(\Exception $e){
-                    return new PaymentFinishedResponse(PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_VALIDATION, $payConfirmParameter->getData());
+                    return new PaymentFinishedResponse($this->getServiceId(), PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_VALIDATION, $cart->getPaymentOptionStrategyServiceData(), $PaymentFinishedResponseData);
                 }
             break;
             case PaymentFinishedResponse::STATUS_ERROR:

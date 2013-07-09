@@ -41,6 +41,6 @@ class InvoicePaymentOptionCartStrategy extends AbstractPaymentOptionCartStrategy
      */
     public function pay(Context $context, CartInterface $cart, CartManager $cartManager)
     {
-        return new PaymentFinishedResponse(PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_COMPLETION);
+        return new PaymentFinishedResponse($this->getServiceId(), PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_COMPLETION);
     }
 }

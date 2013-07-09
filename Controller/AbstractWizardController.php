@@ -142,7 +142,10 @@ abstract class AbstractWizardController extends AbstractController
         $cart = $this->getCurrentCart();
         $cartManager = $this->getCurrentCartManager();
 
-        $payment = new Payment();
+        $paymentClass = $this->getParameter('ibrows_sylius_shop.payment.class');
+        $payment = new $paymentClass();
+        $payment->setStrategyId($response->getStrategyId());
+        $payment->setStrategyData($response->getStrategyData());
         $payment->setData($response->getData());
 
         $cart->addPayment($payment);

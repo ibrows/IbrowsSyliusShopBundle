@@ -24,6 +24,39 @@ interface PaymentInterface
     public function setCart(CartInterface $cart = null, $stopPropagation = false);
 
     /**
+     * @return float
+     */
+    public function getAmount();
+
+    /**
+     * @param float $amount
+     * @return CartInterface
+     */
+    public function setAmount($amount = 0.0);
+
+    /**
+     * @return string
+     */
+    public function getStrategyId();
+
+    /**
+     * @param null $strategyId
+     * @return $this|PaymentInterface
+     */
+    public function setStrategyId($strategyId = null);
+
+    /**
+     * @return array
+     */
+    public function getStrategyData();
+
+    /**
+     * @param array $strategyData
+     * @return $this|PaymentInterface
+     */
+    public function setStrategyData(array $strategyData = null);
+
+    /**
      * @return mixed
      */
     public function getData();

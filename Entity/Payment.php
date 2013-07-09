@@ -30,13 +30,25 @@ class Payment implements PaymentInterface
     protected $cart;
 
     /**
+     * @var string $strategyId
+     * @ORM\Column(type="string", name="strategy_id", nullable=false)
+     */
+    protected $strategyId;
+
+    /**
+     * @var array $strategyData
+     * @ORM\Column(type="json_array", name="strategy_data", nullable=true)
+     */
+    protected $strategyData;
+
+    /**
      * @var array $data
      * @ORM\Column(type="json_array", name="data", nullable=true)
      */
     protected $data;
 
     /**
-     * {@inheritdoc}
+     * @return int
      */
     public function getId()
     {
@@ -54,19 +66,39 @@ class Payment implements PaymentInterface
     /**
      * @param CartInterface $cart
      * @param bool $stopPropagation
-     * @return $this
+     * @return $this|PaymentInterface
      */
     public function setCart(CartInterface $cart = null, $stopPropagation = false)
     {
-        if(!$stopPropagation) {
-            if(!is_null($this->cart)) {
+        if (!$stopPropagation) {
+            if (!is_null($this->cart)) {
                 $this->cart->removePayment($this, true);
             }
-            if(!is_null($cart)) {
+            if (!is_null($cart)) {
                 $cart->addPayment($this, true);
             }
         }
         $this->cart = $cart;
+
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getAmount()
+    {
+        return $this->amount;
+    }
+
+    /**
+     * @param float $amount
+     * @return $this|PaymentInterface
+     */
+    public function setAmount($amount = 0.0)
+    {
+        $this->amount = $amount;
+
         return $this;
     }
 
@@ -80,11 +112,50 @@ class Payment implements PaymentInterface
 
     /**
      * @param array $data
-     * @return CartInterface
+     * @return $this|PaymentInterface
      */
     public function setData(array $data = null)
     {
         $this->data = $data;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStrategyId()
+    {
+        return $this->strategyId;
+    }
+
+    /**
+     * @param null $strategyId
+     * @return $this|PaymentInterface
+     */
+    public function setStrategyId($strategyId = null)
+    {
+        $this->strategyId = $strategyId;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getStrategyData()
+    {
+        return $this->strategyData;
+    }
+
+    /**
+     * @param array $strategyData
+     * @return $this|PaymentInterface
+     */
+    public function setStrategyData(array $strategyData = null)
+    {
+        $this->strategyData = $strategyData;
+
         return $this;
     }
 }
