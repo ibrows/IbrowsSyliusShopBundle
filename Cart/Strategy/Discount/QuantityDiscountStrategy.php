@@ -20,20 +20,31 @@ class QuantityDiscountStrategy extends AbstractCartStrategy
      * @var bool
      */
     protected $quantityFromProduct = false;
+
     /**
      * @var bool
      */
     protected $roundpercent = true;
 
     /**
-     * @param array $steps
+     * @var string
      */
-    public function __construct(array $steps, $quantitymethod = "getTotal", $quantityFromProduct = false, $roundpercent = true)
+    protected $totalMethod;
+
+    /**
+     * @param array $steps
+     * @param string $quantitymethod
+     * @param bool $quantityFromProduct
+     * @param bool $roundpercent
+     * @param string $totalMethod
+     */
+    public function __construct(array $steps, $quantitymethod = "getTotal", $quantityFromProduct = false, $roundpercent = true, $totalMethod = null)
     {
         $this->steps = $steps;
         $this->quantitymethod = $quantitymethod;
         $this->quantityFromProduct = $quantityFromProduct;
         $this->roundpercent = $roundpercent;
+        $this->totalMethod = $totalMethod;
     }
 
     public function accept(CartInterface $cart, CartManager $cartManager)
@@ -61,26 +72,32 @@ class QuantityDiscountStrategy extends AbstractCartStrategy
         if (!$steps) {
             return array();
         }
-        $total = $this->getQuantity($cart);
-        if ($total <= 0) {
+        $quantity = $total = $this->getQuantity($cart);
+        if ($quantity <= 0) {
             return array();
         }
 
-
-        $costs = $this->getStepCosts($this->steps, $total, true);
+        $costs = $this->getStepCosts($this->steps, $quantity, true);
         if ($costs != 0) {
+            $totalmethod = $this->totalMethod;
+            if($totalmethod){
+                $total = $cart->$totalmethod();
+            }
+
             if (stripos($costs, '%') !== false) {
-                $precent = intval($costs);
-                $costs = $total * $precent / 100;
+                $percent = intval($costs);
+                $costs = $total * $percent / 100;
                 if($this->roundpercent){
                     $costs = self::roundfivers($costs);
                 }
             }
+
             $costs = $costs * -1;
+
             $item = $this->createAdditionalCartItem($costs);
 
             $item->setText($this->getItemText($costs, $cart, $cartManager, $item));
-            $item->setStrategyData(array('costs' => $costs, 'total' => $total));
+            $item->setStrategyData(array('costs' => $costs, 'total' => $total, 'quantity' => $quantity));
             return array(
                     $item
             );
@@ -164,6 +181,24 @@ class QuantityDiscountStrategy extends AbstractCartStrategy
     public function setRoundpercent($roundpercent)
     {
         $this->roundpercent = $roundpercent;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTotalMethod()
+    {
+        return $this->totalMethod;
+    }
+
+    /**
+     * @param string $totalMethod
+     * @return QuantityDiscountStrategy
+     */
+    public function setTotalMethod($totalMethod)
+    {
+        $this->totalMethod = $totalMethod;
         return $this;
     }
 
