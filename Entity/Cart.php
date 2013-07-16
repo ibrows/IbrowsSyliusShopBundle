@@ -206,6 +206,12 @@ class Cart extends BaseCart implements CartInterface
      */
     protected $payments;
 
+    /**
+     * @var float
+     * @ORM\Column(type="decimal", scale=30, precision=65, name="amount_to_pay")
+     */
+    protected $amountToPay = 0.0;
+
     public function __construct()
     {
         parent::__construct();
@@ -906,7 +912,7 @@ class Cart extends BaseCart implements CartInterface
     }
 
     /**
-     * @param Collection|PaymentInterFace[] $payments
+     * @param Collection|Paymentinterface[] $payments
      * @return $this
      */
     public function setPayments(Collection $payments)
@@ -922,10 +928,28 @@ class Cart extends BaseCart implements CartInterface
     }
 
     /**
-     * @return Payments[]
+     * @return PaymentInterface[]
      */
     public function getPayments()
     {
         return $this->payments;
+    }
+
+    /**
+     * @return float
+     */
+    public function getAmountToPay()
+    {
+        return $this->amountToPay;
+    }
+
+    /**
+     * @param float $amountToPay
+     * @return Cart
+     */
+    public function setAmountToPay($amountToPay)
+    {
+        $this->amountToPay = $amountToPay;
+        return $this;
     }
 }

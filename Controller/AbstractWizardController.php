@@ -83,7 +83,7 @@ abstract class AbstractWizardController extends AbstractController
     public function paymentValidation()
     {
         $cart = $this->getCurrentCart();
-        if (!$cart->isTermsAndConditions()) {
+        if (!$cart->isTermsAndConditions() OR $cart->getTotalWithTax() !== $cart->getAmountToPay()) {
             return Wizard::REDIRECT_STEP_BACK;
         }
         return true;

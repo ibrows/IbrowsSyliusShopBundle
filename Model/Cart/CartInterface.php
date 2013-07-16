@@ -36,6 +36,17 @@ interface CartInterface extends BaseCartInterface
     public function addAdditionalItem(AdditionalCartItemInterface $item);
 
     /**
+     * @return float
+     */
+    public function getAmountToPay();
+
+    /**
+     * @param float $amountToPay
+     * @return CartInterface
+     */
+    public function setAmountToPay($amountToPay);
+
+    /**
      * @param AdditionalCartItemInterface $item
      * @return CartInterface
      */

@@ -270,6 +270,9 @@ class WizardController extends AbstractWizardController
 
         $cartManager = $this->getCurrentCartManager();
 
+        $cart->setAmountToPay($cart->getTotalWithTax());
+        $this->persistCurrentCart(false);
+
         return $this->getViewData('summary', array(
             'deliveryOptionStrategy' => $cartManager->getSelectedDeliveryOptionStrategyService(),
             'paymentOptionStrategy' => $cartManager->getSelectedPaymentOptionStrategyService(),
