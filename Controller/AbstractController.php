@@ -194,17 +194,23 @@ abstract class AbstractController extends Controller
                 $item = $itemNotOnStock->getItem();
                 if(!$item->getProduct()->isEnabled()){
                     $message = $item . ' not found';
-                    $this->get('session')->getFlashBag()->add('notice', $message);
+                    $this->addFlashMessage($message);
                     $cartManager->removeItem($item);
                     continue;
                 }
                 $message = $item . ' ' . $item->getQuantityNotAvailable() . " not there...";
-                $this->get('session')->getFlashBag()->add('notice', $message);
+                $this->addFlashMessage($message);
                 $item->setQuantityToAvailable();
             }
             $cartManager->persistCart($refreshAndCheckAvailability);
         }
     }
+
+
+    protected function addFlashMessage($message){
+        return  $this->get('session')->getFlashBag()->add('notice', $message);;
+    }
+
 
     /**
      * @return ProductRepository
