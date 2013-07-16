@@ -235,7 +235,7 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
         }
 
         $payInitParameter
-            ->setAmount(round($cart->getTotalWithTax()*100))
+            ->setAmount(round($cart->getAmountToPay()*100))
             ->setDescription(sprintf('Order %s', $cart->getId()))
             ->setOrderid($cart->getId())
             ->setSuccesslink($router->generate($currentRouteName, array('status' => PaymentFinishedResponse::STATUS_OK), true))
