@@ -23,6 +23,7 @@ use Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface;
 use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
 use Ibrows\SyliusShopBundle\IbrowsSyliusShopBundle;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -62,6 +63,17 @@ abstract class AbstractController extends Controller
         }
 
         return $resource;
+    }
+
+    /**
+     * @return UserInterface
+     */
+    protected function getUserOrException()
+    {
+        if(!$user = $this->getUser()){
+            throw new AccessDeniedException();
+        }
+        return $user;
     }
 
     /**
@@ -395,7 +407,8 @@ abstract class AbstractController extends Controller
         return new InvoiceAddressType(
             $this->getInvoiceAddressTypeCountryChoices(),
             $this->getInvoiceAddressTypePreferredCountryChoices(),
-            $this->getInvoiceAddressTypeTitleChoices());
+            $this->getInvoiceAddressTypeTitleChoices()
+        );
     }
 
     /**
@@ -477,7 +490,7 @@ abstract class AbstractController extends Controller
     /**
      * @return array
      */
-    protected function getAddressTypeTitleChoices()
+    public function getAddressTypeTitleChoices()
     {
         return array_flip(Address::getTitles());
     }
