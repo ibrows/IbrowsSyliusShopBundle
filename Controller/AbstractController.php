@@ -66,6 +66,7 @@ abstract class AbstractController extends Controller
     }
 
     /**
+     * @throws AccessDeniedException
      * @return UserInterface
      */
     protected function getUserOrException()
@@ -77,11 +78,14 @@ abstract class AbstractController extends Controller
     }
 
     /**
-     * @param string $className
+     * @param string|object $className
      * @return ObjectRepository
      */
     protected function getRepository($className)
     {
+        if(is_object($className)){
+            $className = get_class($className);
+        }
         return $this->getManagerForClass($className)->getRepository($className);
     }
 
