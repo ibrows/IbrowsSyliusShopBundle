@@ -264,11 +264,13 @@ abstract class AbstractController extends Controller
 
     /**
      * @param CartManager $cartManager
+     * @return null|Response
      */
     protected function authDelete(CartManager $cartManager)
     {
         $cartManager->getCart()->setEmail(null);
         $this->persistCart($cartManager);
+        return null;
     }
 
     /**

@@ -31,6 +31,11 @@ interface AddressInterface
     public function getTitle();
 
     /**
+     * @return int
+     */
+    public function getId();
+
+    /**
      * @param string $title
      * @return AddressInterface
      */

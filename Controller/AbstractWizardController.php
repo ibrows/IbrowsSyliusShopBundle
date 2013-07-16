@@ -1,34 +1,21 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Controller;
-use Ibrows\SyliusShopBundle\Cart\CartManager;
 
 use Ibrows\Bundle\WizardAnnotationBundle\Annotation\Wizard;
 use Ibrows\Bundle\WizardAnnotationBundle\Annotation\AnnotationHandler as WizardHandler;
-
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Context;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\PaymentFinishedResponse;
-use Ibrows\SyliusShopBundle\Entity\Payment;
-use Ibrows\SyliusShopBundle\Form\AuthType;
-use Ibrows\SyliusShopBundle\Form\LoginType;
-use Ibrows\SyliusShopBundle\Form\BasketType;
-use Ibrows\SyliusShopBundle\Form\BasketItemType;
-
-use Ibrows\SyliusShopBundle\Form\DeliveryAddressType;
-use Ibrows\SyliusShopBundle\Form\InvoiceAddressType;
-
-use Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface;
-use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
-
 use Ibrows\SyliusShopBundle\Entity\Address;
-
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
-
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Ibrows\SyliusShopBundle\Model\Cart\Payment\PaymentInterface;
+use Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface;
+use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
 
 abstract class AbstractWizardController extends AbstractController
 {
@@ -143,6 +130,8 @@ abstract class AbstractWizardController extends AbstractController
         $cartManager = $this->getCurrentCartManager();
 
         $paymentClass = $this->getParameter('ibrows_sylius_shop.payment.class');
+
+        /* @var PaymentInterface $payment */
         $payment = new $paymentClass();
         $payment->setStrategyId($response->getStrategyId());
         $payment->setStrategyData($response->getStrategyData());
@@ -263,6 +252,164 @@ abstract class AbstractWizardController extends AbstractController
     {
         $cart->setTermsAndConditions(false);
         $this->persistCurrentCart();
+    }
+
+    /**
+     * @return InvoiceAddressInterface
+     */
+    protected function getInvoiceAddress()
+    {
+        if ($this->getCurrentCart()->getInvoiceAddress()) {
+            return $this->getCurrentCart()->getInvoiceAddress();
+        }
+        if ($this->getUser() && $this->getUser()->getInvoiceAddress()) {
+            return $this->getUser()->getInvoiceAddress();
+        }
+
+        return $this->getNewInvoiceAddress();
+    }
+
+    /**
+     * @return DeliveryAddressInterface
+     */
+    protected function getDeliveryAddress()
+    {
+        if ($this->getCurrentCart()->getDeliveryAddress()) {
+            return $this->getCurrentCart()->getDeliveryAddress();
+        }
+        if ($this->getUser() && $this->getUser()->getDeliveryAddress()) {
+            return $this->getUser()->getDeliveryAddress();
+        }
+
+        return $this->getNewDeliveryAddress();
+    }
+
+    /**
+     * @param Request $request
+     * @param FormInterface $deliveryOptionStrategyForm
+     * @param FormInterface $invoiceAddressForm
+     * @param FormInterface $invoiceSameAsDeliveryForm
+     * @param InvoiceAddressInterface $invoiceAddress
+     * @return bool
+     */
+    protected function saveAddressForm(Request $request, FormInterface $deliveryOptionStrategyForm, FormInterface $invoiceAddressForm, FormInterface $invoiceSameAsDeliveryForm, InvoiceAddressInterface $invoiceAddress)
+    {
+        $validDeliveryOptionStrategyFormData = $this->bindDeliveryOptions($deliveryOptionStrategyForm);
+
+        $invoiceAddressForm->bind($request);
+        $invoiceSameAsDeliveryForm->bind($request);
+
+        if ($validDeliveryOptionStrategyFormData && $invoiceAddressForm->isValid() && $invoiceSameAsDeliveryForm->isValid()) {
+
+            $invoiceSameAsDelivery = (bool) $invoiceSameAsDeliveryForm->get('invoiceSameAsDelivery')->getData();
+            $deliveryAddressForm = $this->handleDeliveryAddress($invoiceSameAsDelivery, $invoiceAddress);
+
+            if ($deliveryAddressForm === true) {
+                $cart = $this->getCurrentCart();
+                $cart->setInvoiceAddress($invoiceAddress);
+
+                if($this->getUser()){
+                    $this->getUser()->setInvoiceAddress($cart->getInvoiceAddress());
+                    $this->getUser()->setDeliveryAddress($cart->getDeliveryAddress());
+                }
+
+                $om = $this->getObjectManager();
+                $om->persist($invoiceAddress);
+
+                $this->persistCurrentCart();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * returns true or the form if its not valid
+     *
+     * @param boolean $invoiceSameAsDelivery
+     * @param null $invoiceAddress
+     * @throws \Exception
+     * @return bool|FormInterface
+     */
+    protected function handleDeliveryAddress($invoiceSameAsDelivery = null, $invoiceAddress = null)
+    {
+        $formoptions = array(
+            'data_class' => $this->getDeliveryAddressClass(),
+            'validation_groups' => array(
+                'sylius_wizard_address'
+            )
+        );
+
+        $deliveryAddressForm = $this->createForm($this->getDeliveryAddressType(), $this->getDeliveryAddress(), $formoptions);
+
+        //before post
+        if ($invoiceSameAsDelivery === null) {
+            return $deliveryAddressForm;
+        }
+
+        if($invoiceAddress == null){
+            throw new \Exception('first bind invoiceaddress before use handleDeliveryAddress');
+        }
+
+        $currentcart = $this->getCurrentCart();
+
+        //same
+        if ($invoiceSameAsDelivery) {
+            $currentcart->setDeliveryAddress($invoiceAddress);
+            return true;
+        }
+
+        //different delivery
+        if ($currentcart->getDeliveryAddress() != null && $currentcart->getInvoiceAddress() != null && ($currentcart->getDeliveryAddress()->getId() == $currentcart->getInvoiceAddress()->getId())) {
+            $deliveryAddress = $this->getNewDeliveryAddress();
+            $deliveryAddressForm = $this->createForm($this->getDeliveryAddressType(), $deliveryAddress,$formoptions);
+        }
+
+        $deliveryAddressForm->bind($this->getRequest());
+        if (!$deliveryAddressForm->isValid()) {
+            return $deliveryAddressForm;
+        }
+
+        $deliveryAddress = $deliveryAddressForm->getData();
+        $em = $this->getManagerForClass($deliveryAddress);
+        $em->persist($deliveryAddress);
+        $currentcart->setDeliveryAddress($deliveryAddress);
+
+        return true;
+    }
+
+    /**
+     * @param FormInterface $deliveryOptionStrategyForm
+     * @return boolean
+     */
+    protected function bindDeliveryOptions(FormInterface $deliveryOptionStrategyForm)
+    {
+        $deliveryOptionStrategyForm->bind($this->getRequest());
+
+        $deliveryOptionStrategyServiceId = $deliveryOptionStrategyForm->get('strategyServiceId')->getData();
+        $deliveryOptioStrategy = $this->getCurrentCartManager()->getPossibleDeliveryOptionStrategyById($deliveryOptionStrategyServiceId);
+
+        if (!$deliveryOptioStrategy) {
+            $deliveryOptionStrategyForm->addError(new FormError('cart.strategy.delivery.notfound'));
+        }
+
+        if ($deliveryOptioStrategy && $deliveryOptionStrategyForm->isValid()) {
+            $cart = $this->getCurrentCart();
+            $cart->setDeliveryOptionStrategyServiceId($deliveryOptioStrategy->getServiceId());
+            $cart->setDeliveryOptionStrategyServiceData($deliveryOptionStrategyForm->get($deliveryOptioStrategy->getName())->getViewData());
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param string $action
+     * @param array $data
+     * @return array
+     */
+    protected function getViewData($action, array $data = array())
+    {
+        return $data;
     }
 
     /**
