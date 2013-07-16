@@ -341,6 +341,14 @@ abstract class Product implements ProductInterface
     }
 
     /**
+     * @return bool
+     */
+    public function getAvailableOnDemand()
+    {
+        return $this->availableOnDemand;
+    }
+
+    /**
      * @param bool $availableOnDemand
      */
     public function setAvailableOnDemand($availableOnDemand)
