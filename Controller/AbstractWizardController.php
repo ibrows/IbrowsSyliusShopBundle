@@ -257,6 +257,15 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
+     * @param CartInterface $cart
+     */
+    protected function preSummaryAction(CartInterface $cart)
+    {
+        $cart->setTermsAndConditions(false);
+        $this->persistCurrentCart();
+    }
+
+    /**
      * @return WizardHandler
      */
     protected function getWizard()

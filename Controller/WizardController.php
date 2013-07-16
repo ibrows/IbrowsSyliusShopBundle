@@ -383,8 +383,8 @@ class WizardController extends AbstractWizardController
     public function summaryAction()
     {
         $cart = $this->getCurrentCart();
-        $cart->setTermsAndConditions(false);
-        $this->persistCurrentCart();
+
+        $this->preSummaryAction($cart);
 
         $summaryForm = $this->createForm($this->getSummaryType(), $cart, array(
                         'validation_groups' => array(
