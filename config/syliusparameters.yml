@@ -2,7 +2,7 @@ parameters:
   ibrows_sylius_shop.user.role: ROLE_SHOP
   ibrows_sylius_shop.user.class: TBA in Project
 
-  ibrows_sylius_shop.product.class: Ibrows\SyliusShopBundle\Entity\Product
+  ibrows_sylius_shop.product.class: TBA in Project
 
   ibrows_sylius_shop.payment.class: Ibrows\SyliusShopBundle\Entity\Payment
 
