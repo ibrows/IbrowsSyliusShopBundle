@@ -3,7 +3,7 @@
 namespace Ibrows\SyliusShopBundle\Entity;
 
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
-use Sylius\Bundle\InventoryBundle\Entity\InventoryUnit as BaseInventoryUnit;
+use spec\Sylius\Bundle\InventoryBundle\Model\InventoryUnit as BaseInventoryUnit;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
