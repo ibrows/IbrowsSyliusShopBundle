@@ -248,6 +248,14 @@ abstract class AbstractWizardController extends AbstractController
     /**
      * @param CartInterface $cart
      */
+    protected function preAddressAction(CartInterface $cart)
+    {
+
+    }
+
+    /**
+     * @param CartInterface $cart
+     */
     protected function preSummaryAction(CartInterface $cart)
     {
         $cart->setTermsAndConditions(false);

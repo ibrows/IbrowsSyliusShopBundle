@@ -143,6 +143,12 @@ class WizardController extends AbstractWizardController
     public function addressAction(Request $request)
     {
         $cart = $this->getCurrentCart();
+
+        $preAddressAction = $this->preAddressAction($cart);
+        if($preAddressAction instanceof Response){
+            return $preAddressAction;
+        }
+
         $cartManager = $this->getCurrentCartManager();
 
         $invoiceAddress = $this->getInvoiceAddress();
@@ -250,7 +256,10 @@ class WizardController extends AbstractWizardController
     public function summaryAction()
     {
         $cart = $this->getCurrentCart();
-        $this->preSummaryAction($cart);
+        $preSummaryAction = $this->preSummaryAction($cart);
+        if($preSummaryAction instanceof Response){
+            return $preSummaryAction;
+        }
 
         $summaryForm = $this->createForm($this->getSummaryType(), $cart, array(
             'validation_groups' => array(
