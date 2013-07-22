@@ -1,2 +1,4 @@
 fos_user:
   user_class: %ibrows_sylius_shop.user.class%
+  db_driver: orm
+  firewall_name: main

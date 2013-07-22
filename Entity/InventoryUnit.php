@@ -13,13 +13,6 @@ use Doctrine\ORM\Mapping as ORM;
 class InventoryUnit extends BaseInventoryUnit
 {
     /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
-
-    /**
      * @var CartInterface
      */
     protected $cart;
