@@ -32,6 +32,7 @@ abstract class Product implements ProductInterface
     /**
      * @var bool
      * @ORM\Column(type="boolean")
+     * @Sonata\FormMapper(options={"required"=false})
      */
     protected $availableOnDemand = false;
 
@@ -237,6 +238,26 @@ abstract class Product implements ProductInterface
     public function getCreatedAt()
     {
         return $this->createdAt;
+    }
+
+    /**
+     * @param \DateTime $createdAt
+     * @return Product
+     */
+    public function setCreatedAt(\DateTime $createdAt = null)
+    {
+        $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    /**
+     * @param \DateTime $updatedAt
+     * @return Product
+     */
+    public function setUpdatedAt(\DateTime $updatedAt = null)
+    {
+        $this->updatedAt = $updatedAt;
+        return $this;
     }
 
     /**
