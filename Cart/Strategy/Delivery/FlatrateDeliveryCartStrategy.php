@@ -16,7 +16,7 @@ class FlatrateDeliveryCartStrategy extends AbstractDeliveryCartStrategy
     /**
      * @param array $steps
      */
-    public function __construct(array $steps)
+    public function __construct(array $steps = array())
     {
         ksort($steps);
         $this->steps = $steps;
