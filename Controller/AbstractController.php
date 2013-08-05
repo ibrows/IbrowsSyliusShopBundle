@@ -180,7 +180,7 @@ abstract class AbstractController extends Controller
     }
 
     /**
-     * @return \Ibrows\SyliusShopBundle\Cart\CurrentCartManager
+     * @return CurrentCartManager
      */
     protected function closeCurrentCart(){
         return $this->getCurrentCartManager()->closeCart();

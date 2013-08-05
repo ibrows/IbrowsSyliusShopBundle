@@ -256,8 +256,7 @@ class WizardController extends AbstractWizardController
     public function summaryAction()
     {
         $cart = $this->getCurrentCart();
-        $preSummaryAction = $this->preSummaryAction($cart);
-        if($preSummaryAction instanceof Response){
+        if($preSummaryAction = $this->preSummaryAction($cart)){
             return $preSummaryAction;
         }
 
@@ -312,20 +311,19 @@ class WizardController extends AbstractWizardController
         $paymentOptionStrategyService = $cartManager->getSelectedPaymentOptionStrategyService();
         $response = $paymentOptionStrategyService->pay($context, $cart, $cartManager);
 
-        switch (true) {
-        case $response instanceof RedirectResponse:
-            return $response;
-            break;
-        case $response instanceof ErrorRedirectResponse:
-            return new RedirectResponse($this->generateUrl($context->getErrorRouteName(), $response->getParameters()));
-            break;
-        case $response instanceof SelfRedirectResponse:
-            return $this->redirect($this->generateUrl($context->getCurrentRouteName(), $response->getParameters()));
-            break;
-        case $response instanceof PaymentFinishedResponse:
-            return $this->handlePaymentFinishedResponse($response, $context);
-            break;
-
+        switch(true){
+            case $response instanceof RedirectResponse:
+                return $response;
+                break;
+            case $response instanceof ErrorRedirectResponse:
+                return new RedirectResponse($this->generateUrl($context->getErrorRouteName(), $response->getParameters()));
+                break;
+            case $response instanceof SelfRedirectResponse:
+                return $this->redirect($this->generateUrl($context->getCurrentRouteName(), $response->getParameters()));
+                break;
+            case $response instanceof PaymentFinishedResponse:
+                return $this->handlePaymentFinishedResponse($response, $context);
+                break;
         }
 
         throw $this->createNotFoundException("ResponseType for PaymentGateway not found");
