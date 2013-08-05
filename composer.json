@@ -38,15 +38,15 @@
    "repositories": [
         {
             "type": "vcs",
-            "url":  "git://github.com/ibrows/SyliusCartBundle.git"
+            "url":  "git@github.com:ibrows/SyliusCartBundle.git"
         },
         {
             "type": "vcs",
-            "url":  "git://github.com/ibrows/SyliusResourceBundle.git"
+            "url":  "git@github.com:ibrows/SyliusResourceBundle.git"
         },
         {
             "type": "vcs",
-            "url":  "git://github.com/ibrows/SyliusInventoryBundle.git"
+            "url":  "git@github.com:ibrows/SyliusInventoryBundle.git"
         }
     ], 
     "autoload": {
