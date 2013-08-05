@@ -409,6 +409,7 @@ abstract class AbstractWizardController extends AbstractController
             $cart->setDeliveryOptionStrategyServiceData($deliveryOptionStrategyForm->get($deliveryOptioStrategy->getName())->getViewData());
             return true;
         }
+
         return false;
     }
 
