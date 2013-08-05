@@ -18,8 +18,8 @@
         "php": ">=5.3.0",
 
         "sylius/cart-bundle": "dev-ibrows",
-        "sylius/inventory-bundle": "dev-master",
-        "sylius/resource-bundle": "dev-master#627efb99efc564dc0ebad0c29d4eb3b1b74fe13c",
+        "sylius/inventory-bundle": "dev-ibrows",
+        "sylius/resource-bundle": "dev-ibrows",
 
         "friendsofsymfony/user-bundle": "2.0.*@dev",
         "stof/doctrine-extensions-bundle": "dev-master",
