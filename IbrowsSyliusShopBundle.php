@@ -3,6 +3,7 @@
 namespace Ibrows\SyliusShopBundle;
 
 use Ibrows\SyliusShopBundle\DependencyInjection\CompilerPass;
+use JMS\SerializerBundle\JMSSerializerBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -30,6 +31,7 @@ class IbrowsSyliusShopBundle extends Bundle
         return array(
             new \Payment\Bundle\SaferpayBundle\PaymentSaferpayBundle(),
 
+            new \JMS\SerializerBundle\JMSSerializerBundle(),
             new \FOS\UserBundle\FOSUserBundle(),
             new \FOS\RestBundle\FOSRestBundle(),
 
