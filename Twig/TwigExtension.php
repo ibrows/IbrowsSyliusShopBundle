@@ -44,11 +44,7 @@ class TwigExtension extends \Twig_Extension
         return array(
             'getCurrentCartManager' => new \Twig_Function_Method($this, 'getCurrentCartManager'),
             'getCurrentCart' => new \Twig_Function_Method($this, 'getCurrentCart'),
-            'getCurrentCartCurrency' => new \Twig_Function_Method($this, 'getCurrentCartCurrency'),
-            'ibr_render_hinclude' => new \Twig_Function_Method($this, 'renderHinclude', array(
-                'needs_environment' => true,
-                'is_safe' => array('html')
-            )),
+            'getCurrentCartCurrency' => new \Twig_Function_Method($this, 'getCurrentCartCurrency')
         );
     }
 
@@ -74,43 +70,6 @@ class TwigExtension extends \Twig_Extension
     public function getCurrentCartCurrency()
     {
         return $this->currentCartManager->getCart()->getCurrency();
-    }
-
-    /**
-     * @param \Twig_Environment $environment
-     * @param string $uri
-     * @param array $options
-     * @return string
-     */
-    public function renderHinclude(\Twig_Environment $environment, $uri, array $options = array())
-    {
-        // We need to replace ampersands in the URI with the encoded form in order to return valid html/xml content.
-        $uri = str_replace('&', '&amp;', $uri);
-
-        $template = isset($options['default']) ? $options['default'] : $this->defaultHincludeTemplate;
-        if ($template) {
-            $content = $environment->render($template);
-        } else {
-            $content = $template;
-        }
-
-        $attributes = isset($options['attributes']) && is_array($options['attributes']) ? $options['attributes'] : array();
-        if (isset($options['id']) && $options['id']) {
-            $attributes['id'] = $options['id'];
-        }
-
-        $renderedAttributes = '';
-        if (count($attributes) > 0) {
-            foreach($attributes as $attribute => $value) {
-                $renderedAttributes .= sprintf(
-                    ' %s="%s"',
-                    htmlspecialchars($attribute, ENT_QUOTES | ENT_SUBSTITUTE, $this->charset, false),
-                    htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, $this->charset, false)
-                );
-            }
-        }
-
-        return sprintf('<hx:include src="%s"%s>%s</hx:include>', $uri, $renderedAttributes, $content);
     }
 
     /**
