@@ -40,18 +40,25 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
     protected $doCompletePayment;
 
     /**
+     * @var string
+     */
+    protected $testAccountId;
+
+    /**
      * @param Saferpay $saferpay
      * @param PayInitParameterFactory $payInitParameterFactory
      * @param array $paymentMethods
      * @param bool $doCompletePayment
+     * @param string $testAccountId
      */
-    public function __construct(Saferpay $saferpay, PayInitParameterFactory $payInitParameterFactory, array $paymentMethods, $doCompletePayment = true)
+    public function __construct(Saferpay $saferpay, PayInitParameterFactory $payInitParameterFactory, array $paymentMethods, $doCompletePayment = true, $testAccountId = '99867-94913159')
     {
         $this->saferpay = $saferpay;
         $this->payInitParameterFactory = $payInitParameterFactory;
         $this->paymentMethods = $paymentMethods;
         $this->setParentVisible(false);
         $this->setDoCompletePayment($doCompletePayment);
+        $this->setTestAccountId($testAccountId);
     }
 
     /**
@@ -225,7 +232,7 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
         $providerSet = null;
 
         if($this->isTestMode()){
-            $payInitParameter->setAccountid('99867-94913159');
+            $payInitParameter->setAccountid($this->getTestAccountId());
             $payInitParameter->setPaymentmethods(array($payInitParameter::PAYMENTMETHOD_SAFERPAY_TESTCARD));
         }else{
             $serviceData = $cart->getPaymentOptionStrategyServiceData();
@@ -260,5 +267,23 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
         }
 
         return $payInitParameter;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTestAccountId()
+    {
+        return $this->testAccountId;
+    }
+
+    /**
+     * @param string $testAccountId
+     * @return SaferpayPaymentOptionCartStrategy
+     */
+    public function setTestAccountId($testAccountId)
+    {
+        $this->testAccountId = $testAccountId;
+        return $this;
     }
 }
