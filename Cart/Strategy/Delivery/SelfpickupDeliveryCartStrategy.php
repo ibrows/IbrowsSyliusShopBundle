@@ -15,11 +15,18 @@ class SelfpickupDeliveryCartStrategy extends AbstractDeliveryCartStrategy
     protected $stores;
 
     /**
-     * @param array $stores
+     * @var string
      */
-    public function __construct(array $stores = array())
+    protected $defaultStore;
+
+    /**
+     * @param array $stores
+     * @param string $defaultStore
+     */
+    public function __construct(array $stores = array(), $defaultStore = null)
     {
         $this->stores = $stores;
+        $this->setDefaultStore($defaultStore);
     }
 
     /**
@@ -32,11 +39,33 @@ class SelfpickupDeliveryCartStrategy extends AbstractDeliveryCartStrategy
 
     /**
      * @param array $stores
-     * @return SelfpickupDeliveryCartStrategy
+     * @return SelfpickupDeliveryCartStrategy|$this
      */
     public function setStores($stores)
     {
         $this->stores = $stores;
+
+        return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getDefaultStore()
+    {
+        return $this->defaultStore;
+    }
+
+    /**
+     * @param $defaultStore
+     * @return SelfpickupDeliveryCartStrategy|$this
+     */
+    public function setDefaultStore($defaultStore)
+    {
+        if (array_key_exists($defaultStore, $this->getStores())) {
+            $this->defaultStore = $defaultStore;
+        }
+
         return $this;
     }
 
@@ -58,23 +87,28 @@ class SelfpickupDeliveryCartStrategy extends AbstractDeliveryCartStrategy
     public function compute(CartInterface $cart, CartManager $cartManager)
     {
         $data = $cart->getDeliveryOptionStrategyServiceData();
-        if(!isset($data['store'])){
+        if (!isset($data['store'])) {
             $this->removeStrategy($cart);
+
             return array();
         }
 
         $store = $data['store'];
         $costs = $this->getCostsForStore($store, $cart, $cartManager);
 
-        if($costs){
+        if ($costs) {
             $item = $this->createAdditionalCartItem($costs);
             $item->setText($this->getItemText($store, $costs, $cart, $cartManager));
-            $item->setStrategyData(array(
-                'store' => $store,
-                'costs' => $costs
-            ));
+            $item->setStrategyData(
+                array(
+                    'store' => $store,
+                    'costs' => $costs
+                )
+            );
+
             return array($item);
         }
+
         return array();
     }
 
@@ -84,11 +118,16 @@ class SelfpickupDeliveryCartStrategy extends AbstractDeliveryCartStrategy
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        if($this->stores){
-            $builder->add('store', 'choice', array(
-                'choices' => $this->stores,
-                'expanded' => true
-            ));
+        if ($this->stores) {
+            $builder->add(
+                'store',
+                'choice',
+                array(
+                    'choices'  => $this->stores,
+                    'data' => $this->defaultStore,
+                    'expanded' => true
+                )
+            );
         }
     }
 
