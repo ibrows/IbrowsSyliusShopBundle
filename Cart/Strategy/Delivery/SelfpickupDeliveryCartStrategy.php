@@ -38,6 +38,19 @@ class SelfpickupDeliveryCartStrategy extends AbstractDeliveryCartStrategy
     }
 
     /**
+     * @param CartInterface $cart
+     * @return string
+     */
+    public function getStore(CartInterface $cart)
+    {
+        $data = $cart->getDeliveryOptionStrategyServiceData();
+        if(!isset($data['store'])){
+            return null;
+        }
+        return isset($this->stores[$data['store']]) ? $this->stores[$data['store']] : null;
+    }
+
+    /**
      * @param array $stores
      * @return SelfpickupDeliveryCartStrategy|$this
      */

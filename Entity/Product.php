@@ -5,7 +5,7 @@ namespace Ibrows\SyliusShopBundle\Entity;
 use Ibrows\SyliusShopBundle\Model\Product\ProductInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
-use DateTime;
+use Ibrows\Bundle\SonataAdminAnnotationBundle\Annotation as Sonata;
 
 /**
  * @ORM\MappedSuperclass
@@ -17,6 +17,7 @@ abstract class Product implements ProductInterface
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @Sonata\Order\FormMapperExclude
      */
     protected $id;
 
@@ -31,6 +32,7 @@ abstract class Product implements ProductInterface
     /**
      * @var bool
      * @ORM\Column(type="boolean")
+     * @Sonata\FormMapper(options={"required"=false})
      */
     protected $availableOnDemand = false;
 
@@ -64,7 +66,7 @@ abstract class Product implements ProductInterface
     /**
      * Available on.
      * @ORM\Column(type="datetime")
-     * @var DateTime
+     * @var \DateTime
      */
     protected $availableOn;
 
@@ -85,21 +87,21 @@ abstract class Product implements ProductInterface
     /**
      * Creation time.
      * @ORM\Column(type="datetime")
-     * @var DateTime
+     * @var \DateTime
      */
     protected $createdAt;
 
     /**
      * Last update time.
      * @ORM\Column(type="datetime", nullable=true)
-     * @var DateTime
+     * @var \DateTime
      */
     protected $updatedAt;
 
     /**
      * Deletion time.
      * @ORM\Column(type="datetime", nullable=true)
-     * @var DateTime
+     * @var \DateTime
      */
     protected $deletedAt;
 
@@ -236,6 +238,26 @@ abstract class Product implements ProductInterface
     public function getCreatedAt()
     {
         return $this->createdAt;
+    }
+
+    /**
+     * @param \DateTime $createdAt
+     * @return Product
+     */
+    public function setCreatedAt(\DateTime $createdAt = null)
+    {
+        $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    /**
+     * @param \DateTime $updatedAt
+     * @return Product
+     */
+    public function setUpdatedAt(\DateTime $updatedAt = null)
+    {
+        $this->updatedAt = $updatedAt;
+        return $this;
     }
 
     /**

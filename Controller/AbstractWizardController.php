@@ -255,11 +255,13 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param CartInterface $cart
+     * @return null|Response
      */
     protected function preSummaryAction(CartInterface $cart)
     {
         $cart->setTermsAndConditions(false);
         $this->persistCurrentCart();
+        return null;
     }
 
     /**
@@ -407,6 +409,7 @@ abstract class AbstractWizardController extends AbstractController
             $cart->setDeliveryOptionStrategyServiceData($deliveryOptionStrategyForm->get($deliveryOptioStrategy->getName())->getViewData());
             return true;
         }
+
         return false;
     }
 
