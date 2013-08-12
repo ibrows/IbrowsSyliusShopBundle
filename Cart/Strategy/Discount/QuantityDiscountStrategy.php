@@ -1,6 +1,7 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Cart\Strategy\Discount;
+
 use Ibrows\SyliusShopBundle\Cart\CartManager;
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
@@ -47,6 +48,11 @@ class QuantityDiscountStrategy extends AbstractCartStrategy
         $this->totalMethod = $totalMethod;
     }
 
+    /**
+     * @param CartInterface $cart
+     * @param CartManager $cartManager
+     * @return bool
+     */
     public function accept(CartInterface $cart, CartManager $cartManager)
     {
         return true;
@@ -106,6 +112,10 @@ class QuantityDiscountStrategy extends AbstractCartStrategy
         return array();
     }
 
+    /**
+     * @param CartInterface $cart
+     * @return int
+     */
     protected function getQuantity(CartInterface $cart)
     {
 

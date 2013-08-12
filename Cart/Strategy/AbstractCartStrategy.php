@@ -93,6 +93,7 @@ abstract class AbstractCartStrategy implements CartStrategyInterface
 
     /**
      * @param boolean $taxincl
+     * @return AbstractCartStrategy
      */
     public function setTaxincl($taxincl)
     {
@@ -101,9 +102,11 @@ abstract class AbstractCartStrategy implements CartStrategyInterface
     }
 
     /**
+     * @param int $price
+     * @param string $text
      * @return AdditionalCartItemInterface
      */
-    protected function createAdditionalCartItem($price = 0)
+    protected function createAdditionalCartItem($price = 0, $text = null)
     {
         $className = $this->additionalCartItemRepo->getClassName();
 
@@ -114,6 +117,7 @@ abstract class AbstractCartStrategy implements CartStrategyInterface
             $item->setPriceWithTax($price);
         else
             $item->setPrice($price);
+        $item->setText($text?:$this->getServiceId());
         return $item;
     }
 
