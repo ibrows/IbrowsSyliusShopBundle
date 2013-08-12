@@ -21,7 +21,7 @@ abstract class AbstractCartFormStrategy extends AbstractCartStrategy implements 
     /**
      * @var string
      */
-    protected $defaultTranslationDomain = "Forms";
+    protected $defaultTranslationDomain = "messages";
 
     /**
      * @return bool
