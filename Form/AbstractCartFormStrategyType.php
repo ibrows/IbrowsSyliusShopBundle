@@ -46,7 +46,7 @@ abstract class AbstractCartFormStrategyType extends AbstractType
         );
 
         if($data){
-            $options['data'] = $data;
+            $options['empty_data'] = $data;
         }
 
         $builder->add('strategyServiceId', 'choice', $options);
