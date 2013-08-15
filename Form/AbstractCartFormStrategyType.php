@@ -31,25 +31,25 @@ abstract class AbstractCartFormStrategyType extends AbstractType
         $strategies = $this->getStrategies();
 
         $choices = array();
-        $data = null;
+        $default = null;
         foreach($strategies as $strategy){
             $choices[$strategy->getServiceId()] = $strategy;
             if($strategy instanceof CartDefaultOptionStrategyInterface && $strategy->isDefault()){
-                $data = $strategy->getServiceId();
+                $default = $strategy->getServiceId();
             }
         }
 
-        $options = array(
+        $strategyOptions = array(
             'choices' => $choices,
             'multiple' => false,
             'expanded' => true
         );
 
-        if($data){
-            $options['empty_data'] = $data;
+        if($default && (!isset($options['data']) OR $options['data'] == null)){
+            $strategyOptions['data'] = $default;
         }
 
-        $builder->add('strategyServiceId', 'choice', $options);
+        $builder->add('strategyServiceId', 'choice', $strategyOptions);
 
         foreach($strategies as $strategy){
             $builder->add($strategy->getName(), $strategy);
