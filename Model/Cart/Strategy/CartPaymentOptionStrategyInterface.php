@@ -12,7 +12,7 @@ use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\PaymentFinishedRespon
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\ErrorRedirectResponse;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\SelfRedirectResponse;
 
-interface CartPaymentOptionStrategyInterface extends CartStrategyInterface, CartFormStrategyInterface
+interface CartPaymentOptionStrategyInterface extends CartStrategyInterface, CartFormStrategyInterface, CartDefaultOptionStrategyInterface
 {
     /**
      * @param Context $context

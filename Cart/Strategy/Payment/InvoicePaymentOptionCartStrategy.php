@@ -5,6 +5,7 @@ namespace Ibrows\SyliusShopBundle\Cart\Strategy\Payment;
 use Ibrows\SyliusShopBundle\Cart\CartManager;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\ErrorRedirectResponse;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\PaymentFinishedResponse;
+use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartDefaultOptionStrategyInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\SelfRedirectResponse;
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
