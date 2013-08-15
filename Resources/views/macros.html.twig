@@ -1,0 +1,18 @@
+{% macro renderStrategyOptionForm(strategyOptionForm) %}
+    <div class="strategies" data-strategies>
+        {{ form_errors(strategyOptionForm) }}
+        {% for choicekey, choice in strategyOptionForm.strategyServiceId.vars.choices %}
+            {% set strategy = choice.label %}
+            {% set strategyChoice = strategyOptionForm.strategyServiceId[choicekey] %}
+            <div class="strategy" data-strategy>
+                <div class="parent" data-parent {% if strategy.parentVisible != true %}style="display:none"{% endif %}>
+                    {{ form_row(strategyChoice) }}
+                </div>
+                <div class="child" data-child {% if strategy.parentVisible != true %}data-parent-inactiv="true"{% endif %}>
+                    {{ form_widget(strategyOptionForm[strategy.name]) }}
+                </div>
+            </div>
+        {% endfor %}
+        {{ form_rest(strategyOptionForm) }}
+    </div>
+{% endmacro %}
