@@ -8,7 +8,7 @@
                 <div class="parent" data-parent {% if strategy.parentVisible != true %}style="display:none"{% endif %}>
                     {{ form_row(strategyChoice) }}
                 </div>
-                <div class="child" data-child {% if strategy.parentVisible != true %}data-parent-inactiv="true"{% endif %}>
+                <div class="child" data-child>
                     {{ form_widget(strategyOptionForm[strategy.name]) }}
                 </div>
             </div>

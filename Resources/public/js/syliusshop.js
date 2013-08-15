@@ -1,3 +1,32 @@
+function syliusshop_registerCartEvents(cartContainerId, defaultQuantity){
+    var doc = $(document);
+
+    defaultQuantity = parseInt(defaultQuantity);
+    if(defaultQuantity <= 0 || !defaultQuantity){
+        defaultQuantity = 1;
+    }
+
+    doc.on('syliusshop.cart.changed', function(){
+        if(typeof hinclude != 'undefined'){
+            hinclude.refresh(cartContainerId);
+        }
+    });
+
+    doc.on('click', '[data-item-add-action]', function(e){
+        e.preventDefault();
+
+        var item = $(this);
+
+        $.post(item.attr('href'), {
+            itemId: item.data('item-add-action'),
+            quantity: syliusshop_getItemQuantity(item, defaultQuantity)
+        }, function(data, textStatus){
+            var eventName = textStatus == 'success' ? 'syliusshop.cart.changed' : 'syliusshop.cart.item.error';
+            doc.trigger(eventName, [data, textStatus]);
+        });
+    });
+}
+
 function syliusshop_registerStrategyServiceForm(form){
     var strategies = form.find('[data-strategies]');
 
@@ -40,37 +69,8 @@ function syliusshop_registerStrategyServiceForm(form){
         $(this)
             .closest('[data-strategy]')
             .find('[data-parent] :input')
-            .prop('checked', true)
+            .removeProp('checked')
             .change();
-    });
-}
-
-function syliusshop_registerCartEvents(cartContainerId, defaultQuantity){
-    var doc = $(document);
-
-    defaultQuantity = parseInt(defaultQuantity);
-    if(defaultQuantity <= 0 || !defaultQuantity){
-        defaultQuantity = 1;
-    }
-
-    doc.on('syliusshop.cart.changed', function(){
-        if(typeof hinclude != 'undefined'){
-            hinclude.refresh(cartContainerId);
-        }
-    });
-
-    doc.on('click', '[data-item-add-action]', function(e){
-        e.preventDefault();
-
-        var item = $(this);
-
-        $.post(item.attr('href'), {
-            itemId: item.data('item-add-action'),
-            quantity: syliusshop_getItemQuantity(item, defaultQuantity)
-        }, function(data, textStatus){
-            var eventName = textStatus == 'success' ? 'syliusshop.cart.changed' : 'syliusshop.cart.item.error';
-            doc.trigger(eventName, [data, textStatus]);
-        });
     });
 }
 
