@@ -33,12 +33,12 @@ abstract class AbstractDeliveryCartStrategy extends AbstractCartFormStrategy imp
     }
 
     /**
-     * @param boolean $default
+     * @param boolean $flag
      * @return AbstractDeliveryCartStrategy
      */
-    public function setDefault($default)
+    public function setDefault($flag = true)
     {
-        $this->default = $default;
+        $this->default = $flag;
         return $this;
     }
 

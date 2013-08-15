@@ -3,6 +3,7 @@
 namespace Ibrows\SyliusShopBundle\Form;
 
 use Ibrows\SyliusShopBundle\Cart\CartManager;
+use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartDefaultOptionStrategyInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartFormStrategyInterface;
 
@@ -30,15 +31,25 @@ abstract class AbstractCartFormStrategyType extends AbstractType
         $strategies = $this->getStrategies();
 
         $choices = array();
+        $data = null;
         foreach($strategies as $strategy){
             $choices[$strategy->getServiceId()] = $strategy;
+            if($strategy instanceof CartDefaultOptionStrategyInterface && $strategy->isDefault()){
+                $data = $strategy->getServiceId();
+            }
         }
 
-        $builder->add('strategyServiceId', 'choice', array(
+        $options = array(
             'choices' => $choices,
             'multiple' => false,
             'expanded' => true
-        ));
+        );
+
+        if($data){
+            $options['data'] = $data;
+        }
+
+        $builder->add('strategyServiceId', 'choice', $options);
 
         foreach($strategies as $strategy){
             $builder->add($strategy->getName(), $strategy);

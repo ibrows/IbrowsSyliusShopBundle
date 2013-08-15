@@ -3,21 +3,11 @@
 namespace Ibrows\SyliusShopBundle\Model\Cart\Strategy;
 
 use Ibrows\SyliusShopBundle\Cart\CartManager;
+use Ibrows\SyliusShopBundle\Cart\Strategy\DefaultOptionCartStrategyInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 
-interface CartDeliveryOptionStrategyInterface extends CartStrategyInterface, CartFormStrategyInterface
+interface CartDeliveryOptionStrategyInterface extends CartStrategyInterface, CartFormStrategyInterface, CartDefaultOptionStrategyInterface
 {
-    /**
-     * @param bool $flag
-     * @return CartDeliveryOptionStrategyInterface
-     */
-    public function setDefault($flag);
-
-    /**
-     * @return bool
-     */
-    public function isDefault();
-
     /**
      * @return mixed
      */
