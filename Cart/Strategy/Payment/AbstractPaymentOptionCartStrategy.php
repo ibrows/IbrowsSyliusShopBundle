@@ -21,6 +21,11 @@ abstract class AbstractPaymentOptionCartStrategy extends AbstractCartFormStrateg
     protected $testMode = false;
 
     /**
+     * @var bool
+     */
+    protected $default;
+
+    /**
      * @return RouterInterface
      * @throws \Exception
      */
@@ -30,6 +35,24 @@ abstract class AbstractPaymentOptionCartStrategy extends AbstractCartFormStrateg
             throw new \Exception("Set Router first");
         }
         return $this->router;
+    }
+
+    /**
+     * @param bool $flag
+     * @return AbstractPaymentOptionCartStrategy
+     */
+    public function setDefault($flag = true)
+    {
+        $this->default = $flag;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDefault()
+    {
+        return (bool)$this->default;
     }
 
     /**

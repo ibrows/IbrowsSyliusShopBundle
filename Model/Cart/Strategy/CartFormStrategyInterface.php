@@ -6,7 +6,7 @@ use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Ibrows\SyliusShopBundle\Cart\CartManager;
 use Symfony\Component\Form\FormTypeInterface;
 
-interface CartFormStrategyInterface extends CartStrategyInterface, FormTypeInterface
+interface CartFormStrategyInterface extends CartStrategyInterface, FormTypeInterface, CartDefaultOptionStrategyInterface
 {
     /**
      * @param CartInterface $cart
