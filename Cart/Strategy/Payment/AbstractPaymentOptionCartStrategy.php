@@ -90,7 +90,17 @@ abstract class AbstractPaymentOptionCartStrategy extends AbstractCartFormStrateg
      */
     public function accept(CartInterface $cart, CartManager $cartManager)
     {
-        return $cart->getPaymentOptionStrategyServiceId() == $this->getServiceId();
+        $selectedServiceId = $cart->getPaymentOptionStrategyServiceId();
+        if($selectedServiceId == $this->getServiceId()){
+            return true;
+        }
+
+        if(!$selectedServiceId && $this->isDefault()){
+            $cart->setPaymentOptionStrategyServiceId($this->getServiceId());
+            return true;
+        }
+
+        return false;
     }
 
     /**
