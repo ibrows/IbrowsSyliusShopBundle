@@ -112,6 +112,25 @@ class CartManager
     }
 
     /**
+     * @param array|\Traversable $strategies
+     * @return CartManager
+     * @throws \InvalidArgumentException
+     */
+    public function setStrategies($strategies)
+    {
+        if(!is_array($strategies) && !$strategies instanceof \Traversable){
+            throw new \InvalidArgumentException("strategies has to implement Traversable or array");
+        }
+        foreach($this->getStrategies() as $strategy){
+            $this->removeStrategy($strategy);
+        }
+        foreach($strategies as $strategy){
+            $this->addStrategy($strategy);
+        }
+        return $this;
+    }
+
+    /**
      * @param CartStrategyInterface $strategy
      * @return CartManager
      */
