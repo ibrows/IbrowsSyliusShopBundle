@@ -27,6 +27,29 @@ function syliusshop_registerCartEvents(cartContainerId, defaultQuantity){
     });
 }
 
+function syliusshop_registerInvoiceSameAsDelivery()
+{
+    var addressDelivery = $('[data-deliveryaddress]');
+    var addressDeliveryInputs = addressDelivery.find(':input');
+
+    if($('[data-invoicesameasdelivery] input:checked').val() == "1"){
+        addressDeliveryInputs.prop("disabled", "disabled");
+        addressDelivery.hide();
+    }else{
+        addressDeliveryInputs.removeProp("disabled");
+    }
+
+    $('[data-invoicesameasdelivery] input').click(function(e){
+        if($('[data-invoicesameasdelivery] input:checked').val() == "1"){
+            addressDeliveryInputs.prop("disabled", "disabled");
+            addressDelivery.slideUp();
+        }else{
+            addressDeliveryInputs.removeProp("disabled");
+            addressDelivery.slideDown();
+        }
+    });
+}
+
 function syliusshop_registerStrategyServiceForm(form){
     var strategies = form.find('[data-strategies]');
 
