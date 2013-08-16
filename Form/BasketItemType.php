@@ -13,11 +13,18 @@ class BasketItemType extends AbstractType
     protected $dataClass;
 
     /**
-     * @param string $dataClass
+     * @var string
      */
-    public function __construct($dataClass)
+    protected $quantityType;
+
+    /**
+     * @param string $dataClass
+     * @param string $quantityType
+     */
+    public function __construct($dataClass, $quantityType = 'integer')
     {
         $this->dataClass = $dataClass;
+        $this->quantityType = $quantityType;
     }
 
     /**
@@ -27,7 +34,7 @@ class BasketItemType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('quantity')
+            ->add('quantity', $this->quantityType)
         ;
     }
 

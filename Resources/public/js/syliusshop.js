@@ -324,48 +324,45 @@
      * Strategy Form Handler
      * @param jQuery form
      */
-    this.registerStrategyFormHandler = function(form){
+    this.registerStrategyServiceFormHandler = function(form){
         self.log('syliusShop.registerStrategyFormHandler');
 
         var strategies = form.find('[data-strategies]');
 
         strategies
-            .find('[data-parent]:visible :input:not(:checked)')
+            .find('[data-strategy] [data-parent]:visible :input:not(:checked)')
             .closest('[data-strategy]')
             .find('[data-child]')
             .hide();
 
         form.find(':submit').click(function(e){
+            self.log('StrategyChoice Form submit -> disable all unneeded inputs');
             strategies
-                .find('[data-parent] :input:not(:checked)')
+                .find('[data-strategy] [data-parent] :input:not(:checked)')
                 .closest('[data-strategy]')
                 .find('[data-child] :input')
                 .prop('disabled', 'disabled');
         });
 
-        var strategieChoices = strategies.find('[data-parent] :input');
+        var strategieChoiceParentInputs = strategies.find('[data-strategy] [data-parent] :input');
 
-        strategieChoices.change(function(){
-            self.log('StrategyChoice Parent changed');
-            strategieChoices.each(function(){
+        strategieChoiceParentInputs.change(function(){
+            self.log('StrategyChoice Parent Input changed');
+            strategieChoiceParentInputs.each(function(){
                 var elem = $(this);
 
                 var elemIsChecked = elem.is(':checked');
+
                 var childForm = elem.closest('[data-strategy]').find('[data-child]');
 
-                self.log(childForm);
                 if(elemIsChecked || elem.closest('[data-parent]').is(':hidden')){
-                    self.log('Show');
                     childForm.show();
                 }else{
-                    self.log('Hide');
                     childForm.hide();
                 }
 
                 if(!elemIsChecked){
                     var inputs = childForm.find(':input');
-                    self.log('uncheck:');
-                    self.log(inputs);
                     childForm.find(':input').prop('checked', false);
                 }
             });
@@ -376,7 +373,7 @@
             $(this)
                 .closest('[data-strategy]')
                 .find('[data-parent] :input')
-                .removeProp('checked')
+                .prop('checked', 'checked')
                 .change();
         });
     };
