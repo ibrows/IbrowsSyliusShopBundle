@@ -47,7 +47,7 @@ class WizardController extends AbstractWizardController
                 $basketForm = $this->createForm($this->getBasketType(), $cart);
             }
 
-            $basketForm->bind($request);
+            $basketForm->submit($request);
             if ($basketForm->isValid()) {
                 $this->persistCurrentCart();
                 $basketForm = $this->createForm($this->getBasketType(), $cart);
@@ -222,7 +222,7 @@ class WizardController extends AbstractWizardController
         $paymentOptionStrategyForm = $this->createForm($this->getPaymentOptionStrategyType($cartManager), $paymentOptionStrategyFormData);
 
         if ("POST" == $request->getMethod()) {
-            $paymentOptionStrategyForm->bind($request);
+            $paymentOptionStrategyForm->submit($request);
             if ($paymentOptionStrategyForm->isValid()) {
                 $paymentOptionStrategyServiceId = $paymentOptionStrategyForm->get('strategyServiceId')->getData();
                 $paymentOptionStrategy = $cartManager->getPossiblePaymentOptionStrategyById($paymentOptionStrategyServiceId);
@@ -265,7 +265,7 @@ class WizardController extends AbstractWizardController
         $request = $this->getRequest();
 
         if ('POST' === $request->getMethod()) {
-            $summaryForm->bind($request);
+            $summaryForm->submit($request);
             if ($summaryForm->isValid()) {
                 $this->persistCurrentCart();
                 return $this->redirect($this->getWizard()->getNextStepUrl());
