@@ -14,29 +14,33 @@
             },
             'cartItemAdd': {
                 'dataSelector': 'cart-item-add-action',
-                'eventName': 'syliusshop.cart.item.add',
+                'eventName': 'syliusshop.cart.item.doadd',
                 'dataQuantity': 'quantity',
                 'dataItemAddContainer': 'item-add-container',
                 'dataItemAddInputSelector': 'item-add-input',
                 'defaultQuantity': 1,
-                'errorEventName': 'syliusshop.cart.item.add.error'
+                'eventErrorName': 'syliusshop.cart.item.adderror',
+                'eventSuccessName': 'syliusshop.cart.item.addsuccess'
             },
             'watchlistItemAdd': {
                 'dataSelector': 'watchlist-item-add-action',
-                'eventName': 'syliusshop.watchlist.item.add',
-                'errorEventName': 'syliusshop.watchlist.item.add.error'
+                'eventName': 'syliusshop.watchlist.item.doadd',
+                'eventErrorName': 'syliusshop.watchlist.item.adderror',
+                'eventSuccessName': 'syliusshop.watchlist.item.addsuccess'
             },
             'watchlistItemRemove': {
                 'dataSelector': 'watchlist-item-remove-action',
-                'eventName': 'syliusshop.watchlist.item.remove',
-                'errorEventName': 'syliusshop.watchlist.item.remove.error'
+                'eventName': 'syliusshop.watchlist.item.doremove',
+                'eventErrorName': 'syliusshop.watchlist.item.removeerror',
+                'eventSuccessName': 'syliusshop.watchlist.item.removesuccess',
+                'dataContainerRemoveSelect': 'watchlist-remove-container'
             },
             'quantityChange': {
                 'dataSelector': 'quantity-change',
                 'eventName': 'syliusshop.quantity.change',
                 'dataContainerSelector': 'quantity-change-container',
                 'dataInputSelector': 'quantity-input-container',
-                'inputSelector': 'input',
+                'inputSelector': 'input'
             }
         },
         strategy: {
@@ -244,24 +248,29 @@
         var doc = self.doc;
         var settings = self.settings;
 
-        doc.on(settings.actions.cartChanged.eventName, function(e){
+        doc.on(settings.actions.cartItemAdd.eventSuccessName, function(e, data, textStatus, url, itemId, quantity, item){
             if(typeof self.hinclude == 'undefined'){
                 self.log('hinclude lib not found');
                 return;
             }
             self.log('refresh hinclude id '+ settings.hinclude.cartId);
             self.hinclude.refresh(settings.hinclude.cartId);
+
+            self.trigger(settings.actions.cartChanged.eventName, [data, textStatus, url, itemId, quantity, item]);
         });
 
-        doc.on(settings.actions.cartItemAdd.eventName, function(e, url, itemId, quantity){
+        doc.on(settings.actions.cartItemAdd.eventName, function(e, url, itemId, quantity, item){
             self.log('POST to '+ url +' with itemId '+ itemId + ' with quantity '+ quantity);
             $.post(url, {
                 itemId: itemId,
                 quantity: quantity
             }, function(data, textStatus){
                 self.log('Response received');
-                var eventName = textStatus == 'success' ? settings.actions.cartChanged.eventName : settings.actions.cartItemAdd.errorEventName;
-                self.trigger(eventName, [data, textStatus]);
+                if(textStatus == "success"){
+                    self.trigger(settings.actions.cartItemAdd.eventSuccessName, [data, textStatus, url, itemId, quantity, item]);
+                }else{
+                    self.trigger(settings.actions.cartItemAdd.eventErrorName, [data, textStatus, url, itemId, quantity, item]);
+                }
             });
         });
     };
@@ -270,31 +279,44 @@
      * Watchlist Listeners
      * - ItemAdd = Post to Url, trigger watchlist changed event or itemAdd error event
      * - ItemRemove = Post to Url, trigger watchlist changed event or itemRemove error event
+     * - ItemRemoveSuccess = Remove Container from DOM
      */
     this.registerWatchlistListener = function(){
         var doc = self.doc;
         var settings = self.settings;
 
-        doc.on(settings.actions.watchlistItemAdd.eventName, function(e, url, itemId){
+        doc.on(settings.actions.watchlistItemAdd.eventName, function(e, url, itemId, item){
             self.log('POST to '+ url +' with itemId '+ itemId);
             $.post(url, {
                 itemId: itemId
             }, function(data, textStatus){
                 self.log('Response received');
-                var eventName = textStatus == 'success' ? settings.actions.watchlistChanged.eventName : settings.actions.watchlistItemAdd.errorEventName;
-                self.trigger(eventName, [data, textStatus]);
+                if(textStatus == "success"){
+                    self.trigger(settings.actions.watchlistItemAdd.eventSuccessName, [data, textStatus, url, itemId, item]);
+                }else{
+                    self.trigger(settings.actions.watchlistItemAdd.eventErrorName, [data, textStatus, url, itemId, item]);
+                }
             });
         });
 
-        doc.on(settings.actions.watchlistItemRemove.eventName, function(e, url, itemId){
+        doc.on(settings.actions.watchlistItemRemove.eventName, function(e, url, itemId, item){
             self.log('POST to '+ url +' with itemId '+ itemId);
             $.post(url, {
                 itemId: itemId
             }, function(data, textStatus){
                 self.log('Response received');
-                var eventName = textStatus == 'success' ? settings.actions.watchlistChanged.eventName : settings.actions.watchlistItemRemove.errorEventName;
-                doc.trigger(eventName, [data, textStatus]);
+                if(textStatus == "success"){
+                    self.trigger(settings.actions.watchlistItemRemove.eventSuccessName, [data, textStatus, url, itemId, item]);
+                }else{
+                    self.trigger(settings.actions.watchlistItemRemove.eventErrorName, [data, textStatus, url, itemId, item]);
+                }
             });
+        });
+
+        doc.on(settings.actions.watchlistItemRemove.eventSuccessName, function(e, data, textStatus, url, itemId, item){
+            var selector = '[data-'+ settings.actions.watchlistItemRemove.dataContainerRemoveSelect +']';
+            self.log('remove closest to item container from dom: '+ selector);
+            item.closest(selector).remove();
         });
     };
 
@@ -331,7 +353,7 @@
                 var elemIsChecked = elem.is(':checked');
                 var childForm = elem.closest('[data-strategy]').find('[data-child]');
 
-                console.log(childForm);
+                self.log(childForm);
                 if(elemIsChecked || elem.closest('[data-parent]').is(':hidden')){
                     self.log('Show');
                     childForm.show();
