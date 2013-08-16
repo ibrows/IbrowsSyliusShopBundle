@@ -26,8 +26,6 @@
                 'dataSelector': 'cart-item-add-action',
                 'eventName': 'syliusshop.cart.item.doadd',
                 'dataQuantity': 'quantity',
-                'dataItemAddContainer': 'item-add-container',
-                'dataItemAddInputSelector': 'item-add-input',
                 'defaultQuantity': 1,
                 'eventErrorName': 'syliusshop.cart.item.adderror',
                 'eventSuccessName': 'syliusshop.cart.item.addsuccess'
@@ -66,7 +64,7 @@
 
     /**
      * Helper for log
-     * @param mixed msg
+     * @param {mixed} msg
      */
     this.log = function(msg){
         if(!self.settings.log == true){
@@ -77,8 +75,8 @@
 
     /**
      * Helper for log events
-     * @param string eventName
-     * @param array parameters
+     * @param {string} eventName
+     * @param {array} parameters
      */
     this.trigger = function(eventName, parameters){
         self.log('syliusShop.trigger -> '+ eventName);
@@ -89,7 +87,7 @@
 
     /**
      * Merge Settings with given Options
-     * @param object options
+     * @param {object} options
      */
     this.setup = function(options){
         self.settings = $.extend({}, this.settings, options);
@@ -104,10 +102,13 @@
         self.registerEvents();
         self.registerListeners();
         self.registerHandlers();
-    }
+    };
 
     /**
      * Register all Events
+     * - Cart Events
+     * - Watchlist Events
+     * - QuantityChange Events
      */
     this.registerEvents = function(){
         self.log('syliusShop.registerEvents')
@@ -171,26 +172,17 @@
         self.log('syliusShop.registerWatchlistEvents');
 
         var doc = self.doc;
-        var settings = self.settings;
 
-        doc.on('click', '[data-'+settings.actions.watchlistItemAdd.dataSelector+']', function(e){
-            e.preventDefault();
+        $.each([self.settings.actions.watchlistItemAdd, self.settings.actions.watchlistItemRemove], function(index, settings){
+            doc.on('click', '[data-'+settings.dataSelector+']', function(e){
+                e.preventDefault();
 
-            var item = $(this);
-            var url = item.attr('href');
-            var itemId = item.data(settings.actions.watchlistItemAdd.dataSelector);
+                var item = $(this);
+                var url = item.attr('href');
+                var itemId = item.data(settings.dataSelector);
 
-            self.trigger(settings.actions.watchlistItemAdd.eventName, [url, itemId, item]);
-        });
-
-        doc.on('click', '[data-'+settings.actions.watchlistItemRemove.dataSelector+']', function(e){
-            e.preventDefault();
-
-            var item = $(this);
-            var url = item.attr('href');
-            var itemId = item.data(settings.actions.watchlistItemRemove.dataSelector);
-
-            self.trigger(settings.actions.watchlistItemRemove.eventName, [url, itemId, item]);
+                self.trigger(settings.eventName, [url, itemId, item]);
+            });
         });
     };
 
@@ -202,55 +194,56 @@
         self.log('syliusShop.registerQuantityChangeEvents');
 
         var doc = self.doc;
-        var settings = self.settings;
+        var settings = self.settings.actions.quantityChange;
 
-        doc.on('click', '[data-'+settings.actions.quantityChange.dataSelector+']', function(e){
+        doc.on('click', '[data-'+settings.dataSelector+']', function(e){
             e.preventDefault();
 
             var elem = $(this);
             var quantityInput = elem
-                .closest('[data-'+ settings.actions.quantityChange.dataContainerSelector +']')
-                .find('[data-'+ settings.actions.quantityChange.dataInputSelector +'] '+ settings.actions.quantityChange.dataInputSelector);
+                .closest('[data-'+ settings.dataContainerSelector +']')
+                .find('[data-'+ settings.dataInputSelector +'] '+ settings.inputSelector +':first');
 
-            var quantityChange = parseInt(elem.data(settings.actions.quantityChange.dataSelector));
+            var quantityChange = parseInt(elem.data(settings.dataSelector));
             var newQuantity = parseInt(quantityInput.val())+quantityChange;
 
             if(newQuantity < 0){
                 newQuantity = 0;
             }
 
-            self.trigger(settings.actions.quantityChange.eventName, [quantityInput, newQuantity]);
+            self.trigger(settings.eventName, [quantityInput, newQuantity]);
         });
     };
 
     /**
      * Evaluate ItemQuantity for add Item to Cart
-     * @param jQuery item
+     * @param {jQuery} item
      * @returns int
      */
     this.getItemQuantity = function(item){
         self.log('syliusShop.getItemQuantity:');
 
-        var settings = self.settings;
-        var itemActionQuantity = parseInt(item.data(settings.actions.cartItemAdd.dataQuantity));
+        var settings = self.settings.actions.cartItemAdd;
+        var itemActionQuantity = parseInt(item.data(settings.dataQuantity));
 
         if(itemActionQuantity >= 1){
-            self.log(itemActionQuantity);
+            self.log('Found quantity on action item: '+itemActionQuantity);
             return itemActionQuantity;
         }
 
+        var quantityChangeSettings = self.settings.actions.quantityChange;
         var itemInput = item
-            .closest('[data-'+ settings.actions.cartItemAdd.dataItemAddContainer +']')
-            .find('[data-'+ settings.actions.cartItemAdd.dataItemAddInputSelector +']');
+            .closest('[data-'+ quantityChangeSettings.dataContainerSelector +']')
+            .find('[data-'+ quantityChangeSettings.dataInputSelector +'] '+ quantityChangeSettings.inputSelector +':first');
 
         var itemInputQuantity = parseInt(itemInput.val());
         if(itemInputQuantity >= 1){
-            self.log(itemInputQuantity);
+            self.log('Found quantity in quantityChangeContainer input field: '+itemInputQuantity);
             return itemInputQuantity;
         }
 
-        self.log(settings.actions.cartItemAdd.defaultQuantity);
-        return settings.actions.cartItemAdd.defaultQuantity;
+        self.log('Default Quantity: '+settings.defaultQuantity);
+        return settings.defaultQuantity;
     };
 
     /**
@@ -422,15 +415,14 @@
             self.log('found invoiceSameAsDelivery');
 
             var container = $(this);
-
             var addressDelivery = container.find('[data-'+ settings.dataDeliveryAddressSelector +']');
             var addressDeliveryInputs = addressDelivery.find(':input');
 
-            var handleChange = function(slide){
+            var handleChange = function(doSlide){
                 if(parseInt(container.find('[data-'+ settings.dataSelector +'] input:checked').val()) == 1){
                     self.log('addressDeliveryInputs disabled');
                     addressDeliveryInputs.prop("disabled", "disabled");
-                    if(slide == true){
+                    if(doSlide == true){
                         addressDelivery.slideUp();
                     }else{
                         addressDelivery.hide();
@@ -438,7 +430,7 @@
                 }else{
                     self.log('addressDeliveryInputs available');
                     addressDeliveryInputs.removeProp("disabled");
-                    if(slide == true){
+                    if(doSlide == true){
                         addressDelivery.slideDown();
                     }else{
                         addressDelivery.show();
