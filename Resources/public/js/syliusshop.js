@@ -10,7 +10,9 @@
                 'dataSelector': 'strategy-form'
             },
             'invoiceSameAsDelivery': {
-
+                'dataContainerSelector': 'invoice-same-as-delivery-container',
+                'dataSelector': 'invoice-same-as-delivery',
+                'dataDeliveryAddressSelector': 'delivery-address'
             }
         },
         actions: {
@@ -60,6 +62,8 @@
     this.console = console || {log: function(msg){}};
     this.hinclude = hinclude;
 
+    var self = window.syliusShop = this;
+
     /**
      * Helper for log
      * @param mixed msg
@@ -93,6 +97,14 @@
         self.log('syliusShop.setup');
         self.log(self.settings);
     };
+
+    this.registerAll = function(){
+        self.log('syliusShop.registerAll');
+
+        self.registerEvents();
+        self.registerListeners();
+        self.registerHandlers();
+    }
 
     /**
      * Register all Events
@@ -404,26 +416,41 @@
     this.registerInvoiceSameAsDeliveryHandler = function(){
         self.log('syliusShop.registerInvoiceSameAsDeliveryHandler');
 
-        var addressDelivery = $('[data-deliveryaddress]');
-        var addressDeliveryInputs = addressDelivery.find(':input');
+        var settings = self.settings.handlers.invoiceSameAsDelivery;
 
-        if(parseInt($('[data-invoicesameasdelivery] input:checked').val()) == 1){
-            addressDeliveryInputs.prop("disabled", "disabled");
-            addressDelivery.hide();
-        }else{
-            addressDeliveryInputs.removeProp("disabled");
-        }
+        $('[data-'+ settings.dataContainerSelector +']').each(function(){
+            self.log('found invoiceSameAsDelivery');
 
-        $('[data-invoicesameasdelivery] input').click(function(e){
-            if(parseInt($('[data-invoicesameasdelivery] input:checked').val()) == 1){
-                addressDeliveryInputs.prop("disabled", "disabled");
-                addressDelivery.slideUp();
-            }else{
-                addressDeliveryInputs.removeProp("disabled");
-                addressDelivery.slideDown();
-            }
+            var container = $(this);
+
+            var addressDelivery = container.find('[data-'+ settings.dataDeliveryAddressSelector +']');
+            var addressDeliveryInputs = addressDelivery.find(':input');
+
+            var handleChange = function(slide){
+                if(parseInt(container.find('[data-'+ settings.dataSelector +'] input:checked').val()) == 1){
+                    self.log('addressDeliveryInputs disabled');
+                    addressDeliveryInputs.prop("disabled", "disabled");
+                    if(slide == true){
+                        addressDelivery.slideUp();
+                    }else{
+                        addressDelivery.hide();
+                    }
+                }else{
+                    self.log('addressDeliveryInputs available');
+                    addressDeliveryInputs.removeProp("disabled");
+                    if(slide == true){
+                        addressDelivery.slideDown();
+                    }else{
+                        addressDelivery.show();
+                    }
+                }
+            };
+
+            container.find('[data-'+ settings.dataSelector +'] input').change(function(e){
+                handleChange(true);
+            });
+
+            handleChange(false);
         });
     };
-
-    var self = window.syliusShop = this;
 }(jQuery, document, window, console, hinclude));
