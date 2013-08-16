@@ -1,9 +1,17 @@
 (function($, document, window, console, hinclude){
     this.doc = $(document);
     this.settings = {
-        log: true,
+        log: false,
         hinclude: {
             cartId: 'cart'
+        },
+        handlers: {
+            'strategyServiceForm': {
+                'dataSelector': 'strategy-form'
+            },
+            'invoiceSameAsDelivery': {
+
+            }
         },
         actions: {
             'cartChanged': {
@@ -83,7 +91,7 @@
         self.settings = $.extend({}, this.settings, options);
 
         self.log('syliusShop.setup');
-        self.log(this.settings);
+        self.log(self.settings);
     };
 
     /**
@@ -109,6 +117,14 @@
         self.registerCartListener();
         self.registerWatchlistListener();
         self.registerQuantityChangeListener();
+    };
+
+    this.registerHandlers = function()
+    {
+        self.log('syliusShop.registerHandlers');
+
+        self.registerStrategyServiceFormHandler();
+        self.registerInvoiceSameAsDeliveryHandler();
     };
 
     /**
@@ -322,59 +338,63 @@
 
     /**
      * Strategy Form Handler
-     * @param jQuery form
      */
-    this.registerStrategyServiceFormHandler = function(form){
+    this.registerStrategyServiceFormHandler = function(){
         self.log('syliusShop.registerStrategyFormHandler');
 
-        var strategies = form.find('[data-strategies]');
+        $('form[data-'+ self.settings.handlers.strategyServiceForm.dataSelector +']').each(function(){
+            self.log('Found ServiceForm');
 
-        strategies
-            .find('[data-strategy] [data-parent]:visible :input:not(:checked)')
-            .closest('[data-strategy]')
-            .find('[data-child]')
-            .hide();
+            var form = $(this);
 
-        form.find(':submit').click(function(e){
-            self.log('StrategyChoice Form submit -> disable all unneeded inputs');
+            var strategies = form.find('[data-strategies]');
+
             strategies
-                .find('[data-strategy] [data-parent] :input:not(:checked)')
+                .find('[data-strategy] [data-parent]:visible :input:not(:checked)')
                 .closest('[data-strategy]')
-                .find('[data-child] :input')
-                .prop('disabled', 'disabled');
-        });
+                .find('[data-child]')
+                .hide();
 
-        var strategieChoiceParentInputs = strategies.find('[data-strategy] [data-parent] :input');
-
-        strategieChoiceParentInputs.change(function(){
-            self.log('StrategyChoice Parent Input changed');
-            strategieChoiceParentInputs.each(function(){
-                var elem = $(this);
-
-                var elemIsChecked = elem.is(':checked');
-
-                var childForm = elem.closest('[data-strategy]').find('[data-child]');
-
-                if(elemIsChecked || elem.closest('[data-parent]').is(':hidden')){
-                    childForm.show();
-                }else{
-                    childForm.hide();
-                }
-
-                if(!elemIsChecked){
-                    var inputs = childForm.find(':input');
-                    childForm.find(':input').prop('checked', false);
-                }
+            form.find(':submit').click(function(e){
+                self.log('StrategyChoice Form submit -> disable all unneeded inputs');
+                strategies
+                    .find('[data-strategy] [data-parent] :input:not(:checked)')
+                    .closest('[data-strategy]')
+                    .find('[data-child] :input')
+                    .prop('disabled', 'disabled');
             });
-        });
 
-        strategies.find('[data-strategy] [data-child] :input').change(function(){
-            self.log('StrategyChoice Child changed');
-            $(this)
-                .closest('[data-strategy]')
-                .find('[data-parent] :input')
-                .prop('checked', 'checked')
-                .change();
+            var strategieChoiceParentInputs = strategies.find('[data-strategy] [data-parent] :input');
+
+            strategieChoiceParentInputs.change(function(){
+                self.log('StrategyChoice Parent Input changed');
+                strategieChoiceParentInputs.each(function(){
+                    var elem = $(this);
+
+                    var elemIsChecked = elem.is(':checked');
+                    var childForm = elem.closest('[data-strategy]').find('[data-child]');
+
+                    if(elemIsChecked || elem.closest('[data-parent]').is(':hidden')){
+                        childForm.show();
+                    }else{
+                        childForm.hide();
+                    }
+
+                    if(!elemIsChecked){
+                        var inputs = childForm.find(':input');
+                        childForm.find(':input').prop('checked', false);
+                    }
+                });
+            });
+
+            strategies.find('[data-strategy] [data-child] :input').change(function(){
+                self.log('StrategyChoice Child changed');
+                $(this)
+                    .closest('[data-strategy]')
+                    .find('[data-parent] :input')
+                    .prop('checked', 'checked')
+                    .change();
+            });
         });
     };
 
