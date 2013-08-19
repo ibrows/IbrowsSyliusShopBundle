@@ -15,6 +15,10 @@
                 'dataDeliveryAddressSelector': 'delivery-address'
             }
         },
+        messageModal: {
+            'dataSelector': 'message-modal-event',
+            'dataEventTypeSelector': 'message-modal-event-type'
+        },
         actions: {
             'cartChanged': {
                 'eventName': 'syliusshop.cart.changed'
@@ -59,6 +63,7 @@
     };
     this.console = console || {log: function(msg){}};
     this.hinclude = hinclude;
+    this.messageModals = {};
 
     var self = window.syliusShop = this;
 
@@ -71,6 +76,30 @@
             return;
         }
         self.console.log(msg);
+    };
+
+    this.onAction = function(eventName, cb, type){
+        var settings = self.settings.actions;
+        if(typeof settings[eventName] == 'undefined'){
+            throw "eventName "+ eventName + " not available";
+        }
+
+        type = type ? this.ucfirst(type) : '';
+        var key = 'event'+type+'Name';
+        eventName = settings[eventName][key];
+
+        if(typeof eventName == 'undefined'){
+            throw "eventName "+ eventName + " not available";
+        }
+
+        self.log('Register Event '+ eventName);
+        this.doc.on(eventName, cb);
+    };
+
+    this.ucfirst = function(str){
+        str += '';
+        var f = str.charAt(0).toUpperCase();
+        return f + str.substr(1);
     };
 
     /**
@@ -102,6 +131,21 @@
         self.registerEvents();
         self.registerListeners();
         self.registerHandlers();
+
+        self.registerMessageModals();
+    };
+
+    this.registerMessageModals = function(){
+        var settings = self.settings.messageModal;
+
+        $('[data-message-modal-event]').each(function(){
+            var modal = $(this);
+
+            var eventName = modal.data(settings.dataSelector);
+            var eventType = modal.data(settings.dataEventTypeSelector);
+
+            self.registerMessageModal(eventName, modal, modal.data(), eventType);
+        });
     };
 
     /**
@@ -213,6 +257,68 @@
 
             self.trigger(settings.eventName, [quantityInput, newQuantity]);
         });
+    };
+
+    this.registerMessageModal = function(name, modal, settings, eventType){
+        self.log('syliusShop.registerMessageModal: '+ name);
+
+        var defaultSettings = {
+            mouseOutTimeout: 200,
+            showTimeout: 2000
+        };
+
+        settings = $.extend({}, defaultSettings, settings);
+
+        this.messageModals[name] = {
+            container: modal,
+            settings: settings,
+            timeout: null
+        };
+
+        self.log(settings);
+
+        this.registerMessageModalEvents(name);
+        this.registerMessageModalListeners(name, eventType);
+    };
+
+    this.registerMessageModalListeners = function(name, eventType){
+        self.log('syliusShop.registerMessageModalListeners: '+ name);
+        this.onAction(name, function(e){
+            self.showMessageModal(name);
+        }, eventType);
+    };
+
+    this.registerMessageModalEvents = function(name){
+        self.log('syliusShop.registerMessageModalEvents: '+ name);
+
+        var modal = this.messageModals[name];
+        var container = modal.container;
+
+        container.mouseover(function(){
+            self.log('MessageModal mouseover '+ name);
+            self.log('MessageModal clearTimeout '+ name);
+            clearTimeout(modal.timeout);
+        }).mouseout(function(){
+            self.log('MessageModal mouseout '+ name);
+            self.log('MessageModal setTimeout '+ name);
+            modal.timeout = window.setTimeout(function(){
+                container.fadeOut();
+                self.log('MessageModal fadeOut '+ name);
+            }, modal.settings.mouseOutTimeout);
+        });
+    };
+
+    this.showMessageModal = function(name){
+        var modal = this.messageModals[name];
+        var container = modal.container;
+
+        clearTimeout(container.timeout);
+        container.stop();
+        container.fadeIn();
+
+        modal.timeout = window.setTimeout(function(){
+            container.fadeOut();
+        }, modal.settings.showTimeout);
     };
 
     /**
