@@ -417,9 +417,10 @@
             var container = $(this);
             var addressDelivery = container.find('[data-'+ settings.dataDeliveryAddressSelector +']');
             var addressDeliveryInputs = addressDelivery.find(':input');
+            var toggleInputContainer = container.find('[data-'+ settings.dataSelector +']');
 
             var handleChange = function(doSlide){
-                if(parseInt(container.find('[data-'+ settings.dataSelector +'] input:checked').val()) == 1){
+                if(parseInt(toggleInputContainer.find('input:checked').val()) == 1){
                     self.log('addressDeliveryInputs disabled');
                     addressDeliveryInputs.prop("disabled", "disabled");
                     if(doSlide == true){
@@ -429,7 +430,7 @@
                     }
                 }else{
                     self.log('addressDeliveryInputs available');
-                    addressDeliveryInputs.removeProp("disabled");
+                    addressDeliveryInputs.prop("disabled", false);
                     if(doSlide == true){
                         addressDelivery.slideDown();
                     }else{
@@ -438,7 +439,7 @@
                 }
             };
 
-            container.find('[data-'+ settings.dataSelector +'] input').change(function(e){
+            toggleInputContainer.find('input').change(function(e){
                 handleChange(true);
             });
 
