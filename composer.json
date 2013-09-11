@@ -21,13 +21,13 @@
         "sylius/inventory-bundle": "dev-ibrows",
         "sylius/resource-bundle": "dev-ibrows",
 
-        "friendsofsymfony/user-bundle": "2.0.*@dev",
-        "stof/doctrine-extensions-bundle": "dev-master",
+        "friendsofsymfony/user-bundle": "2.0.*",
+        "stof/doctrine-extensions-bundle": "1.1.*",
 
-        "sonata-project/doctrine-orm-admin-bundle": "2.2.*@dev",
+        "sonata-project/doctrine-orm-admin-bundle": "2.2.*",
 
-        "sonata-project/cache-bundle": "2.1.*@dev",
-        "sonata-project/intl-bundle": "2.2.*@dev",
+        "sonata-project/cache-bundle": "2.1.*",
+        "sonata-project/intl-bundle": "2.2.*",
 
         "ibrows/wizard-annotation-bundle": "1.*",
         "ibrows/sonata-admin-annotation-bundle": "2.*",
