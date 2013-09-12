@@ -10,14 +10,16 @@ use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface;
 class ProductTaxRateCartStrategy extends AbstractCartStrategy
 {
     /**
-     * @var float
+     * @var string
      */
     protected $taxRateMethod;
+    protected $defaultTaxRate;
 
-    public function __construct($taxRateMethod = 'getTaxRate', $taxincl = false)
+    public function __construct($taxRateMethod = 'getTaxRate', $taxincl = false, $defaultTaxRate = 8)
     {
         $this->setTaxRateMethod($taxRateMethod);
         $this->taxincl = $taxincl;
+        $this->defaultTaxRate = $defaultTaxRate;
     }
 
     /**
@@ -55,8 +57,13 @@ class ProductTaxRateCartStrategy extends AbstractCartStrategy
         }
 
         foreach ($cart->getAdditionalItems() as $item) {
+            //is discount
             $item->setTaxInclusive($this->getTaxincl());
-            $item->setTaxRate($mixedrate);
+            if ($item->getPrice() < 0) {
+                $item->setTaxRate($mixedrate);
+            } else {
+                $item->setTaxRate($this->getDefaultTaxRate());
+            }
         }
         return array();
     }
@@ -103,6 +110,17 @@ class ProductTaxRateCartStrategy extends AbstractCartStrategy
     public function setTaxRateMethod($taxRateMethod)
     {
         $this->taxRateMethod = $taxRateMethod;
+        return $this;
+    }
+
+    public function getDefaultTaxRate()
+    {
+        return $this->defaultTaxRate;
+    }
+
+    public function setDefaultTaxRate($defaultTaxRate)
+    {
+        $this->defaultTaxRate = $defaultTaxRate;
         return $this;
     }
 
