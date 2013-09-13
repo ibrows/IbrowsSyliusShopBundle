@@ -50,6 +50,5 @@
     "autoload": {
         "psr-0": { "Ibrows\\SyliusShopBundle": "" }
     },
-    "target-dir": "Ibrows/SyliusShopBundle",
-    "minimum-stability": "dev"
+    "target-dir": "Ibrows/SyliusShopBundle"
 }
