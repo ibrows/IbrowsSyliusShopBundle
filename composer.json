@@ -17,9 +17,9 @@
     "require": {
         "php": ">=5.3.0",
 
-        "sylius/cart-bundle": "dev-ibrows",
-        "sylius/inventory-bundle": "dev-ibrows",
-        "sylius/resource-bundle": "dev-ibrows",
+        "sylius/cart-bundle": "dev-ibrows@dev",
+        "sylius/inventory-bundle": "dev-ibrows@dev",
+        "sylius/resource-bundle": "dev-ibrows@dev",
 
         "friendsofsymfony/user-bundle": "*",
         "stof/doctrine-extensions-bundle": "~1.1",
