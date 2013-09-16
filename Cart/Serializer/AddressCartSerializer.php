@@ -21,6 +21,10 @@ class AddressCartSerializer implements CartSerializerInterface
      */
     public function serialize(CartInterface $cart)
     {
+        // Force not Proxy
+        $cart->getDeliveryAddress()->getFirstname();
+        $cart->getInvoiceAddress()->getFirstname();
+
         $cart->setDeliveryAddressObj($cart->getDeliveryAddress());
         $cart->setInvoiceAddressObj($cart->getInvoiceAddress());
     }

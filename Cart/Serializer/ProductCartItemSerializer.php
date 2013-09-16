@@ -22,6 +22,8 @@ class ProductCartItemSerializer implements CartItemSerializerInterface
      */
     public function serialize(CartItemInterface $item)
     {
+        // Force not Proxy
+        $item->getName();
         $item->setProductObj($item->getProduct());
     }
 }
