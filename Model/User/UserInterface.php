@@ -26,6 +26,11 @@ interface UserInterface extends FosUserInterface
     public function getDeliveryAddress();
 
     /**
+     * @return int
+     */
+    public function getId();
+
+    /**
      * @param DeliveryAddressInterface $deliveryAddress
      * @return UserInterface
      */
