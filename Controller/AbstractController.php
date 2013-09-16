@@ -39,6 +39,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Ibrows\SyliusShopBundle\Entity\Address;
 use Ibrows\SyliusShopBundle\Model\User\UserInterface;
+use Doctrine\ORM\EntityRepository;
 
 abstract class AbstractController extends Controller
 {
@@ -79,7 +80,7 @@ abstract class AbstractController extends Controller
 
     /**
      * @param string|object $className
-     * @return ObjectRepository
+     * @return EntityRepository
      */
     protected function getRepository($className)
     {
