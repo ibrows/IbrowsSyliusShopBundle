@@ -2,10 +2,11 @@
 
 namespace Ibrows\SyliusShopBundle\Form;
 
+use Ibrows\SyliusShopBundle\Entity\Address;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 
-abstract class AddressType extends AbstractType
+class AddressType extends AbstractType
 {
     /**
      * @var array
@@ -23,18 +24,26 @@ abstract class AddressType extends AbstractType
     protected $titleChoices;
 
     /**
+     * @var string
+     */
+    protected $dataClass;
+
+    /**
      * @param array $countryChoices
      * @param array $preferredCountryChoices
      * @param array $titleChoices
+     * @param string $dataClass
      */
     public function __construct(
         array $countryChoices = array(),
         array $preferredCountryChoices = array(),
-        array $titleChoices = array()
+        array $titleChoices = array(),
+        $dataClass = null
     ){
         $this->countryChoices = $countryChoices;
         $this->preferredCountryChoices = $preferredCountryChoices;
         $this->titleChoices = $titleChoices;
+        $this->dataClass = $dataClass;
     }
 
     /**
@@ -73,6 +82,11 @@ abstract class AddressType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         parent::setDefaultOptions($resolver);
+        if($this->dataClass){
+            $resolver->setDefaults(array(
+                'data_class' => $this->dataClass
+            ));
+        }
     }
 
     /**
@@ -85,7 +99,7 @@ abstract class AddressType extends AbstractType
 
     /**
      * @param array $preferredCountryChoices
-     * @return AbstractAddressType
+     * @return AddressType
      */
     public function setPreferredCountryChoices($preferredCountryChoices)
     {
@@ -104,7 +118,7 @@ abstract class AddressType extends AbstractType
 
     /**
      * @param array $countryChoices
-     * @return AbstractAddressType
+     * @return AddressType
      */
     public function setCountryChoices($countryChoices)
     {
@@ -122,7 +136,7 @@ abstract class AddressType extends AbstractType
 
     /**
      * @param array $titleChoices
-     * @return AbstractAddressType
+     * @return AddressType
      */
     public function setTitleChoices($titleChoices)
     {
