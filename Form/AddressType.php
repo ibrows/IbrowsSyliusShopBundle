@@ -5,7 +5,7 @@ namespace Ibrows\SyliusShopBundle\Form;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 
-abstract class AbstractAddressType extends AbstractType
+abstract class AddressType extends AbstractType
 {
     /**
      * @var array
@@ -128,5 +128,13 @@ abstract class AbstractAddressType extends AbstractType
     {
         $this->titleChoices = $titleChoices;
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return 'ibr_sylius_address';
     }
 }

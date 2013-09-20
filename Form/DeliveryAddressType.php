@@ -2,7 +2,7 @@
 
 namespace Ibrows\SyliusShopBundle\Form;
 
-class DeliveryAddressType extends AbstractAddressType
+class DeliveryAddressType extends AddressType
 {
     /**
      * @return string
