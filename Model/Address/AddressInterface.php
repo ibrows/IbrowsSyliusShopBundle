@@ -2,6 +2,8 @@
 
 namespace Ibrows\SyliusShopBundle\Model\Address;
 
+use Ibrows\SyliusShopBundle\Model\User\UserInterface;
+
 interface AddressInterface
 {
     const
@@ -150,4 +152,15 @@ interface AddressInterface
      * @return bool
      */
     public function compare(AddressInterface $address);
+
+    /**
+     * @param UserInterface $user
+     * @return AddressInterface
+     */
+    public function setUser(UserInterface $user);
+
+    /**
+     * @return UserInterface
+     */
+    public function getUser();
 }

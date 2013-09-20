@@ -69,6 +69,7 @@ abstract class User extends FOSUser implements UserInterface
 
     /**
      * @param InvoiceAddressInterface $invoiceAddress
+     * @return $this
      */
     public function setInvoiceAddress(InvoiceAddressInterface $invoiceAddress = null)
     {
@@ -87,7 +88,7 @@ abstract class User extends FOSUser implements UserInterface
 
     /**
      * @param DeliveryAddressInterface $deliveryAddress
-     * @return \Ibrows\SyliusShopBundle\Entity\User
+     * @return $this
      */
     public function setDeliveryAddress(DeliveryAddressInterface $deliveryAddress = null)
     {
@@ -97,7 +98,7 @@ abstract class User extends FOSUser implements UserInterface
     }
 
     /**
-     * @param Many $many
+     * @param AddressInterface $addresss
      * @param bool $stopPropagation
      * @return $this
      */
@@ -109,16 +110,17 @@ abstract class User extends FOSUser implements UserInterface
         }
         return $this;
     }
+
     /**
-     * @param Many $many
+     * @param AddressInterface $address
      * @param bool $stopPropagation
      * @return $this
      */
-    public function removeAddress(AddressInterface $addresss, $stopPropagation = false)
+    public function removeAddress(AddressInterface $address, $stopPropagation = false)
     {
-        $this->addresses->removeElement($addresss);
+        $this->addresses->removeElement($address);
         if (!$stopPropagation) {
-            $addresss->setUser(null, true);
+            $address->setUser(null, true);
         }
         return $this;
     }
@@ -132,17 +134,19 @@ abstract class User extends FOSUser implements UserInterface
     }
 
     /**
-     * @param  $addresses
+     * @param AddressInterface[] $addresses
+     * @return $this
      */
     public function setAddresses($addresses)
     {
         foreach ($this->addresses as $address) {
-            $this->removeMany($address);
+            $this->removeAddress($address);
         }
         foreach ($this->addresses as $address) {
             $this->addAddress($address);
         }
         $this->addresses = $addresses;
+        return $this;
     }
 
 }
