@@ -1,4 +1,4 @@
-(function($, document, window, console, hinclude){
+(function($, document, window){
     this.doc = $(document);
     this.settings = {
         log: false,
@@ -61,8 +61,9 @@
             }
         }
     };
-    this.console = console || {log: function(msg){}};
-    this.hinclude = hinclude;
+
+    this.console = window.console || {log: function(msg){}};
+    this.hinclude = window.hinclude || null;
     this.messageModals = {};
 
     var self = window.syliusShop = this;
@@ -552,4 +553,4 @@
             handleChange(false);
         });
     };
-}(jQuery, document, window, console, hinclude));
+}(jQuery, document, window));
