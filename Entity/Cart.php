@@ -170,7 +170,6 @@ class Cart extends BaseCart implements CartInterface
     /**
      * @var DateTime
      * @ORM\Column(type="datetime", name="terms_and_conditions_at", nullable=true)
-     * @Assert\NotNull(groups={"sylius_wizard_summary"})
      */
     protected $termsAndConditionsAt;
 
@@ -538,6 +537,7 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @return \DateTime
+     * @Assert\True(groups={"sylius_wizard_summary"})
      */
     public function isTermsAndConditions()
     {
