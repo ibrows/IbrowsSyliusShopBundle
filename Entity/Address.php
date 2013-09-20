@@ -5,15 +5,16 @@ namespace Ibrows\SyliusShopBundle\Entity;
 use Ibrows\SyliusShopBundle\Model\Address\AddressInterface;
 use Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface;
 use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
-
 use Symfony\Component\Validator\Constraints as Assert;
-
 use Doctrine\ORM\Mapping as ORM;
 use Ibrows\SyliusShopBundle\Model\User\UserInterface;
+use Ibrows\Bundle\SonataAdminAnnotationBundle\Annotation as Sonata;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="ibr_sylius_address")
+ * @Sonata\Order\FormMapperAll
+ * @Sonata\Order\ShowMapperAll
  */
 class Address implements InvoiceAddressInterface, DeliveryAddressInterface
 {
@@ -22,6 +23,8 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @Sonata\Order\FormMapperExclude
+     * @Sonata\ListMapper(identifier=true)
      */
     protected $id;
 
@@ -29,6 +32,8 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
      * @var string $firstname
      * @ORM\Column(type="string", nullable=true)
      * @Assert\NotBlank(groups={"sylius_wizard_address"})
+     * @Sonata\ListMapper()
+     * @Sonata\DatagridMapper
      */
     protected $firstname;
 
@@ -36,6 +41,8 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
      * @var string $lastname
      * @ORM\Column(type="string", nullable=true)
      * @Assert\NotBlank(groups={"sylius_wizard_address"})
+     * @Sonata\ListMapper()
+     * @Sonata\DatagridMapper
      */
     protected $lastname;
 
@@ -63,6 +70,8 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
      * @var string $zip
      * @ORM\Column(type="string", nullable=true)
      * @Assert\NotBlank(groups={"sylius_wizard_address"})
+     * @Sonata\DatagridMapper
+     * @Sonata\ListMapper()
      */
     protected $zip;
 
@@ -70,6 +79,8 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
      * @var string $city
      * @ORM\Column(type="string", nullable=true)
      * @Assert\NotBlank(groups={"sylius_wizard_address"})
+     * @Sonata\DatagridMapper
+     * @Sonata\ListMapper()
      */
     protected $city;
 
@@ -91,6 +102,8 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
      * @var string $email
      * @ORM\Column(type="string", nullable=true)
      * @Assert\Email(groups={"sylius_wizard_address"})
+     * @Sonata\ListMapper()
+     * @Sonata\DatagridMapper
      */
     protected $email;
 
@@ -99,6 +112,8 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
      * @var UserInterface
      * @ORM\ManyToOne(targetEntity="\Ibrows\SyliusShopBundle\Model\User\UserInterface", inversedBy="addresses")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     * @Sonata\DatagridMapper
+     * @Sonata\Order\FormMapperExclude
      */
     protected $user;
 
