@@ -1,8 +1,8 @@
 sylius_inventory:
-  driver: doctrine/orm
-  backorders: false
-  classes:
-      unit:
-          model: Ibrows\SyliusShopBundle\Entity\InventoryUnit
-      stockable:
-          model: sylius_inventory.classes.stockable.model 
+    driver: doctrine/orm
+    backorders: false
+    classes:
+        unit:
+            model: %ibrows_sylius_shop.inventory.class%
+        stockable:
+            model: %ibrows_sylius_shop.product.class%
