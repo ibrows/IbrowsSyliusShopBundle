@@ -1,21 +1,23 @@
 parameters:
-  ibrows_sylius_shop.user.role: ROLE_SHOP
-  ibrows_sylius_shop.user.class: TBA in Project
+    ibrows_sylius_shop.user.role: ROLE_SHOP
+    ibrows_sylius_shop.user.class: YourProjectUserClass
 
-  ibrows_sylius_shop.product.class: TBA in Project
+    ibrows_sylius_shop.product.class: YourProjectProductClass
 
-  ibrows_sylius_shop.payment.class: Ibrows\SyliusShopBundle\Entity\Payment
+    ibrows_sylius_shop.payment.class: Ibrows\SyliusShopBundle\Entity\Payment
 
-  ibrows_sylius_shop.address.class: Ibrows\SyliusShopBundle\Entity\Address
-  ibrows_sylius_shop.deliveryaddress.class: Ibrows\SyliusShopBundle\Entity\Address
-  ibrows_sylius_shop.invoiceaddress.class: Ibrows\SyliusShopBundle\Entity\Address
+    ibrows_sylius_shop.address.class: Ibrows\SyliusShopBundle\Entity\Address
+    ibrows_sylius_shop.deliveryaddress.class: Ibrows\SyliusShopBundle\Entity\Address
+    ibrows_sylius_shop.invoiceaddress.class: Ibrows\SyliusShopBundle\Entity\Address
 
-  ibrows_sylius_shop.cart.class: Ibrows\SyliusShopBundle\Entity\Cart
-  ibrows_sylius_shop.cartitem.class: Ibrows\SyliusShopBundle\Entity\CartItem
-  ibrows_sylius_shop.additionalcartitem.class: Ibrows\SyliusShopBundle\Entity\AdditionalCartItem
+    ibrows_sylius_shop.cart.class: Ibrows\SyliusShopBundle\Entity\Cart
+    ibrows_sylius_shop.cartitem.class: Ibrows\SyliusShopBundle\Entity\CartItem
+    ibrows_sylius_shop.additionalcartitem.class: Ibrows\SyliusShopBundle\Entity\AdditionalCartItem
 
-  ibrows_sylius_shop.inventory.class: Ibrows\SyliusShopBundle\Entity\InventoryUnit
+    ibrows_sylius_shop.cart.itemresolver.class: Ibrows\SyliusShopBundle\Cart\BaseItemResolver
 
-  ibrows_sylius_shop.cart.itemresolver.class: Ibrows\SyliusShopBundle\Cart\BaseItemResolver
+    ibrows_sylius_shop.inventory.class: Ibrows\SyliusShopBundle\Entity\InventoryUnit
 
-  ibrows_sylius_shop.hinclude.defaultTemplate: IbrowsSyliusShopBundle::hinclude.html.twig
+    ibrows_sylius_shop.hinclude.defaultTemplate: IbrowsSyliusShopBundle::hinclude.html.twig
+
+    sylius.model.inventory_unit.class: %ibrows_sylius_shop.inventory.class%
