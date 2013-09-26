@@ -1,8 +1,5 @@
 parameters:
     ibrows_sylius_shop.user.role: ROLE_SHOP
-    ibrows_sylius_shop.user.class: YourProjectUserClass
-
-    ibrows_sylius_shop.product.class: YourProjectProductClass
 
     ibrows_sylius_shop.payment.class: Ibrows\SyliusShopBundle\Entity\Payment
 
