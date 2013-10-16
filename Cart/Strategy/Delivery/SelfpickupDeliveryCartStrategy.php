@@ -57,7 +57,6 @@ class SelfpickupDeliveryCartStrategy extends AbstractDeliveryCartStrategy
     public function setStores($stores)
     {
         $this->stores = $stores;
-
         return $this;
     }
 
@@ -99,14 +98,19 @@ class SelfpickupDeliveryCartStrategy extends AbstractDeliveryCartStrategy
      */
     public function compute(CartInterface $cart, CartManager $cartManager)
     {
-        $data = $cart->getDeliveryOptionStrategyServiceData();
-        if (!isset($data['store'])) {
-            $this->removeStrategy($cart);
+        $store = null;
 
-            return array();
+        if(count($this->stores) > 0){
+            $data = $cart->getDeliveryOptionStrategyServiceData();
+
+            if (!isset($data['store']) OR !isset($this->stores[$data['store']])) {
+                $this->removeStrategy($cart);
+                return array();
+            }
+
+            $store = $data['store'];
         }
 
-        $store = $data['store'];
         $costs = $this->getCostsForStore($store, $cart, $cartManager);
 
         if ($costs) {
@@ -151,6 +155,16 @@ class SelfpickupDeliveryCartStrategy extends AbstractDeliveryCartStrategy
      * @return float
      */
     protected function getCostsForStore($store, CartInterface $cart, CartManager $cartManager)
+    {
+        return $this->getCosts($cart, $cartManager);
+    }
+
+    /**
+     * @param CartInterface $cart
+     * @param CartManager $cartManager
+     * @return int
+     */
+    protected function getCosts(CartInterface $cart, CartManager $cartManager)
     {
         return 0;
     }
