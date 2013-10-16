@@ -426,11 +426,14 @@ class CartManager
      */
     public function getCart($throwException = false)
     {
-        if(!$this->cart && true === $throwException){
-            throw new \BadMethodCallException("Use setCart first!");
+        if(!$cart = $this->cart){
+            if(true === $throwException){
+                throw new \BadMethodCallException("Use setCart first!");
+            }else{
+                return null;
+            }
         }
 
-        $cart = $this->cart;
         $hasCurrency = (bool)$cart->getCurrency();
 
         if(!$hasCurrency){
