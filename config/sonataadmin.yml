@@ -47,6 +47,7 @@ sonata_doctrine_orm_admin:
 sonata_block:
     default_contexts: [cms]
     blocks:
+        sonata.admin.block.search_result:
         sonata.admin.block.admin_list:
             contexts:   [admin]
 
