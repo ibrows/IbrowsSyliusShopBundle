@@ -33,7 +33,12 @@ class OrderConfirmationSerializer implements CartSerializerInterface
     /**
      * @var string
      */
-    protected $template;
+    protected $templatePlain;
+
+    /**
+     * @var string
+     */
+    protected $templateHtml;
 
     /**
      * @var array|string
@@ -49,16 +54,19 @@ class OrderConfirmationSerializer implements CartSerializerInterface
      * @param ContainerInterface $container
      * @param string $subject
      * @param string $from
-     * @param string $template
+     * @param string $templatePlain
+     * @param string $templateHtml
      * @param string|array $bcc
      * @param string $translationDomain
+     * @internal param string $template
      */
-    public function __construct(ContainerInterface $container, $subject = null, $from = null, $template = null, $bcc = null, $translationDomain = null)
+    public function __construct(ContainerInterface $container, $subject = null, $from = null, $templatePlain = null, $templateHtml = null, $bcc = null, $translationDomain = null)
     {
         $this->container = $container;
         $this->subject = $subject;
         $this->from = $from;
-        $this->template = $template;
+        $this->templatePlain = $templatePlain;
+        $this->templateHtml = $templateHtml;
         $this->bcc = $bcc;
         $this->translationDomain = $translationDomain;
     }
@@ -108,6 +116,42 @@ class OrderConfirmationSerializer implements CartSerializerInterface
     }
 
     /**
+     * @return string
+     */
+    public function getTemplatePlain()
+    {
+        return $this->templatePlain;
+    }
+
+    /**
+     * @param string $templatePlain
+     * @return OrderConfirmationSerializer
+     */
+    public function setTemplatePlain($templatePlain)
+    {
+        $this->templatePlain = $templatePlain;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTemplateHtml()
+    {
+        return $this->templateHtml;
+    }
+
+    /**
+     * @param string $templateHtml
+     * @return OrderConfirmationSerializer
+     */
+    public function setTemplateHtml($templateHtml)
+    {
+        $this->templateHtml = $templateHtml;
+        return $this;
+    }
+
+    /**
      * @return TranslatorInterface
      */
     protected function getTranslator()
@@ -126,7 +170,8 @@ class OrderConfirmationSerializer implements CartSerializerInterface
             ->setFrom($this->getFrom($cart))
             ->setTo($this->getTo($cart))
             ->setBcc($this->getBcc($cart))
-            ->setBody($this->getBody($cart))
+            ->setBody($this->getHtmlBody($cart))
+            ->addPart($this->getPlainBody($cart))
         ;
     }
 
@@ -134,9 +179,18 @@ class OrderConfirmationSerializer implements CartSerializerInterface
      * @param CartInterface $cart
      * @return string
      */
-    protected function getBody(CartInterface $cart)
+    protected function getPlainBody(CartInterface $cart)
     {
-        return $this->getTemplating()->render($this->getTemplate(), array('cart' => $cart));
+        return $this->getTemplating()->render($this->getTemplatePlain(), array('cart' => $cart));
+    }
+
+    /**
+     * @param CartInterface $cart
+     * @return string
+     */
+    protected function getHtmlBody(CartInterface $cart)
+    {
+        return $this->getTemplating()->render($this->getTemplateHtml(), array('cart' => $cart));
     }
 
     /**
@@ -169,25 +223,6 @@ class OrderConfirmationSerializer implements CartSerializerInterface
 
     /**
      * @param CartInterface $cart
-     * @return string
-     */
-    public function getTemplate(CartInterface $cart = null)
-    {
-        return $this->template;
-    }
-
-    /**
-     * @param string $template
-     * @return OrderConfirmationSerializer
-     */
-    public function setTemplate($template)
-    {
-        $this->template = $template;
-        return $this;
-    }
-
-    /**
-     * @param CartInterface $cart
      * @return string|array
      */
     public function getTo(CartInterface $cart = null)
@@ -202,7 +237,7 @@ class OrderConfirmationSerializer implements CartSerializerInterface
 
         $to[] = $cart->getEmail();
 
-        return $this->to;
+        return $to;
     }
 
     /**
