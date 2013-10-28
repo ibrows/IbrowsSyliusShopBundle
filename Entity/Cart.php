@@ -30,6 +30,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          )
  *      )
  * })
+ * @ORM\InheritanceType("JOINED")
  */
 class Cart extends BaseCart implements CartInterface
 {

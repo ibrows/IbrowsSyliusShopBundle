@@ -1,14 +1,12 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Entity;
+
 use Ibrows\SyliusShopBundle\Model\Product\ProductInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface;
-
 use Sylius\Bundle\CartBundle\Entity\CartItem as BaseCartItem;
 use Sylius\Bundle\CartBundle\Model\CartItemInterface as BaseCartItemInterface;
-
 use Doctrine\ORM\Mapping as ORM;
-
 use DateTime;
 
 /**
@@ -32,6 +30,7 @@ use DateTime;
  *          )
  *      )
  * })
+ * @ORM\InheritanceType("JOINED")
  */
 class CartItem extends BaseCartItem implements CartItemInterface
 {

@@ -15,6 +15,7 @@ use Ibrows\Bundle\SonataAdminAnnotationBundle\Annotation as Sonata;
  * @ORM\Table(name="ibr_sylius_address")
  * @Sonata\Order\FormMapperAll
  * @Sonata\Order\ShowMapperAll
+ * @ORM\InheritanceType("JOINED")
  */
 class Address implements InvoiceAddressInterface, DeliveryAddressInterface
 {

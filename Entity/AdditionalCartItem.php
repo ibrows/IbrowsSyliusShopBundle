@@ -16,6 +16,7 @@ use DateTime;
 /**
  * @ORM\Entity
  * @ORM\Table(name="ibr_sylius_cart_additional_item")
+ * @ORM\InheritanceType("JOINED")
  */
 class AdditionalCartItem implements AdditionalCartItemInterface
 {

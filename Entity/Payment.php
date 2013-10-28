@@ -11,6 +11,7 @@ use DateTime;
 /**
  * @ORM\Entity
  * @ORM\Table(name="ibr_sylius_payment")
+ * @ORM\InheritanceType("JOINED")
  */
 class Payment implements PaymentInterface
 {

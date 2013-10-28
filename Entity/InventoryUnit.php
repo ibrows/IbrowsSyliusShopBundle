@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity
  * @ORM\Table(name="ibr_sylius_inventory_unit")
+ * @ORM\InheritanceType("JOINED")
  */
 class InventoryUnit extends BaseInventoryUnit
 {
