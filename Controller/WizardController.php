@@ -29,10 +29,14 @@ class WizardController extends AbstractWizardController
      */
     public function basketAction(Request $request)
     {
+        $cart = $this->getCurrentCart();
+        if(($preAction = $this->preBasketAction($cart)) instanceof Response){
+            return $preAction;
+        }
+
         $continueSubmitName = 'continue';
         $deleteSubmitName = 'delete';
 
-        $cart = $this->getCurrentCart();
         $cartManager = $this->getCurrentCartManager();
         $basketForm = $this->createForm($this->getBasketType(), $cart);
 
@@ -74,8 +78,13 @@ class WizardController extends AbstractWizardController
      */
     public function authAction(Request $request)
     {
+        $cart = $this->getCurrentCart();
+        if(($preAction = $this->preAuthAction($cart)) instanceof Response){
+            return $preAction;
+        }
+
         $cartManager = $this->getCurrentCartManager();
-        $cart = $cartManager->getCart();
+
         $wizard = $this->getWizard();
 
         $authForm = $this->createForm($this->getAuthType(), null, array(
@@ -143,10 +152,8 @@ class WizardController extends AbstractWizardController
     public function addressAction(Request $request)
     {
         $cart = $this->getCurrentCart();
-
-        $preAddressAction = $this->preAddressAction($cart);
-        if($preAddressAction instanceof Response){
-            return $preAddressAction;
+        if(($preAction = $this->preAddressAction($cart)) instanceof Response){
+            return $preAction;
         }
 
         $cartManager = $this->getCurrentCartManager();
@@ -252,8 +259,8 @@ class WizardController extends AbstractWizardController
     public function summaryAction()
     {
         $cart = $this->getCurrentCart();
-        if($preSummaryAction = $this->preSummaryAction($cart)){
-            return $preSummaryAction;
+        if(($preAction = $this->preSummaryAction($cart)) instanceof Response){
+            return $preAction;
         }
 
         $summaryForm = $this->createForm($this->getSummaryType(), $cart, array(
@@ -297,6 +304,10 @@ class WizardController extends AbstractWizardController
     public function paymentAction(Request $request)
     {
         $cart = $this->getCurrentCart();
+        if(($preAction = $this->prePaymentAction($cart)) instanceof Response){
+            return $preAction;
+        }
+
         if ($cart->isPayed()) {
             return $this->redirect($this->getWizard()->getNextStepUrl());
         }

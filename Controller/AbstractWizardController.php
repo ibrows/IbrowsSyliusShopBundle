@@ -255,6 +255,27 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param CartInterface $cart
+     */
+    protected function preBasketAction(CartInterface $cart){
+
+    }
+
+    /**
+     * @param CartInterface $cart
+     */
+    protected function preAuthAction(CartInterface $cart){
+
+    }
+
+    /**
+     * @param CartInterface $cart
+     */
+    protected function prePaymentAction(CartInterface $cart){
+
+    }
+
+    /**
+     * @param CartInterface $cart
      * @return null|Response
      */
     protected function preSummaryAction(CartInterface $cart)
