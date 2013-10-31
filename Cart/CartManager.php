@@ -3,6 +3,7 @@
 namespace Ibrows\SyliusShopBundle\Cart;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Ibrows\SyliusShopBundle\Cart\Exception\CartCurrencyChangeException;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Costs;
 use Ibrows\SyliusShopBundle\Entity\AdditionalCartItem;
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
@@ -457,7 +458,7 @@ class CartManager
     /**
      * @param string $toCurrency
      * @return CartManager
-     * @throws \LogicException
+     * @throws CartCurrencyChangeException
      */
     public function changeCurrency($toCurrency)
     {
@@ -475,11 +476,12 @@ class CartManager
                 $strategy->changeCurrency($fromCurrency, $toCurrency, $cart, $this);
                 $foundStrategy = true;
                 $this->persistCart();
+                break;
             }
         }
 
         if(!$foundStrategy){
-            throw new \LogicException("No currency strategy could provide currency change from $fromCurrency to $toCurrency");
+            throw new CartCurrencyChangeException("No currency strategy could provide currency change from $fromCurrency to $toCurrency");
         }
 
         return $this;
