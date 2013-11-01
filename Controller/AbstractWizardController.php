@@ -247,36 +247,43 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param CartInterface $cart
+     * @return Response|null
      */
     protected function preAddressAction(CartInterface $cart)
     {
-
+        return null;
     }
 
     /**
      * @param CartInterface $cart
+     * @return Response|null
      */
-    protected function preBasketAction(CartInterface $cart){
-
+    protected function preBasketAction(CartInterface $cart)
+    {
+        return null;
     }
 
     /**
      * @param CartInterface $cart
+     * @return Response|null
      */
-    protected function preAuthAction(CartInterface $cart){
-
+    protected function preAuthAction(CartInterface $cart)
+    {
+        return null;
     }
 
     /**
      * @param CartInterface $cart
+     * @return Response|null
      */
-    protected function prePaymentAction(CartInterface $cart){
-
+    protected function prePaymentAction(CartInterface $cart)
+    {
+        return null;
     }
 
     /**
      * @param CartInterface $cart
-     * @return null|Response
+     * @return Response|null
      */
     protected function preSummaryAction(CartInterface $cart)
     {
@@ -386,13 +393,12 @@ abstract class AbstractWizardController extends AbstractController
             throw new \Exception('first bind invoiceaddress before use handleDeliveryAddress');
         }
 
-        $currentcart = $this->getCurrentCart();
-
         //same
         if ($invoiceSameAsDelivery) {
-            $currentcart->setDeliveryAddress($invoiceAddress);
-            return true;
+            return $this->handleInvoiceIsSameAsDelivery($deliveryAddressForm, $invoiceAddress);
         }
+
+        $currentcart = $this->getCurrentCart();
 
         //different delivery
         if ($currentcart->getDeliveryAddress() != null && $currentcart->getInvoiceAddress() != null && ($currentcart->getDeliveryAddress()->getId() == $currentcart->getInvoiceAddress()->getId())) {
@@ -410,6 +416,18 @@ abstract class AbstractWizardController extends AbstractController
         $em->persist($deliveryAddress);
         $currentcart->setDeliveryAddress($deliveryAddress);
 
+        return true;
+    }
+
+    /**
+     * @param FormInterface $deliveryAddressForm
+     * @param InvoiceAddressInterface $invoiceAddress
+     * @return bool
+     */
+    protected function handleInvoiceIsSameAsDelivery(FormInterface $deliveryAddressForm, InvoiceAddressInterface $invoiceAddress)
+    {
+        $currentcart = $this->getCurrentCart();
+        $currentcart->setDeliveryAddress($invoiceAddress);
         return true;
     }
 
