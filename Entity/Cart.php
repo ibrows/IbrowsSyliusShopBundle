@@ -222,6 +222,14 @@ class Cart extends BaseCart implements CartInterface
     }
 
     /**
+     * @return float
+     */
+    public function getTotalRounded()
+    {
+        return round($this->getTotal(), 2);
+    }
+
+    /**
      * @return Cart
      */
     public function calculateTotal()
