@@ -188,7 +188,7 @@ class WizardController extends AbstractWizardController
         $deliveryAddressForm = $this->handleDeliveryAddress();
 
         if ("POST" == $request->getMethod()) {
-            if($this->saveAddressForm($request, $deliveryOptionStrategyForm, $invoiceAddressForm, $invoiceSameAsDeliveryForm, $invoiceAddress)){
+            if($this->saveAddressForm($request, $deliveryOptionStrategyForm, $invoiceAddressForm, $invoiceSameAsDeliveryForm, $invoiceAddress, $deliveryAddressForm)){
                 return $this->redirect($this->getWizard()->getNextStepUrl());
             }
         }

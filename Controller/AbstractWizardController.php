@@ -328,9 +328,10 @@ abstract class AbstractWizardController extends AbstractController
      * @param FormInterface $invoiceAddressForm
      * @param FormInterface $invoiceSameAsDeliveryForm
      * @param InvoiceAddressInterface $invoiceAddress
+     * @param FormInterface $deliveryAddressForm
      * @return bool
      */
-    protected function saveAddressForm(Request $request, FormInterface $deliveryOptionStrategyForm, FormInterface $invoiceAddressForm, FormInterface &$invoiceSameAsDeliveryForm, InvoiceAddressInterface $invoiceAddress)
+    protected function saveAddressForm(Request $request, FormInterface $deliveryOptionStrategyForm, FormInterface &$invoiceAddressForm, FormInterface &$invoiceSameAsDeliveryForm, InvoiceAddressInterface $invoiceAddress, FormInterface &$deliveryAddressForm)
     {
         $validDeliveryOptionStrategyFormData = $this->bindDeliveryOptions($deliveryOptionStrategyForm);
 
@@ -366,6 +367,21 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
+     * @return FormInterface
+     */
+    protected function createDeliveryAddressForm()
+    {
+        $formoptions = array(
+            'data_class' => $this->getDeliveryAddressClass(),
+            'validation_groups' => array(
+                'sylius_wizard_address'
+            )
+        );
+
+        return $this->createForm($this->getDeliveryAddressType(), $this->getDeliveryAddress(), $formoptions);
+    }
+
+    /**
      * returns true or the form if its not valid
      *
      * @param boolean $invoiceSameAsDelivery
@@ -375,14 +391,7 @@ abstract class AbstractWizardController extends AbstractController
      */
     protected function handleDeliveryAddress($invoiceSameAsDelivery = null, $invoiceAddress = null)
     {
-        $formoptions = array(
-            'data_class' => $this->getDeliveryAddressClass(),
-            'validation_groups' => array(
-                'sylius_wizard_address'
-            )
-        );
-
-        $deliveryAddressForm = $this->createForm($this->getDeliveryAddressType(), $this->getDeliveryAddress(), $formoptions);
+        $deliveryAddressForm = $this->createDeliveryAddressForm();
 
         //before post
         if ($invoiceSameAsDelivery === null) {
@@ -424,7 +433,7 @@ abstract class AbstractWizardController extends AbstractController
      * @param InvoiceAddressInterface $invoiceAddress
      * @return bool
      */
-    protected function handleInvoiceIsSameAsDelivery(FormInterface $deliveryAddressForm, InvoiceAddressInterface $invoiceAddress)
+    protected function handleInvoiceIsSameAsDelivery(FormInterface &$deliveryAddressForm, InvoiceAddressInterface $invoiceAddress)
     {
         $currentcart = $this->getCurrentCart();
         $currentcart->setDeliveryAddress($invoiceAddress);
