@@ -10,6 +10,7 @@ use Ibrows\SyliusShopBundle\Entity\Address;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -367,18 +368,24 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
+     * @param FormTypeInterface $type
+     * @param DeliveryAddressInterface $deliveryAddress
+     * @param array $formOptions
      * @return FormInterface
      */
-    protected function createDeliveryAddressForm()
+    protected function createDeliveryAddressForm(FormTypeInterface $type = null, DeliveryAddressInterface $deliveryAddress = null, array $formOptions = null)
     {
-        $formoptions = array(
+        $type = $type ?: $this->getDeliveryAddressType();
+        $deliveryAddress = $deliveryAddress ?: $this->getDeliveryAddress();
+
+        $formoptions = $formOptions ?: array(
             'data_class' => $this->getDeliveryAddressClass(),
             'validation_groups' => array(
                 'sylius_wizard_address'
             )
         );
 
-        return $this->createForm($this->getDeliveryAddressType(), $this->getDeliveryAddress(), $formoptions);
+        return $this->createForm($type, $deliveryAddress, $formoptions);
     }
 
     /**
@@ -411,8 +418,7 @@ abstract class AbstractWizardController extends AbstractController
 
         //different delivery
         if ($currentcart->getDeliveryAddress() != null && $currentcart->getInvoiceAddress() != null && ($currentcart->getDeliveryAddress()->getId() == $currentcart->getInvoiceAddress()->getId())) {
-            $deliveryAddress = $this->getNewDeliveryAddress();
-            $deliveryAddressForm = $this->createForm($this->getDeliveryAddressType(), $deliveryAddress,$formoptions);
+            $deliveryAddressForm = $this->createDeliveryAddressForm(null, $this->getNewDeliveryAddress());
         }
 
         $deliveryAddressForm->bind($this->getRequest());
