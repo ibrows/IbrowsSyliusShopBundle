@@ -151,6 +151,7 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
     {
         $request = $context->getRequest();
         $saferpay = $this->getSaferpay();
+
         $payInitParameter = $this->getPayInitParameter($context, $cart);
         $PaymentFinishedResponseData = array('payInitParameter' => $payInitParameter->getData());
 
@@ -229,15 +230,16 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
         $invoiceAddress = $cart->getInvoiceAddress();
         $router = $this->getRouter();
 
-        $providerSet = null;
-
         if($this->isTestMode()){
             $payInitParameter->setAccountid($this->getTestAccountId());
             $payInitParameter->setPaymentmethods(array($payInitParameter::PAYMENTMETHOD_SAFERPAY_TESTCARD));
         }else{
             $serviceData = $cart->getPaymentOptionStrategyServiceData();
             if(isset($serviceData['method'])){
-                $payInitParameter->setPaymentmethods(array($serviceData['method']));
+                $reflection = new \ReflectionClass($payInitParameter);
+                if($code = $reflection->getConstant('PAYMENTMETHOD_'.strtoupper($serviceData['method']))){
+                    $payInitParameter->setPaymentmethods(array($code));
+                }
             }
         }
 
@@ -256,6 +258,7 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
             ->setCountry($invoiceAddress->getCountry())
             ->setEmail($invoiceAddress->getEmail())
             ->setCurrency(strtoupper($cart->getCurrency()))
+            ->setLangid(strtoupper(substr($context->getRequest()->getLocale(), 0, 2)))
         ;
 
         if($invoiceAddress->isTitleWoman()){
