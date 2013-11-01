@@ -21,7 +21,9 @@ class SimpleTaxRateCartStrategy extends AbstractCartStrategy
     protected $taxincl = false;
 
     /**
-     * @param float $taxRate
+     * @param float $taxFactor
+     * @param bool $taxincl
+     * @throws \LogicException
      */
     public function __construct($taxFactor = 0.08, $taxincl = false)
     {
