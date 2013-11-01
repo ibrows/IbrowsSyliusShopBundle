@@ -7,7 +7,6 @@ use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\ErrorRedirectResponse
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\PaymentFinishedResponse;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\SelfRedirectResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Form\FormError;
 use Ibrows\Bundle\WizardAnnotationBundle\Annotation\Wizard;
 use Symfony\Component\HttpFoundation\Request;
