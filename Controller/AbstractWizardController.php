@@ -323,7 +323,7 @@ abstract class AbstractWizardController extends AbstractController
      * @param InvoiceAddressInterface $invoiceAddress
      * @return bool
      */
-    protected function saveAddressForm(Request $request, FormInterface $deliveryOptionStrategyForm, FormInterface $invoiceAddressForm, FormInterface $invoiceSameAsDeliveryForm, InvoiceAddressInterface $invoiceAddress)
+    protected function saveAddressForm(Request $request, FormInterface $deliveryOptionStrategyForm, FormInterface $invoiceAddressForm, FormInterface &$invoiceSameAsDeliveryForm, InvoiceAddressInterface $invoiceAddress)
     {
         $validDeliveryOptionStrategyFormData = $this->bindDeliveryOptions($deliveryOptionStrategyForm);
 
@@ -349,6 +349,10 @@ abstract class AbstractWizardController extends AbstractController
 
                 $this->persistCurrentCart();
                 return true;
+            }else{
+                $invoiceSameAsDeliveryForm = $this->createForm($this->getInvoiceSameAsDeliveryType(), array(
+                    'invoiceSameAsDelivery' => false
+                ));
             }
         }
         return false;
