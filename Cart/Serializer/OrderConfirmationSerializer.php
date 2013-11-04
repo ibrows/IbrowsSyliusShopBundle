@@ -170,7 +170,7 @@ class OrderConfirmationSerializer implements CartSerializerInterface
             ->setFrom($this->getFrom($cart))
             ->setTo($this->getTo($cart))
             ->setBcc($this->getBcc($cart))
-            ->setBody($this->getHtmlBody($cart))
+            ->setBody($this->getHtmlBody($cart), 'text/html', 'utf-8')
             ->addPart($this->getPlainBody($cart))
         ;
     }
