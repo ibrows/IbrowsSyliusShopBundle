@@ -181,10 +181,7 @@ class OrderConfirmationSerializer implements CartSerializerInterface
      */
     protected function getPlainBody(CartInterface $cart)
     {
-        return $this->getTemplating()->render($this->getTemplatePlain(), array(
-            'cart' => $cart,
-            'translation_domain' => $this->getTranslationDomain()
-        ));
+        return $this->getTemplating()->render($this->getTemplatePlain(), $this->getTemplateVariables($cart));
     }
 
     /**
@@ -193,10 +190,25 @@ class OrderConfirmationSerializer implements CartSerializerInterface
      */
     protected function getHtmlBody(CartInterface $cart)
     {
-        return $this->getTemplating()->render($this->getTemplateHtml(), array(
+        return $this->getTemplating()->render($this->getTemplateHtml(), $this->getTemplateVariables($cart));
+    }
+
+    /**
+     * @param CartInterface $cart
+     * @return array
+     */
+    protected function getTemplateVariables(CartInterface $cart)
+    {
+        $cartManager = $this->container->get('ibrows_syliusshop.currentcart.manager');
+        return array(
             'cart' => $cart,
-            'translation_domain' => $this->getTranslationDomain()
-        ));
+            'translation_domain' => $this->getTranslationDomain(),
+            'cartManager' => $cartManager,
+            'deliveryOptionStrategy' => $cartManager->getSelectedDeliveryOptionStrategyService(),
+            'paymentOptionStrategy' => $cartManager->getSelectedPaymentOptionStrategyService(),
+            'deliveryOptionStrategyData' => $cart->getDeliveryOptionStrategyServiceData(),
+            'paymentOptionStrategyData' => $cart->getPaymentOptionStrategyServiceData(),
+        );
     }
 
     /**
