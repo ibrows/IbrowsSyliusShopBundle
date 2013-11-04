@@ -255,7 +255,7 @@ class CartManager
 
     /**
      * @param CartStrategyInterface $strategy
-     * @return array $costs
+     * @return Costs
      */
     public function getStrategyServiceCostsByStrategy(CartStrategyInterface $strategy = null)
     {
@@ -270,6 +270,22 @@ class CartManager
             $costs->setTotalWithTax($costs->getTotalWithTax()+$item->getPriceWithTax());
         }
 
+        return $costs;
+    }
+
+    /**
+     * @param CartStrategyInterface[] $strategies
+     * @return Costs
+     */
+    public function getStrategyServiceCostsByStrategies(array $strategies)
+    {
+        $costs = new Costs();
+        foreach($strategies as $strategy){
+            $strategyCosts = $this->getStrategyServiceCostsByStrategy($strategy);
+            $costs->setTotal($costs->getTotal()+$strategyCosts->getTotal());
+            $costs->setTax($costs->getTax()+$strategyCosts->getTax());
+            $costs->setTotalWithTax($costs->getTotalWithTax()+$strategyCosts->getTotalWithTax());
+        }
         return $costs;
     }
 
