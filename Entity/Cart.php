@@ -985,6 +985,11 @@ class Cart extends BaseCart implements CartInterface
      */
     public function addVoucherCode(VoucherCodeInterface $voucherCode)
     {
+        foreach($this->getVoucherCodes() as $existingVoucherCode){
+            if($existingVoucherCode->getCode() == $voucherCode->getCode()){
+                return $this;
+            }
+        }
         $voucherCode->setCart($this);
         $this->voucherCodes->add($voucherCode);
         return $this;
