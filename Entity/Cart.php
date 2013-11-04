@@ -182,6 +182,11 @@ class Cart extends BaseCart implements CartInterface
     protected $invoiceAddress;
 
     /**
+     * @var
+     */
+    protected $voucherCodes;
+
+    /**
      * @var InvoiceAddressInterface $invoiceAddressObj
      * @ORM\Column(type="object", name="invoice_address_obj", nullable=true)
      */

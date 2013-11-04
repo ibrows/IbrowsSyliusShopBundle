@@ -2,15 +2,15 @@
 
 namespace Ibrows\SyliusShopBundle\Entity;
 
-use Ibrows\SyliusShopBundle\Model\Product\ProductInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Ibrows\SyliusShopBundle\Model\VoucherInterface;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="ibr_sylius_voucher")
  * @ORM\InheritanceType("JOINED")
  */
-class Voucher implements ProductInterface
+class Voucher implements VoucherInterface
 {
     /**
      * @var int
