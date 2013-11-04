@@ -37,5 +37,9 @@ class VoucherPercentCartStrategy extends VoucherCartStrategy
     protected function redeemVoucher(VoucherCodeInterface $voucherCode, BaseVoucherInterface $voucher)
     {
         $voucherCode->setRedeemedAt(new \DateTime());
+        if(!$voucher instanceof VoucherPercentInterface){
+            return;
+        }
+        $voucher->setQuantity($voucher->getQuantity()-1);
     }
 }

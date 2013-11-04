@@ -68,7 +68,7 @@ abstract class AbstractVoucher implements BaseVoucherInterface
      */
     public function getCodeWithPrefix()
     {
-        return self::getPrefix().$this->getCode();
+        return static::getPrefix().$this->getCode();
     }
 
     /**

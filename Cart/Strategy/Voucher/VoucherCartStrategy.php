@@ -141,5 +141,10 @@ class VoucherCartStrategy extends AbstractCartStrategy implements CartVoucherStr
     protected function redeemVoucher(VoucherCodeInterface $voucherCode, BaseVoucherInterface $voucher)
     {
         $voucherCode->setRedeemedAt(new \DateTime());
+        if(!$voucher instanceof VoucherInterface){
+            return;
+        }
+
+        // here reduction
     }
 }

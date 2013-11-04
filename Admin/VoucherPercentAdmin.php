@@ -18,6 +18,7 @@ class VoucherPercentAdmin extends DefaultAdmin
             ->addIdentifier('id')
             ->add('code')
             ->add('percent')
+            ->add('quantity')
             ->add('validFrom')
             ->add('validTo')
         ;
@@ -41,6 +42,7 @@ class VoucherPercentAdmin extends DefaultAdmin
         $formMapper
             ->add('code')
             ->add('percent')
+            ->add('quantity')
             ->add('validFrom', 'datetime', array(
                 'date_widget' => 'single_text',
                 'time_widget' => 'single_text'
@@ -59,8 +61,9 @@ class VoucherPercentAdmin extends DefaultAdmin
     {
         $showMapper
             ->add('id')
-            ->add('code')
+            ->add('codeWithPrefix')
             ->add('percent')
+            ->add('quantity')
             ->add('validFrom')
             ->add('validTo')
         ;
