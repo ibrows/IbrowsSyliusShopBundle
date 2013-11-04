@@ -7,7 +7,7 @@ use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
 
-class VoucherAdmin extends DefaultAdmin
+class VoucherPercentAdmin extends DefaultAdmin
 {
     /**
      * @param ListMapper $listMapper
@@ -16,10 +16,10 @@ class VoucherAdmin extends DefaultAdmin
     {
         $listMapper
             ->addIdentifier('id')
-            ->add('payed')
             ->add('code')
-            ->add('value')
-            ->add('currency')
+            ->add('percent')
+            ->add('validFrom')
+            ->add('validTo')
         ;
     }
 
@@ -30,8 +30,6 @@ class VoucherAdmin extends DefaultAdmin
     {
         $datagridMapper
             ->add('code')
-            ->add('value')
-            ->add('currency')
         ;
     }
 
@@ -42,9 +40,12 @@ class VoucherAdmin extends DefaultAdmin
     {
         $formMapper
             ->add('code')
-            ->add('value')
-            ->add('currency')
-            ->add('payedAt', 'datetime', array(
+            ->add('percent')
+            ->add('validFrom', 'datetime', array(
+                'date_widget' => 'single_text',
+                'time_widget' => 'single_text'
+            ))
+            ->add('validTo', 'datetime', array(
                 'date_widget' => 'single_text',
                 'time_widget' => 'single_text'
             ))
@@ -59,9 +60,9 @@ class VoucherAdmin extends DefaultAdmin
         $showMapper
             ->add('id')
             ->add('code')
-            ->add('value')
-            ->add('createdAt')
-            ->add('payedAt')
+            ->add('percent')
+            ->add('validFrom')
+            ->add('validTo')
         ;
     }
 }

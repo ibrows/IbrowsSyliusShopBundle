@@ -52,6 +52,10 @@ class WizardController extends AbstractWizardController
 
             $basketForm->submit($request);
             if ($basketForm->isValid()) {
+                if(($postAction = $this->postBasketFormValidationAction($cart)) instanceof Response){
+                    return $postAction;
+                }
+
                 $this->persistCurrentCart();
                 $basketForm = $this->createForm($this->getBasketType(), $cart);
                 if ($request->request->get($continueSubmitName)) {

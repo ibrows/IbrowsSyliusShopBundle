@@ -294,6 +294,15 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
+     * @param CartInterface $cart
+     * @return null|Response
+     */
+    protected function postBasketFormValidationAction(CartInterface $cart)
+    {
+        return null;
+    }
+
+    /**
      * @return InvoiceAddressInterface
      */
     protected function getInvoiceAddress()

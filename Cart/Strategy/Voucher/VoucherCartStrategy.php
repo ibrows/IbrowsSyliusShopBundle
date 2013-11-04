@@ -135,10 +135,10 @@ class VoucherCartStrategy extends AbstractCartStrategy implements CartVoucherStr
 
     /**
      * @param VoucherCodeInterface $voucherCode
-     * @param VoucherInterface $voucher
+     * @param BaseVoucherInterface $voucher
      * @todo reduce voucher value (strategy for sorting vouchers and create a new one)
      */
-    protected function redeemVoucher(VoucherCodeInterface $voucherCode, VoucherInterface $voucher)
+    protected function redeemVoucher(VoucherCodeInterface $voucherCode, BaseVoucherInterface $voucher)
     {
         $voucherCode->setRedeemedAt(new \DateTime());
     }
