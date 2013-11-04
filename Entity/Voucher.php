@@ -3,7 +3,7 @@
 namespace Ibrows\SyliusShopBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Ibrows\SyliusShopBundle\Model\VoucherInterface;
+use Ibrows\SyliusShopBundle\Model\Voucher\VoucherInterface;
 
 /**
  * @ORM\Entity
