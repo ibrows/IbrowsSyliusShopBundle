@@ -273,6 +273,7 @@ class WizardController extends AbstractWizardController
         if ('POST' === $request->getMethod()) {
             $summaryForm->submit($request);
             if ($summaryForm->isValid()) {
+                $this->getCurrentCartManager()->redeemVouchers();
                 $this->persistCurrentCart();
                 return $this->redirect($this->getWizard()->getNextStepUrl());
             }

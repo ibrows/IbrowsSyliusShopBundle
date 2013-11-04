@@ -5,12 +5,14 @@ namespace Ibrows\SyliusShopBundle\Cart;
 use Doctrine\Common\Collections\ArrayCollection;
 use Ibrows\SyliusShopBundle\Cart\Exception\CartCurrencyChangeException;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Costs;
+use Ibrows\SyliusShopBundle\Cart\Strategy\Voucher\VoucherCartStrategy;
 use Ibrows\SyliusShopBundle\Entity\AdditionalCartItem;
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartCurrencyStrategyInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartPaymentOptionStrategyInterface;
+use Ibrows\SyliusShopBundle\Model\Voucher\VoucherCodeInterface;
 use Sylius\Bundle\InventoryBundle\Checker\AvailabilityCheckerInterface;
 use Ibrows\SyliusShopBundle\Cart\Exception\CartItemNotOnStockException;
 use Symfony\Component\HttpFoundation\Request;
@@ -469,6 +471,35 @@ class CartManager
         }
 
         return $cart;
+    }
+
+    /**
+     * @param VoucherCodeInterface $voucherCode
+     * @return $this
+     */
+    public function addVoucherCode(VoucherCodeInterface $voucherCode)
+    {
+        $this->getCart(true)->addVoucherCode($voucherCode);
+        return $this;
+    }
+
+    /**
+     * @param VoucherCodeInterface $voucherCode
+     * @return $this
+     */
+    public function removeVoucherCode(VoucherCodeInterface $voucherCode)
+    {
+        $this->getCart(true)->removeVoucherCode($voucherCode);
+        return $this;
+    }
+
+    public function redeemVouchers()
+    {
+        foreach($this->getStrategies() as $strategy){
+            if($strategy instanceof VoucherCartStrategy){
+                $strategy->redeemVouchers($this->getCart(), $this);
+            }
+        }
     }
 
     /**

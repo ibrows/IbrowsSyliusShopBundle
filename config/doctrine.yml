@@ -11,6 +11,9 @@ doctrine:
 
             Ibrows\SyliusShopBundle\Model\Product\ProductInterface: '%ibrows_sylius_shop.product.class%'
 
+            Ibrows\SyliusShopBundle\Model\Voucher\VoucherInterface: '%ibrows_sylius_shop.voucher.class%'
+            Ibrows\SyliusShopBundle\Model\Voucher\VoucherCodeInterface: '%ibrows_sylius_shop.vouchercode.class%'
+
             Ibrows\SyliusShopBundle\Model\CartInterface: '%ibrows_sylius_shop.cart.class%'
             Ibrows\SyliusShopBundle\Model\CartItemInterface: '%ibrows_sylius_shop.cartitem.class%'
             Ibrows\SyliusShopBundle\Model\AdditionalCartItemInterface: '%ibrows_sylius_shop.additionalcartitem.class%'

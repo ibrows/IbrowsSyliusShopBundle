@@ -14,8 +14,8 @@ use Sylius\Bundle\CartBundle\Model\CartItemInterface as SyliusCartItemInterface;
 use Sylius\Bundle\CartBundle\Entity\Cart as BaseCart;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use DateTime;
 use Symfony\Component\Validator\Constraints as Assert;
+use Ibrows\SyliusShopBundle\Model\Voucher\VoucherCodeInterface;
 
 /**
  * @ORM\Entity
@@ -145,31 +145,31 @@ class Cart extends BaseCart implements CartInterface
     protected $totalTax = 0.0;
 
     /**
-     * @var DateTime
+     * @var \DateTime
      * @ORM\Column(type="datetime", name="payed_at", nullable=true)
      */
     protected $payedAt;
 
     /**
-     * @var DateTime
+     * @var \DateTime
      * @ORM\Column(type="datetime", name="confirmed_at", nullable=true)
      */
     protected $confirmedAt;
 
     /**
-     * @var DateTime
+     * @var \DateTime
      * @ORM\Column(type="datetime", name="closed_at", nullable=true)
      */
     protected $closedAt;
 
     /**
-     * @var DateTime
+     * @var \DateTime
      * @ORM\Column(type="datetime", name="created_at")
      */
     protected $createdAt;
 
     /**
-     * @var DateTime
+     * @var \DateTime
      * @ORM\Column(type="datetime", name="terms_and_conditions_at", nullable=true)
      */
     protected $termsAndConditionsAt;
@@ -182,7 +182,8 @@ class Cart extends BaseCart implements CartInterface
     protected $invoiceAddress;
 
     /**
-     * @var
+     * @var VoucherCodeInterface[]|Collection
+     * @ORM\OneToMany(targetEntity="Ibrows\SyliusShopBundle\Model\Voucher\VoucherCodeInterface", mappedBy="cart", cascade="all", orphanRemoval=true)
      */
     protected $voucherCodes;
 
@@ -223,8 +224,11 @@ class Cart extends BaseCart implements CartInterface
         $this->payments = new ArrayCollection();
         $this->items = new ArrayCollection();
         $this->additionalItems = new ArrayCollection();
+        $this->voucherCodes = new ArrayCollection();
         $this->setCreated();
     }
+
+
 
     /**
      * @return float
@@ -443,7 +447,7 @@ class Cart extends BaseCart implements CartInterface
         if(false === $flag){
             $this->payedAt = null;
         }else{
-            $this->payedAt = new DateTime;
+            $this->payedAt = new \DateTime;
         }
         return $this;
     }
@@ -457,7 +461,7 @@ class Cart extends BaseCart implements CartInterface
     }
 
     /**
-     * @return DateTime
+     * @return \DateTime
      */
     public function getPayedAt()
     {
@@ -465,7 +469,7 @@ class Cart extends BaseCart implements CartInterface
     }
 
     /**
-     * @return DateTime
+     * @return \DateTime
      */
     public function isClosed()
     {
@@ -481,13 +485,13 @@ class Cart extends BaseCart implements CartInterface
         if(false === $flag){
             $this->closedAt = null;
         }else{
-            $this->closedAt = new DateTime;
+            $this->closedAt = new \DateTime;
         }
         return $this;
     }
 
     /**
-     * @return DateTime
+     * @return \DateTime
      */
     public function getClosedAt()
     {
@@ -559,7 +563,7 @@ class Cart extends BaseCart implements CartInterface
     }
 
     /**
-     * @return DateTime
+     * @return \DateTime
      */
     public function getTermsAndConditionsAt()
     {
@@ -575,7 +579,7 @@ class Cart extends BaseCart implements CartInterface
         if(false === $flag){
             $this->termsAndConditionsAt = null;
         }else{
-            $this->termsAndConditionsAt = new DateTime;
+            $this->termsAndConditionsAt = new \DateTime;
         }
         return $this;
     }
@@ -844,7 +848,7 @@ class Cart extends BaseCart implements CartInterface
         if(false === $flag){
             $this->confirmedAt = null;
         }else{
-            $this->confirmedAt = new DateTime;
+            $this->confirmedAt = new \DateTime;
         }
         return $this;
     }
@@ -858,7 +862,7 @@ class Cart extends BaseCart implements CartInterface
     }
 
     /**
-     * @return DateTime
+     * @return \DateTime
      */
     public function getConfirmedAt()
     {
@@ -874,7 +878,7 @@ class Cart extends BaseCart implements CartInterface
     }
 
     /**
-     * @return DateTime
+     * @return \DateTime
      */
     public function getCreatedAt()
     {
@@ -890,7 +894,7 @@ class Cart extends BaseCart implements CartInterface
         if(false === $flag){
             $this->createdAt = null;
         }else{
-            $this->createdAt = new DateTime;
+            $this->createdAt = new \DateTime;
         }
         return $this;
     }
@@ -964,6 +968,36 @@ class Cart extends BaseCart implements CartInterface
     public function setAmountToPay($amountToPay)
     {
         $this->amountToPay = $amountToPay;
+        return $this;
+    }
+
+    /**
+     * @return VoucherCodeInterface[]|Collection
+     */
+    public function getVoucherCodes()
+    {
+        return $this->voucherCodes;
+    }
+
+    /**
+     * @param VoucherCodeInterface $voucherCode
+     * @return CartInterface
+     */
+    public function addVoucherCode(VoucherCodeInterface $voucherCode)
+    {
+        $voucherCode->setCart($this);
+        $this->voucherCodes->add($voucherCode);
+        return $this;
+    }
+
+    /**
+     * @param VoucherCodeInterface $voucherCode
+     * @return CartInterface
+     */
+    public function removeVoucherCode(VoucherCodeInterface $voucherCode)
+    {
+        $voucherCode->setCart(null);
+        $this->voucherCodes->removeElement($voucherCode);
         return $this;
     }
 }

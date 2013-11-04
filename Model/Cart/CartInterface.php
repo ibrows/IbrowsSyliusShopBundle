@@ -8,6 +8,7 @@ use Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface;
 use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\Payment\PaymentInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartStrategyInterface;
+use Ibrows\SyliusShopBundle\Model\Voucher\VoucherCodeInterface;
 use Sylius\Bundle\CartBundle\Model\CartInterface as BaseCartInterface;
 use DateTime;
 
@@ -39,6 +40,23 @@ interface CartInterface extends BaseCartInterface
      * @return float
      */
     public function getAmountToPay();
+
+    /**
+     * @return VoucherCodeInterface[]|Collection
+     */
+    public function getVoucherCodes();
+
+    /**
+     * @param VoucherCodeInterface $voucherCode
+     * @return CartInterface
+     */
+    public function addVoucherCode(VoucherCodeInterface $voucherCode);
+
+    /**
+     * @param VoucherCodeInterface $voucherCode
+     * @return CartInterface
+     */
+    public function removeVoucherCode(VoucherCodeInterface $voucherCode);
 
     /**
      * @param float $amountToPay
@@ -353,7 +371,7 @@ interface CartInterface extends BaseCartInterface
     public function setTotalWithTax($totalWithTax);
 
     /**
-     * @return Payments[]
+     * @return PaymentInterface[]
      */
     public function getPayments();
 

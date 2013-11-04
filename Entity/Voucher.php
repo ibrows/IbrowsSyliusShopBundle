@@ -3,28 +3,22 @@
 namespace Ibrows\SyliusShopBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Ibrows\SyliusShopBundle\Model\Product\ProductInterface;
 use Ibrows\SyliusShopBundle\Model\Voucher\VoucherInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints as DoctrineAssert;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="ibr_sylius_voucher")
  * @ORM\InheritanceType("JOINED")
  */
-class Voucher implements VoucherInterface
+class Voucher extends AbstractVoucher implements VoucherInterface, ProductInterface
 {
-    /**
-     * @var int
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
-
     /**
      * @var string
      * @ORM\Column(type="string")
      */
-    protected $code;
+    protected $currency;
 
     /**
      * @var float
@@ -34,50 +28,16 @@ class Voucher implements VoucherInterface
 
     /**
      * @var \DateTime
-     * @ORM\Column(type="datetime", name="created_at")
-     */
-    protected $createdAt;
-
-    /**
-     * @var \DateTime
      * @ORM\Column(type="datetime", name="payed_at", nullable=true)
      */
     protected $payedAt;
 
-    public function __construct()
-    {
-        $this->setCreatedAt(new \DateTime());
-    }
-
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return '#'. $this->getId() .' Voucher "'. $this->getCode() .'" ('. $this->getValue() .') | Status: '. ($this->isPayed() ? 'payed' : 'unpayed');
-    }
-
-    /**
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCode()
-    {
-        return $this->code;
-    }
-
-    /**
-     * @param mixed $code
-     * @return Voucher
-     */
-    public function setCode($code)
-    {
-        $this->code = $code;
-        return $this;
     }
 
     /**
@@ -95,24 +55,6 @@ class Voucher implements VoucherInterface
     public function setValue($value)
     {
         $this->value = $value;
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @param \DateTime $createdAt
-     * @return Voucher
-     */
-    public function setCreatedAt(\DateTime $createdAt = null)
-    {
-        $this->createdAt = $createdAt;
         return $this;
     }
 
@@ -192,6 +134,14 @@ class Voucher implements VoucherInterface
     }
 
     /**
+     * @return bool
+     */
+    public function isValid()
+    {
+        return $this->isPayed() && $this->getValue() > 0;
+    }
+
+    /**
      * Set stock on hand.
      *
      * @param integer $onHand
@@ -226,5 +176,40 @@ class Voucher implements VoucherInterface
     public function isPayed()
     {
         return $this->getPayedAt() !== null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    /**
+     * @param string $currency
+     * @return Voucher
+     */
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public static function getPrefix()
+    {
+        return 'v';
+    }
+
+    /**
+     * @param string $code
+     * @return bool
+     */
+    public static function acceptCode($code)
+    {
+        return substr($code, 0, 1) == self::getPrefix();
     }
 }
