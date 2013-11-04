@@ -181,7 +181,10 @@ class OrderConfirmationSerializer implements CartSerializerInterface
      */
     protected function getPlainBody(CartInterface $cart)
     {
-        return $this->getTemplating()->render($this->getTemplatePlain(), array('cart' => $cart));
+        return $this->getTemplating()->render($this->getTemplatePlain(), array(
+            'cart' => $cart,
+            'translation_domain' => $this->getTranslationDomain()
+        ));
     }
 
     /**
@@ -190,7 +193,10 @@ class OrderConfirmationSerializer implements CartSerializerInterface
      */
     protected function getHtmlBody(CartInterface $cart)
     {
-        return $this->getTemplating()->render($this->getTemplateHtml(), array('cart' => $cart));
+        return $this->getTemplating()->render($this->getTemplateHtml(), array(
+            'cart' => $cart,
+            'translation_domain' => $this->getTranslationDomain()
+        ));
     }
 
     /**
