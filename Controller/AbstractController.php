@@ -3,7 +3,6 @@
 namespace Ibrows\SyliusShopBundle\Controller;
 
 use Ibrows\SyliusShopBundle\Cart\Exception\CartItemNotOnStockException;
-
 use Ibrows\SyliusShopBundle\Cart\CartManager;
 use Ibrows\SyliusShopBundle\Cart\CurrentCartManager;
 use Ibrows\SyliusShopBundle\Form\DeliveryOptionStrategyType;
@@ -25,7 +24,6 @@ use Ibrows\SyliusShopBundle\IbrowsSyliusShopBundle;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormInterface;
@@ -40,6 +38,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Ibrows\SyliusShopBundle\Entity\Address;
 use Ibrows\SyliusShopBundle\Model\User\UserInterface;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Security\Core\SecurityContextInterface;
 
 abstract class AbstractController extends Controller
 {
@@ -64,6 +63,14 @@ abstract class AbstractController extends Controller
         }
 
         return $resource;
+    }
+
+    /**
+     * @return SecurityContextInterface
+     */
+    protected function getSecurityContext()
+    {
+        return $this->get('security.context');
     }
 
     /**
@@ -398,7 +405,12 @@ abstract class AbstractController extends Controller
     protected function getNewInvoiceAddress()
     {
         $className = $this->getInvoiceAddressClass();
-        return new $className();
+
+        /** @var InvoiceAddressInterface $invoiceAddress */
+        $invoiceAddress = new $className();
+        $invoiceAddress->setEmail($this->getCurrentCart()->getEmail());
+
+        return $invoiceAddress;
     }
 
     /**
@@ -407,7 +419,12 @@ abstract class AbstractController extends Controller
     protected function getNewDeliveryAddress()
     {
         $className = $this->getDeliveryAddressClass();
-        return new $className();
+
+        /** @var DeliveryAddressInterface $deliveryAddress */
+        $deliveryAddress = new $className();
+        $deliveryAddress->setEmail($this->getCurrentCart()->getEmail());
+
+        return $deliveryAddress;
     }
 
     /**
