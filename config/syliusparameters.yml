@@ -11,6 +11,8 @@ parameters:
     ibrows_sylius_shop.cartitem.class: Ibrows\SyliusShopBundle\Entity\CartItem
     ibrows_sylius_shop.additionalcartitem.class: Ibrows\SyliusShopBundle\Entity\AdditionalCartItem
 
+    ibrows_sylius_shop.voucher.class: Ibrows\SyliusShopBundle\Entity\Voucher
+
     ibrows_sylius_shop.cart.itemresolver.class: Ibrows\SyliusShopBundle\Cart\BaseItemResolver
 
     ibrows_sylius_shop.inventory.class: Ibrows\SyliusShopBundle\Entity\InventoryUnit

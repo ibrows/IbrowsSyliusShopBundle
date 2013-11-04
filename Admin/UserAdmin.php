@@ -7,7 +7,8 @@ use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Route\RouteCollection;
 
-class UserAdmin extends DefaultAdmin {
+class UserAdmin extends DefaultAdmin
+{
 
     public function configureDatagridFilters(DatagridMapper $datagrid) {
 
