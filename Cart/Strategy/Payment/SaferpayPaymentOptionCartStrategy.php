@@ -135,7 +135,6 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
         $data = $cart->getPaymentOptionStrategyServiceData();
         if(!isset($data['method'])){
             $this->removeStrategy($cart);
-            return array();
         }
         return array();
     }
