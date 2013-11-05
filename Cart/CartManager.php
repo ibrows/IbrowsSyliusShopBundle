@@ -161,6 +161,7 @@ class CartManager
         foreach($this->strategies as $strategy){
             if(
                 $strategy instanceof CartDeliveryOptionStrategyInterface &&
+                $strategy->isEnabled() && 
                 $strategy->isPossible($cart, $this)
             ){
                 $strategies[] = $strategy;
@@ -207,6 +208,7 @@ class CartManager
         foreach($this->strategies as $strategy){
             if(
                 $strategy instanceof CartPaymentOptionStrategyInterface &&
+                $strategy->isEnabled() &&
                 $strategy->isPossible($cart, $this)
             ){
                 $strategies[] = $strategy;
