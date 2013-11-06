@@ -257,7 +257,7 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
             ->setCountry($invoiceAddress->getCountry())
             ->setEmail($invoiceAddress->getEmail())
             ->setCurrency(strtoupper($cart->getCurrency()))
-            ->setLangid(strtoupper(substr($context->getRequest()->getLocale(), 0, 2)))
+            ->setLangid($context->getRequest()->getLocale())
         ;
 
         if($invoiceAddress->isTitleWoman()){
