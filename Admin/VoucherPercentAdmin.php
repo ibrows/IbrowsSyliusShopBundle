@@ -42,14 +42,18 @@ class VoucherPercentAdmin extends DefaultAdmin
         $formMapper
             ->add('code')
             ->add('percent')
-            ->add('quantity')
+            ->add('quantity', null, array(
+                'required' => false
+            ))
             ->add('validFrom', 'datetime', array(
                 'date_widget' => 'single_text',
-                'time_widget' => 'single_text'
+                'time_widget' => 'single_text',
+                'required' => false
             ))
             ->add('validTo', 'datetime', array(
                 'date_widget' => 'single_text',
-                'time_widget' => 'single_text'
+                'time_widget' => 'single_text',
+                'required' => false
             ))
         ;
     }
