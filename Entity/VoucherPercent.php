@@ -99,7 +99,20 @@ class VoucherPercent extends AbstractVoucher implements VoucherPercentInterface
     public function isValid()
     {
         $now = new \DateTime();
-        return $now > $this->getValidFrom() && $now < $this->getValidTo() && $this->getQuantity() > 0;
+
+        if(($from = $this->getValidFrom()) && $from > $now){
+            return false;
+        }
+
+        if(($to = $this->getValidTo()) && $to < $now){
+            return false;
+        }
+
+        if(is_null($quantity = $this->getQuantity())){
+            return true;
+        }
+
+        return $quantity > 0;
     }
 
     /**
