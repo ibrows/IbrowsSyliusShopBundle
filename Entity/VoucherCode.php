@@ -45,6 +45,11 @@ class VoucherCode implements VoucherCodeInterface
      */
     protected $cart;
 
+    public function __construct()
+    {
+        $this->setValid(false);
+    }
+
     /**
      * @return mixed
      */
