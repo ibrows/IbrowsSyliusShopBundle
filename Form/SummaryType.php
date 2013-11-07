@@ -13,7 +13,7 @@ class SummaryType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('termsandconditions', 'checkbox')
+            ->add('termsAndConditions', 'checkbox')
         ;
     }
 
