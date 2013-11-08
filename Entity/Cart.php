@@ -228,7 +228,13 @@ class Cart extends BaseCart implements CartInterface
         $this->setCreated();
     }
 
-
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return 'Cart #'. $this->getId();
+    }
 
     /**
      * @return float
