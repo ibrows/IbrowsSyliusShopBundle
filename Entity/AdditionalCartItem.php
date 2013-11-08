@@ -1,17 +1,10 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Entity;
+
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
-
-use Ibrows\SyliusShopBundle\Model\Product\ProductInterface;
-use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
-use Sylius\Bundle\CartBundle\Entity\CartItem as BaseCartItem;
-use Sylius\Bundle\CartBundle\Model\CartItemInterface as BaseCartItemInterface;
-
 use Doctrine\ORM\Mapping as ORM;
-
-use DateTime;
 
 /**
  * @ORM\Entity
@@ -91,7 +84,6 @@ class AdditionalCartItem implements AdditionalCartItemInterface
 
     public function calculateTotal()
     {
-
         $price = $this->getPrice();
         $tax = $this->getTaxFactor();
 
@@ -104,6 +96,38 @@ class AdditionalCartItem implements AdditionalCartItemInterface
             $this->setTaxPrice($taxPrice);
             $this->setPriceWithTax($price+$taxPrice);
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getPriceRounded()
+    {
+        return sprintf('%.2f', round($this->getPrice(), 2));
+    }
+
+    /**
+     * @return string
+     */
+    public function getTaxPriceRounded()
+    {
+        return sprintf('%.2f', round($this->getTaxPrice(), 2));
+    }
+
+    /**
+     * @return string
+     */
+    public function getTaxRateRounded()
+    {
+        return sprintf('%.2f', round($this->getTaxRate(), 2));
+    }
+
+    /**
+     * @return string
+     */
+    public function getPriceWithTaxRounded()
+    {
+        return sprintf('%.2f', round($this->getPriceWithTax(), 2));
     }
 
     /**

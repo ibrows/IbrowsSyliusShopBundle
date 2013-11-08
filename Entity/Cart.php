@@ -237,11 +237,75 @@ class Cart extends BaseCart implements CartInterface
     }
 
     /**
-     * @return float
+     * @return string
      */
     public function getTotalRounded()
     {
-        return round($this->getTotal(), 2);
+        return sprintf('%.2f', round($this->getTotal(), 2));
+    }
+
+    /**
+     * @return string
+     */
+    public function getItemsPriceTotalTaxRounded()
+    {
+        return sprintf('%.2f', round($this->getItemsPriceTotalTax(), 2));
+    }
+
+    /**
+     * @return string
+     */
+    public function getItemsPriceTotalWithTaxRounded()
+    {
+        return sprintf('%.2f', round($this->getItemsPriceTotalWithTax(), 2));
+    }
+
+    /**
+     * @return string
+     */
+    public function getAdditionalItemsPriceTotalRounded()
+    {
+        return sprintf('%.2f', round($this->getAdditionalItemsPriceTotal(), 2));
+    }
+
+    /**
+     * @return string
+     */
+    public function getAdditionalItemsPriceTotalTaxRounded()
+    {
+        return sprintf('%.2f', round($this->getAdditionalItemsPriceTotalTax(), 2));
+    }
+
+    /**
+     * @return string
+     */
+    public function getAdditionalItemsPriceTotalWithTaxRounded()
+    {
+        return sprintf('%.2f', round($this->getAdditionalItemsPriceTotalWithTax(), 2));
+    }
+
+    /**
+     * @return string
+     */
+    public function getTotalTaxRounded()
+    {
+        return sprintf('%.2f', round($this->getTotalTax(), 2));
+    }
+
+    /**
+     * @return float
+     */
+    public function getTotalWithTaxRounded()
+    {
+        return sprintf('%.2f', round($this->getTotalWithTax(), 2));
+    }
+
+    /**
+     * @return string
+     */
+    public function getAmountToPayRounded()
+    {
+        return sprintf('%.2f', round($this->getAmountToPay(), 2));
     }
 
     /**
@@ -609,6 +673,28 @@ class Cart extends BaseCart implements CartInterface
     }
 
     /**
+     * @return array
+     */
+    public function getDeliveryOptionStrategyServiceIdWithData()
+    {
+        return array(
+            'id' => $this->getDeliveryOptionStrategyServiceId(),
+            'data' => $this->getDeliveryOptionStrategyServiceData()
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function getPaymentOptionStrategyServiceIdWithData()
+    {
+        return array(
+            'id' => $this->getPaymentOptionStrategyServiceId(),
+            'data' => $this->getPaymentOptionStrategyServiceData()
+        );
+    }
+
+    /**
      * @return int
      */
     public function getTotalAdditionalItems()
@@ -650,6 +736,14 @@ class Cart extends BaseCart implements CartInterface
     public function getItemsPriceTotal()
     {
         return $this->itemsPriceTotal;
+    }
+
+    /**
+     * @return string
+     */
+    public function getItemsPriceTotalRounded()
+    {
+        return sprintf('%.2f', round($this->getItemsPriceTotal(), 2));
     }
 
     /**

@@ -17,16 +17,29 @@ class VoucherPercentCartStrategy extends VoucherCartStrategy
      */
     protected function getAdditionalItemByVoucherCode(VoucherCodeInterface $voucherCode, CartInterface $cart)
     {
-        $voucherCode->setValid(false);
-
         /** @var VoucherPercentInterface $voucher */
-        if(!$voucher = $this->getValidVoucher($voucherCode)){
+        if(!$voucher = $this->getVoucher($voucherCode)){
+            $voucherCode->setValid(false);
+            return null;
+        }
+
+        if(!$voucher->isValid() && !$voucherCode->isRedeemed()){
+            $voucherCode->setValid(false);
             return null;
         }
 
         $voucherCode->setValid(true);
+
         return $this->createAdditionalCartItem(
-            round($cart->getItemsPriceTotalWithTax()*$voucher->getPercent()/5,2)*5*-1
+            round($cart->getItemsPriceTotalWithTax()*$voucher->getPercent()/5,2)*5*-1,
+            null,
+            array(
+                'percentRate' => $voucher->getPercent()*100,
+                'code' => $voucherCode->getCode(),
+                'validFrom' => ($from = $voucher->getValidFrom()) ? $from->format('Y-m-d H:i:s') : null,
+                'validTo' => ($to = $voucher->getValidTo()) ? $to->format('Y-m-d H:i:s') : null,
+                'quantity' => $voucher->getQuantity()
+            )
         );
     }
 
@@ -40,6 +53,9 @@ class VoucherPercentCartStrategy extends VoucherCartStrategy
         if(!$voucher instanceof VoucherPercentInterface){
             return;
         }
-        $voucher->setQuantity($voucher->getQuantity()-1);
+
+        if($voucher->hasQuantity()){
+            $voucher->setQuantity($voucher->getQuantity()-1);
+        }
     }
 }

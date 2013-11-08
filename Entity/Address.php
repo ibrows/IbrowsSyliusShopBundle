@@ -289,6 +289,9 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
         return $this->zip;
     }
 
+    /**
+     * @return string
+     */
     protected function getStringTemplate()
     {
         return "%%Company%%
@@ -297,12 +300,18 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
         %%Zip%% %%City%%";
     }
 
+    /**
+     * @return array
+     */
     protected function getStringTemplateVariables()
     {
         $vars = get_object_vars($this);
         return $vars;
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         $template = $this->getStringTemplate();
@@ -314,7 +323,7 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
             }
             $template = preg_replace('!%%' . $var . '%%!', $value, $template);
         }
-        return preg_replace("!\n+\s*\n+!","\n",$template);
+        return preg_replace("!\n+\s*\n+!","\n", $template);
     }
 
     /**

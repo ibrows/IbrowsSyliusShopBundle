@@ -32,6 +32,11 @@ interface VoucherPercentInterface extends BaseVoucherInterface
     public function getQuantity();
 
     /**
+     * @return bool
+     */
+    public function hasQuantity();
+
+    /**
      * @param int $quantity
      * @return VoucherPercentInterface
      */

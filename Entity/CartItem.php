@@ -7,7 +7,6 @@ use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface;
 use Sylius\Bundle\CartBundle\Entity\CartItem as BaseCartItem;
 use Sylius\Bundle\CartBundle\Model\CartItemInterface as BaseCartItemInterface;
 use Doctrine\ORM\Mapping as ORM;
-use DateTime;
 
 /**
  * @ORM\Entity
@@ -54,7 +53,7 @@ class CartItem extends BaseCartItem implements CartItemInterface
     protected $productObj;
 
     /**
-     * @var DateTime
+     * @var \DateTime
      * @ORM\Column(type="datetime", nullable=true)
      */
     protected $delivered = null;
@@ -107,6 +106,43 @@ class CartItem extends BaseCartItem implements CartItemInterface
             $this->setTaxPrice($taxPrice);
             $this->totalWithTaxPrice = ($total + $taxPrice);
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getTaxRateRounded()
+    {
+        return sprintf('%.2f', round($this->getTaxRate(), 2));
+    }
+
+    /**
+     * @return string
+     */
+    public function getTaxPriceRounded()
+    {
+        return sprintf('%.2f', round($this->getTaxPrice(), 2));
+    }
+
+    /**
+     * @return string
+     */
+    public function getTotalWithTaxPriceRounded()
+    {
+        return sprintf('%.2f', round($this->getTotalWithTaxPrice(), 2));
+    }
+
+    /**
+     * @return string
+     */
+    public function getTotalRounded()
+    {
+        return sprintf('%.2f', round($this->getTotal(), 2));
+    }
+
+    public function getUnitPriceRounded()
+    {
+        return sprintf('%.2f', round($this->getUnitPrice(), 2));
     }
 
     /**
@@ -172,7 +208,7 @@ class CartItem extends BaseCartItem implements CartItemInterface
         if (false === $flag) {
             $this->delivered = null;
         } else {
-            $this->delivered = new DateTime;
+            $this->delivered = new \DateTime;
         }
         return $this;
     }
@@ -195,7 +231,7 @@ class CartItem extends BaseCartItem implements CartItemInterface
     }
 
     /**
-     * @return DateTime
+     * @return \DateTime
      */
     public function getDeliveredAt()
     {

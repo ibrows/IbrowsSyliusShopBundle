@@ -104,9 +104,10 @@ abstract class AbstractCartStrategy implements CartStrategyInterface
     /**
      * @param int $price
      * @param string $text
+     * @param array $data
      * @return AdditionalCartItemInterface
      */
-    protected function createAdditionalCartItem($price = 0, $text = null)
+    protected function createAdditionalCartItem($price = 0, $text = null, array $data = array())
     {
         $className = $this->additionalCartItemRepo->getClassName();
 
@@ -117,6 +118,7 @@ abstract class AbstractCartStrategy implements CartStrategyInterface
             $item->setPriceWithTax($price);
         else
             $item->setPrice($price);
+        $item->setStrategyData($data);
         $item->setText($text?:$this->getServiceId());
         return $item;
     }

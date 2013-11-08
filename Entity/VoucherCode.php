@@ -68,6 +68,13 @@ class VoucherCode implements VoucherCodeInterface
         return $this;
     }
 
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return 'Code : "'. $this->getCode() .'" ('. ($this->isValid() ? 'valid' : 'invalid') .') '. ($this->isRedeemed() ? ' / RedeemedAt: '. $this->getRedeemedAt()->format('Y-m-d H:i:s') : null);
+    }
 
     /**
      * @return bool

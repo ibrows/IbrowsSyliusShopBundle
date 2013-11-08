@@ -108,11 +108,11 @@ class VoucherPercent extends AbstractVoucher implements VoucherPercentInterface
             return false;
         }
 
-        if(is_null($quantity = $this->getQuantity())){
+        if(!$this->hasQuantity()){
             return true;
         }
 
-        return $quantity > 0;
+        return $this->getQuantity() > 0;
     }
 
     /**
@@ -148,5 +148,13 @@ class VoucherPercent extends AbstractVoucher implements VoucherPercentInterface
     public static function acceptCode($code)
     {
         return substr($code, 0, 1) == self::getPrefix();
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasQuantity()
+    {
+        return !is_null($this->getQuantity());
     }
 }
