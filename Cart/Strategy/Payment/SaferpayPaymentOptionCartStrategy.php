@@ -25,6 +25,11 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
     protected $saferpay;
 
     /**
+     * @var string
+     */
+    protected $saferpayPassword;
+
+    /**
      * @var PayInitParameterFactory
      */
     protected $payInitParameterFactory;
@@ -173,7 +178,7 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
                         return new PaymentFinishedResponse($this->getServiceId(), PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_COMPLETION, $cart->getPaymentOptionStrategyServiceData(), $PaymentFinishedResponseData);
                     }
 
-                    $saferpay->payCompleteV2($payConfirmParameter, 'Cancel');
+                    $saferpay->payCompleteV2($payConfirmParameter, 'Cancel', $this->getSaferpayPassword());
                     return new PaymentFinishedResponse($this->getServiceId(), PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_VALIDATION, $cart->getPaymentOptionStrategyServiceData(), $PaymentFinishedResponseData);
                 }catch(\Exception $e){
                     return new PaymentFinishedResponse($this->getServiceId(), PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_VALIDATION, $cart->getPaymentOptionStrategyServiceData(), $PaymentFinishedResponseData);
@@ -286,6 +291,24 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
     public function setTestAccountId($testAccountId)
     {
         $this->testAccountId = $testAccountId;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSaferpayPassword()
+    {
+        return $this->saferpayPassword;
+    }
+
+    /**
+     * @param string $saferpayPassword
+     * @return SaferpayPaymentOptionCartStrategy
+     */
+    public function setSaferpayPassword($saferpayPassword)
+    {
+        $this->saferpayPassword = $saferpayPassword;
         return $this;
     }
 }
