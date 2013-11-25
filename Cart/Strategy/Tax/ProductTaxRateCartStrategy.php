@@ -52,10 +52,9 @@ class ProductTaxRateCartStrategy extends AbstractCartStrategy
         if ($cart->getItemsPriceTotalTax() == 0) {
             $mixedrate = 0;
         } else {
-            $mixedrate = $cart->getItemsPriceTotalTax() * 100 / $cart->getItemsPriceTotalWithTax();
+            $mixedrate = $cart->getItemsPriceTotalTax() * 100 / $cart->getItemsPriceTotal();
             $mixedrate = round($mixedrate, 2, PHP_ROUND_HALF_UP);
         }
-
         foreach ($cart->getAdditionalItems() as $item) {
             //is discount
             $item->setTaxInclusive($this->getTaxincl());
