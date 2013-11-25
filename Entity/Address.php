@@ -294,10 +294,11 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
      */
     protected function getStringTemplate()
     {
-        return "%%Company%%
-        %%Firstname%% %%Lastname%%
-        %%Street%%
-        %%Zip%% %%City%%";
+        return
+"%%Company%%
+%%Firstname%% %%Lastname%%
+%%Street%%
+%%Zip%% %%City%%";
     }
 
     /**
