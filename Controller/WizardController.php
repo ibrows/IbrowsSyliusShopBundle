@@ -318,6 +318,11 @@ class WizardController extends AbstractWizardController
 
         $context = new Context($request, 'wizard_payment', 'wizard_summary');
 
+        if($cart->getAmountToPay() <= 0){
+            $response = new PaymentFinishedResponse('ibrows_syliusshop.payment.strategy.nullamount');
+            return $this->handlePaymentFinishedResponse($response, $context);
+        }
+
         $cartManager = $this->getCurrentCartManager();
         $paymentOptionStrategyService = $cartManager->getSelectedPaymentOptionStrategyService();
         $response = $paymentOptionStrategyService->pay($context, $cart, $cartManager);
