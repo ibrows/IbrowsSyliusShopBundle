@@ -16,7 +16,7 @@ class VoucherAdmin extends DefaultAdmin
     {
         $listMapper
             ->addIdentifier('id')
-            ->add('payed')
+            ->add('payed', 'boolean')
             ->add('code')
             ->add('value')
             ->add('currency')
@@ -46,7 +46,8 @@ class VoucherAdmin extends DefaultAdmin
             ->add('currency')
             ->add('payedAt', 'datetime', array(
                 'date_widget' => 'single_text',
-                'time_widget' => 'single_text'
+                'time_widget' => 'single_text',
+                'required' => false
             ))
         ;
     }
