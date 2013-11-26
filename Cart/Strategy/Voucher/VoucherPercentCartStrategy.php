@@ -7,15 +7,27 @@ use Ibrows\SyliusShopBundle\Model\Voucher\BaseVoucherInterface;
 use Ibrows\SyliusShopBundle\Model\Voucher\VoucherCodeInterface;
 use Ibrows\SyliusShopBundle\Model\Voucher\VoucherPercentInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class VoucherPercentCartStrategy extends VoucherCartStrategy
 {
     /**
+     * @param RegistryInterface $doctrine
+     * @param string $voucherClass
+     * @param bool $cumulative
+     */
+    public function __construct(RegistryInterface $doctrine, $voucherClass, $cumulative = false)
+    {
+        parent::__construct($doctrine, $voucherClass, $cumulative);
+    }
+
+    /**
      * @param VoucherCodeInterface $voucherCode
      * @param CartInterface $cart
+     * @param float $totalToReduce
      * @return AdditionalCartItemInterface
      */
-    protected function getAdditionalItemByVoucherCode(VoucherCodeInterface $voucherCode, CartInterface $cart)
+    protected function getAdditionalItemByVoucherCode(VoucherCodeInterface $voucherCode, CartInterface $cart, &$totalToReduce)
     {
         /** @var VoucherPercentInterface $voucher */
         if(!$voucher = $this->getVoucher($voucherCode)){
@@ -31,7 +43,7 @@ class VoucherPercentCartStrategy extends VoucherCartStrategy
         $voucherCode->setValid(true);
 
         return $this->createAdditionalCartItem(
-            round($cart->getItemsPriceTotalWithTax()*$voucher->getPercent()/5,2)*5*-1,
+            $cart->getItemsPriceTotalWithTax()*$voucher->getPercent()*-1,
             null,
             array(
                 'percentRate' => $voucher->getPercent()*100,

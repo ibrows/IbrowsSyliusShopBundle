@@ -26,13 +26,20 @@ class VoucherCartStrategy extends AbstractCartStrategy implements CartVoucherStr
     protected $voucherClass;
 
     /**
+     * @var bool
+     */
+    protected $cumulative = true;
+
+    /**
      * @param RegistryInterface $doctrine
      * @param string $voucherClass
+     * @param bool $cumulative
      */
-    public function __construct(RegistryInterface $doctrine, $voucherClass)
+    public function __construct(RegistryInterface $doctrine, $voucherClass, $cumulative = true)
     {
         $this->voucherRepo = $doctrine->getRepository($voucherClass);
         $this->voucherClass = $voucherClass;
+        $this->cumulative = $cumulative;
     }
 
     /**
@@ -53,6 +60,9 @@ class VoucherCartStrategy extends AbstractCartStrategy implements CartVoucherStr
     public function compute(CartInterface $cart, CartManager $cartManager)
     {
         $additionalItems = array();
+
+        $totalToReduce = $cart->getTotalWithTax();
+
         foreach($cart->getVoucherCodes() as $voucherCode){
             /** @var VoucherInterface $voucherClass */
             $voucherClass = $this->voucherClass;
@@ -61,10 +71,14 @@ class VoucherCartStrategy extends AbstractCartStrategy implements CartVoucherStr
                 continue;
             }
 
-            if($additionalItem = $this->getAdditionalItemByVoucherCode($voucherCode, $cart)){
+            if($additionalItem = $this->getAdditionalItemByVoucherCode($voucherCode, $cart, $totalToReduce)){
                 $additionalItems[] = $additionalItem;
+                if(!$this->isCumulative()){
+                    break;
+                }
             }
         }
+
         return $additionalItems;
     }
 
@@ -101,10 +115,16 @@ class VoucherCartStrategy extends AbstractCartStrategy implements CartVoucherStr
     /**
      * @param VoucherCodeInterface $voucherCode
      * @param CartInterface $cart
+     * @param float $totalToReduce
      * @return AdditionalCartItemInterface
      */
-    protected function getAdditionalItemByVoucherCode(VoucherCodeInterface $voucherCode, CartInterface $cart)
+    protected function getAdditionalItemByVoucherCode(VoucherCodeInterface $voucherCode, CartInterface $cart, &$totalToReduce)
     {
+        if($totalToReduce <= 0){
+            $voucherCode->setValid(false);
+            return null;
+        }
+
         /** @var VoucherInterface $voucher */
         if(!$voucher = $this->getVoucher($voucherCode)){
             $voucherCode->setValid(false);
@@ -116,14 +136,26 @@ class VoucherCartStrategy extends AbstractCartStrategy implements CartVoucherStr
             return null;
         }
 
-        if(!$cart->getCurrency() == $voucher->getCurrency()){
+        if($cart->getCurrency() != $voucher->getCurrency()){
             $voucherCode->setValid(false);
             return null;
         }
 
         $voucherCode->setValid(true);
 
-        return $this->createAdditionalCartItem($voucher->getValue()*-1);
+        $voucherValue = $voucher->getValue();
+        if($voucherValue <= $totalToReduce){
+            $totalToReduce = $totalToReduce - $voucherValue;
+            return $this->createAdditionalCartItem($voucher->getValue()*-1, null, array(
+                'code' => $voucherCode->getCode()
+            ));
+        }else{
+            $voucherReduction = $totalToReduce;
+            $totalToReduce = 0;
+            return $this->createAdditionalCartItem($voucherReduction*-1, null, array(
+                'code' => $voucherCode->getCode()
+            ));
+        }
     }
 
     /**
@@ -152,7 +184,7 @@ class VoucherCartStrategy extends AbstractCartStrategy implements CartVoucherStr
     /**
      * @param VoucherCodeInterface $voucherCode
      * @param BaseVoucherInterface $voucher
-     * @todo reduce voucher value (strategy for sorting vouchers and create a new one)
+     * @todo reduce voucher value (strategy for sorting vouchers and create a new one maybe)
      */
     protected function redeemVoucher(VoucherCodeInterface $voucherCode, BaseVoucherInterface $voucher)
     {
@@ -162,5 +194,23 @@ class VoucherCartStrategy extends AbstractCartStrategy implements CartVoucherStr
         }
 
         // here reduction
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isCumulative()
+    {
+        return $this->cumulative;
+    }
+
+    /**
+     * @param boolean $cumulative
+     * @return VoucherCartStrategy
+     */
+    public function setCumulative($cumulative)
+    {
+        $this->cumulative = $cumulative;
+        return $this;
     }
 }
