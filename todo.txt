@@ -1,4 +1,4 @@
-CurrencySwitch
-==============
+CurrencySwitch (New approach)
+=============================
 Currency on each item in cart (item and additional item)
 CurrencyNormalizer which checks the source currency (on cart) to all items and converts the prices if needed
