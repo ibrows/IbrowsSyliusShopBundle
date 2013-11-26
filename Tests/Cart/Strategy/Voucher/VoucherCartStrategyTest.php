@@ -155,4 +155,107 @@ class VoucherCartStrategyTest extends AbstractVoucherCartStrategyTest
             }
         }
     }
+
+    public function testValidVouchers()
+    {
+        /** @var Voucher[] $vouchers */
+        $vouchers = array(
+            $this->getVoucher('ab', 50, new \DateTime()),
+            $this->getVoucher('cd', 100, new \DateTime()),
+            $this->getVoucher('ef', 150)
+        );
+
+        $prefix = Voucher::getPrefix();
+        /** @var VoucherCode[] $voucherCodes */
+        $voucherCodes = array(
+            $this->getVoucherCode($prefix.'ab'),
+            $this->getVoucherCode($prefix.'cd'),
+            $this->getVoucherCode($prefix.'ef')
+        );
+
+        $cartTotal = 5500.50;
+
+        $voucherCartStrategy = $this->getVoucherCartStrategy(new ArrayCollection($vouchers));
+        $cart = $this->getCart(new ArrayCollection($voucherCodes), $cartTotal);
+
+        $this->assertSame($cartTotal, $cart->getTotalWithTax());
+
+        $cartManager = $this->getCartManager();
+        $voucherCartStrategy->compute($cart, $cartManager);
+
+        foreach($voucherCodes as $voucherCode){
+            $this->assertFalse($voucherCode->isRedeemed());
+        }
+
+        // 1 and 2 valid, 3 not payed
+        $this->assertTrue($vouchers[0]->isValid());
+        $this->assertTrue($vouchers[1]->isValid());
+        $this->assertFalse($vouchers[2]->isValid());
+
+        $voucherCartStrategy->redeemVouchers($cart, $cartManager);
+
+        // 1 and 2 redeemed, 3 not valid -> not redeemed
+        $this->assertTrue($voucherCodes[0]->isRedeemed());
+        $this->assertTrue($voucherCodes[1]->isRedeemed());
+        $this->assertFalse($voucherCodes[2]->isRedeemed());
+
+        // Check amount of vouchers
+        $this->assertSame(0, $vouchers[0]->getValue());
+        $this->assertSame(0, $vouchers[1]->getValue());
+        $this->assertFalse($voucherCodes[2]->isValid());
+    }
+
+    public function testValidVouchersWithCartAmountLowerThanVouchers()
+    {
+        /** @var Voucher[] $vouchers */
+        $vouchers = array(
+            $this->getVoucher('ab', 50, new \DateTime()),
+            $this->getVoucher('cd', 100, new \DateTime()),
+            $this->getVoucher('ef', 800, new \DateTime()),
+            $this->getVoucher('gh', 150)
+        );
+
+        $prefix = Voucher::getPrefix();
+        /** @var VoucherCode[] $voucherCodes */
+        $voucherCodes = array(
+            $this->getVoucherCode($prefix.'ab'),
+            $this->getVoucherCode($prefix.'cd'),
+            $this->getVoucherCode($prefix.'ef'),
+            $this->getVoucherCode($prefix.'gh'),
+        );
+
+        $cartTotal = 80;
+
+        $voucherCartStrategy = $this->getVoucherCartStrategy(new ArrayCollection($vouchers));
+        $cart = $this->getCart(new ArrayCollection($voucherCodes), $cartTotal);
+
+        $this->assertSame($cartTotal, $cart->getTotalWithTax());
+
+        $cartManager = $this->getCartManager();
+        $voucherCartStrategy->compute($cart, $cartManager);
+
+        foreach($voucherCodes as $voucherCode){
+            $this->assertFalse($voucherCode->isRedeemed());
+        }
+
+        // 1, 2 and 3 valid, 4 not payed
+        $this->assertTrue($vouchers[0]->isValid());
+        $this->assertTrue($vouchers[1]->isValid());
+        $this->assertTrue($vouchers[2]->isValid());
+        $this->assertFalse($vouchers[3]->isValid());
+
+        $voucherCartStrategy->redeemVouchers($cart, $cartManager);
+
+        // 1 and 2 redeemed, 3 not used because of total amount of cart, 4 not valid -> not redeemed
+        $this->assertTrue($voucherCodes[0]->isRedeemed());
+        $this->assertTrue($voucherCodes[1]->isRedeemed());
+        $this->assertFalse($voucherCodes[2]->isRedeemed());
+        $this->assertFalse($voucherCodes[3]->isRedeemed());
+
+        // Check amount of vouchers
+        $this->assertSame(0, $vouchers[0]->getValue());
+        $this->assertSame(70, $vouchers[1]->getValue());
+        $this->assertSame(800, $vouchers[2]->getValue());
+        $this->assertFalse($voucherCodes[3]->isValid());
+    }
 }
