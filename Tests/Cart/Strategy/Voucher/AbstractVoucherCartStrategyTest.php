@@ -125,7 +125,7 @@ abstract class AbstractVoucherCartStrategyTest extends \PHPUnit_Framework_TestCa
      * @param Collection|VoucherCode[] $voucherCodes
      * @return Cart
      */
-    protected function getCart(Collection $voucherCodes = null)
+    protected function getCart(Collection $voucherCodes = null, $totalWithTax = null)
     {
         $voucherCodes = $voucherCodes ?: new ArrayCollection();
 
@@ -141,6 +141,12 @@ abstract class AbstractVoucherCartStrategyTest extends \PHPUnit_Framework_TestCa
             ->expects($this->any())
             ->method('getCurrency')
             ->will($this->returnValue('CHF'))
+        ;
+
+        $cart
+            ->expects($this->any())
+            ->method('getTotalWithTax')
+            ->will($this->returnValue($totalWithTax))
         ;
 
         return $cart;

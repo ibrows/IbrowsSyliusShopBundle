@@ -47,15 +47,112 @@ class VoucherCartStrategyTest extends AbstractVoucherCartStrategyTest
         )));
 
         $prefix = Voucher::getPrefix();
-
         $cart = $this->getCart(new ArrayCollection(array(
             $this->getVoucherCode($prefix.'ab'),
             $this->getVoucherCode($prefix.'cd'),
             $this->getVoucherCode($prefix.'ef')
-        )));
+        )), 5000);
 
         $cartManager = $this->getCartManager();
+        $additionalItems = $voucherCartStrategy->compute($cart, $cartManager);
 
-        $this->assertCount(2, $voucherCartStrategy->compute($cart, $cartManager));
+        $this->assertCount(2, $additionalItems);
+
+        $search = array(-50, -100);
+        foreach($additionalItems as $item){
+            $this->assertNotSame(false, $key = array_search($item->getPriceWithTax(), $search));
+            if(false !== $key){
+                unset($search[$key]);
+            }
+        }
+    }
+
+    public function testWrongCurrency()
+    {
+        $voucherCartStrategy = $this->getVoucherCartStrategy(new ArrayCollection(array(
+            $this->getVoucher('ab', 50, new \DateTime()),
+            $this->getVoucher('cd', 100, new \DateTime(), 'EUR'),
+            $this->getVoucher('ef', 150)
+        )));
+
+        $prefix = Voucher::getPrefix();
+        $cart = $this->getCart(new ArrayCollection(array(
+            $this->getVoucherCode($prefix.'ab'),
+            $this->getVoucherCode($prefix.'cd'),
+            $this->getVoucherCode($prefix.'ef')
+        )), 5000);
+
+        $cartManager = $this->getCartManager();
+        $additionalItems = $voucherCartStrategy->compute($cart, $cartManager);
+
+        $this->assertCount(1, $additionalItems);
+
+        $search = array(-50);
+        foreach($additionalItems as $item){
+            $this->assertNotSame(false, $key = array_search($item->getPriceWithTax(), $search));
+            if(false !== $key){
+                unset($search[$key]);
+            }
+        }
+    }
+
+    public function testCartAmountLowerThanVouchersCompute()
+    {
+        $voucherCartStrategy = $this->getVoucherCartStrategy(new ArrayCollection(array(
+            $this->getVoucher('ab', 50, new \DateTime()),
+            $this->getVoucher('cd', 100, new \DateTime()),
+            $this->getVoucher('ef', 150)
+        )));
+
+        $prefix = Voucher::getPrefix();
+        $cart = $this->getCart(new ArrayCollection(array(
+            $this->getVoucherCode($prefix.'ab'),
+            $this->getVoucherCode($prefix.'cd'),
+            $this->getVoucherCode($prefix.'ef')
+        )), 80);
+
+        $cartManager = $this->getCartManager();
+        $additionalItems = $voucherCartStrategy->compute($cart, $cartManager);
+
+        $this->assertCount(2, $additionalItems);
+
+        $search = array(-50, -30);
+        foreach($additionalItems as $item){
+            $this->assertNotSame(false, $key = array_search($item->getPriceWithTax(), $search));
+            if(false !== $key){
+                unset($search[$key]);
+            }
+        }
+    }
+
+    public function testNotCumulative()
+    {
+        $voucherCartStrategy = $this->getVoucherCartStrategy(new ArrayCollection(array(
+            $this->getVoucher('ab', 50, new \DateTime()),
+            $this->getVoucher('cd', 100, new \DateTime()),
+            $this->getVoucher('ef', 150)
+        )));
+
+        $voucherCartStrategy->setCumulative(false);
+
+        $prefix = Voucher::getPrefix();
+        $cart = $this->getCart(new ArrayCollection(array(
+            $this->getVoucherCode($prefix.'ab'),
+            $this->getVoucherCode($prefix.'cd'),
+            $this->getVoucherCode($prefix.'ef')
+        )), 5000);
+
+        $cartManager = $this->getCartManager();
+        $additionalItems = $voucherCartStrategy->compute($cart, $cartManager);
+
+        $this->assertCount(1, $additionalItems);
+
+        $search = array(-50);
+        foreach($additionalItems as $item){
+            $this->assertNotSame(false, $key = array_search($item->getPriceWithTax(), $search));
+            if(false !== $key){
+                unset($search[$key]);
+            }
+        }
     }
 }
