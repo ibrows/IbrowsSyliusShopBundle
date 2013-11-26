@@ -4,6 +4,7 @@ namespace Ibrows\SyliusShopBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Ibrows\SyliusShopBundle\Model\Voucher\BaseVoucherInterface;
+use Ibrows\SyliusShopBundle\Model\Voucher\VoucherCodeInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints as DoctrineAssert;
 
 /**
@@ -87,5 +88,14 @@ abstract class AbstractVoucher implements BaseVoucherInterface
     {
         $this->createdAt = $createdAt;
         return $this;
+    }
+
+    /**
+     * @param VoucherCodeInterface $voucherCode
+     * @return bool
+     */
+    public static function acceptCode(VoucherCodeInterface $voucherCode)
+    {
+        return substr($voucherCode->getCode(), 0, 1) == static::getPrefix();
     }
 }

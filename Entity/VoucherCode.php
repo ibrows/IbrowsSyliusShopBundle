@@ -51,7 +51,7 @@ class VoucherCode implements VoucherCodeInterface
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getCode()
     {
@@ -59,8 +59,8 @@ class VoucherCode implements VoucherCodeInterface
     }
 
     /**
-     * @param mixed $code
-     * @return Voucher
+     * @param string $code
+     * @return VoucherCode
      */
     public function setCode($code)
     {
@@ -94,9 +94,9 @@ class VoucherCode implements VoucherCodeInterface
 
     /**
      * @param \DateTime $redeemedAt
-     * @return VoucherCodeInterface
+     * @return VoucherCode
      */
-    public function setRedeemedAt(\DateTime $redeemedAt)
+    public function setRedeemedAt(\DateTime $redeemedAt = null)
     {
         $this->redeemedAt = $redeemedAt;
         return $this;
@@ -112,7 +112,7 @@ class VoucherCode implements VoucherCodeInterface
 
     /**
      * @param bool $valid
-     * @return VoucherCodeInterface
+     * @return VoucherCode
      */
     public function setValid($valid = true)
     {
@@ -122,7 +122,7 @@ class VoucherCode implements VoucherCodeInterface
 
     /**
      * @param CartInterface $cart
-     * @return VoucherCodeInterface
+     * @return VoucherCode
      */
     public function setCart(CartInterface $cart = null)
     {

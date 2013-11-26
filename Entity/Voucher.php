@@ -4,6 +4,7 @@ namespace Ibrows\SyliusShopBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Ibrows\SyliusShopBundle\Model\Product\ProductInterface;
+use Ibrows\SyliusShopBundle\Model\Voucher\VoucherCodeInterface;
 use Ibrows\SyliusShopBundle\Model\Voucher\VoucherInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints as DoctrineAssert;
 
@@ -202,14 +203,5 @@ class Voucher extends AbstractVoucher implements VoucherInterface, ProductInterf
     public static function getPrefix()
     {
         return 'v';
-    }
-
-    /**
-     * @param string $code
-     * @return bool
-     */
-    public static function acceptCode($code)
-    {
-        return substr($code, 0, 1) == self::getPrefix();
     }
 }

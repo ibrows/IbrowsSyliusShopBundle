@@ -57,7 +57,7 @@ class VoucherCartStrategy extends AbstractCartStrategy implements CartVoucherStr
             /** @var VoucherInterface $voucherClass */
             $voucherClass = $this->voucherClass;
 
-            if(!$voucherClass::acceptCode($voucherCode->getCode())){
+            if(!$voucherClass::acceptCode($voucherCode)){
                 continue;
             }
 
@@ -137,7 +137,7 @@ class VoucherCartStrategy extends AbstractCartStrategy implements CartVoucherStr
             $voucherClass = $this->voucherClass;
 
             if(
-                !$voucherClass::acceptCode($voucherCode->getCode()) OR
+                !$voucherClass::acceptCode($voucherCode) OR
                 !$voucherCode->isValid() OR
                 $voucherCode->isRedeemed() OR
                 !($voucher = $this->getValidVoucher($voucherCode))
