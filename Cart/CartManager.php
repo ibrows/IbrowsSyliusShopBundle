@@ -497,9 +497,10 @@ class CartManager
 
     public function redeemVouchers()
     {
+        $cart = $this->getCart();
         foreach($this->getStrategies() as $strategy){
             if($strategy instanceof VoucherCartStrategy){
-                $strategy->redeemVouchers($this->getCart(), $this);
+                $strategy->redeemVouchers($cart, $this);
             }
         }
     }
