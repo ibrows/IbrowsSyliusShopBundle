@@ -58,8 +58,9 @@ class VoucherPercentCartStrategy extends VoucherCartStrategy
     /**
      * @param VoucherCodeInterface $voucherCode
      * @param BaseVoucherInterface $voucher
+     * @param float $totalToReduce
      */
-    protected function redeemVoucher(VoucherCodeInterface $voucherCode, BaseVoucherInterface $voucher)
+    protected function redeemVoucher(VoucherCodeInterface $voucherCode, BaseVoucherInterface $voucher, &$totalToReduce)
     {
         $voucherCode->setRedeemedAt(new \DateTime());
         if(!$voucher instanceof VoucherPercentInterface){
