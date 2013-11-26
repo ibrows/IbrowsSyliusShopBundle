@@ -6,3 +6,5 @@
 /.settings/
 /.idea/
 /temp
+vendor
+composer.lock
