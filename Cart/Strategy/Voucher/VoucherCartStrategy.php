@@ -146,16 +146,16 @@ class VoucherCartStrategy extends AbstractCartStrategy implements CartVoucherStr
         $voucherValue = $voucher->getValue();
         if($voucherValue <= $totalToReduce){
             $totalToReduce = $totalToReduce - $voucherValue;
-            return $this->createAdditionalCartItem($voucher->getValue()*-1, null, array(
-                'code' => $voucherCode->getCode()
-            ));
+            $voucherReduction = $voucher->getValue()*-1;
         }else{
-            $voucherReduction = $totalToReduce;
+            $voucherReduction = $totalToReduce*-1;
             $totalToReduce = 0;
-            return $this->createAdditionalCartItem($voucherReduction*-1, null, array(
-                'code' => $voucherCode->getCode()
-            ));
         }
+
+        return $this->createAdditionalCartItem($voucherReduction, null, array(
+            'code' => $voucherCode->getCode(),
+            'reduction' => $voucherReduction
+        ));
     }
 
     /**
@@ -164,6 +164,8 @@ class VoucherCartStrategy extends AbstractCartStrategy implements CartVoucherStr
      */
     public function redeemVouchers(CartInterface $cart, CartManager $cartManager)
     {
+        $totalToReduce = $cart->getTotalWithTax();
+
         foreach($cart->getVoucherCodes() as $voucherCode){
             /** @var VoucherInterface $voucherClass */
             $voucherClass = $this->voucherClass;
@@ -177,23 +179,38 @@ class VoucherCartStrategy extends AbstractCartStrategy implements CartVoucherStr
                 continue;
             }
 
-            $this->redeemVoucher($voucherCode, $voucher);
+            $this->redeemVoucher($voucherCode, $voucher, $totalToReduce);
         }
     }
 
     /**
      * @param VoucherCodeInterface $voucherCode
      * @param BaseVoucherInterface $voucher
-     * @todo reduce voucher value (strategy for sorting vouchers and create a new one maybe)
+     * @param float $totalToReduce
      */
-    protected function redeemVoucher(VoucherCodeInterface $voucherCode, BaseVoucherInterface $voucher)
+    protected function redeemVoucher(VoucherCodeInterface $voucherCode, BaseVoucherInterface $voucher, &$totalToReduce)
     {
+        if($totalToReduce <= 0){
+            return;
+        }
+
         $voucherCode->setRedeemedAt(new \DateTime());
+
         if(!$voucher instanceof VoucherInterface){
             return;
         }
 
-        // here reduction
+        $voucherValue = $voucher->getValue();
+
+        if($voucherValue <= $totalToReduce){
+            $newVoucherValue = 0;
+            $totalToReduce = $totalToReduce - $voucherValue;
+        }else{
+            $newVoucherValue = $voucherValue - $totalToReduce;
+            $totalToReduce = 0;
+        }
+
+        $voucher->setValue($newVoucherValue);
     }
 
     /**
