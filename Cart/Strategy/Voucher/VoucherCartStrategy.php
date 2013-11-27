@@ -31,12 +31,18 @@ class VoucherCartStrategy extends AbstractCartStrategy implements CartVoucherStr
     protected $cumulative = true;
 
     /**
+     * @var RegistryInterface
+     */
+    protected $doctrine;
+
+    /**
      * @param RegistryInterface $doctrine
      * @param string $voucherClass
      * @param bool $cumulative
      */
     public function __construct(RegistryInterface $doctrine, $voucherClass, $cumulative = true)
     {
+        $this->doctrine = $doctrine;
         $this->voucherRepo = $doctrine->getRepository($voucherClass);
         $this->voucherClass = $voucherClass;
         $this->cumulative = $cumulative;
@@ -145,8 +151,8 @@ class VoucherCartStrategy extends AbstractCartStrategy implements CartVoucherStr
 
         $voucherValue = $voucher->getValue();
         if($voucherValue <= $totalToReduce){
-            $totalToReduce = $totalToReduce - $voucherValue;
             $voucherReduction = $voucher->getValue()*-1;
+            $totalToReduce = $totalToReduce - $voucherValue;
         }else{
             $voucherReduction = $totalToReduce*-1;
             $totalToReduce = 0;
@@ -211,6 +217,9 @@ class VoucherCartStrategy extends AbstractCartStrategy implements CartVoucherStr
         }
 
         $voucher->setValue($newVoucherValue);
+
+        $em = $this->doctrine->getManagerForClass(get_class($voucher));
+        $em->persist($voucher);
     }
 
     /**

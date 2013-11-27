@@ -69,6 +69,9 @@ class VoucherPercentCartStrategy extends VoucherCartStrategy
 
         if($voucher->hasQuantity()){
             $voucher->setQuantity($voucher->getQuantity()-1);
+
+            $em = $this->doctrine->getManagerForClass(get_class($voucher));
+            $em->persist($voucher);
         }
     }
 }
