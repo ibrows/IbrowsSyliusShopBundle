@@ -76,6 +76,11 @@ class CartManager
     protected $currencyStrategies;
 
     /**
+     * @var bool
+     */
+    protected $vouchersRedeemed = false;
+
+    /**
      * @param ObjectManager $cartObjectManager
      * @param ObjectRepository $cartObjectRepo
      * @param ObjectManager $itemObjectManager
@@ -503,6 +508,7 @@ class CartManager
                 $strategy->redeemVouchers($cart, $this);
             }
         }
+        $this->vouchersRedeemed = true;
     }
 
     /**
@@ -585,6 +591,11 @@ class CartManager
         }
 
         foreach($this->strategies as $strategy){
+            // do not remove additional items for voucher strategies if already redeemed
+            if(true === $this->vouchersRedeemed && $strategy instanceof VoucherCartStrategy){
+                continue;
+            }
+
             foreach($cart->getAdditionalItemsByStrategy($strategy) as $item){
                 $this->removeAdditionalItem($item);
             }
@@ -593,6 +604,11 @@ class CartManager
         $cart->refreshCart();
 
         foreach($this->strategies as $strategy){
+            // do not add additional items for voucher strategies if already redeemed
+            if(true === $this->vouchersRedeemed && $strategy instanceof VoucherCartStrategy){
+                continue;
+            }
+
             if($strategy->isEnabled() && $strategy->accept($cart, $this)){
                 foreach($strategy->compute($cart, $this) as $item){
                     $this->addAdditionalItem($item);
