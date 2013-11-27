@@ -148,7 +148,7 @@ abstract class AbstractWizardController extends AbstractController
 
         $cart->addPayment($payment);
 
-        $this->persistCart($cartManager, false);
+        $this->persistCart($cartManager);
     }
 
     /**
@@ -164,7 +164,7 @@ abstract class AbstractWizardController extends AbstractController
         $cart->setConfirmed();
         $cart->setPayed();
 
-        $this->persistCart($cartManager, false);
+        $this->persistCart($cartManager);
 
         return $this->redirect($this->getWizard()->getNextStepUrl());
     }
@@ -225,7 +225,7 @@ abstract class AbstractWizardController extends AbstractController
         $cartManager = $this->getCurrentCartManager();
 
         $cart->setConfirmed();
-        $this->persistCart($cartManager, false);
+        $this->persistCart($cartManager);
 
         return $this->redirect($this->getWizard()->getNextStepUrl());
     }
