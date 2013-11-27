@@ -27,7 +27,7 @@ class ZeroAmountPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrat
         if($cart->getTotalWithTax() <= 0){
             $cart->setPaymentOptionStrategyServiceId($this->getServiceId());
             return true;
-        }elseif($cart->getPaymentOptionStrategyServiceId() == $this->getServiceId()){
+        }elseif($cartManager->getSelectedPaymentOptionStrategyService() === $this){
             $this->removeStrategy($cart);
         }
         return false;
