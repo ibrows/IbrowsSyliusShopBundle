@@ -30,6 +30,7 @@ class BasketType extends AbstractType
             ->add('items', 'collection', array(
                 'type' => $this->basketItemType
             ))
+            ->add('continue', 'submit')
         ;
     }
 

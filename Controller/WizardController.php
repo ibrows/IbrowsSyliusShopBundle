@@ -33,40 +33,33 @@ class WizardController extends AbstractWizardController
             return $preAction;
         }
 
-        $continueSubmitName = 'continue';
-        $deleteSubmitName = 'delete';
-
         $cartManager = $this->getCurrentCartManager();
         $basketForm = $this->createForm($this->getBasketType(), $cart);
 
         if ("POST" == $request->getMethod()) {
-            if (($deleteItems = $request->request->get($deleteSubmitName)) && is_array($deleteItems)) {
-                foreach ($deleteItems as $itemId => $formName) {
-                    if ($item = $cart->getItemById($itemId)) {
-                        $cartManager->removeItem($item);
-                    }
-                }
-                $this->persistCurrentCart();
-                $basketForm = $this->createForm($this->getBasketType(), $cart);
-            }
-
-            $basketForm->submit($request);
+            $basketForm->handleRequest($request);
             if ($basketForm->isValid()) {
                 if(($postAction = $this->postBasketFormValidationAction($cart)) instanceof Response){
                     return $postAction;
                 }
 
+                foreach($basketForm->get('items') as $basketFormItem){
+                    if($basketFormItem->get('delete')->isClicked()){
+                        $cartManager->removeItem($basketFormItem->getData());
+                    }
+                }
+
                 $this->persistCurrentCart();
-                $basketForm = $this->createForm($this->getBasketType(), $cart);
-                if ($request->request->get($continueSubmitName)) {
+
+                if($basketForm->get('continue')->isClicked()) {
                     return $this->redirect($this->getWizard()->getNextStepUrl());
                 }
+
+                $basketForm = $this->createForm($this->getBasketType(), $cart);
             }
         }
 
         return $this->getViewData('basket', array(
-            'deleteSubmitName' => $deleteSubmitName,
-            'continueSubmitName' => $continueSubmitName,
             'basketForm' => $basketForm->createView(),
             'cart' => $this->getCurrentCart(),
             'deliveryOptionStrategyService' => $cartManager->getSelectedDeliveryOptionStrategyService(),

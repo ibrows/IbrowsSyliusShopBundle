@@ -28,6 +28,7 @@ class BasketItemType extends AbstractType
     {
         $builder
             ->add('quantity')
+            ->add('delete', 'submit')
         ;
     }
 
