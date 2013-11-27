@@ -6,6 +6,7 @@ use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Context;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\ErrorRedirectResponse;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\PaymentFinishedResponse;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\SelfRedirectResponse;
+use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\ZeroAmountPaymentOptionCartStrategy;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Form\FormError;
 use Ibrows\Bundle\WizardAnnotationBundle\Annotation\Wizard;
@@ -216,6 +217,10 @@ class WizardController extends AbstractWizardController
     {
         $cartManager = $this->getCurrentCartManager();
         $cart = $cartManager->getCart();
+
+        if($cartManager->getSelectedPaymentOptionStrategyService() instanceof ZeroAmountPaymentOptionCartStrategy){
+            return $this->redirect($this->getWizard()->getNextStepUrl());
+        }
 
         $paymentOptionStrategyFormData = null;
         $selectedPaymentOptionStrategyServiceId = $cart->getPaymentOptionStrategyServiceId();
