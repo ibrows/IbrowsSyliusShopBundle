@@ -40,6 +40,11 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
     protected $paymentMethods;
 
     /**
+     * @var string
+     */
+    protected $defaultPaymentMethod;
+
+    /**
      * @var bool
      */
     protected $doCompletePayment;
@@ -82,6 +87,27 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
     {
         $this->paymentMethods = $paymentMethods;
         return $this;
+    }
+
+    /**
+     * @param CartInterface $cart
+     * @param CartManager $cartManager
+     * @return bool
+     */
+    public function accept(CartInterface $cart, CartManager $cartManager)
+    {
+        $selectedServiceId = $cart->getPaymentOptionStrategyServiceId();
+        if($selectedServiceId == $this->getServiceId()){
+            return true;
+        }
+
+        if(!$selectedServiceId && $this->isDefault()){
+            $cart->setPaymentOptionStrategyServiceId($this->getServiceId());
+            $cart->setPaymentOptionStrategyServiceData(array('method' => $this->getDefaultPaymentMethod()));
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -309,6 +335,24 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
     public function setSaferpayPassword($saferpayPassword)
     {
         $this->saferpayPassword = $saferpayPassword;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDefaultPaymentMethod()
+    {
+        return $this->defaultPaymentMethod;
+    }
+
+    /**
+     * @param string $defaultPaymentMethod
+     * @return SaferpayPaymentOptionCartStrategy
+     */
+    public function setDefaultPaymentMethod($defaultPaymentMethod)
+    {
+        $this->defaultPaymentMethod = $defaultPaymentMethod;
         return $this;
     }
 }
