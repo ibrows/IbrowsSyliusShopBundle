@@ -186,7 +186,13 @@ class VoucherCartStrategyTest extends AbstractVoucherCartStrategyTest
         $this->assertSame($cartTotal, $cart->getTotalWithTax());
 
         $cartManager = $this->getCartManager();
-        $voucherCartStrategy->compute($cart, $cartManager);
+        $additionalItems = $voucherCartStrategy->compute($cart, $cartManager);
+
+        $cart->expects($this->any())
+            ->method('getAdditionalItemsByStrategy')
+            ->with($voucherCartStrategy)
+            ->will($this->returnValue($additionalItems))
+        ;
 
         foreach($voucherCodes as $voucherCode){
             $this->assertFalse($voucherCode->isRedeemed());
@@ -242,7 +248,13 @@ class VoucherCartStrategyTest extends AbstractVoucherCartStrategyTest
         $this->assertSame($cartTotal, $cart->getTotalWithTax());
 
         $cartManager = $this->getCartManager();
-        $voucherCartStrategy->compute($cart, $cartManager);
+
+        $additionalItems = $voucherCartStrategy->compute($cart, $cartManager);
+        $cart->expects($this->any())
+            ->method('getAdditionalItemsByStrategy')
+            ->with($voucherCartStrategy)
+            ->will($this->returnValue($additionalItems))
+        ;
 
         foreach($voucherCodes as $voucherCode){
             $this->assertFalse($voucherCode->isRedeemed());

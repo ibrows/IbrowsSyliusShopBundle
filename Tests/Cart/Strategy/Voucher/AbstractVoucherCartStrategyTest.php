@@ -13,9 +13,12 @@ use Ibrows\SyliusShopBundle\Entity\VoucherCode;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\EntityManager;
+use Ibrows\SyliusShopBundle\Model\Voucher\VoucherInterface;
 
 abstract class AbstractVoucherCartStrategyTest extends \PHPUnit_Framework_TestCase
 {
+    protected $lastVoucherId = 0;
+
     /**
      * @param string $code
      * @param float $value
@@ -33,6 +36,13 @@ abstract class AbstractVoucherCartStrategyTest extends \PHPUnit_Framework_TestCa
             ->setCurrency($currency)
             ->setValue($value)
         ;
+
+        $reflection = new \ReflectionClass($voucher);
+        $id = $reflection->getProperty('id');
+
+        $id->setAccessible(true);
+        $id->setValue($voucher, ++$this->lastVoucherId);
+        $id->setAccessible(false);
 
         return $voucher;
     }
@@ -55,12 +65,13 @@ abstract class AbstractVoucherCartStrategyTest extends \PHPUnit_Framework_TestCa
     }
 
     /**
-     * @param Collection|Voucher[] $vouchers
+     * @param Collection|VoucherInterface[] $vouchers
      * @param \PHPUnit_Framework_MockObject_MockObject|EntityManager $em
      * @return VoucherCartStrategy
      */
     protected function getVoucherCartStrategy(Collection $vouchers = null, $em = null)
     {
+        /** @var VoucherInterface[] $vouchers */
         $vouchers = $vouchers ?: new ArrayCollection();
 
         $voucherClass = 'Ibrows\SyliusShopBundle\Entity\Voucher';
@@ -68,22 +79,32 @@ abstract class AbstractVoucherCartStrategyTest extends \PHPUnit_Framework_TestCa
         /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject $voucherRepo */
         $voucherRepo = $this->getMock('Doctrine\ORM\EntityRepository', array(), array(), '', false);
 
-        foreach($vouchers as $voucher){
-            $voucherRepo->expects($this->any())
-                ->method('findOneBy')
-                ->will($this->returnCallback(function(array $criterias)use($vouchers){
-                    if(!isset($criterias['code'])){
-                        return null;
-                    }
-                    foreach($vouchers as $voucher){
-                        if($voucher->getCode() == $criterias['code']){
-                            return $voucher;
-                        }
-                    }
+        $voucherRepo->expects($this->any())
+            ->method('findOneBy')
+            ->will($this->returnCallback(function(array $criterias)use($vouchers){
+                if(!isset($criterias['code'])){
                     return null;
-                }))
-            ;
-        }
+                }
+                foreach($vouchers as $voucher){
+                    if($voucher->getCode() == $criterias['code']){
+                        return $voucher;
+                    }
+                }
+                return null;
+            }))
+        ;
+
+        $voucherRepo->expects($this->any())
+            ->method('find')
+            ->will($this->returnCallback(function($id)use($vouchers){
+                foreach($vouchers as $voucher){
+                    if($voucher->getId() == $id){
+                        return $voucher;
+                    }
+                }
+                return null;
+            }))
+        ;
 
         /** @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject $registry */
         $registry = $this->getMock('Symfony\Bridge\Doctrine\RegistryInterface');
@@ -142,7 +163,7 @@ abstract class AbstractVoucherCartStrategyTest extends \PHPUnit_Framework_TestCa
     /**
      * @param Collection|VoucherCode[] $voucherCodes
      * @param float $totalWithTax
-     * @return Cart
+     * @return Cart|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getCart(Collection $voucherCodes = null, $totalWithTax = null)
     {
