@@ -175,7 +175,12 @@ class VoucherCartStrategyTest extends AbstractVoucherCartStrategyTest
 
         $cartTotal = 5500.50;
 
-        $voucherCartStrategy = $this->getVoucherCartStrategy(new ArrayCollection($vouchers));
+        $em = $this->getEntityManagerMock();
+        $em->expects($this->exactly(2))
+            ->method('persist')
+        ;
+
+        $voucherCartStrategy = $this->getVoucherCartStrategy(new ArrayCollection($vouchers), $em);
         $cart = $this->getCart(new ArrayCollection($voucherCodes), $cartTotal);
 
         $this->assertSame($cartTotal, $cart->getTotalWithTax());
@@ -226,7 +231,12 @@ class VoucherCartStrategyTest extends AbstractVoucherCartStrategyTest
 
         $cartTotal = 80;
 
-        $voucherCartStrategy = $this->getVoucherCartStrategy(new ArrayCollection($vouchers));
+        $em = $this->getEntityManagerMock();
+        $em->expects($this->exactly(2))
+            ->method('persist')
+        ;
+
+        $voucherCartStrategy = $this->getVoucherCartStrategy(new ArrayCollection($vouchers), $em);
         $cart = $this->getCart(new ArrayCollection($voucherCodes), $cartTotal);
 
         $this->assertSame($cartTotal, $cart->getTotalWithTax());

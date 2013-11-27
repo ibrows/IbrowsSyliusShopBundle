@@ -12,6 +12,7 @@ use Ibrows\SyliusShopBundle\Entity\Voucher;
 use Ibrows\SyliusShopBundle\Entity\VoucherCode;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\EntityManager;
 
 abstract class AbstractVoucherCartStrategyTest extends \PHPUnit_Framework_TestCase
 {
@@ -55,9 +56,10 @@ abstract class AbstractVoucherCartStrategyTest extends \PHPUnit_Framework_TestCa
 
     /**
      * @param Collection|Voucher[] $vouchers
+     * @param \PHPUnit_Framework_MockObject_MockObject|EntityManager $em
      * @return VoucherCartStrategy
      */
-    protected function getVoucherCartStrategy(Collection $vouchers = null)
+    protected function getVoucherCartStrategy(Collection $vouchers = null, $em = null)
     {
         $vouchers = $vouchers ?: new ArrayCollection();
 
@@ -86,10 +88,18 @@ abstract class AbstractVoucherCartStrategyTest extends \PHPUnit_Framework_TestCa
         /** @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject $registry */
         $registry = $this->getMock('Symfony\Bridge\Doctrine\RegistryInterface');
 
+        $em = $em ?: $this->getEntityManagerMock();
+
         $registry->expects($this->any())
             ->method('getRepository')
             ->with($voucherClass)
             ->will($this->returnValue($voucherRepo))
+        ;
+
+        $registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with($voucherClass)
+            ->will($this->returnValue($em))
         ;
 
         $voucherCartStrategy = new VoucherCartStrategy($registry, $voucherClass);
@@ -111,6 +121,14 @@ abstract class AbstractVoucherCartStrategyTest extends \PHPUnit_Framework_TestCa
     }
 
     /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|EntityManager
+     */
+    protected function getEntityManagerMock()
+    {
+        return $this->getMock('Doctrine\ORM\EntityManager', array(), array(), '', false);
+    }
+
+    /**
      * @return CartManager
      */
     protected function getCartManager()
@@ -123,6 +141,7 @@ abstract class AbstractVoucherCartStrategyTest extends \PHPUnit_Framework_TestCa
 
     /**
      * @param Collection|VoucherCode[] $voucherCodes
+     * @param float $totalWithTax
      * @return Cart
      */
     protected function getCart(Collection $voucherCodes = null, $totalWithTax = null)
