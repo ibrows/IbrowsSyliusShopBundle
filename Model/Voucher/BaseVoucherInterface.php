@@ -10,6 +10,11 @@ interface BaseVoucherInterface
     public function isValid();
 
     /**
+     * @return int
+     */
+    public function getId();
+
+    /**
      * @param VoucherCodeInterface $voucherCode
      * @return bool
      */
