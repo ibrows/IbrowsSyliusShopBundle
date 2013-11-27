@@ -6,6 +6,7 @@ use Ibrows\Bundle\WizardAnnotationBundle\Annotation\Wizard;
 use Ibrows\Bundle\WizardAnnotationBundle\Annotation\AnnotationHandler as WizardHandler;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Context;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\PaymentFinishedResponse;
+use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\ZeroAmountPaymentOptionCartStrategy;
 use Ibrows\SyliusShopBundle\Entity\Address;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Symfony\Component\Form\FormError;
@@ -72,9 +73,16 @@ abstract class AbstractWizardController extends AbstractController
     public function summaryValidation()
     {
         $cart = $this->getCurrentCart();
-        if (!$cart->getPaymentOptionStrategyServiceId()) {
+        $cartManager = $this->getCurrentCartManager();
+
+        if($cart->getTotalWithTax() > 0 && $cartManager->getSelectedPaymentOptionStrategyService() instanceof ZeroAmountPaymentOptionCartStrategy){
             return Wizard::REDIRECT_STEP_BACK;
         }
+
+        if(!$cart->getPaymentOptionStrategyServiceId()){
+            return Wizard::REDIRECT_STEP_BACK;
+        }
+
         return true;
     }
 
