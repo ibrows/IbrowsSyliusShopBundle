@@ -52,7 +52,7 @@ class UserController extends AbstractController
                 $address->setEmail($user->getEmail());
                 $user->setInvoiceAddress($address);
                 $this->getManagerForClass($address)->persist($address);
-                $user->addRole('ibrows_sylius_shop.user.role');
+                $user->addRole($this->getParameter('ibrows_sylius_shop.user.role'));
                 $this->getFOSUserManager()->updateUser($user);
                 $this->getLoginManager()->loginUser($this->getParameter('fos_user.firewall_name'), $user);
                 $this->getManagerForClass($address)->flush();
