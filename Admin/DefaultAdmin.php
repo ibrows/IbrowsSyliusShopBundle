@@ -51,7 +51,7 @@ class DefaultAdmin extends AbstractSonataAdminAnnotationAdmin
     }
 
     protected function addActions($listMapper, array $actions = array(
-            'view' => array(),
+            'show' => array(),
             'edit' => array(),
             'delete' => array()
     ))
