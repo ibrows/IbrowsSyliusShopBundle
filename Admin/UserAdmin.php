@@ -9,6 +9,17 @@ use Sonata\AdminBundle\Route\RouteCollection;
 
 class UserAdmin extends DefaultAdmin
 {
+	public function configureListFields(ListMapper $listMapper)
+	{
+		$listMapper
+		->addIdentifier('id')
+		->add('email')
+		->add('lastLogin')
+		->add('enabled')
+		->add('roles')
+		;
+	}
+
 
     public function configureDatagridFilters(DatagridMapper $datagrid) {
 
