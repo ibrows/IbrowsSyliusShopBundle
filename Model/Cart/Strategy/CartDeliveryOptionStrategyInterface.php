@@ -18,4 +18,9 @@ interface CartDeliveryOptionStrategyInterface extends CartStrategyInterface, Car
      * @return CartDeliveryOptionStrategyInterface
      */
     public function setDeliveryConditions($conditions);
+
+    /**
+     * @return bool
+     */
+    public function isSkip();
 }

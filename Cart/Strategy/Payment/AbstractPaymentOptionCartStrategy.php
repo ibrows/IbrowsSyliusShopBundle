@@ -23,7 +23,12 @@ abstract class AbstractPaymentOptionCartStrategy extends AbstractCartFormStrateg
     /**
      * @var bool
      */
-    protected $default;
+    protected $default = false;
+
+    /**
+     * @var bool
+     */
+    protected $skip = false;
 
     /**
      * @return RouterInterface
@@ -101,6 +106,24 @@ abstract class AbstractPaymentOptionCartStrategy extends AbstractCartFormStrateg
         }
 
         return false;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isSkip()
+    {
+        return $this->skip;
+    }
+
+    /**
+     * @param boolean $skip
+     * @return AbstractPaymentOptionCartStrategy
+     */
+    public function setSkip($skip)
+    {
+        $this->skip = $skip;
+        return $this;
     }
 
     /**

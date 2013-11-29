@@ -15,6 +15,7 @@ class ZeroAmountPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrat
     public function __construct()
     {
         $this->setParentVisible(false);
+        $this->setSkip(true);
     }
 
     /**

@@ -43,4 +43,9 @@ interface CartPaymentOptionStrategyInterface extends CartStrategyInterface, Cart
      * @return RouterInterface
      */
     public function getRouter();
+
+    /**
+     * @return bool
+     */
+    public function isSkip();
 }

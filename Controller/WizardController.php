@@ -6,7 +6,6 @@ use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Context;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\ErrorRedirectResponse;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\PaymentFinishedResponse;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\SelfRedirectResponse;
-use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\ZeroAmountPaymentOptionCartStrategy;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Form\FormError;
 use Ibrows\Bundle\WizardAnnotationBundle\Annotation\Wizard;
@@ -15,6 +14,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\Form\ClickableInterface;
+use Symfony\Component\Form\FormInterface;
 
 /**
  * @Route("/wizard")
@@ -44,15 +45,20 @@ class WizardController extends AbstractWizardController
                     return $postAction;
                 }
 
+                /** @var FormInterface $basketFormItem */
                 foreach($basketForm->get('items') as $basketFormItem){
-                    if($basketFormItem->get('delete')->isClicked()){
+                    /** @var ClickableInterface $deleteSubmit */
+                    $deleteSubmit = $basketFormItem->get('delete');
+                    if($deleteSubmit->isClicked()){
                         $cartManager->removeItem($basketFormItem->getData());
                     }
                 }
 
                 $this->persistCurrentCart();
 
-                if($basketForm->get('continue')->isClicked()) {
+                /** @var ClickableInterface $continueSubmit */
+                $continueSubmit = $basketForm->get('continue');
+                if($continueSubmit->isClicked()) {
                     return $this->redirect($this->getWizard()->getNextStepUrl());
                 }
 
@@ -182,6 +188,10 @@ class WizardController extends AbstractWizardController
             }
         }
 
+        if($selectedDeliveryOptionStrategyService && true === $selectedDeliveryOptionStrategyService->isSkip()){
+            return $this->redirect($this->getWizard()->getNextStepUrl());
+        }
+
         $deliveryOptionStrategyForm = $this->createForm($this->getDeliveryOptionStrategyType($cartManager), $deliveryOptionStrategyFormData);
         $deliveryAddressForm = $this->handleDeliveryAddress();
 
@@ -211,12 +221,9 @@ class WizardController extends AbstractWizardController
         $cartManager = $this->getCurrentCartManager();
         $cart = $cartManager->getCart();
 
-        if($cartManager->getSelectedPaymentOptionStrategyService() instanceof ZeroAmountPaymentOptionCartStrategy){
-            return $this->redirect($this->getWizard()->getNextStepUrl());
-        }
-
         $paymentOptionStrategyFormData = null;
         $selectedPaymentOptionStrategyServiceId = $cart->getPaymentOptionStrategyServiceId();
+        $selectedPaymentOptionStrategyService = null;
         if ($selectedPaymentOptionStrategyServiceId) {
             $selectedPaymentOptionStrategyService = $cartManager->getPossiblePaymentOptionStrategyById($selectedPaymentOptionStrategyServiceId);
             if ($selectedPaymentOptionStrategyService) {
@@ -225,6 +232,10 @@ class WizardController extends AbstractWizardController
                     $selectedPaymentOptionStrategyService->getName() => $cart->getPaymentOptionStrategyServiceData()
                 );
             }
+        }
+
+        if($selectedPaymentOptionStrategyService && true === $selectedPaymentOptionStrategyService->isSkip()){
+            return $this->redirect($this->getWizard()->getNextStepUrl());
         }
 
         $paymentOptionStrategyForm = $this->createForm($this->getPaymentOptionStrategyType($cartManager), $paymentOptionStrategyFormData);

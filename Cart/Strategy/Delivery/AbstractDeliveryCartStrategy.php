@@ -25,6 +25,11 @@ abstract class AbstractDeliveryCartStrategy extends AbstractCartFormStrategy imp
     protected $deliveryConditions;
 
     /**
+     * @var bool
+     */
+    protected $skip = false;
+
+    /**
      * @return boolean
      */
     public function isDefault()
@@ -78,6 +83,24 @@ abstract class AbstractDeliveryCartStrategy extends AbstractCartFormStrategy imp
         }
 
         return false;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isSkip()
+    {
+        return $this->skip;
+    }
+
+    /**
+     * @param boolean $skip
+     * @return AbstractDeliveryCartStrategy
+     */
+    public function setSkip($skip)
+    {
+        $this->skip = $skip;
+        return $this;
     }
 
     /**
