@@ -3,7 +3,6 @@
 namespace Ibrows\SyliusShopBundle;
 
 use Ibrows\SyliusShopBundle\DependencyInjection\CompilerPass;
-use JMS\SerializerBundle\JMSSerializerBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -28,7 +27,7 @@ class IbrowsSyliusShopBundle extends Bundle
      */
     public static function getBundles()
     {
-        return array(
+        $bundles = array(
             new \Payment\Bundle\SaferpayBundle\PaymentSaferpayBundle(),
 
             new \JMS\SerializerBundle\JMSSerializerBundle(),
@@ -54,5 +53,11 @@ class IbrowsSyliusShopBundle extends Bundle
 
             new \Ibrows\SyliusShopBundle\IbrowsSyliusShopBundle()
         );
+
+        if(class_exists('\\Sonata\\CoreBundle\\SonataCoreBundle')){
+            $bundles[] = new \Sonata\CoreBundle\SonataCoreBundle();
+        }
+
+        return $bundles;
     }
 }
