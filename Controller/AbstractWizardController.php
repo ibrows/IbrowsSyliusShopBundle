@@ -42,6 +42,16 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
+     * @param FormInterface $basketForm
+     * @param CartInterface $cart
+     * @return null|Response
+     */
+    protected function postInvalidBasketFormValidationAction(FormInterface $basketForm, CartInterface $cart)
+    {
+        return null;
+    }
+
+    /**
      * @return bool|Response
      */
     public function addressValidation()
