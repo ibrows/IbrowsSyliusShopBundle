@@ -32,7 +32,8 @@
 
         "payment/saferpay-bundle": "2.*",
         "payment/httpclient-buzz": "1.*",
-
+    },
+    "require-dev": {
         "phpunit/phpunit": "3.7.*"
     },
    "repositories": [
