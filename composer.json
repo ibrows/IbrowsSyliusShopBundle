@@ -31,7 +31,7 @@
         "ibrows/sonata-admin-annotation-bundle": "2.*",
 
         "payment/saferpay-bundle": "2.*",
-        "payment/httpclient-buzz": "1.*",
+        "payment/httpclient-buzz": "1.*"
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*"
