@@ -41,4 +41,9 @@ interface CartFormStrategyInterface extends CartStrategyInterface, FormTypeInter
      * @return string
      */
     public function getDefaultTranslationDomain();
+
+    /**
+     * @return array
+     */
+    public function __sleep();
 }

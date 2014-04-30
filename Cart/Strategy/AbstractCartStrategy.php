@@ -29,6 +29,14 @@ abstract class AbstractCartStrategy implements CartStrategyInterface
     protected $taxincl = false;
 
     /**
+     * @return array
+     */
+    public function __sleep()
+    {
+        return array('serviceId');
+    }
+
+    /**
      * @param ObjectRepository $repo
      * @return ObjectRepository
      */
