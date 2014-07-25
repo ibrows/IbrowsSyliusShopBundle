@@ -9,6 +9,7 @@
         	<parameter key="ibrows_sylius_shop.cart.manager.class">Ibrows\SyliusShopBundle\Cart\CartManager</parameter>
             <parameter key="ibrows_sylius_shop.currentcart.manager.class">Ibrows\SyliusShopBundle\Cart\CurrentCartManager</parameter>
             <parameter key="ibrows_sylius_shop.logininformation.class">Ibrows\SyliusShopBundle\Login\LoginInformation</parameter>
+            <parameter key="ibrows_sylius_shop.product.skufield">sku</parameter>
          </parameters>
 
     <services>
