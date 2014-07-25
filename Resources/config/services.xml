@@ -16,6 +16,7 @@
         <service id="ibrows_syliusshop.manager.cartitem" class="Ibrows\SyliusShopBundle\Cart\CartItemManager">
             <argument type="service" id="doctrine.orm.entity_manager"/>
             <argument>%ibrows_sylius_shop.product.class%</argument>
+            <argument>%ibrows_sylius_shop.cart.class%</argument>
             <argument>%ibrows_sylius_shop.product.skuField%</argument>
         </service>
         <!-- Cart -->

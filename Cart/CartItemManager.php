@@ -29,15 +29,18 @@ class CartItemManager {
      */
     protected $skuField;
 
+    protected $cartClass;
+
     /**
      * @param EntityManager $em
      * @param string $class
      * @param string $skuProperty
      */
-    function __construct($em, $class, $skuProperty='sku')
+    function __construct($em, $class, $cartClass, $skuProperty='sku')
     {
         $this->em = $em;
         $this->productClass = $class;
+        $this->cartClass = $cartClass;
         $this->skuField = $skuProperty;
     }
 
@@ -49,6 +52,13 @@ class CartItemManager {
         $cart = $cartItemInterface->getCart();
         $product = $cartItemInterface->getProduct();
 
+        return $this->getBoughtProducts($product, $cart);
+    }
+
+    public function getBoughtWithProduct($product, $cart=null){
+        if($cart == null){
+            $cart = $this->cartClass;
+        }
         $cartRepo = $this->getRepositoryForClass($cart);
 
         $qb = $cartRepo->createQueryBuilder('c');
@@ -65,7 +75,6 @@ class CartItemManager {
                 $articles[$article->getId()] = $article;
             }
         }
-
         return $articles;
     }
 
