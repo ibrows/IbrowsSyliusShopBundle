@@ -94,7 +94,11 @@ class WizardController extends AbstractWizardController
 
         $wizard = $this->getWizard();
 
-        $authForm = $this->createForm($this->getAuthType());
+        $authForm = $this->createForm($this->getAuthType(), null, array(
+            'validation_groups' => array(
+                'sylius_wizard_auth'
+            )
+        ));
 
         $loginInformation = $this->getLoginInformation();
         $user = $loginInformation->getUser();

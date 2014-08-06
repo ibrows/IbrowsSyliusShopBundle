@@ -3,9 +3,6 @@
 namespace Ibrows\SyliusShopBundle\Form;
 
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\Email;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\NotNull;
 
 class AuthType extends AbstractType
 {
@@ -15,14 +12,7 @@ class AuthType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add('email', 'email', array(
-                'constraints' => array(
-                    new NotBlank(),
-                    new Email()
-                )
-            ))
-        ;
+        $builder->add('email', 'email');
     }
 
     /**
