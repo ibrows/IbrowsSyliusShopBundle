@@ -625,7 +625,7 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @return \DateTime
-     * @Assert\True(groups={"sylius_wizard_summary"})
+     * @Assert\True(groups={"sylius_wizard_summary"}, message="termsandconditions")
      */
     public function isTermsAndConditions()
     {
