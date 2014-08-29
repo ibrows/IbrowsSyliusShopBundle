@@ -35,6 +35,9 @@
         "payment/saferpay-bundle": "2.*",
         "payment/httpclient-buzz": "1.*"
     },
+    "suggest": {
+        "remdan/easysys-connector-bundle": "dev-master"
+    },
     "require-dev": {
         "phpunit/phpunit": "3.7.*"
     },

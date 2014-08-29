@@ -14,5 +14,9 @@ class IbrowsSyliusShopExtension extends Extension
     {
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
+
+        if ($container->hasDefinition('remdan.easysysconnector')) {
+            $loader->load('easysysconnector_services.xml');
+        }
     }
 }
