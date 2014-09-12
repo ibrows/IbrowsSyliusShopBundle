@@ -48,6 +48,15 @@ abstract class AbstractDeliveryCartStrategy extends AbstractCartFormStrategy imp
     }
 
     /**
+     * @param CartInterface $cart
+     * @return array
+     */
+    public function getTranslationParameters(CartInterface $cart)
+    {
+        return $this->transformToTranslationKeys($cart->getDeliveryOptionStrategyServiceData());
+    }
+
+    /**
      * @return mixed
      */
     public function getDeliveryConditions()

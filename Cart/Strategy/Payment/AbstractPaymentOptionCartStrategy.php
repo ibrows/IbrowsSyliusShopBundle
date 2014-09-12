@@ -43,6 +43,15 @@ abstract class AbstractPaymentOptionCartStrategy extends AbstractCartFormStrateg
     }
 
     /**
+     * @param CartInterface $cart
+     * @return array
+     */
+    public function getTranslationParameters(CartInterface $cart)
+    {
+        return $this->transformToTranslationKeys($cart->getPaymentOptionStrategyServiceData());
+    }
+
+    /**
      * @param bool $flag
      * @return AbstractPaymentOptionCartStrategy
      */

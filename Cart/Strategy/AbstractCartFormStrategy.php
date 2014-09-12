@@ -24,6 +24,21 @@ abstract class AbstractCartFormStrategy extends AbstractCartStrategy implements 
     protected $defaultTranslationDomain = "messages";
 
     /**
+     * @param array $parameters
+     * @param string $prefix
+     * @param string $suffix
+     * @return array
+     */
+    protected function transformToTranslationKeys(array $parameters, $prefix = '%', $suffix = '%')
+    {
+        $newParameters = array();
+        foreach($parameters as $key => $value){
+            $newParameters[$prefix.$key.$suffix] = $value;
+        }
+        return $newParameters;
+    }
+
+    /**
      * @return bool
      */
     public function isParentVisible()
@@ -55,6 +70,14 @@ abstract class AbstractCartFormStrategy extends AbstractCartStrategy implements 
     public function getName()
     {
         return str_replace(".", "_", $this->getServiceId());
+    }
+
+    /**
+     * @return string
+     */
+    public function getTranslationKey(CartInterface $cart)
+    {
+        return $this->getServiceId();
     }
 
     /**

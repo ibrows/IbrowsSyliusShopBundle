@@ -91,6 +91,26 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
 
     /**
      * @param CartInterface $cart
+     * @return string
+     */
+    public function getTranslationKey(CartInterface $cart)
+    {
+        $data = $cart->getPaymentOptionStrategyServiceData();
+        if(!isset($data['method'])){
+            return parent::getTranslationKey($cart);
+        }
+
+        $methods = $this->getPaymentMethods();
+
+        if(!isset($methods[$data['method']])){
+            return parent::getTranslationKey($cart);
+        }
+
+        return $methods[$data['method']].' (Saferpay)';
+    }
+
+    /**
+     * @param CartInterface $cart
      * @param CartManager $cartManager
      * @return bool
      */
