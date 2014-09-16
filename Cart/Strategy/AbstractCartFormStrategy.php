@@ -82,6 +82,15 @@ abstract class AbstractCartFormStrategy extends AbstractCartStrategy implements 
 
     /**
      * @param CartInterface $cart
+     * @return array
+     */
+    public function getTranslationParameters(CartInterface $cart)
+    {
+        return array();
+    }
+
+    /**
+     * @param CartInterface $cart
      * @param CartManager $cartManager
      * @return bool
      */
