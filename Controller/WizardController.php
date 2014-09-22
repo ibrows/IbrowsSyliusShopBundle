@@ -62,6 +62,7 @@ class WizardController extends AbstractWizardController
                     return $this->redirect($this->getWizard()->getNextStepUrl());
                 }
 
+                $this->getManagerForClass($cart)->refresh($cart);
                 $basketForm = $this->createForm($this->getBasketType(), $cart);
             }else{
                 if(($postAction = $this->postInvalidBasketFormValidationAction($basketForm, $cart)) instanceof Response){
