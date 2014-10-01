@@ -61,6 +61,25 @@ class EasysysConnectorManager extends BaseEasysysConnectorManager
     }
 
     /**
+     * @param int $invoiceId
+     * @return array
+     */
+    public function getInvoicePayments($invoiceId)
+    {
+        $parameterBag = clone $this->getEasysysConnector()->getHttpParameterBag();
+
+        $parameterBag->setMethod(HttpAdapterInterface::HTTP_METHOD_GET);
+
+        $requestUri = (string)vsprintf('kb_invoice/%d/payment', array($invoiceId));
+        $parameterBag->setUri($requestUri);
+
+        $parameterBag->setHeaders($this->easysysConnector->getAuthAdapter()->getDefaultHeaders($parameterBag));
+
+        $response = $this->easysysConnector->getManager()->execute($parameterBag);
+        return json_decode($response->getContent(), true);
+    }
+
+    /**
      * @param CartInterface $cart
      * @param $text
      * @return HttpResponse
