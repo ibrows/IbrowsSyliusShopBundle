@@ -3,6 +3,7 @@
 namespace Ibrows\SyliusShopBundle\EasysysConnector;
 
 
+use EasysysConnector\Manager\Resource\Kb\ResourcePositionCustomManager;
 use Remdan\EasysysConnectorBundle\EasysysConnectorManager as BaseEasysysConnectorManager;
 use EasysysConnector\HttpAdapter\HttpAdapterInterface;
 use EasysysConnector\HttpAdapter\HttpParameterBag;
@@ -28,9 +29,35 @@ class EasysysConnectorManager extends BaseEasysysConnectorManager
      */
     public function pushKbPositionCustom(ResourcePositionCustomInterface $positionCustom)
     {
-        $positionCustom = $this->get($positionCustom->getEsResource())->createData($positionCustom);
+        /** @var ResourcePositionCustomManager $manager */
+        $manager = $this->get($positionCustom->getEsResource());
+        $positionCustom = $manager->createData($positionCustom);
 
         return $positionCustom;
+    }
+
+    /**
+     * @param int $invoiceId
+     * @param float $invoiceAmount
+     * @return HttpResponse
+     * @throws \Exception
+     */
+    public function setInvoiceToPayed($invoiceId, $invoiceAmount)
+    {
+        $parameterBag = clone $this->getEasysysConnector()->getHttpParameterBag();
+
+        $parameterBag->setMethod(HttpAdapterInterface::HTTP_METHOD_POST);
+        $parameterBag->setParameterPostFormat('application/json');
+        $parameterBag->setParameterPost(array(
+            'value' => $invoiceAmount,
+        ));
+
+        $requestUri = (string)vsprintf('kb_invoice/%d/payment', array($invoiceId));
+        $parameterBag->setUri($requestUri);
+
+        $parameterBag->setHeaders($this->easysysConnector->getAuthAdapter()->getDefaultHeaders($parameterBag));
+
+        return $this->easysysConnector->getManager()->execute($parameterBag);
     }
 
     /**
@@ -40,15 +67,17 @@ class EasysysConnectorManager extends BaseEasysysConnectorManager
      */
     public function pushKbComment(CartInterface $cart, $text)
     {
-        $parameterBag = new HttpParameterBag();
+        $parameterBag = clone $this->getEasysysConnector()->getHttpParameterBag();
+
         $parameterBag->setMethod(HttpAdapterInterface::HTTP_METHOD_POST);
         $parameterBag->setParameterPostFormat('application/json');
         $parameterBag->setParameterPost(array(
             'user_id' => $cart->getEsUserId(),
-            'text' => $text
+            'text' => $text,
+            'is_public' => false
         ));
 
-        $requestUri = (string)vsprintf('kb_order/%s/comment', array($cart->getEsId()));
+        $requestUri = (string)vsprintf('kb_order/%d/comment', array($cart->getEsId()));
         $parameterBag->setUri($requestUri);
 
         $parameterBag->setHeaders($this->easysysConnector->getAuthAdapter()->getDefaultHeaders($parameterBag));
