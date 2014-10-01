@@ -269,8 +269,12 @@
         };
 
         settings = $.extend({}, defaultSettings, settings);
+        if(!this.messageModals[name])
+        {
+            this.messageModals[name] = [];
+        }
 
-        this.messageModals[name] = {
+        this.messageModals[name][eventType] = {
             container: modal,
             settings: settings,
             timeout: null
@@ -278,21 +282,21 @@
 
         self.log(settings);
 
-        this.registerMessageModalEvents(name);
+        this.registerMessageModalEvents(name, eventType);
         this.registerMessageModalListeners(name, eventType);
     };
 
     this.registerMessageModalListeners = function(name, eventType){
         self.log('syliusShop.registerMessageModalListeners: '+ name);
         this.onAction(name, function(e){
-            self.showMessageModal(name);
+            self.showMessageModal(name, eventType);
         }, eventType);
     };
 
-    this.registerMessageModalEvents = function(name){
+    this.registerMessageModalEvents = function(name, type){
         self.log('syliusShop.registerMessageModalEvents: '+ name);
 
-        var modal = this.messageModals[name];
+        var modal = this.messageModals[name][type];
         var container = modal.container;
 
         container.mouseover(function(){
@@ -309,8 +313,8 @@
         });
     };
 
-    this.showMessageModal = function(name){
-        var modal = this.messageModals[name];
+    this.showMessageModal = function(name, type){
+        var modal = this.messageModals[name][type];
         var container = modal.container;
 
         clearTimeout(container.timeout);
@@ -389,6 +393,24 @@
 
         doc.on(settings.actions.cartItemAdd.eventName, function(e, url, itemId, quantity, item){
             self.log('POST to '+ url +' with itemId '+ itemId + ' with quantity '+ quantity);
+            $.ajax(url,  {
+                type: "POST",
+                data : {
+                    itemId: itemId,
+                    quantity: quantity
+                },
+                success : function(data, textStatus)
+                {
+                    console.log(textStatus)
+                    self.trigger(settings.actions.cartItemAdd.eventSuccessName, [data, textStatus, url, itemId, quantity, item]);
+                },
+                error : function(data, textStatus)
+                {
+                    console.log(textStatus)
+                    self.trigger(settings.actions.cartItemAdd.eventErrorName, [data, textStatus, url, itemId, quantity, item]);
+                }
+            });
+            /*
             $.post(url, {
                 itemId: itemId,
                 quantity: quantity
@@ -400,6 +422,7 @@
                     self.trigger(settings.actions.cartItemAdd.eventErrorName, [data, textStatus, url, itemId, quantity, item]);
                 }
             });
+            */
         });
     };
 
@@ -415,6 +438,20 @@
 
         doc.on(settings.actions.watchlistItemAdd.eventName, function(e, url, itemId, item){
             self.log('POST to '+ url +' with itemId '+ itemId);
+            $.ajax(url,  {
+                data : {
+                    itemId: itemId
+                },
+                success : function(data, statusText)
+                {
+                    self.trigger(settings.actions.watchlistItemAdd.eventSuccessName, [data, textStatus, url, itemId, item]);
+                },
+                error : function(data, statusText)
+                {
+                    self.trigger(settings.actions.watchlistItemAdd.eventErrorName, [data, textStatus, url, itemId, item]);
+                }
+            });
+            /*
             $.post(url, {
                 itemId: itemId
             }, function(data, textStatus){
@@ -425,20 +462,36 @@
                     self.trigger(settings.actions.watchlistItemAdd.eventErrorName, [data, textStatus, url, itemId, item]);
                 }
             });
+            */
         });
 
         doc.on(settings.actions.watchlistItemRemove.eventName, function(e, url, itemId, item){
             self.log('POST to '+ url +' with itemId '+ itemId);
+            $.ajax(url,  {
+                data : {
+                    itemId: itemId
+                },
+                success : function(data, statusText)
+                {
+                    self.trigger(settings.actions.watchlistItemRemove.eventSuccessName, [data, textStatus, url, itemId, item]);
+                },
+                error : function(data, statusText)
+                {
+                    self.trigger(settings.actions.watchlistItemRemove.eventErrorName, [data, textStatus, url, itemId, item]);
+                }
+            });
+            /*
             $.post(url, {
-                itemId: itemId
+
             }, function(data, textStatus){
                 self.log('Response received');
                 if(textStatus == "success"){
-                    self.trigger(settings.actions.watchlistItemRemove.eventSuccessName, [data, textStatus, url, itemId, item]);
+
                 }else{
                     self.trigger(settings.actions.watchlistItemRemove.eventErrorName, [data, textStatus, url, itemId, item]);
                 }
             });
+            */
         });
 
         doc.on(settings.actions.watchlistItemRemove.eventSuccessName, function(e, data, textStatus, url, itemId, item){
