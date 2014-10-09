@@ -189,10 +189,13 @@ abstract class AbstractController extends Controller
     }
 
     /**
-     * @return CurrentCartManager
+     * @param bool $persistCart
+     * @param bool $returnExceptions
+     * @return \Exception[]|CurrentCartManager
      */
-    protected function closeCurrentCart(){
-        return $this->getCurrentCartManager()->closeCart();
+    protected function closeCurrentCart($persistCart = true, $returnExceptions = false)
+    {
+        return $this->getCurrentCartManager()->closeCart($persistCart, $returnExceptions);
     }
 
     /**

@@ -127,18 +127,27 @@ class CurrentCartManager extends CartManager
 
     /**
      * @param bool $persistCart
-     * @return CurrentCartManager
-     * @throws \BadMethodCallException
+     * @param bool $returnExceptions
+     * @return CurrentCartManager|\Exception[]
      */
-    public function closeCart($persistCart = true)
+    public function closeCart($persistCart = true, $returnExceptions = false)
     {
         $cart = $this->getCart();
         if($cart->isClosed()){
-            throw new \BadMethodCallException("Cart is already closed");
+            throw new BadMethodCallException("Cart is already closed");
         }
 
-        $this->serializeCartItems($cart);
-        $this->serializeCart($cart);
+        $exceptions = array();
+
+        $serializeCartItemsReturn = $this->serializeCartItems($cart, $returnExceptions);
+        if($returnExceptions){
+            $exceptions = array_merge($exceptions, $serializeCartItemsReturn);
+        }
+
+        $serializeCartReturn = $this->serializeCart($cart, $returnExceptions);
+        if($returnExceptions){
+            $exceptions = array_merge($exceptions, $serializeCartReturn);
+        }
 
         $cart->setClosed();
         $cart->setLocked(true);
@@ -148,7 +157,8 @@ class CurrentCartManager extends CartManager
         }
 
         $this->clearCurrentCart();
-        return $this;
+
+        return $returnExceptions ? $exceptions : $this;
     }
 
     /**
@@ -163,27 +173,55 @@ class CurrentCartManager extends CartManager
 
     /**
      * @param CartInterface $cart
+     * @param bool $returnExceptions
+     * @throws \Exception
+     * @return null|\Exception[]
      */
-    protected function serializeCart(CartInterface $cart)
+    protected function serializeCart(CartInterface $cart, $returnExceptions = false)
     {
+        $exceptions = array();
+
         foreach($this->cartSerializers as $serializer){
             if(true === $serializer->accept($cart)){
-                $serializer->serialize($cart);
+                try {
+                    $serializer->serialize($cart);
+                }catch (\Exception $e){
+                    if(!$returnExceptions){
+                        throw $e;
+                    }
+                    $exceptions[] = $e;
+                }
             }
         }
+
+        return $returnExceptions ? $exceptions : null;
     }
 
     /**
      * @param CartInterface $cart
+     * @param bool $returnExceptions
+     * @throws \Exception
+     * @return null|\Exception[]
      */
-    protected function serializeCartItems(CartInterface $cart)
+    protected function serializeCartItems(CartInterface $cart, $returnExceptions = false)
     {
+        $exceptions = array();
+
         foreach($cart->getItems() as $item){
             foreach($this->cartItemSerializers as $serializer){
                 if(true === $serializer->accept($item)){
-                    $serializer->serialize($item);
+                    try {
+                        $serializer->serialize($item);
+                    }catch (\Exception $e){
+                        if(!$returnExceptions){
+                            throw $e;
+                        }
+                        $exceptions[] = $e;
+                    }
                 }
             }
         }
+
+        return $returnExceptions ? $exceptions : null;
     }
 }
