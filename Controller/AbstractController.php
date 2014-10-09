@@ -104,6 +104,7 @@ abstract class AbstractController extends Controller
     protected function getManagerForClass($className)
     {
         if(is_object($className)){
+            /** @var object $className */
             $className = get_class($className);
         }
         return $this->getDoctrine()->getManagerForClass($className);
