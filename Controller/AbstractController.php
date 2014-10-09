@@ -234,11 +234,12 @@ abstract class AbstractController extends Controller
         }
     }
 
-
+    /**
+     * @param string $message
+     */
     protected function addFlashMessage($message){
-        return  $this->get('session')->getFlashBag()->add('notice', $message);;
+        $this->get('session')->getFlashBag()->add('notice', $message);
     }
-
 
     /**
      * @return ProductRepository
@@ -312,11 +313,11 @@ abstract class AbstractController extends Controller
      * @param FormInterface $authForm
      * @param CartManager $cartManager
      * @param WizardHandler $wizard
-     * @return RedirectResponse|void
+     * @return RedirectResponse|null
      */
     protected function authByEmail(Request $request, FormInterface $authForm, CartManager $cartManager, WizardHandler $wizard)
     {
-        $authForm->bind($request);
+        $authForm->handleRequest($request);
         if ($authForm->isValid()) {
             $email = $authForm->get('email')->getData();
             if ($this->getFOSUserManager()->findUserByEmail($email)) {
@@ -327,6 +328,8 @@ abstract class AbstractController extends Controller
                 return $this->redirect($wizard->getNextStepUrl());
             }
         }
+
+        return null;
     }
 
     /**
