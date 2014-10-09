@@ -87,7 +87,7 @@ class CartItem extends BaseCartItem implements CartItemInterface
      */
     public function __toString()
     {
-        return (string) $this->product;
+        return (string)$this->product;
     }
 
     public function calculateTotal()
