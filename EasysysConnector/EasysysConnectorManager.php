@@ -3,7 +3,9 @@
 namespace Ibrows\SyliusShopBundle\EasysysConnector;
 
 
+use EasysysConnector\Manager\Resource\Kb\ResourceOrderManager;
 use EasysysConnector\Manager\Resource\Kb\ResourcePositionCustomManager;
+use EasysysConnector\Model\Resource\Kb\ResourceOrderInterface;
 use Remdan\EasysysConnectorBundle\EasysysConnectorManager as BaseEasysysConnectorManager;
 use EasysysConnector\HttpAdapter\HttpAdapterInterface;
 use EasysysConnector\HttpAdapter\HttpParameterBag;
@@ -15,12 +17,14 @@ use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 class EasysysConnectorManager extends BaseEasysysConnectorManager
 {
     /**
-     * @param CartInterface $cart
+     * @param ResourceOrderInterface $cart
      * @return mixed
      */
-    public function pushKbOrder(CartInterface $cart)
+    public function pushKbOrder(ResourceOrderInterface $cart)
     {
-        return $this->get($cart->getEsResource())->createData($cart);
+        /** @var ResourceOrderManager $manager */
+        $manager = $this->get($cart->getEsResource());
+        return $manager->createData($cart);
     }
 
     /**
@@ -38,21 +42,77 @@ class EasysysConnectorManager extends BaseEasysysConnectorManager
 
     /**
      * @param int $invoiceId
-     * @param float $invoiceAmount
-     * @return HttpResponse
+     * @param float $invoiceValue
+     * @param bool $setFirstToIssued
      * @throws \Exception
+     * @return HttpResponse
      */
-    public function setInvoiceToPayed($invoiceId, $invoiceAmount)
+    public function setInvoiceToPayed($invoiceId, $invoiceValue = null, $setFirstToIssued = true)
     {
+        if($setFirstToIssued){
+            $this->setInvoiceToIssued($invoiceId);
+        }
+
+        if(!is_null($invoiceValue)){
+            $invoiceValue = $this->getInvoiceValue($invoiceId);
+        }
+
         $parameterBag = clone $this->getEasysysConnector()->getHttpParameterBag();
 
         $parameterBag->setMethod(HttpAdapterInterface::HTTP_METHOD_POST);
         $parameterBag->setParameterPostFormat('application/json');
         $parameterBag->setParameterPost(array(
-            'value' => $invoiceAmount,
+            'value' => $invoiceValue,
         ));
 
         $requestUri = (string)vsprintf('kb_invoice/%d/payment', array($invoiceId));
+        $parameterBag->setUri($requestUri);
+
+        $parameterBag->setHeaders($this->easysysConnector->getAuthAdapter()->getDefaultHeaders($parameterBag));
+
+        return $this->easysysConnector->getManager()->execute($parameterBag);
+    }
+
+    /**
+     * @param $invoiceId
+     * @return HttpResponse
+     * @throws \Exception
+     */
+    public function getInvoiceValue($invoiceId)
+    {
+        $parameterBag = clone $this->getEasysysConnector()->getHttpParameterBag();
+
+        $parameterBag->setMethod(HttpAdapterInterface::HTTP_METHOD_GET);
+
+        $requestUri = (string)vsprintf('kb_bill/%d', array($invoiceId));
+        $parameterBag->setUri($requestUri);
+
+        $parameterBag->setHeaders($this->easysysConnector->getAuthAdapter()->getDefaultHeaders($parameterBag));
+
+        $data = $this->easysysConnector->getManager()->execute($parameterBag);
+
+        $value = 0;
+        if(isset($data['positions']) && is_array($data['positions'])){
+            foreach($data['positions'] as $position){
+                $value += $position['position_total'];
+            }
+        }
+        return $value;
+    }
+
+    /**
+     * @param int $invoiceId
+     * @return HttpResponse
+     * @throws \Exception
+     */
+    public function setInvoiceToIssued($invoiceId)
+    {
+        $parameterBag = clone $this->getEasysysConnector()->getHttpParameterBag();
+
+        $parameterBag->setMethod(HttpAdapterInterface::HTTP_METHOD_POST);
+        $parameterBag->setParameterPostFormat('application/json');
+
+        $requestUri = (string)vsprintf('kb_invoice/%d/issue', array($invoiceId));
         $parameterBag->setUri($requestUri);
 
         $parameterBag->setHeaders($this->easysysConnector->getAuthAdapter()->getDefaultHeaders($parameterBag));
@@ -80,11 +140,11 @@ class EasysysConnectorManager extends BaseEasysysConnectorManager
     }
 
     /**
-     * @param CartInterface $cart
-     * @param $text
+     * @param ResourceOrderInterface $cart
+     * @param string $text
      * @return HttpResponse
      */
-    public function pushKbComment(CartInterface $cart, $text)
+    public function pushKbComment(ResourceOrderInterface $cart, $text)
     {
         $parameterBag = clone $this->getEasysysConnector()->getHttpParameterBag();
 
