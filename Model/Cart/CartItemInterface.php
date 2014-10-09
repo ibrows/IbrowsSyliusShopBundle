@@ -25,6 +25,16 @@ interface CartItemInterface extends BaseCartItemInterface
     public function getDeliveredAt();
 
     /**
+     * @return int
+     */
+    public function getQuantityNotAvailable();
+
+    /**
+     * @return CartItemInterface
+     */
+    public function setQuantityToAvailable();
+
+    /**
      * @return string
      */
     public function getName();
@@ -90,10 +100,15 @@ interface CartItemInterface extends BaseCartItemInterface
     public function isTaxInclusive();
 
     /**
-     * @param boolean $mwstinclusive
+     * @param boolean $taxInclusive
      * @return CartItemInterface
      */
     public function setTaxInclusive($taxInclusive);
+
+    /**
+     * @return string
+     */
+    public function __toString();
 
     /**
      * @return int

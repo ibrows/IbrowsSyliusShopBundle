@@ -20,4 +20,9 @@ interface ProductInterface extends StockableInterface
      * @return boolean
      */
     public function isEnabled();
+
+    /**
+     * @return string
+     */
+    public function __toString();
 }

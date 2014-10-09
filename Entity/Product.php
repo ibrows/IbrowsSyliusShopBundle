@@ -383,7 +383,7 @@ abstract class Product implements ProductInterface
      */
     public function __toString()
     {
-        return (string) $this->getInventoryName();
+        return (string)$this->getInventoryName();
     }
     /**
      * @return boolean
@@ -394,14 +394,12 @@ abstract class Product implements ProductInterface
     }
 
     /**
-     * @param  $enabled
+     * @param bool $enabled
+     * @return $this
      */
     public function setEnabled($enabled)
     {
         $this->enabled = $enabled;
         return $this;
     }
-
-
-
 }
