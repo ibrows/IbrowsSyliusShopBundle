@@ -401,12 +401,12 @@
                 },
                 success : function(data, textStatus)
                 {
-                    console.log(textStatus)
+                    self.log(textStatus);
                     self.trigger(settings.actions.cartItemAdd.eventSuccessName, [data, textStatus, url, itemId, quantity, item]);
                 },
                 error : function(data, textStatus)
                 {
-                    console.log(textStatus)
+                    self.log(textStatus);
                     self.trigger(settings.actions.cartItemAdd.eventErrorName, [data, textStatus, url, itemId, quantity, item]);
                 }
             });
