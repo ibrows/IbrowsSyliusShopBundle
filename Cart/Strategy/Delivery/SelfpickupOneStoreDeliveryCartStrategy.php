@@ -4,6 +4,7 @@ namespace Ibrows\SyliusShopBundle\Cart\Strategy\Delivery;
 
 use Ibrows\SyliusShopBundle\Cart\Strategy\Delivery\SelfpickupDeliveryCartStrategy;
 use Ibrows\SyliusShopBundle\Cart\CartManager;
+use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 
