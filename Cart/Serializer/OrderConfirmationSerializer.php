@@ -172,7 +172,7 @@ class OrderConfirmationSerializer implements CartSerializerInterface
             ->setBcc($this->getBcc($cart))
             ->setBody($this->getHtmlBody($cart), 'text/html', 'utf-8')
             ->addPart($this->getPlainBody($cart))
-        ;
+            ;
     }
 
     /**
@@ -201,6 +201,7 @@ class OrderConfirmationSerializer implements CartSerializerInterface
     {
         $cartManager = $this->container->get('ibrows_syliusshop.currentcart.manager');
         return array(
+            'subject' => $this->getSubject($cart),
             'cart' => $cart,
             'translation_domain' => $this->getTranslationDomain(),
             'cartManager' => $cartManager,
