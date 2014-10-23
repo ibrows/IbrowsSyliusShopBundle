@@ -53,7 +53,7 @@ class EasysysConnectorManager extends BaseEasysysConnectorManager
             $this->setInvoiceToIssued($invoiceId);
         }
 
-        if(!is_null($invoiceValue)){
+        if(is_null($invoiceValue)){
             $invoiceValue = $this->getInvoiceValue($invoiceId);
         }
 
