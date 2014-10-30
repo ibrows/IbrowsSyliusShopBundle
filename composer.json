@@ -33,7 +33,9 @@
         "ibrows/sonata-admin-annotation-bundle": "2.*",
 
         "payment/saferpay-bundle": "2.*",
-        "payment/httpclient-buzz": "1.*"
+        "payment/httpclient-buzz": "1.*",
+
+        "hinclude/hinclude": "0.9.5"
     },
     "suggest": {
         "remdan/easysys-connector-bundle": "dev-master"
