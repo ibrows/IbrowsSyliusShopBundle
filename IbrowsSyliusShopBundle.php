@@ -43,7 +43,6 @@ class IbrowsSyliusShopBundle extends Bundle
             new \Ibrows\Bundle\WizardAnnotationBundle\IbrowsWizardAnnotationBundle(),
 
             new \Sonata\BlockBundle\SonataBlockBundle(),
-            new \Sonata\jQueryBundle\SonatajQueryBundle(),
             new \Sonata\AdminBundle\SonataAdminBundle(),
             new \Sonata\DoctrineORMAdminBundle\SonataDoctrineORMAdminBundle(),
             new \Sonata\IntlBundle\SonataIntlBundle(),
