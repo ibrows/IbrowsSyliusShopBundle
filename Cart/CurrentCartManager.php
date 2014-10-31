@@ -70,7 +70,9 @@ class CurrentCartManager extends CartManager
     public function getCart($throwException = false)
     {
         if(!$this->cart){
-            parent::setCart($this->provider->getCart());
+            /** @var CartInterface $cart */
+            $cart = $this->provider->getCart();
+            parent::setCart($cart);
         }
         return parent::getCart($throwException);
     }
@@ -128,13 +130,15 @@ class CurrentCartManager extends CartManager
     /**
      * @param bool $persistCart
      * @param bool $returnExceptions
-     * @return CurrentCartManager|\Exception[]
+     * @throws \BadMethodCallException
+     * @throws \Exception
+     * @return \Exception[]|CurrentCartManager
      */
     public function closeCart($persistCart = true, $returnExceptions = false)
     {
         $cart = $this->getCart();
         if($cart->isClosed()){
-            throw new BadMethodCallException("Cart is already closed");
+            throw new \BadMethodCallException("Cart is already closed");
         }
 
         $exceptions = array();

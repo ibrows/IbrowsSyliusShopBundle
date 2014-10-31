@@ -462,7 +462,6 @@ class CartManager
                 if($currencyStrategy->acceptAsDefaultCurrency($cart, $this)){
                     $cart->setCurrency($currencyStrategy->getDefaultCurrency($cart, $this));
                     $hasCurrency = true;
-                    $this->persistCart();
                     break;
                 }
             }
