@@ -380,7 +380,7 @@
         var doc = self.doc;
         var settings = self.settings;
 
-        doc.on(settings.actions.cartItemAdd.eventSuccessName, function(e, data, textStatus, url, itemId, quantity, item){
+        doc.on(settings.actions.cartItemAdd.eventSuccessName, function(e, data, statusText, url, itemId, quantity, item){
             if(typeof self.hinclude == 'undefined'){
                 self.log('hinclude lib not found');
                 return;
@@ -388,7 +388,7 @@
             self.log('refresh hinclude id '+ settings.hinclude.cartId);
             self.hinclude.refresh(settings.hinclude.cartId);
 
-            self.trigger(settings.actions.cartChanged.eventName, [data, textStatus, url, itemId, quantity, item]);
+            self.trigger(settings.actions.cartChanged.eventName, [data, statusText, url, itemId, quantity, item]);
         });
 
         doc.on(settings.actions.cartItemAdd.eventName, function(e, url, itemId, quantity, item){
@@ -399,27 +399,27 @@
                     itemId: itemId,
                     quantity: quantity
                 },
-                success : function(data, textStatus)
+                success : function(data, statusText)
                 {
-                    self.log(textStatus);
-                    self.trigger(settings.actions.cartItemAdd.eventSuccessName, [data, textStatus, url, itemId, quantity, item]);
+                    self.log(statusText);
+                    self.trigger(settings.actions.cartItemAdd.eventSuccessName, [data, statusText, url, itemId, quantity, item]);
                 },
-                error : function(data, textStatus)
+                error : function(data, statusText)
                 {
-                    self.log(textStatus);
-                    self.trigger(settings.actions.cartItemAdd.eventErrorName, [data, textStatus, url, itemId, quantity, item]);
+                    self.log(statusText);
+                    self.trigger(settings.actions.cartItemAdd.eventErrorName, [data, statusText, url, itemId, quantity, item]);
                 }
             });
             /*
             $.post(url, {
                 itemId: itemId,
                 quantity: quantity
-            }, function(data, textStatus){
+            }, function(data, statusText){
                 self.log('Response received');
-                if(textStatus == "success"){
-                    self.trigger(settings.actions.cartItemAdd.eventSuccessName, [data, textStatus, url, itemId, quantity, item]);
+                if(statusText == "success"){
+                    self.trigger(settings.actions.cartItemAdd.eventSuccessName, [data, statusText, url, itemId, quantity, item]);
                 }else{
-                    self.trigger(settings.actions.cartItemAdd.eventErrorName, [data, textStatus, url, itemId, quantity, item]);
+                    self.trigger(settings.actions.cartItemAdd.eventErrorName, [data, statusText, url, itemId, quantity, item]);
                 }
             });
             */
@@ -444,22 +444,22 @@
                 },
                 success : function(data, statusText)
                 {
-                    self.trigger(settings.actions.watchlistItemAdd.eventSuccessName, [data, textStatus, url, itemId, item]);
+                    self.trigger(settings.actions.watchlistItemAdd.eventSuccessName, [data, statusText, url, itemId, item]);
                 },
                 error : function(data, statusText)
                 {
-                    self.trigger(settings.actions.watchlistItemAdd.eventErrorName, [data, textStatus, url, itemId, item]);
+                    self.trigger(settings.actions.watchlistItemAdd.eventErrorName, [data, statusText, url, itemId, item]);
                 }
             });
             /*
             $.post(url, {
                 itemId: itemId
-            }, function(data, textStatus){
+            }, function(data, statusText){
                 self.log('Response received');
-                if(textStatus == "success"){
-                    self.trigger(settings.actions.watchlistItemAdd.eventSuccessName, [data, textStatus, url, itemId, item]);
+                if(statusText == "success"){
+                    self.trigger(settings.actions.watchlistItemAdd.eventSuccessName, [data, statusText, url, itemId, item]);
                 }else{
-                    self.trigger(settings.actions.watchlistItemAdd.eventErrorName, [data, textStatus, url, itemId, item]);
+                    self.trigger(settings.actions.watchlistItemAdd.eventErrorName, [data, statusText, url, itemId, item]);
                 }
             });
             */
@@ -473,28 +473,28 @@
                 },
                 success : function(data, statusText)
                 {
-                    self.trigger(settings.actions.watchlistItemRemove.eventSuccessName, [data, textStatus, url, itemId, item]);
+                    self.trigger(settings.actions.watchlistItemRemove.eventSuccessName, [data, statusText, url, itemId, item]);
                 },
                 error : function(data, statusText)
                 {
-                    self.trigger(settings.actions.watchlistItemRemove.eventErrorName, [data, textStatus, url, itemId, item]);
+                    self.trigger(settings.actions.watchlistItemRemove.eventErrorName, [data, statusText, url, itemId, item]);
                 }
             });
             /*
             $.post(url, {
 
-            }, function(data, textStatus){
+            }, function(data, statusText){
                 self.log('Response received');
-                if(textStatus == "success"){
+                if(statusText == "success"){
 
                 }else{
-                    self.trigger(settings.actions.watchlistItemRemove.eventErrorName, [data, textStatus, url, itemId, item]);
+                    self.trigger(settings.actions.watchlistItemRemove.eventErrorName, [data, statusText, url, itemId, item]);
                 }
             });
             */
         });
 
-        doc.on(settings.actions.watchlistItemRemove.eventSuccessName, function(e, data, textStatus, url, itemId, item){
+        doc.on(settings.actions.watchlistItemRemove.eventSuccessName, function(e, data, statusText, url, itemId, item){
             var selector = '[data-'+ settings.actions.watchlistItemRemove.dataContainerRemoveSelect +']';
             self.log('remove closest to item container from dom: '+ selector);
             item.closest(selector).remove();
