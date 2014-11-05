@@ -166,6 +166,17 @@ class CurrentCartManager extends CartManager
     }
 
     /**
+     * @param bool $refreshAndCheckAvailability
+     * @return CartManager
+     */
+    public function persistCart($refreshAndCheckAvailability = true)
+    {
+        parent::persistCart($refreshAndCheckAvailability);
+        $this->provider->setCart($this->getCart());
+        return $this;
+    }
+
+    /**
      * @return CurrentCartManager
      */
     public function clearCurrentCart()
