@@ -394,7 +394,7 @@
         doc.on(settings.actions.cartItemAdd.eventName, function(e, url, itemId, quantity, item){
             self.log('POST to '+ url +' with itemId '+ itemId + ' with quantity '+ quantity);
             $.ajax(url,  {
-                type: "POST",
+                type: 'POST',
                 data : {
                     itemId: itemId,
                     quantity: quantity
@@ -439,6 +439,7 @@
         doc.on(settings.actions.watchlistItemAdd.eventName, function(e, url, itemId, item){
             self.log('POST to '+ url +' with itemId '+ itemId);
             $.ajax(url,  {
+                method: 'POST',
                 data : {
                     itemId: itemId
                 },
@@ -468,6 +469,7 @@
         doc.on(settings.actions.watchlistItemRemove.eventName, function(e, url, itemId, item){
             self.log('POST to '+ url +' with itemId '+ itemId);
             $.ajax(url,  {
+                method: 'POST',
                 data : {
                     itemId: itemId
                 },
