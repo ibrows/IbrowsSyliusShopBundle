@@ -10,8 +10,12 @@ namespace Ibrows\SyliusShopBundle\Cart;
 
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
+use Ibrows\SyliusShopBundle\Entity\CartItem;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface;
+use Ibrows\SyliusShopBundle\Repository\CartItemRepository;
+use Ibrows\SyliusShopBundle\Repository\ProductRepository;
 
 class CartItemManager {
     /**
@@ -32,16 +36,25 @@ class CartItemManager {
     protected $cartClass;
 
     /**
+     * @var CartItemRepository
+     */
+    protected $cartItemRepo;
+
+    /**
      * @param EntityManager $em
      * @param string $class
+     * @param $cartClass
      * @param string $skuProperty
+     * @param null $cartItemClass
      */
-    function __construct($em, $class, $cartClass, $skuProperty='sku')
+    function __construct($em, $class, $cartClass, $skuProperty='sku', CartItemRepository $cartItemRepo=null)
     {
         $this->em = $em;
         $this->productClass = $class;
         $this->cartClass = $cartClass;
         $this->skuField = $skuProperty;
+        $this->cartItemRepo = $cartItemRepo;
+
     }
 
     /**
@@ -152,6 +165,14 @@ class CartItemManager {
             $class = get_class($class);
         }
         return $this->em->getRepository($class);
+    }
+
+    /**
+     *
+     */
+    public function getMostBoughtArticles($limit=50)
+    {
+        return $this->cartItemRepo->findByMostBought($limit);
     }
 
 

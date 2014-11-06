@@ -9,7 +9,7 @@ use Sylius\Bundle\CartBundle\Model\CartItemInterface as BaseCartItemInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Ibrows\SyliusShopBundle\Repository\CartItemRepository")
  * @ORM\Table(name="ibr_sylius_cart_item")
  * @ORM\AttributeOverrides({
  *      @ORM\AttributeOverride(name="unitPrice",
