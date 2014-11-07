@@ -8,25 +8,48 @@
 
 namespace Ibrows\SyliusShopBundle\Repository;
 
-
 use Doctrine\ORM\EntityRepository;
+use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface;
+use Ibrows\SyliusShopBundle\Model\Product\ProductInterface;
 
 class CartItemRepository extends EntityRepository
 {
     /**
-     * @return mixed
+     * @param int $limit
+     * @return ProductInterface[]
      */
-    public function findByMostBought($limit=50)
+    public function findByMostBoughtProducts($limit = 50)
     {
-        $qb = $this->createQueryBuilder('i');
-        $qb->addSelect('SUM(i.quantity) quantity');
-        $qb->leftJoin('i.product', 'product');
+        $qb = $this->createQueryBuilder('item');
+
+        $qb->addSelect('SUM(item.quantity) as itemQuantity');
+        $qb->addSelect('product');
+
+        $qb->leftJoin('item.product', 'product');
+        $qb->leftJoin('item.cart', 'cart');
+
         $qb->where('product.enabled = :enabled');
         $qb->setParameter('enabled', true);
-        $qb->orderBy('quantity', 'DESC');
-        $qb->groupBy('i.product');
+
+        $qb->andWhere($qb->expr()->isNotNull('cart.confirmedAt'));
+
+        $qb->orderBy('itemQuantity', 'DESC');
+        $qb->groupBy('product.id');
+
         $qb->setMaxResults($limit);
-        $result = $qb->getQuery()->getScalarResult();
-        return $result;
+
+        $rows = $qb->getQuery()->getResult();
+        $products = array();
+
+        foreach ($rows as $row) {
+            if (!isset($row[0])) {
+                continue;
+            }
+            /** @var CartItemInterface $item */
+            $item = $row[0];
+            $products[] = $item->getProduct();
+        }
+
+        return $products;
     }
 } 

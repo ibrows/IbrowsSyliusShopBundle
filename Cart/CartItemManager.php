@@ -8,16 +8,14 @@
 
 namespace Ibrows\SyliusShopBundle\Cart;
 
-
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
-use Ibrows\SyliusShopBundle\Entity\CartItem;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface;
+use Ibrows\SyliusShopBundle\Model\Product\ProductInterface;
 use Ibrows\SyliusShopBundle\Repository\CartItemRepository;
-use Ibrows\SyliusShopBundle\Repository\ProductRepository;
 
-class CartItemManager {
+class CartItemManager
+{
     /**
      * @var EntityManager
      */
@@ -33,6 +31,9 @@ class CartItemManager {
      */
     protected $skuField;
 
+    /**
+     * @var string
+     */
     protected $cartClass;
 
     /**
@@ -42,49 +43,57 @@ class CartItemManager {
 
     /**
      * @param EntityManager $em
-     * @param string $class
+     * @param string $productClass
      * @param $cartClass
      * @param string $skuProperty
-     * @param null $cartItemClass
+     * @param CartItemRepository $cartItemRepo
      */
-    function __construct($em, $class, $cartClass, $skuProperty='sku', CartItemRepository $cartItemRepo=null)
+    public function __construct(EntityManager $em, $productClass, $cartClass, $skuProperty = 'sku', CartItemRepository $cartItemRepo = null)
     {
         $this->em = $em;
-        $this->productClass = $class;
+        $this->productClass = $productClass;
         $this->cartClass = $cartClass;
         $this->skuField = $skuProperty;
         $this->cartItemRepo = $cartItemRepo;
-
     }
 
     /**
      * @param CartItemInterface $cartItemInterface
      * @return array
      */
-    public function getBoughtWith ( CartItemInterface $cartItemInterface) {
+    public function getBoughtWith(CartItemInterface $cartItemInterface)
+    {
         $cart = $cartItemInterface->getCart();
         $product = $cartItemInterface->getProduct();
 
         return $this->getBoughtProducts($product, $cart);
     }
 
-    public function getBoughtWithProduct($product, $cart=null){
-        if($cart == null){
+    /**
+     * @param ProductInterface $product
+     * @param CartInterface $cart
+     * @return array
+     */
+    public function getBoughtWithProduct(ProductInterface $product, CartInterface $cart = null)
+    {
+        if ($cart == null) {
             $cart = $this->cartClass;
         }
+
         $cartRepo = $this->getRepositoryForClass($cart);
 
         $qb = $cartRepo->createQueryBuilder('c');
         $qb->leftJoin('c.items', 'i');
         $qb->where('i.product = :product ');
         $qb->setParameter('product', $product);
+
         /** @var CartInterface[] $carts */
         $carts = $qb->getQuery()->execute();
 
         $articles = array();
-        foreach($carts as $_cart){
+        foreach ($carts as $_cart) {
             $_articles = $this->getBoughtProducts($_cart);
-            foreach($_articles as $article){
+            foreach ($_articles as $article) {
                 $articles[$article->getId()] = $article;
             }
         }
@@ -93,43 +102,46 @@ class CartItemManager {
 
     /**
      * @param CartInterface $cart
-     * @return array
+     * @return ProductInterface[]
      */
-    public function getBoughtProducts( CartInterface $cart ) {
+    public function getBoughtProducts(CartInterface $cart)
+    {
         $skus = array();
 
-        foreach($cart->getItems() as $item){
+        foreach ($cart->getItems() as $item) {
             $skus[$item->getProduct()->getSku()] = $item->getProduct()->getSku();
         }
         $_sku = array();
-        foreach($skus as $sku){
+        foreach ($skus as $sku) {
             $_sku[] = $sku;
         }
-        if(count($_sku) > 0){
+        if (count($_sku) > 0) {
             return $this->getProductsBySku($_sku);
         }
         return array();
     }
 
     /**
-     * @param $carts
+     * @param CartInterface[] $carts
      * @param int $limit
-     * @return array
+     * @return ProductInterface[]
      */
-    public function getMostBoughtProducts($carts, $limit = null){
+    public function getMostBoughtProductsFromCarts(array $carts, $limit = null)
+    {
         $skus = array();
-        foreach($carts as $cart) {
-            foreach($cart->getItems() as $item){
-                if ( !isset($skus[$item->getProduct()->getSku()]) ) {
+        foreach ($carts as $cart) {
+            foreach ($cart->getItems() as $item) {
+                if (!isset($skus[$item->getProduct()->getSku()])) {
                     $skus[$item->getProduct()->getSku()] = 0;
                 }
                 $skus[$item->getProduct()->getSku()] += $item->getQuantity();
             }
         }
-        if ( count($skus) > 0 ){
+
+        if (count($skus) > 0) {
             arsort($skus);
             $articleIds = array();
-            foreach($skus as $key => $quantity){
+            foreach ($skus as $key => $quantity) {
                 $articleIds[$quantity] = $key;
             }
 
@@ -140,17 +152,31 @@ class CartItemManager {
     }
 
     /**
+     * @param int $limit
+     * @return ProductInterface[]
+     */
+    public function getMostBoughtProducts($limit = 50)
+    {
+        return $this->cartItemRepo->findByMostBoughtProducts($limit);
+    }
+
+    /**
      * @param array $skus
      * @param int $limit
-     * @return array
+     * @return ProductInterface[]
      */
-    protected function getProductsBySku($skus, $limit=null){
+    protected function getProductsBySku(array $skus, $limit = null)
+    {
+        if (!$skus) {
+            return array();
+        }
+
         $repo = $this->em->getRepository($this->productClass);
         $qb = $repo->createQueryBuilder('p');
-        $qb->where('p.'.$this->skuField.' IN (:sku)');
+        $qb->where('p.' . $this->skuField . ' IN (:sku)');
         $qb->setParameter('sku', $skus);
 
-        if($limit != null ){
+        if ($limit != null) {
             $qb->setMaxResults($limit);
         }
         return $qb->getQuery()->execute();
@@ -160,20 +186,11 @@ class CartItemManager {
      * @param $class
      * @return \Doctrine\ORM\EntityRepository
      */
-    protected function getRepositoryForClass($class){
-        if(is_object($class)){
+    protected function getRepositoryForClass($class)
+    {
+        if (is_object($class)) {
             $class = get_class($class);
         }
         return $this->em->getRepository($class);
     }
-
-    /**
-     *
-     */
-    public function getMostBoughtArticles($limit=50)
-    {
-        return $this->cartItemRepo->findByMostBought($limit);
-    }
-
-
-} 
+}

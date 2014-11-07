@@ -25,4 +25,9 @@ interface ProductInterface extends StockableInterface
      * @return string
      */
     public function __toString();
+
+    /**
+     * @return string
+     */
+    public function getId();
 }
