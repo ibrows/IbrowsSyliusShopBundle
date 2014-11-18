@@ -1,4 +1,4 @@
-(function($, document, window){
+(function ($, document, window) {
     this.doc = $(document);
     this.settings = {
         log: false,
@@ -62,7 +62,10 @@
         }
     };
 
-    this.console = window.console || {log: function(msg){}};
+    this.console = window.console || {
+        log: function (msg) {
+        }
+    };
     this.hinclude = window.hinclude || null;
     this.messageModals = {};
 
@@ -72,32 +75,36 @@
      * Helper for log
      * @param {mixed} msg
      */
-    this.log = function(msg){
-        if(!self.settings.log == true){
+    this.log = function (msg) {
+        if (!self.settings.log == true) {
             return;
         }
         self.console.log(msg);
     };
 
-    this.onAction = function(eventName, cb, type){
+    this.onAction = function (eventName, cb, type) {
         var settings = self.settings.actions;
-        if(typeof settings[eventName] == 'undefined'){
-            throw "eventName "+ eventName + " not available";
+        if (typeof settings[eventName] == 'undefined') {
+            throw "eventName " + eventName + " not available";
         }
 
         type = type ? this.ucfirst(type) : '';
-        var key = 'event'+type+'Name';
+        var key = 'event' + type + 'Name';
         eventName = settings[eventName][key];
 
-        if(typeof eventName == 'undefined'){
-            throw "eventName "+ eventName + " not available";
+        if (typeof eventName == 'undefined') {
+            throw "eventName " + eventName + " not available";
         }
 
-        self.log('Register Event '+ eventName);
+        self.log('Register Event ' + eventName);
         this.doc.on(eventName, cb);
     };
 
-    this.ucfirst = function(str){
+    /**
+     * @param str
+     * @returns {string}
+     */
+    this.ucfirst = function (str) {
         str += '';
         var f = str.charAt(0).toUpperCase();
         return f + str.substr(1);
@@ -108,8 +115,8 @@
      * @param {string} eventName
      * @param {array} parameters
      */
-    this.trigger = function(eventName, parameters){
-        self.log('syliusShop.trigger -> '+ eventName);
+    this.trigger = function (eventName, parameters) {
+        self.log('syliusShop.trigger -> ' + eventName);
         self.log(parameters);
 
         self.doc.trigger(eventName, parameters);
@@ -119,27 +126,26 @@
      * Merge Settings with given Options
      * @param {object} options
      */
-    this.setup = function(options){
+    this.setup = function (options) {
         self.settings = $.extend({}, this.settings, options);
 
         self.log('syliusShop.setup');
         self.log(self.settings);
     };
 
-    this.registerAll = function(){
+    this.registerAll = function () {
         self.log('syliusShop.registerAll');
 
         self.registerEvents();
         self.registerListeners();
         self.registerHandlers();
-
         self.registerMessageModals();
     };
 
-    this.registerMessageModals = function(){
+    this.registerMessageModals = function () {
         var settings = self.settings.messageModal;
 
-        $('[data-message-modal-event]').each(function(){
+        $('[data-message-modal-event]').each(function () {
             var modal = $(this);
 
             var eventName = modal.data(settings.dataSelector);
@@ -155,11 +161,8 @@
      * - Watchlist Events
      * - QuantityChange Events
      */
-    this.registerEvents = function(){
+    this.registerEvents = function () {
         self.log('syliusShop.registerEvents')
-
-        var doc = self.doc;
-        var settings = self.settings;
 
         self.registerCartEvents();
         self.registerWatchlistEvents();
@@ -169,7 +172,7 @@
     /**
      * Register all Listeners
      */
-    this.registerListeners = function(){
+    this.registerListeners = function () {
         self.log('syliusShop.registerListeners')
 
         self.registerCartListener();
@@ -177,8 +180,7 @@
         self.registerQuantityChangeListener();
     };
 
-    this.registerHandlers = function()
-    {
+    this.registerHandlers = function () {
         self.log('syliusShop.registerHandlers');
 
         self.registerStrategyServiceFormHandler();
@@ -189,13 +191,13 @@
      * Cart Events
      * itemAdd = evaluate url, itemid and quantity, trigger cart item add event
      */
-    this.registerCartEvents = function(){
+    this.registerCartEvents = function () {
         self.log('syliusShop.registerCartEvents');
 
         var doc = self.doc;
         var settings = self.settings;
 
-        doc.on('click', '[data-'+settings.actions.cartItemAdd.dataSelector+']', function(e){
+        doc.on('click', '[data-' + settings.actions.cartItemAdd.dataSelector + ']', function (e) {
             e.preventDefault();
 
             var item = $(this);
@@ -213,13 +215,13 @@
      * itemAdd = evaluate url and itemid, trigger watchlist item add event
      * itemRemove = evaluate url and itemid, trigger watchlist item remove event
      */
-    this.registerWatchlistEvents = function(){
+    this.registerWatchlistEvents = function () {
         self.log('syliusShop.registerWatchlistEvents');
 
         var doc = self.doc;
 
-        $.each([self.settings.actions.watchlistItemAdd, self.settings.actions.watchlistItemRemove], function(index, settings){
-            doc.on('click', '[data-'+settings.dataSelector+']', function(e){
+        $.each([self.settings.actions.watchlistItemAdd, self.settings.actions.watchlistItemRemove], function (index, settings) {
+            doc.on('click', '[data-' + settings.dataSelector + ']', function (e) {
                 e.preventDefault();
 
                 var item = $(this);
@@ -235,24 +237,24 @@
      * QuantityChange Events
      * QuantityChangeClick = find quantityInput in container, read quantityChange (+- X), trigger quantityChangeEvent
      */
-    this.registerQuantityChangeEvents = function(){
+    this.registerQuantityChangeEvents = function () {
         self.log('syliusShop.registerQuantityChangeEvents');
 
         var doc = self.doc;
         var settings = self.settings.actions.quantityChange;
 
-        doc.on('click', '[data-'+settings.dataSelector+']', function(e){
+        doc.on('click', '[data-' + settings.dataSelector + ']', function (e) {
             e.preventDefault();
 
             var elem = $(this);
             var quantityInput = elem
-                .closest('[data-'+ settings.dataContainerSelector +']')
-                .find('[data-'+ settings.dataInputSelector +'] '+ settings.inputSelector +':first');
+                .closest('[data-' + settings.dataContainerSelector + ']')
+                .find('[data-' + settings.dataInputSelector + '] ' + settings.inputSelector + ':first');
 
             var quantityChange = parseInt(elem.data(settings.dataSelector));
-            var newQuantity = parseInt(quantityInput.val())+quantityChange;
+            var newQuantity = parseInt(quantityInput.val()) + quantityChange;
 
-            if(newQuantity < 0){
+            if (newQuantity < 0) {
                 newQuantity = 0;
             }
 
@@ -260,8 +262,8 @@
         });
     };
 
-    this.registerMessageModal = function(name, modal, settings, eventType){
-        self.log('syliusShop.registerMessageModal: '+ name);
+    this.registerMessageModal = function (name, modal, settings, eventType) {
+        self.log('syliusShop.registerMessageModal: ' + name);
 
         var defaultSettings = {
             mouseOutTimeout: 200,
@@ -269,8 +271,8 @@
         };
 
         settings = $.extend({}, defaultSettings, settings);
-        if(!this.messageModals[name])
-        {
+
+        if (!this.messageModals[name]) {
             this.messageModals[name] = [];
         }
 
@@ -286,34 +288,37 @@
         this.registerMessageModalListeners(name, eventType);
     };
 
-    this.registerMessageModalListeners = function(name, eventType){
-        self.log('syliusShop.registerMessageModalListeners: '+ name);
-        this.onAction(name, function(e){
+    this.registerMessageModalListeners = function (name, eventType) {
+        self.log('syliusShop.registerMessageModalListeners: ' + name);
+
+        this.onAction(name, function (e) {
             self.showMessageModal(name, eventType);
         }, eventType);
     };
 
-    this.registerMessageModalEvents = function(name, type){
-        self.log('syliusShop.registerMessageModalEvents: '+ name);
+    this.registerMessageModalEvents = function (name, type) {
+        self.log('syliusShop.registerMessageModalEvents: ' + name);
 
         var modal = this.messageModals[name][type];
         var container = modal.container;
 
-        container.mouseover(function(){
-            self.log('MessageModal mouseover '+ name);
-            self.log('MessageModal clearTimeout '+ name);
+        container.mouseover(function () {
+            self.log('MessageModal mouseover ' + name);
+            self.log('MessageModal clearTimeout ' + name);
+
             clearTimeout(modal.timeout);
-        }).mouseout(function(){
-            self.log('MessageModal mouseout '+ name);
-            self.log('MessageModal setTimeout '+ name);
-            modal.timeout = window.setTimeout(function(){
+        }).mouseout(function () {
+            self.log('MessageModal mouseout ' + name);
+            self.log('MessageModal setTimeout ' + name);
+
+            modal.timeout = window.setTimeout(function () {
                 container.fadeOut();
-                self.log('MessageModal fadeOut '+ name);
+                self.log('MessageModal fadeOut ' + name);
             }, modal.settings.mouseOutTimeout);
         });
     };
 
-    this.showMessageModal = function(name, type){
+    this.showMessageModal = function (name, type) {
         var modal = this.messageModals[name][type];
         var container = modal.container;
 
@@ -321,7 +326,7 @@
         container.stop();
         container.fadeIn();
 
-        modal.timeout = window.setTimeout(function(){
+        modal.timeout = window.setTimeout(function () {
             container.fadeOut();
         }, modal.settings.showTimeout);
     };
@@ -331,29 +336,29 @@
      * @param {jQuery} item
      * @returns int
      */
-    this.getItemQuantity = function(item){
+    this.getItemQuantity = function (item) {
         self.log('syliusShop.getItemQuantity:');
 
         var settings = self.settings.actions.cartItemAdd;
         var itemActionQuantity = parseInt(item.data(settings.dataQuantity));
 
-        if(itemActionQuantity >= 1){
-            self.log('Found quantity on action item: '+itemActionQuantity);
+        if (itemActionQuantity >= 1) {
+            self.log('Found quantity on action item: ' + itemActionQuantity);
             return itemActionQuantity;
         }
 
         var quantityChangeSettings = self.settings.actions.quantityChange;
         var itemInput = item
-            .closest('[data-'+ quantityChangeSettings.dataContainerSelector +']')
-            .find('[data-'+ quantityChangeSettings.dataInputSelector +'] '+ quantityChangeSettings.inputSelector +':first');
+            .closest('[data-' + quantityChangeSettings.dataContainerSelector + ']')
+            .find('[data-' + quantityChangeSettings.dataInputSelector + '] ' + quantityChangeSettings.inputSelector + ':first');
 
         var itemInputQuantity = parseInt(itemInput.val());
-        if(itemInputQuantity >= 1){
-            self.log('Found quantity in quantityChangeContainer input field: '+itemInputQuantity);
+        if (itemInputQuantity >= 1) {
+            self.log('Found quantity in quantityChangeContainer input field: ' + itemInputQuantity);
             return itemInputQuantity;
         }
 
-        self.log('Default Quantity: '+settings.defaultQuantity);
+        self.log('Default Quantity: ' + settings.defaultQuantity);
         return settings.defaultQuantity;
     };
 
@@ -361,10 +366,10 @@
      * QuantityChangeListener
      * - QuantityChange = QuantityInput set value and trigger change()
      */
-    this.registerQuantityChangeListener = function(){
+    this.registerQuantityChangeListener = function () {
         self.log('syliusShop.registerQuantityChangeListener');
 
-        self.doc.on(self.settings.actions.quantityChange.eventName, function(e, quantityInput, newQuantity){
+        self.doc.on(self.settings.actions.quantityChange.eventName, function (e, quantityInput, newQuantity) {
             quantityInput.val(newQuantity).change();
         });
     };
@@ -374,55 +379,44 @@
      * - CartChange = Hinclude Refresh
      * - ItemAdd = Post to Url, trigger cart Changed event or itemAdd error event
      */
-    this.registerCartListener = function(){
+    this.registerCartListener = function () {
         self.log('syliusShop.registerCartListener');
 
         var doc = self.doc;
         var settings = self.settings;
 
-        doc.on(settings.actions.cartItemAdd.eventSuccessName, function(e, data, statusText, url, itemId, quantity, item){
-            if(typeof self.hinclude == 'undefined'){
-                self.log('hinclude lib not found');
-                return;
-            }
-            self.log('refresh hinclude id '+ settings.hinclude.cartId);
-            self.hinclude.refresh(settings.hinclude.cartId);
-
+        doc.on(settings.actions.cartItemAdd.eventSuccessName, function (e, data, statusText, url, itemId, quantity, item) {
             self.trigger(settings.actions.cartChanged.eventName, [data, statusText, url, itemId, quantity, item]);
         });
 
-        doc.on(settings.actions.cartItemAdd.eventName, function(e, url, itemId, quantity, item){
-            self.log('POST to '+ url +' with itemId '+ itemId + ' with quantity '+ quantity);
-            $.ajax(url,  {
+        doc.on(settings.actions.cartChanged.eventName, function (e, data, statusText, url, itemId, quantity, item) {
+            if (typeof self.hinclude == 'undefined') {
+                self.log('hinclude lib not found');
+                return;
+            }
+
+            self.log('refresh hinclude id ' + settings.hinclude.cartId);
+            self.hinclude.refresh(settings.hinclude.cartId);
+        });
+
+        doc.on(settings.actions.cartItemAdd.eventName, function (e, url, itemId, quantity, item) {
+            self.log('POST to ' + url + ' with itemId ' + itemId + ' with quantity ' + quantity);
+
+            $.ajax(url, {
                 type: 'POST',
-                data : {
+                data: {
                     itemId: itemId,
                     quantity: quantity
                 },
-                success : function(data, statusText)
-                {
+                success: function (data, statusText) {
                     self.log(statusText);
                     self.trigger(settings.actions.cartItemAdd.eventSuccessName, [data, statusText, url, itemId, quantity, item]);
                 },
-                error : function(data, statusText)
-                {
+                error: function (data, statusText) {
                     self.log(statusText);
                     self.trigger(settings.actions.cartItemAdd.eventErrorName, [data, statusText, url, itemId, quantity, item]);
                 }
             });
-            /*
-            $.post(url, {
-                itemId: itemId,
-                quantity: quantity
-            }, function(data, statusText){
-                self.log('Response received');
-                if(statusText == "success"){
-                    self.trigger(settings.actions.cartItemAdd.eventSuccessName, [data, statusText, url, itemId, quantity, item]);
-                }else{
-                    self.trigger(settings.actions.cartItemAdd.eventErrorName, [data, statusText, url, itemId, quantity, item]);
-                }
-            });
-            */
         });
     };
 
@@ -432,73 +426,48 @@
      * - ItemRemove = Post to Url, trigger watchlist changed event or itemRemove error event
      * - ItemRemoveSuccess = Remove Container from DOM
      */
-    this.registerWatchlistListener = function(){
+    this.registerWatchlistListener = function () {
         var doc = self.doc;
         var settings = self.settings;
 
-        doc.on(settings.actions.watchlistItemAdd.eventName, function(e, url, itemId, item){
-            self.log('POST to '+ url +' with itemId '+ itemId);
-            $.ajax(url,  {
+        doc.on(settings.actions.watchlistItemAdd.eventName, function (e, url, itemId, item) {
+            self.log('POST to ' + url + ' with itemId ' + itemId);
+
+            $.ajax(url, {
                 method: 'POST',
-                data : {
+                data: {
                     itemId: itemId
                 },
-                success : function(data, statusText)
-                {
+                success: function (data, statusText) {
                     self.trigger(settings.actions.watchlistItemAdd.eventSuccessName, [data, statusText, url, itemId, item]);
                 },
-                error : function(data, statusText)
-                {
+                error: function (data, statusText) {
                     self.trigger(settings.actions.watchlistItemAdd.eventErrorName, [data, statusText, url, itemId, item]);
                 }
             });
-            /*
-            $.post(url, {
-                itemId: itemId
-            }, function(data, statusText){
-                self.log('Response received');
-                if(statusText == "success"){
-                    self.trigger(settings.actions.watchlistItemAdd.eventSuccessName, [data, statusText, url, itemId, item]);
-                }else{
-                    self.trigger(settings.actions.watchlistItemAdd.eventErrorName, [data, statusText, url, itemId, item]);
-                }
-            });
-            */
         });
 
-        doc.on(settings.actions.watchlistItemRemove.eventName, function(e, url, itemId, item){
-            self.log('POST to '+ url +' with itemId '+ itemId);
-            $.ajax(url,  {
+        doc.on(settings.actions.watchlistItemRemove.eventName, function (e, url, itemId, item) {
+            self.log('POST to ' + url + ' with itemId ' + itemId);
+
+            $.ajax(url, {
                 method: 'POST',
-                data : {
+                data: {
                     itemId: itemId
                 },
-                success : function(data, statusText)
-                {
+                success: function (data, statusText) {
                     self.trigger(settings.actions.watchlistItemRemove.eventSuccessName, [data, statusText, url, itemId, item]);
                 },
-                error : function(data, statusText)
-                {
+                error: function (data, statusText) {
                     self.trigger(settings.actions.watchlistItemRemove.eventErrorName, [data, statusText, url, itemId, item]);
                 }
             });
-            /*
-            $.post(url, {
-
-            }, function(data, statusText){
-                self.log('Response received');
-                if(statusText == "success"){
-
-                }else{
-                    self.trigger(settings.actions.watchlistItemRemove.eventErrorName, [data, statusText, url, itemId, item]);
-                }
-            });
-            */
         });
 
-        doc.on(settings.actions.watchlistItemRemove.eventSuccessName, function(e, data, statusText, url, itemId, item){
-            var selector = '[data-'+ settings.actions.watchlistItemRemove.dataContainerRemoveSelect +']';
-            self.log('remove closest to item container from dom: '+ selector);
+        doc.on(settings.actions.watchlistItemRemove.eventSuccessName, function (e, data, statusText, url, itemId, item) {
+            var selector = '[data-' + settings.actions.watchlistItemRemove.dataContainerRemoveSelect + ']';
+            self.log('remove closest to item container from dom: ' + selector);
+
             item.closest(selector).remove();
         });
     };
@@ -506,14 +475,13 @@
     /**
      * Strategy Form Handler
      */
-    this.registerStrategyServiceFormHandler = function(){
+    this.registerStrategyServiceFormHandler = function () {
         self.log('syliusShop.registerStrategyFormHandler');
 
-        $('form[data-'+ self.settings.handlers.strategyServiceForm.dataSelector +']').each(function(){
+        $('form[data-' + self.settings.handlers.strategyServiceForm.dataSelector + ']').each(function () {
             self.log('Found ServiceForm');
 
             var form = $(this);
-
             var strategies = form.find('[data-strategies]');
 
             strategies
@@ -522,7 +490,7 @@
                 .find('[data-child]')
                 .hide();
 
-            form.find(':submit').click(function(e){
+            form.find(':submit').click(function (e) {
                 self.log('StrategyChoice Form submit -> disable all unneeded inputs');
                 strategies
                     .find('[data-strategy] [data-parent] :input:not(:checked)')
@@ -533,29 +501,30 @@
 
             var strategieChoiceParentInputs = strategies.find('[data-strategy] [data-parent] :input');
 
-            strategieChoiceParentInputs.change(function(){
+            strategieChoiceParentInputs.change(function () {
                 self.log('StrategyChoice Parent Input changed');
-                strategieChoiceParentInputs.each(function(){
+
+                strategieChoiceParentInputs.each(function () {
                     var elem = $(this);
 
                     var elemIsChecked = elem.is(':checked');
                     var childForm = elem.closest('[data-strategy]').find('[data-child]');
 
-                    if(elemIsChecked || elem.closest('[data-parent]').is(':hidden')){
+                    if (elemIsChecked || elem.closest('[data-parent]').is(':hidden')) {
                         childForm.show();
-                    }else{
+                    } else {
                         childForm.hide();
                     }
 
-                    if(!elemIsChecked){
-                        var inputs = childForm.find(':input');
+                    if (!elemIsChecked) {
                         childForm.find(':input').prop('checked', false);
                     }
                 });
             });
 
-            strategies.find('[data-strategy] [data-child] :input').change(function(){
+            strategies.find('[data-strategy] [data-child] :input').change(function () {
                 self.log('StrategyChoice Child changed');
+
                 $(this)
                     .closest('[data-strategy]')
                     .find('[data-parent] :input')
@@ -568,40 +537,42 @@
     /**
      * Invoice Same As Delivery Handler
      */
-    this.registerInvoiceSameAsDeliveryHandler = function(){
+    this.registerInvoiceSameAsDeliveryHandler = function () {
         self.log('syliusShop.registerInvoiceSameAsDeliveryHandler');
 
         var settings = self.settings.handlers.invoiceSameAsDelivery;
 
-        $('[data-'+ settings.dataContainerSelector +']').each(function(){
+        $('[data-' + settings.dataContainerSelector + ']').each(function () {
             self.log('found invoiceSameAsDelivery');
 
             var container = $(this);
-            var addressDelivery = container.find('[data-'+ settings.dataDeliveryAddressSelector +']');
+            var addressDelivery = container.find('[data-' + settings.dataDeliveryAddressSelector + ']');
             var addressDeliveryInputs = addressDelivery.find(':input');
-            var toggleInputContainer = container.find('[data-'+ settings.dataSelector +']');
+            var toggleInputContainer = container.find('[data-' + settings.dataSelector + ']');
 
-            var handleChange = function(doSlide){
-                if(parseInt(toggleInputContainer.find('input:checked').val()) == 1){
+            var handleChange = function (doSlide) {
+                if (parseInt(toggleInputContainer.find('input:checked').val()) == 1) {
                     self.log('addressDeliveryInputs disabled');
+
                     addressDeliveryInputs.prop("disabled", "disabled");
-                    if(doSlide == true){
+                    if (doSlide == true) {
                         addressDelivery.slideUp();
-                    }else{
+                    } else {
                         addressDelivery.hide();
                     }
-                }else{
+                } else {
                     self.log('addressDeliveryInputs available');
+
                     addressDeliveryInputs.prop("disabled", false);
-                    if(doSlide == true){
+                    if (doSlide == true) {
                         addressDelivery.slideDown();
-                    }else{
+                    } else {
                         addressDelivery.show();
                     }
                 }
             };
 
-            toggleInputContainer.find('input').change(function(e){
+            toggleInputContainer.find('input').change(function (e) {
                 handleChange(true);
             });
 
