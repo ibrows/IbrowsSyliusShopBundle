@@ -19,7 +19,7 @@
 
         "symfony/symfony": "2.3.*",
 
-        "sylius/cart-bundle": "~1.0",
+        "sylius/cart-bundle": "~1.0,>=1.0.2",
         "sylius/inventory-bundle": "~1.0",
         "sylius/resource-bundle": "~1.0",
 
