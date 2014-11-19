@@ -3,21 +3,16 @@
 namespace Ibrows\SyliusShopBundle\Cart;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
-
-use Ibrows\SyliusShopBundle\Model\Cart\Serializer\CartSerializerInterface;
-use Ibrows\SyliusShopBundle\Model\Cart\Serializer\CartItemSerializerInterface;
-
-use Sylius\Bundle\InventoryBundle\Checker\AvailabilityCheckerInterface;
-
-use Symfony\Component\HttpFoundation\Request;
-
-use Sylius\Bundle\CartBundle\Provider\CartProviderInterface;
-use Sylius\Bundle\CartBundle\Resolver\ItemResolverInterface;
-
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
-use Doctrine\Common\Collections\Collection;
+use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
+use Ibrows\SyliusShopBundle\Model\Cart\Serializer\CartItemSerializerInterface;
+use Ibrows\SyliusShopBundle\Model\Cart\Serializer\CartSerializerInterface;
+use Sylius\Bundle\CartBundle\Provider\CartProviderInterface;
+use Sylius\Bundle\CartBundle\Resolver\ItemResolverInterface;
+use Sylius\Bundle\InventoryBundle\Checker\AvailabilityCheckerInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 class CurrentCartManager extends CartManager
 {
@@ -55,7 +50,7 @@ class CurrentCartManager extends CartManager
         ItemResolverInterface $resolver,
         AvailabilityCheckerInterface $availablityChecker,
         CartProviderInterface $provider
-    ){
+    ) {
         parent::__construct($cartManager, $cartRepo, $itemManager, $itemRepo, $additionalItemObjectRepo, $resolver, $availablityChecker);
         $this->provider = $provider;
         $this->cartItemSerializers = new ArrayCollection();
@@ -69,12 +64,33 @@ class CurrentCartManager extends CartManager
      */
     public function getCart($throwException = false)
     {
-        if(!$this->cart){
+        if (!$this->cart) {
             /** @var CartInterface $cart */
             $cart = $this->provider->getCart();
             parent::setCart($cart);
         }
         return parent::getCart($throwException);
+    }
+
+    /**
+     * @param CartInterface $cart
+     * @return void
+     * @throws \BadMethodCallException
+     */
+    public function setCart(CartInterface $cart = null)
+    {
+        throw new \BadMethodCallException("You dont want to change the current cart");
+    }
+
+    /**
+     * @param bool $refreshAndCheckAvailability
+     * @return CartManager
+     */
+    public function persistCart($refreshAndCheckAvailability = true)
+    {
+        parent::persistCart($refreshAndCheckAvailability);
+        $this->provider->setCart($this->getCart());
+        return $this;
     }
 
     /**
@@ -118,16 +134,6 @@ class CurrentCartManager extends CartManager
     }
 
     /**
-     * @param CartInterface $cart
-     * @return void
-     * @throws \BadMethodCallException
-     */
-    public function setCart(CartInterface $cart = null)
-    {
-        throw new \BadMethodCallException("You dont want to change the current cart");
-    }
-
-    /**
      * @param bool $persistCart
      * @param bool $returnExceptions
      * @throws \BadMethodCallException
@@ -137,43 +143,36 @@ class CurrentCartManager extends CartManager
     public function closeCart($persistCart = true, $returnExceptions = false)
     {
         $cart = $this->getCart();
-        if($cart->isClosed()){
-            throw new \BadMethodCallException("Cart is already closed");
+        if ($cart->isClosed()) {
+            $exception = new \BadMethodCallException("Cart is already closed");
+            if ($returnExceptions) {
+                return array($exception);
+            }
+            throw $exception;
         }
 
         $exceptions = array();
 
         $serializeCartItemsReturn = $this->serializeCartItems($cart, $returnExceptions);
-        if($returnExceptions){
+        if ($returnExceptions) {
             $exceptions = array_merge($exceptions, $serializeCartItemsReturn);
         }
 
         $serializeCartReturn = $this->serializeCart($cart, $returnExceptions);
-        if($returnExceptions){
+        if ($returnExceptions) {
             $exceptions = array_merge($exceptions, $serializeCartReturn);
         }
 
         $cart->setClosed();
         $cart->setLocked(true);
 
-        if(true === $persistCart){
+        if (true === $persistCart) {
             $this->persistCart(false);
         }
 
         $this->clearCurrentCart();
 
         return $returnExceptions ? $exceptions : $this;
-    }
-
-    /**
-     * @param bool $refreshAndCheckAvailability
-     * @return CartManager
-     */
-    public function persistCart($refreshAndCheckAvailability = true)
-    {
-        parent::persistCart($refreshAndCheckAvailability);
-        $this->provider->setCart($this->getCart());
-        return $this;
     }
 
     /**
@@ -196,12 +195,12 @@ class CurrentCartManager extends CartManager
     {
         $exceptions = array();
 
-        foreach($this->cartSerializers as $serializer){
-            if(true === $serializer->accept($cart)){
+        foreach ($this->cartSerializers as $serializer) {
+            if (true === $serializer->accept($cart)) {
                 try {
                     $serializer->serialize($cart);
-                }catch (\Exception $e){
-                    if(!$returnExceptions){
+                } catch (\Exception $e) {
+                    if (!$returnExceptions) {
                         throw $e;
                     }
                     $exceptions[] = $e;
@@ -222,13 +221,13 @@ class CurrentCartManager extends CartManager
     {
         $exceptions = array();
 
-        foreach($cart->getItems() as $item){
-            foreach($this->cartItemSerializers as $serializer){
-                if(true === $serializer->accept($item)){
+        foreach ($cart->getItems() as $item) {
+            foreach ($this->cartItemSerializers as $serializer) {
+                if (true === $serializer->accept($item)) {
                     try {
                         $serializer->serialize($item);
-                    }catch (\Exception $e){
-                        if(!$returnExceptions){
+                    } catch (\Exception $e) {
+                        if (!$returnExceptions) {
                             throw $e;
                         }
                         $exceptions[] = $e;
