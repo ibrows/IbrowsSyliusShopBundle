@@ -52,7 +52,8 @@
                 'eventName': 'syliusshop.quantity.change',
                 'dataContainerSelector': 'quantity-change-container',
                 'dataInputSelector': 'quantity-input-container',
-                'inputSelector': 'input'
+                'inputSelector': 'input',
+                'minimumQuantity': 0
             }
         },
         strategy: {
@@ -127,7 +128,7 @@
      * @param {object} options
      */
     this.setup = function (options) {
-        self.settings = $.extend({}, this.settings, options);
+        self.settings = $.extend(true, this.settings, options);
 
         self.log('syliusShop.setup');
         self.log(self.settings);
@@ -254,8 +255,8 @@
             var quantityChange = parseInt(elem.data(settings.dataSelector));
             var newQuantity = parseInt(quantityInput.val()) + quantityChange;
 
-            if (newQuantity < 0) {
-                newQuantity = 0;
+            if (newQuantity < settings.minimumQuantity) {
+                newQuantity = settings.minimumQuantity;
             }
 
             self.trigger(settings.eventName, [quantityInput, newQuantity]);
