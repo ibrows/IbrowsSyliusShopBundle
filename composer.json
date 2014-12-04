@@ -1,17 +1,21 @@
 {
-    "name":         "ibrows/sylius-shop-bundle",
-    "description":  "Ibrows Sylius Shop Bundle integration",
-    "keywords":     ["ibrows", "sylius", "shop"],
-    "type":         "symfony-bundle",
-    "license":      "MIT",
+    "name": "ibrows/sylius-shop-bundle",
+    "description": "Ibrows Sylius Shop Bundle integration",
+    "keywords": [
+        "ibrows",
+        "sylius",
+        "shop"
+    ],
+    "type": "symfony-bundle",
+    "license": "MIT",
     "authors": [
         {
-            "name": 	"Marc Steiner",
-            "email":	"marc.steiner@ibrows.ch"
+            "name": "Marc Steiner",
+            "email": "marc.steiner@ibrows.ch"
         },
         {
-            "name":     "Mike Meier",
-            "email":    "mike.meier@ibrows.ch"
+            "name": "Mike Meier",
+            "email": "mike.meier@ibrows.ch"
         }
     ],
     "require": {
@@ -34,6 +38,7 @@
 
         "payment/saferpay-bundle": "2.*",
         "payment/httpclient-buzz": "1.*",
+        "ibrows/datatrans-bundle": "1.*",
 
         "hinclude/hinclude": "0.9.5"
     },
@@ -43,21 +48,29 @@
     "require-dev": {
         "phpunit/phpunit": "3.7.*"
     },
-   "repositories": [
+    "repositories": [
         {
             "type": "vcs",
-            "url":  "git@github.com:ibrows/SyliusCartBundle.git"
+            "url": "git@github.com:ibrows/SyliusCartBundle.git"
         },
         {
             "type": "vcs",
-            "url":  "git@github.com:ibrows/SyliusResourceBundle.git"
+            "url": "git@github.com:ibrows/SyliusResourceBundle.git"
         },
         {
             "type": "vcs",
-            "url":  "git@github.com:ibrows/SyliusInventoryBundle.git"
+            "url": "git@github.com:ibrows/SyliusInventoryBundle.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@codebasehq.com:ibrows/ibrowsch/datatrans.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@codebasehq.com:ibrows/ibrowsch/datatrans-bundle.git"
         }
-    ], 
+    ],
     "autoload": {
-        "psr-4": { "Ibrows\\SyliusShopBundle\\": "" }
+        "psr-4": {"Ibrows\\SyliusShopBundle\\": ""}
     }
 }

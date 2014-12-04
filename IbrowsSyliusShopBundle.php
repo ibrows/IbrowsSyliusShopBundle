@@ -29,6 +29,7 @@ class IbrowsSyliusShopBundle extends Bundle
     {
         $bundles = array(
             new \Payment\Bundle\SaferpayBundle\PaymentSaferpayBundle(),
+            new \Ibrows\DataTransBundle\IbrowsDataTransBundle(),
 
             new \JMS\SerializerBundle\JMSSerializerBundle(),
             new \FOS\UserBundle\FOSUserBundle(),
