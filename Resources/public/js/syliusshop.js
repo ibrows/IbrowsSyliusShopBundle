@@ -53,7 +53,11 @@
                 'dataContainerSelector': 'quantity-change-container',
                 'dataInputSelector': 'quantity-input-container',
                 'inputSelector': 'input',
-                'minimumQuantity': 0
+                'minimumQuantity': 0,
+                'inputObservation': {
+                    'default': 500,
+                    'dataSelector': 'quantity-change-delay'
+                }
             }
         },
         strategy: {
@@ -63,6 +67,7 @@
         }
     };
 
+    this.window = window;
     this.console = window.console || {
         log: function (msg) {
         }
@@ -255,12 +260,33 @@
             var quantityChange = parseInt(elem.data(settings.dataSelector));
             var newQuantity = parseInt(quantityInput.val()) + quantityChange;
 
-            if (newQuantity < settings.minimumQuantity) {
+            if (isNaN(newQuantity) || newQuantity < settings.minimumQuantity) {
                 newQuantity = settings.minimumQuantity;
             }
 
             self.trigger(settings.eventName, [quantityInput, newQuantity]);
         });
+
+        var timeout = null;
+        var trigger = function (quantityInput) {
+            return function () {
+                var quantity = parseInt(quantityInput.val());
+                if (isNaN(quantity) || quantity < settings.minimumQuantity) {
+                    quantity = settings.minimumQuantity;
+                }
+                self.trigger(settings.eventName, [quantityInput, quantity]);
+            };
+        };
+
+        doc.on('keyup', '[data-' + settings.dataContainerSelector + '] [data-' + settings.dataInputSelector + '] ' + settings.inputSelector + ':first', function (e) {
+            var elem = $(this);
+            var delay = parseInt(elem.data(settings.inputObservation.dataSelector));
+            if (isNaN(delay)) {
+                delay = settings.inputObservation.default;
+            }
+            self.window.clearTimeout(timeout);
+            timeout = self.window.setTimeout(trigger(elem), delay);
+        })
     };
 
     this.registerMessageModal = function (name, modal, settings, eventType) {
