@@ -55,7 +55,7 @@
                 'inputSelector': 'input',
                 'minimumQuantity': 0,
                 'inputObservation': {
-                    'default': 500,
+                    'standard': 500,
                     'dataSelector': 'quantity-change-delay'
                 }
             }
@@ -282,7 +282,7 @@
             var elem = $(this);
             var delay = parseInt(elem.data(settings.inputObservation.dataSelector));
             if (isNaN(delay)) {
-                delay = settings.inputObservation.default;
+                delay = settings.inputObservation.standard;
             }
             self.window.clearTimeout(timeout);
             timeout = self.window.setTimeout(trigger(elem), delay);
@@ -297,7 +297,7 @@
             showTimeout: 2000
         };
 
-        settings = $.extend({}, defaultSettings, settings);
+        settings = $.extend(true, defaultSettings, settings);
 
         if (!this.messageModals[name]) {
             this.messageModals[name] = [];
