@@ -10,6 +10,7 @@ use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\ErrorRedirectResponse
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\PaymentFinishedResponse;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\SelfRedirectResponse;
 use Ibrows\SyliusShopBundle\CountryCode\CountryCode;
+use Ibrows\SyliusShopBundle\Entity\Payment;
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -159,8 +160,42 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
                         $request->request->all()
                     );
                     break;
+                case PaymentFinishedResponse::STATUS_CANCEL:
+                    $data = $request->request->all();
+                    $canceledAuthorizationResponse = $this->authorization->parseCancelAuthorizationResponse($data);
+
+                    $payment = new Payment();
+                    $payment->setData($data);
+                    $payment->setStrategyId($this->getServiceId());
+                    $cart->addPayment($payment);
+                    $cartManager->persistCart(false);
+
+                    return new ErrorRedirectResponse(
+                        array(
+                            'status' => $canceledAuthorizationResponse->getStatus()
+                        )
+                    );
+                    break;
                 case PaymentFinishedResponse::STATUS_ERROR:
-                    return new ErrorRedirectResponse(array('paymenterror' => $request->get('error')));
+                    $data = $request->request->all();
+                    $failedAuthorizationResponse = $this->authorization->parseFailedAuthorizationResponse($data);
+
+                    $payment = new Payment();
+                    $payment->setData($data);
+                    $payment->setStrategyId($this->getServiceId());
+                    $cart->addPayment($payment);
+                    $cartManager->persistCart(false);
+
+                    return new ErrorRedirectResponse(
+                        array(
+                            'status'   => $failedAuthorizationResponse->getStatus(),
+                            'response' => array(
+                                'errorCode'    => $failedAuthorizationResponse->getErrorCode(),
+                                'errorMessage' => $failedAuthorizationResponse->getErrorMessage(),
+                                'errorDetail'  => $failedAuthorizationResponse->getErrorDetail()
+                            )
+                        )
+                    );
                     break;
             }
         }
@@ -192,7 +227,6 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
                 )
             );
         }
-
     }
 
     /**
@@ -260,8 +294,8 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
             $cart->getCurrency(),
             'Order #' . $cart->getId(),
             $router->generate($currentRouteName, array('status' => PaymentFinishedResponse::STATUS_OK), true),
-            $router->generate($currentRouteName, array('status' => PaymentFinishedResponse::STATUS_ERROR, 'error' => 'fail'), true),
-            $router->generate($currentRouteName, array('status' => PaymentFinishedResponse::STATUS_ERROR, 'error' => 'back'), true)
+            $router->generate($currentRouteName, array('status' => PaymentFinishedResponse::STATUS_ERROR), true),
+            $router->generate($currentRouteName, array('status' => PaymentFinishedResponse::STATUS_CANCEL), true)
         );
 
         $authorizationRequest->setUppWebResponseMethod(DataInterface::RESPONSEMETHOD_POST);

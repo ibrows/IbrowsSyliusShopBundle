@@ -6,6 +6,7 @@ class PaymentFinishedResponse
 {
     const STATUS_OK = 'ok';
     const STATUS_ERROR = 'error';
+    const STATUS_CANCEL = 'cancel';
 
     const ERROR_CONFIRMATION = 1;
     const ERROR_COMPLETION = 2;
