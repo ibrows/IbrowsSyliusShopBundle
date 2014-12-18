@@ -83,6 +83,31 @@ class CartItem extends BaseCartItem implements CartItemInterface
     protected $taxInclusive = false;
 
     /**
+     * ReducedQuantity
+     * @ORM\Column(type="integer", name="reduced_quantity")
+     * @var int
+     */
+    protected $reducedQuantity = 0;
+
+    /**
+     * @return int
+     */
+    public function getReducedQuantity()
+    {
+        return $this->reducedQuantity;
+    }
+
+    /**
+     * @param int $reducedQuantity
+     */
+    public function setReducedQuantity($reducedQuantity)
+    {
+        $this->reducedQuantity = $reducedQuantity;
+    }
+
+
+
+    /**
      * @return string
      */
     public function __toString()

@@ -1,13 +1,24 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Model\Cart;
-use Sylius\Bundle\CartBundle\Model\CartItemInterface as BaseCartItemInterface;
-use Ibrows\SyliusShopBundle\Model\Product\ProductInterface;
 
 use DateTime;
+use Ibrows\SyliusShopBundle\Model\Product\ProductInterface;
+use Sylius\Bundle\CartBundle\Model\CartItemInterface as BaseCartItemInterface;
 
 interface CartItemInterface extends BaseCartItemInterface
 {
+    /**
+     * @return int
+     */
+    public function getReducedQuantity();
+
+    /**
+     * @param $quantity
+     * @return int
+     */
+    public function setReducedQuantity($quantity);
+
     /**
      * @return bool
      */
