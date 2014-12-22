@@ -4,9 +4,6 @@ namespace Ibrows\SyliusShopBundle\Model\Address;
 
 use Doctrine\ORM\Mapping as ORM;
 use Ibrows\Bundle\SonataAdminAnnotationBundle\Annotation as Sonata;
-use Ibrows\SyliusShopBundle\Model\Address\AddressInterface;
-use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
-use Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface;
 use Ibrows\SyliusShopBundle\Model\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -119,6 +116,21 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
     }
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        $template = $this->getStringTemplate();
+
+        foreach ($this->getStringTemplateVariables() as $var => $value) {
+            $var = ucfirst($var);
+            if (method_exists($this, 'get' . $var)) {
+                $value = call_user_func(array($this, 'get' . $var));
+            }
+            $template = preg_replace('!%%' . $var . '%%!', $value, $template);
+        }
+        return preg_replace("!\n+\s*\n+!", "\n", $template);
+    }    /**
      * @param string $city
      * @return Address
      */
@@ -131,12 +143,29 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
     /**
      * @return string
      */
+    protected function getStringTemplate()
+    {
+        return
+            "%%Company%%
+%%Firstname%% %%Lastname%%
+%%Street%%
+%%Zip%% %%City%%";
+    }    /**
+     * @return string
+     */
     public function getCity()
     {
         return $this->city;
     }
 
     /**
+     * @return array
+     */
+    protected function getStringTemplateVariables()
+    {
+        $vars = get_object_vars($this);
+        return $vars;
+    }    /**
      * @param string $company
      * @return Address
      */
@@ -280,43 +309,11 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
         return $this->zip;
     }
 
-    /**
-     * @return string
-     */
-    protected function getStringTemplate()
-    {
-        return
-            "%%Company%%
-%%Firstname%% %%Lastname%%
-%%Street%%
-%%Zip%% %%City%%";
-    }
 
-    /**
-     * @return array
-     */
-    protected function getStringTemplateVariables()
-    {
-        $vars = get_object_vars($this);
-        return $vars;
-    }
 
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        $template = $this->getStringTemplate();
 
-        foreach ($this->getStringTemplateVariables() as $var => $value) {
-            $var = ucfirst($var);
-            if (method_exists($this, 'get' . $var)) {
-                $value = call_user_func(array($this, 'get' . $var));
-            }
-            $template = preg_replace('!%%' . $var . '%%!', $value, $template);
-        }
-        return preg_replace("!\n+\s*\n+!", "\n", $template);
-    }
+
+
 
     /**
      * @param AddressInterface $address

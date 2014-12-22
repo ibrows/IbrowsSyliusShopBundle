@@ -2,22 +2,21 @@
 
 namespace Ibrows\SyliusShopBundle\Controller;
 
-use Ibrows\Bundle\WizardAnnotationBundle\Annotation\Wizard;
 use Ibrows\Bundle\WizardAnnotationBundle\Annotation\AnnotationHandler as WizardHandler;
+use Ibrows\Bundle\WizardAnnotationBundle\Annotation\Wizard;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Context;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\PaymentFinishedResponse;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\ZeroAmountPaymentOptionCartStrategy;
-use Ibrows\SyliusShopBundle\Entity\Address;
+use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
+use Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
+use Ibrows\SyliusShopBundle\Model\Cart\Payment\PaymentInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Ibrows\SyliusShopBundle\Model\Cart\Payment\PaymentInterface;
-use Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface;
-use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 abstract class AbstractWizardController extends AbstractController
 {
@@ -39,16 +38,6 @@ abstract class AbstractWizardController extends AbstractController
         }
 
         return true;
-    }
-
-    /**
-     * @param FormInterface $basketForm
-     * @param CartInterface $cart
-     * @return null|Response
-     */
-    protected function postInvalidBasketFormValidationAction(FormInterface $basketForm, CartInterface $cart)
-    {
-        return null;
     }
 
     /**
@@ -77,6 +66,7 @@ abstract class AbstractWizardController extends AbstractController
         }
         return true;
     }
+
     /**
      * @return bool|Response
      */
@@ -85,11 +75,11 @@ abstract class AbstractWizardController extends AbstractController
         $cart = $this->getCurrentCart();
         $cartManager = $this->getCurrentCartManager();
 
-        if($cart->getTotalWithTax() > 0 && $cartManager->getSelectedPaymentOptionStrategyService() instanceof ZeroAmountPaymentOptionCartStrategy){
+        if ($cart->getTotalWithTax() > 0 && $cartManager->getSelectedPaymentOptionStrategyService() instanceof ZeroAmountPaymentOptionCartStrategy) {
             return Wizard::REDIRECT_STEP_BACK;
         }
 
-        if(!$cart->getPaymentOptionStrategyServiceId()){
+        if (!$cart->getPaymentOptionStrategyServiceId()) {
             return Wizard::REDIRECT_STEP_BACK;
         }
 
@@ -122,26 +112,6 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param PaymentFinishedResponse $response
-     * @param Context $context
-     * @return RedirectResponse
-     */
-    protected function handlePaymentFinishedResponse(PaymentFinishedResponse $response, Context $context)
-    {
-        $this->savePaymentFinishedResponse($response);
-
-        switch($response->getStatus()){
-            case $response::STATUS_OK:
-                return $this->handlePaymentFinishedResponseStatusOk($response, $context);
-                break;
-            case $response::STATUS_ERROR:
-                return $this->handlePaymentFinishedResponseStatusError($response, $context);
-                break;
-        }
-        return $this->handlePaymentFinishedResponseStatusUnknown($response, $context);
-    }
-
-    /**
-     * @param PaymentFinishedResponse $response
      */
     public function savePaymentFinishedResponse(PaymentFinishedResponse $response)
     {
@@ -159,6 +129,36 @@ abstract class AbstractWizardController extends AbstractController
         $cart->addPayment($payment);
 
         $this->persistCart($cartManager, false);
+    }
+
+    /**
+     * @param FormInterface $basketForm
+     * @param CartInterface $cart
+     * @return null|Response
+     */
+    protected function postInvalidBasketFormValidationAction(FormInterface $basketForm, CartInterface $cart)
+    {
+        return null;
+    }
+
+    /**
+     * @param PaymentFinishedResponse $response
+     * @param Context $context
+     * @return RedirectResponse
+     */
+    protected function handlePaymentFinishedResponse(PaymentFinishedResponse $response, Context $context)
+    {
+        $this->savePaymentFinishedResponse($response);
+
+        switch ($response->getStatus()) {
+            case $response::STATUS_OK:
+                return $this->handlePaymentFinishedResponseStatusOk($response, $context);
+                break;
+            case $response::STATUS_ERROR:
+                return $this->handlePaymentFinishedResponseStatusError($response, $context);
+                break;
+        }
+        return $this->handlePaymentFinishedResponseStatusUnknown($response, $context);
     }
 
     /**
@@ -186,7 +186,7 @@ abstract class AbstractWizardController extends AbstractController
      */
     protected function handlePaymentFinishedResponseStatusError(PaymentFinishedResponse $response, Context $context)
     {
-        switch($response->getErrorCode()){
+        switch ($response->getErrorCode()) {
             case $response::ERROR_COMPLETION:
                 return $this->handlePaymentFinishedResponseStatusErrorCompletion($response, $context);
                 break;
@@ -207,9 +207,14 @@ abstract class AbstractWizardController extends AbstractController
      */
     protected function handlePaymentFinishedResponseStatusErrorConfirmation(PaymentFinishedResponse $response, Context $context)
     {
-        return $this->redirect($this->generateUrl($context->getErrorRouteName(), array(
-            'paymenterror' => 'confirmation'
-        )));
+        return $this->redirect(
+            $this->generateUrl(
+                $context->getErrorRouteName(),
+                array(
+                    'paymenterror' => 'confirmation'
+                )
+            )
+        );
     }
 
     /**
@@ -219,9 +224,14 @@ abstract class AbstractWizardController extends AbstractController
      */
     protected function handlePaymentFinishedResponseStatusErrorValidation(PaymentFinishedResponse $response, Context $context)
     {
-        return $this->redirect($this->generateUrl($context->getErrorRouteName(), array(
-            'paymenterror' => 'validation'
-        )));
+        return $this->redirect(
+            $this->generateUrl(
+                $context->getErrorRouteName(),
+                array(
+                    'paymenterror' => 'validation'
+                )
+            )
+        );
     }
 
     /**
@@ -247,9 +257,14 @@ abstract class AbstractWizardController extends AbstractController
      */
     protected function handlePaymentFinishedResponseStatusErrorUnknown(PaymentFinishedResponse $response, Context $context)
     {
-        return $this->redirect($this->generateUrl($context->getErrorRouteName(), array(
-            'paymenterror' => 'unknown'
-        )));
+        return $this->redirect(
+            $this->generateUrl(
+                $context->getErrorRouteName(),
+                array(
+                    'paymenterror' => 'unknown'
+                )
+            )
+        );
     }
 
     /**
@@ -259,9 +274,14 @@ abstract class AbstractWizardController extends AbstractController
      */
     protected function handlePaymentFinishedResponseStatusUnknown(PaymentFinishedResponse $response, Context $context)
     {
-        return $this->redirect($this->generateUrl($context->getErrorRouteName(), array(
-            'paymenterror' => 'general'
-        )));
+        return $this->redirect(
+            $this->generateUrl(
+                $context->getErrorRouteName(),
+                array(
+                    'paymenterror' => 'general'
+                )
+            )
+        );
     }
 
     /**
@@ -366,16 +386,19 @@ abstract class AbstractWizardController extends AbstractController
         $invoiceAddressForm->bind($request);
         $invoiceSameAsDeliveryForm->bind($request);
 
+        $invoiceSameAsDelivery = false;
+        if ($invoiceSameAsDeliveryForm->isValid()) {
+            $invoiceSameAsDelivery = (bool)$invoiceSameAsDeliveryForm->get('invoiceSameAsDelivery')->getData();
+            $deliveryAddressForm = $this->handleDeliveryAddress($invoiceSameAsDelivery, $invoiceAddress);
+        }
+
         if ($validDeliveryOptionStrategyFormData && $invoiceAddressForm->isValid() && $invoiceSameAsDeliveryForm->isValid()) {
 
-            $invoiceSameAsDelivery = (bool) $invoiceSameAsDeliveryForm->get('invoiceSameAsDelivery')->getData();
-            $deliveryAddressForm = $this->handleDeliveryAddress($invoiceSameAsDelivery, $invoiceAddress);
-
-            if ($deliveryAddressForm === true) {
+            if ($invoiceSameAsDelivery OR $deliveryAddressForm->isValid()) {
                 $cart = $this->getCurrentCart();
                 $cart->setInvoiceAddress($invoiceAddress);
 
-                if($this->getUser()){
+                if ($this->getUser()) {
                     $this->getUser()->setInvoiceAddress($cart->getInvoiceAddress());
                     $this->getUser()->setDeliveryAddress($cart->getDeliveryAddress());
                 }
@@ -385,12 +408,16 @@ abstract class AbstractWizardController extends AbstractController
 
                 $this->persistCurrentCart();
                 return true;
-            }else{
-                $invoiceSameAsDeliveryForm = $this->createForm($this->getInvoiceSameAsDeliveryType(), array(
-                    'invoiceSameAsDelivery' => false
-                ));
+            } else {
+                $invoiceSameAsDeliveryForm = $this->createForm(
+                    $this->getInvoiceSameAsDeliveryType(),
+                    array(
+                        'invoiceSameAsDelivery' => false
+                    )
+                );
             }
         }
+
         return false;
     }
 
@@ -406,7 +433,7 @@ abstract class AbstractWizardController extends AbstractController
         $deliveryAddress = $deliveryAddress ?: $this->getDeliveryAddress();
 
         $formoptions = $formOptions ?: array(
-            'data_class' => $this->getDeliveryAddressClass(),
+            'data_class'        => $this->getDeliveryAddressClass(),
             'validation_groups' => array(
                 'sylius_wizard_address'
             )
@@ -420,8 +447,9 @@ abstract class AbstractWizardController extends AbstractController
      *
      * @param boolean $invoiceSameAsDelivery
      * @param null $invoiceAddress
-     * @throws \Exception
+     * @param bool $returnBool
      * @return bool|FormInterface
+     * @throws \Exception
      */
     protected function handleDeliveryAddress($invoiceSameAsDelivery = null, $invoiceAddress = null)
     {
@@ -432,7 +460,7 @@ abstract class AbstractWizardController extends AbstractController
             return $deliveryAddressForm;
         }
 
-        if($invoiceAddress == null){
+        if ($invoiceAddress == null) {
             throw new \Exception('first bind invoiceaddress before use handleDeliveryAddress');
         }
 
@@ -458,7 +486,7 @@ abstract class AbstractWizardController extends AbstractController
         $em->persist($deliveryAddress);
         $currentcart->setDeliveryAddress($deliveryAddress);
 
-        return true;
+        return $deliveryAddressForm;
     }
 
     /**
