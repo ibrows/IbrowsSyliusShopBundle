@@ -47,6 +47,9 @@
                 'eventSuccessName': 'syliusshop.watchlist.item.removesuccess',
                 'dataContainerRemoveSelect': 'watchlist-remove-container'
             },
+            'deliveryAddressChange': {
+                'eventName': 'syliusshop.deliveryaddress.change'
+            },
             'quantityChange': {
                 'dataSelector': 'quantity-change',
                 'eventName': 'syliusshop.quantity.change',
@@ -568,6 +571,7 @@
         self.log('syliusShop.registerInvoiceSameAsDeliveryHandler');
 
         var settings = self.settings.handlers.invoiceSameAsDelivery;
+        var eventSettings = self.settings.actions.deliveryAddressChange;
 
         $('[data-' + settings.dataContainerSelector + ']').each(function () {
             self.log('found invoiceSameAsDelivery');
@@ -587,6 +591,8 @@
                     } else {
                         addressDelivery.hide();
                     }
+
+                    self.trigger(eventSettings.eventName, ['hide', doSlide]);
                 } else {
                     self.log('addressDeliveryInputs available');
 
@@ -596,6 +602,8 @@
                     } else {
                         addressDelivery.show();
                     }
+
+                    self.trigger(eventSettings.eventName, ['show', doSlide]);
                 }
             };
 
