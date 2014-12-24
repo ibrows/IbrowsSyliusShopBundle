@@ -10,45 +10,20 @@ use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface;
 
 class ReduceStocksStrategy extends AbstractCartStrategy
 {
-
-
-    public function __construct()
-    {
-
-    }
-
     /**
      * /**
      * @param CartInterface $cart
-     * @param CartManager   $cartManager
+     * @param CartManager $cartManager
      * @return bool
      */
     public function accept(CartInterface $cart, CartManager $cartManager)
     {
-        return $cartManager->getCart()->isConfirmed();
-    }
-
-    /**
-     * @param CartItemInterface $item
-     * @return bool
-     */
-    public function reduceItem(CartItemInterface $item)
-    {
-        if (!$item->getProduct()) {
-            return false;
-        }
-        if ($item->getReducedQuantity() == $item->getQuantity()) {
-            return false;
-        }
-        $newStock = $item->getProduct()->getOnHand() - $item->getQuantity() + $item->getReducedQuantity() ;
-        $item->getProduct()->setOnHand($newStock);
-        $item->setReducedQuantity($item->getQuantity());
-        return true;
+        return $cart->isConfirmed();
     }
 
     /**
      * @param CartInterface $cart
-     * @param CartManager   $cartManager
+     * @param CartManager $cartManager
      * @return AdditionalCartItemInterface[]
      */
     public function compute(CartInterface $cart, CartManager $cartManager)
@@ -57,5 +32,26 @@ class ReduceStocksStrategy extends AbstractCartStrategy
             $this->reduceItem($item);
         }
         return array();
+    }
+
+    /**
+     * @param CartItemInterface $item
+     * @return bool
+     */
+    public function reduceItem(CartItemInterface $item)
+    {
+        if (!$product = $item->getProduct()) {
+            return false;
+        }
+
+        if ($item->getReducedQuantity() == $item->getQuantity()) {
+            return false;
+        }
+
+        $newStock = $product->getOnHand() - $item->getQuantity() + $item->getReducedQuantity();
+        $item->getProduct()->setOnHand($newStock);
+        $item->setReducedQuantity($item->getQuantity());
+
+        return true;
     }
 }
