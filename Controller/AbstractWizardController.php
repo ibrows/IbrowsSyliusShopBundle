@@ -447,8 +447,7 @@ abstract class AbstractWizardController extends AbstractController
      *
      * @param boolean $invoiceSameAsDelivery
      * @param null $invoiceAddress
-     * @param bool $returnBool
-     * @return bool|FormInterface
+     * @return FormInterface
      * @throws \Exception
      */
     protected function handleDeliveryAddress($invoiceSameAsDelivery = null, $invoiceAddress = null)
@@ -466,7 +465,8 @@ abstract class AbstractWizardController extends AbstractController
 
         //same
         if ($invoiceSameAsDelivery) {
-            return $this->handleInvoiceIsSameAsDelivery($deliveryAddressForm, $invoiceAddress);
+            $this->handleInvoiceIsSameAsDelivery($deliveryAddressForm, $invoiceAddress);
+            return $deliveryAddressForm;
         }
 
         $currentcart = $this->getCurrentCart();
