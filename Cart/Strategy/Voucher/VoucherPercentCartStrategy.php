@@ -24,7 +24,7 @@ class VoucherPercentCartStrategy extends AbstractVoucherCartStrategy
         foreach($cart->getAdditionalItemsByStrategy($this) as $additionalItem){
             $data = $additionalItem->getStrategyData();
 
-            foreach(array('newQuantity', 'voucherId', 'voucherClass', 'voucherCodeId') as $neededKey){
+            foreach(array('newQuantity', 'voucherId', 'voucherClass') as $neededKey){
                 if(!array_key_exists($neededKey, $data)){
                     throw new VoucherRedemptionException("Key $neededKey not found");
                 }
