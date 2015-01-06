@@ -5,13 +5,13 @@ namespace Ibrows\SyliusShopBundle\Cart;
 use Doctrine\Common\Collections\ArrayCollection;
 use Ibrows\SyliusShopBundle\Cart\Exception\CartCurrencyChangeException;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Costs;
-use Ibrows\SyliusShopBundle\Cart\Strategy\Voucher\VoucherCartStrategy;
 use Ibrows\SyliusShopBundle\Entity\AdditionalCartItem;
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartCurrencyStrategyInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartPaymentOptionStrategyInterface;
+use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartVoucherStrategyInterface;
 use Ibrows\SyliusShopBundle\Model\Voucher\VoucherCodeInterface;
 use Sylius\Bundle\InventoryBundle\Checker\AvailabilityCheckerInterface;
 use Ibrows\SyliusShopBundle\Cart\Exception\CartItemNotOnStockException;
@@ -498,7 +498,7 @@ class CartManager
     {
         $cart = $this->getCart();
         foreach($this->getStrategies() as $strategy){
-            if($strategy instanceof VoucherCartStrategy){
+            if($strategy instanceof CartVoucherStrategyInterface){
                 $strategy->redeemVouchers($cart, $this);
             }
         }
