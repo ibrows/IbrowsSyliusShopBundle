@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="ibrows_sylius_shop.validator.unique_voucher.class">Ibrows\SyliusShopBundle\Validator\Constraints\IsUniqueVoucherValidator</parameter>
+    </parameters>
+
+    <services>
+        <service id="ibrows_sylius_shop.validator.unique_voucher"
+                 class="%ibrows_sylius_shop.validator.unique_voucher.class%">
+            <argument type="service" id="ibrows_sylius_shop.repository.voucher"/>
+            <argument type="service" id="ibrows_sylius_shop.repository.percent_voucher"/>
+            <tag name="validator.constraint_validator" alias="validate_unique_voucher"/>
+        </service>
+    </services>
+</container>
