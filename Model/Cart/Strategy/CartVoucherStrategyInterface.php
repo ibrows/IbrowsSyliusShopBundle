@@ -12,4 +12,9 @@ interface CartVoucherStrategyInterface extends CartStrategyInterface
      * @param CartManager $cartManager
      */
     public function redeemVouchers(CartInterface $cart, CartManager $cartManager);
+
+    /**
+     * @return bool True if multiple vouchers are cumulative, false otherwise
+     */
+    public function isCumulative();
 }

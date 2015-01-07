@@ -8,10 +8,15 @@ use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Ibrows\SyliusShopBundle\Model\Voucher\VoucherCodeInterface;
 use Ibrows\SyliusShopBundle\Model\Voucher\VoucherPercentInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class VoucherPercentCartStrategy extends AbstractVoucherCartStrategy
 {
+    /**
+     * @override
+     * @var bool
+     */
+    protected $cumulative = false;
+
     /**
      * @param CartInterface $cart
      * @param CartManager $cartManager
