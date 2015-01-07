@@ -7,7 +7,7 @@
         <parameters>
         	<parameter key="ibrows_sylius_shop.cart.itemresolver.class">Ibrows\SyliusShopBundle\Cart\BaseItemResolver</parameter>
         	<parameter key="ibrows_sylius_shop.cart.manager.class">Ibrows\SyliusShopBundle\Cart\CartManager</parameter>
-        	<parameter key="ibrows_syliusshop.repository.cartitem.class">Ibrows\SyliusShopBundle\Repository\CartItemRepository</parameter>
+
         	<parameter key="ibrows_syliusshop.cartitem.class">Ibrows\SyliusShopBundle\Entity\CartItem</parameter>
             <parameter key="ibrows_sylius_shop.currentcart.manager.class">Ibrows\SyliusShopBundle\Cart\CurrentCartManager</parameter>
             <parameter key="ibrows_sylius_shop.logininformation.class">Ibrows\SyliusShopBundle\Login\LoginInformation</parameter>
@@ -24,23 +24,7 @@
             <argument type="service" id="ibrows_syliusshop.repository.cart_item"/>
         </service>
         <!-- Cart -->
-        <service
-            id="ibrows_syliusshop.repository.additional_cart_item"
-            factory-service="doctrine.orm.default_entity_manager"
-            factory-method="getRepository"
-            class="%ibrows_sylius_shop.additionalcartitem.class%"
-        >
-            <argument>%ibrows_sylius_shop.additionalcartitem.class%</argument>
-        </service>
 
-        <service
-            id="ibrows_syliusshop.repository.cart_item"
-            factory-service="doctrine.orm.default_entity_manager"
-            factory-method="getRepository"
-            class="%ibrows_syliusshop.repository.cartitem.class%"
-        >
-            <argument>%ibrows_syliusshop.cartitem.class%</argument>
-        </service>
 
         <service id="ibrows_syliusshop.cart.resolver" class="%ibrows_sylius_shop.cart.itemresolver.class%">
 			<argument type="service" id="doctrine" />

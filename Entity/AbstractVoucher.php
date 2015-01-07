@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Ibrows\SyliusShopBundle\Model\Voucher\BaseVoucherInterface;
 use Ibrows\SyliusShopBundle\Model\Voucher\VoucherCodeInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints as DoctrineAssert;
+use Ibrows\SyliusShopBundle\Validator\Constraints as IbrowsShopAssert;
 
 /**
  * @ORM\MappedSuperclass
@@ -24,6 +25,7 @@ abstract class AbstractVoucher implements BaseVoucherInterface
     /**
      * @var string
      * @ORM\Column(type="string", unique=true)
+     * @IbrowsShopAssert\IsUniqueVoucher()
      */
     protected $code;
 
@@ -96,6 +98,6 @@ abstract class AbstractVoucher implements BaseVoucherInterface
      */
     public static function acceptCode(VoucherCodeInterface $voucherCode)
     {
-        return substr($voucherCode->getCode(), 0, 1) == static::getPrefix();
+        return substr($voucherCode->getCode(), 0, strlen(static::getPrefix())) == static::getPrefix();
     }
 }
