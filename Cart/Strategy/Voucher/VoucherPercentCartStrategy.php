@@ -12,12 +12,6 @@ use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 class VoucherPercentCartStrategy extends AbstractVoucherCartStrategy
 {
     /**
-     * @override
-     * @var bool
-     */
-    protected $cumulative = false;
-
-    /**
      * @param CartInterface $cart
      * @param CartManager $cartManager
      * @throws VoucherRedemptionException
