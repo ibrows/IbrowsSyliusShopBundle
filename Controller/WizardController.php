@@ -175,9 +175,7 @@ class WizardController extends AbstractWizardController
             )
         ));
 
-        $invoiceSameAsDeliveryForm = $this->createForm($this->getInvoiceSameAsDeliveryType(), array(
-            'invoiceSameAsDelivery' => $invoiceAddress->compare($this->getDeliveryAddress())
-        ));
+        $invoiceSameAsDeliveryForm = $this->getInvoiceSameAsDeliveryForm($invoiceAddress, $this->getDeliveryAddress());
 
         $deliveryOptionStrategyFormData = null;
         $selectedDeliveryOptionStrategyService = null;

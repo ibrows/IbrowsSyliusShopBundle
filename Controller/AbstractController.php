@@ -2,43 +2,44 @@
 
 namespace Ibrows\SyliusShopBundle\Controller;
 
-use Ibrows\SyliusShopBundle\Cart\Exception\CartItemNotOnStockException;
-use Ibrows\SyliusShopBundle\Cart\CartManager;
-use Ibrows\SyliusShopBundle\Cart\CurrentCartManager;
-use Ibrows\SyliusShopBundle\Form\DeliveryOptionStrategyType;
-use Ibrows\SyliusShopBundle\Form\InvoiceSameAsDeliveryType;
-use Ibrows\SyliusShopBundle\Form\PaymentOptionStrategyType;
-use Ibrows\SyliusShopBundle\Form\SummaryType;
-use Ibrows\SyliusShopBundle\Repository\ProductRepository;
-use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
-use Ibrows\SyliusShopBundle\Login\LoginInformationInterface;
-use Ibrows\SyliusShopBundle\Form\AuthType;
-use Ibrows\SyliusShopBundle\Form\LoginType;
-use Ibrows\SyliusShopBundle\Form\BasketType;
-use Ibrows\SyliusShopBundle\Form\BasketItemType;
-use Ibrows\SyliusShopBundle\Form\DeliveryAddressType;
-use Ibrows\SyliusShopBundle\Form\InvoiceAddressType;
-use Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface;
-use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
-use Ibrows\SyliusShopBundle\IbrowsSyliusShopBundle;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Form\FormInterface;
-use Ibrows\Bundle\WizardAnnotationBundle\Annotation\AnnotationHandler as WizardHandler;
-use Symfony\Component\Form\FormError;
-use FOS\UserBundle\Model\UserManagerInterface;
-use FOS\UserBundle\Security\LoginManager;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
-use Ibrows\SyliusShopBundle\Entity\Address;
-use Ibrows\SyliusShopBundle\Model\User\UserInterface;
 use Doctrine\ORM\EntityRepository;
+use FOS\UserBundle\Model\UserManagerInterface;
+use FOS\UserBundle\Security\LoginManager;
+use Ibrows\Bundle\WizardAnnotationBundle\Annotation\AnnotationHandler as WizardHandler;
+use Ibrows\SyliusShopBundle\Cart\CartManager;
+use Ibrows\SyliusShopBundle\Cart\CurrentCartManager;
+use Ibrows\SyliusShopBundle\Cart\Exception\CartItemNotOnStockException;
+use Ibrows\SyliusShopBundle\Entity\Address;
+use Ibrows\SyliusShopBundle\Form\AuthType;
+use Ibrows\SyliusShopBundle\Form\BasketItemType;
+use Ibrows\SyliusShopBundle\Form\BasketType;
+use Ibrows\SyliusShopBundle\Form\DeliveryAddressType;
+use Ibrows\SyliusShopBundle\Form\DeliveryOptionStrategyType;
+use Ibrows\SyliusShopBundle\Form\InvoiceAddressType;
+use Ibrows\SyliusShopBundle\Form\InvoiceSameAsDeliveryType;
+use Ibrows\SyliusShopBundle\Form\LoginType;
+use Ibrows\SyliusShopBundle\Form\PaymentOptionStrategyType;
+use Ibrows\SyliusShopBundle\Form\SummaryType;
+use Ibrows\SyliusShopBundle\IbrowsSyliusShopBundle;
+use Ibrows\SyliusShopBundle\Login\LoginInformationInterface;
+use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
+use Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface;
+use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
+use Ibrows\SyliusShopBundle\Model\User\UserInterface;
+use Ibrows\SyliusShopBundle\Repository\ProductRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 abstract class AbstractController extends Controller
 {
@@ -66,6 +67,46 @@ abstract class AbstractController extends Controller
     }
 
     /**
+     * @return UserInterface
+     */
+    public function getUser()
+    {
+        return parent::getUser();
+    }
+
+    /**
+     * @return array
+     */
+    public function getAddressTypeTitleChoices()
+    {
+        return array_flip(Address::getTitles());
+    }
+
+    /**
+     * @return string
+     */
+    public function getInvoiceAddressClass()
+    {
+        return $this->container->getParameter('ibrows_sylius_shop.invoiceaddress.class');
+    }
+
+    /**
+     * @return string
+     */
+    public function getDeliveryAddressClass()
+    {
+        return $this->container->getParameter('ibrows_sylius_shop.deliveryaddress.class');
+    }
+
+    /**
+     * @return string
+     */
+    public function getPaymentOptionsClass()
+    {
+        return $this->container->getParameter('ibrows_sylius_shop.paymentoptions.class');
+    }
+
+    /**
      * @return SecurityContextInterface
      */
     protected function getSecurityContext()
@@ -79,7 +120,7 @@ abstract class AbstractController extends Controller
      */
     protected function getUserOrException()
     {
-        if(!$user = $this->getUser()){
+        if (!$user = $this->getUser()) {
             throw new AccessDeniedException();
         }
         return $user;
@@ -91,7 +132,7 @@ abstract class AbstractController extends Controller
      */
     protected function getRepository($className)
     {
-        if(is_object($className)){
+        if (is_object($className)) {
             $className = get_class($className);
         }
         return $this->getManagerForClass($className)->getRepository($className);
@@ -103,7 +144,7 @@ abstract class AbstractController extends Controller
      */
     protected function getManagerForClass($className)
     {
-        if(is_object($className)){
+        if (is_object($className)) {
             /** @var object $className */
             $className = get_class($className);
         }
@@ -220,7 +261,7 @@ abstract class AbstractController extends Controller
         } catch (CartItemNotOnStockException $e) {
             foreach ($e->getCartItemsNotOnStock() as $itemNotOnStock) {
                 $item = $itemNotOnStock->getItem();
-                if(!$item->getProduct()->isEnabled()){
+                if (!$item->getProduct()->isEnabled()) {
                     $message = $item . ' not found';
                     $this->addFlashMessage($message);
                     $cartManager->removeItem($item);
@@ -237,7 +278,8 @@ abstract class AbstractController extends Controller
     /**
      * @param string $message
      */
-    protected function addFlashMessage($message){
+    protected function addFlashMessage($message)
+    {
         $this->get('session')->getFlashBag()->add('notice', $message);
     }
 
@@ -258,14 +300,6 @@ abstract class AbstractController extends Controller
     protected function getTranslator()
     {
         return $this->get('translator');
-    }
-
-    /**
-     * @return UserInterface
-     */
-    public function getUser()
-    {
-        return parent::getUser();
     }
 
     /**
@@ -346,6 +380,31 @@ abstract class AbstractController extends Controller
     protected function getInvoiceSameAsDeliveryType()
     {
         return new InvoiceSameAsDeliveryType();
+    }
+
+    /**
+     * @param InvoiceAddressInterface $invoiceAddress
+     * @param DeliveryAddressInterface $deliveryAddress
+     * @return Form
+     */
+    protected function getInvoiceSameAsDeliveryForm(InvoiceAddressInterface $invoiceAddress, DeliveryAddressInterface $deliveryAddress)
+    {
+        return $this->createForm(
+            $this->getInvoiceSameAsDeliveryType(),
+            $this->getInvoiceSameAsDeliveryData($invoiceAddress, $deliveryAddress)
+        );
+    }
+
+    /**
+     * @param InvoiceAddressInterface $invoiceAddress
+     * @param DeliveryAddressInterface $deliveryAddress
+     * @return array
+     */
+    protected function getInvoiceSameAsDeliveryData(InvoiceAddressInterface $invoiceAddress, DeliveryAddressInterface $deliveryAddress)
+    {
+        return array(
+            'invoiceSameAsDelivery' => $invoiceAddress->compare($deliveryAddress)
+        );
     }
 
     /**
@@ -520,37 +579,5 @@ abstract class AbstractController extends Controller
     protected function getAddressTypePreferredCountryChoices()
     {
         return array();
-    }
-
-    /**
-     * @return array
-     */
-    public function getAddressTypeTitleChoices()
-    {
-        return array_flip(Address::getTitles());
-    }
-
-    /**
-     * @return string
-     */
-    public function getInvoiceAddressClass()
-    {
-        return $this->container->getParameter('ibrows_sylius_shop.invoiceaddress.class');
-    }
-
-    /**
-     * @return string
-     */
-    public function getDeliveryAddressClass()
-    {
-        return $this->container->getParameter('ibrows_sylius_shop.deliveryaddress.class');
-    }
-
-    /**
-     * @return string
-     */
-    public function getPaymentOptionsClass()
-    {
-        return $this->container->getParameter('ibrows_sylius_shop.paymentoptions.class');
     }
 }

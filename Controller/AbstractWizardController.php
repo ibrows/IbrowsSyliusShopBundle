@@ -371,6 +371,15 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
+     * @param FormInterface $invoiceSameAsDeliveryForm
+     * @return bool
+     */
+    protected function isInvoiceSameAsDelivery(FormInterface $invoiceSameAsDeliveryForm)
+    {
+        return (bool)$invoiceSameAsDeliveryForm->get('invoiceSameAsDelivery')->getData();
+    }
+
+    /**
      * @param Request $request
      * @param FormInterface $deliveryOptionStrategyForm
      * @param FormInterface $invoiceAddressForm
@@ -388,7 +397,7 @@ abstract class AbstractWizardController extends AbstractController
 
         $invoiceSameAsDelivery = false;
         if ($invoiceSameAsDeliveryForm->isValid()) {
-            $invoiceSameAsDelivery = (bool)$invoiceSameAsDeliveryForm->get('invoiceSameAsDelivery')->getData();
+            $invoiceSameAsDelivery = $this->isInvoiceSameAsDelivery($invoiceSameAsDeliveryForm);
             $deliveryAddressForm = $this->handleDeliveryAddress($invoiceSameAsDelivery, $invoiceAddress);
         }
 
