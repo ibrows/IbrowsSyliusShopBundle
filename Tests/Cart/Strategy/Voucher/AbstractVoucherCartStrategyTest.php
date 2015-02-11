@@ -4,16 +4,15 @@ namespace Ibrows\SyliusShopBundle\Tests\Cart\Strategy\Voucher;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use Ibrows\SyliusShopBundle\Cart\CartManager;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Voucher\VoucherCartStrategy;
-use Ibrows\SyliusShopBundle\Entity\AdditionalCartItem;
 use Ibrows\SyliusShopBundle\Entity\Cart;
 use Ibrows\SyliusShopBundle\Entity\Voucher;
 use Ibrows\SyliusShopBundle\Entity\VoucherCode;
-use Symfony\Bridge\Doctrine\RegistryInterface;
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\EntityManager;
 use Ibrows\SyliusShopBundle\Model\Voucher\VoucherInterface;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 
 abstract class AbstractVoucherCartStrategyTest extends \PHPUnit_Framework_TestCase
 {
@@ -34,8 +33,7 @@ abstract class AbstractVoucherCartStrategyTest extends \PHPUnit_Framework_TestCa
             ->setCode($code)
             ->setPayedAt($payedAt)
             ->setCurrency($currency)
-            ->setValue($value)
-        ;
+            ->setValue($value);
 
         $reflection = new \ReflectionClass($voucher);
         $id = $reflection->getProperty('id');
@@ -58,8 +56,7 @@ abstract class AbstractVoucherCartStrategyTest extends \PHPUnit_Framework_TestCa
 
         $voucherCode
             ->setCode($code)
-            ->setRedeemedAt($redeemedAt)
-        ;
+            ->setRedeemedAt($redeemedAt);
 
         return $voucherCode;
     }
@@ -81,30 +78,36 @@ abstract class AbstractVoucherCartStrategyTest extends \PHPUnit_Framework_TestCa
 
         $voucherRepo->expects($this->any())
             ->method('findOneBy')
-            ->will($this->returnCallback(function(array $criterias)use($vouchers){
-                if(!isset($criterias['code'])){
-                    return null;
-                }
-                foreach($vouchers as $voucher){
-                    if($voucher->getCode() == $criterias['code']){
-                        return $voucher;
+            ->will(
+                $this->returnCallback(
+                    function (array $criterias) use ($vouchers) {
+                        if (!isset($criterias['code'])) {
+                            return null;
+                        }
+                        foreach ($vouchers as $voucher) {
+                            if ($voucher->getCode() == $criterias['code']) {
+                                return $voucher;
+                            }
+                        }
+                        return null;
                     }
-                }
-                return null;
-            }))
-        ;
+                )
+            );
 
         $voucherRepo->expects($this->any())
             ->method('find')
-            ->will($this->returnCallback(function($id)use($vouchers){
-                foreach($vouchers as $voucher){
-                    if($voucher->getId() == $id){
-                        return $voucher;
+            ->will(
+                $this->returnCallback(
+                    function ($id) use ($vouchers) {
+                        foreach ($vouchers as $voucher) {
+                            if ($voucher->getId() == $id) {
+                                return $voucher;
+                            }
+                        }
+                        return null;
                     }
-                }
-                return null;
-            }))
-        ;
+                )
+            );
 
         /** @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject $registry */
         $registry = $this->getMock('Symfony\Bridge\Doctrine\RegistryInterface');
@@ -114,14 +117,12 @@ abstract class AbstractVoucherCartStrategyTest extends \PHPUnit_Framework_TestCa
         $registry->expects($this->any())
             ->method('getRepository')
             ->with($voucherClass)
-            ->will($this->returnValue($voucherRepo))
-        ;
+            ->will($this->returnValue($voucherRepo));
 
         $registry->expects($this->any())
             ->method('getManagerForClass')
             ->with($voucherClass)
-            ->will($this->returnValue($em))
-        ;
+            ->will($this->returnValue($em));
 
         $voucherCartStrategy = new VoucherCartStrategy($registry, $voucherClass);
         $voucherCartStrategy->setEnabled(true);
@@ -133,8 +134,7 @@ abstract class AbstractVoucherCartStrategyTest extends \PHPUnit_Framework_TestCa
 
         $additionalCartItemRepo->expects($this->any())
             ->method('getClassName')
-            ->will($this->returnValue('Ibrows\SyliusShopBundle\Entity\AdditionalCartItem'))
-        ;
+            ->will($this->returnValue('Ibrows\SyliusShopBundle\Entity\AdditionalCartItem'));
 
         $voucherCartStrategy->setAdditionalCartItemRepo($additionalCartItemRepo);
 
@@ -174,20 +174,17 @@ abstract class AbstractVoucherCartStrategyTest extends \PHPUnit_Framework_TestCa
 
         $cart->expects($this->any())
             ->method('getVoucherCodes')
-            ->will($this->returnValue($voucherCodes))
-        ;
+            ->will($this->returnValue($voucherCodes));
 
         $cart
             ->expects($this->any())
             ->method('getCurrency')
-            ->will($this->returnValue('CHF'))
-        ;
+            ->will($this->returnValue('CHF'));
 
         $cart
             ->expects($this->any())
             ->method('getTotalWithTax')
-            ->will($this->returnValue($totalWithTax))
-        ;
+            ->will($this->returnValue($totalWithTax));
 
         return $cart;
     }

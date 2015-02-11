@@ -3,7 +3,6 @@
 namespace Ibrows\SyliusShopBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Ibrows\SyliusShopBundle\Model\Voucher\VoucherCodeInterface;
 use Ibrows\SyliusShopBundle\Model\Voucher\VoucherPercentInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints as DoctrineAssert;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -34,9 +33,9 @@ class VoucherPercent extends AbstractVoucher implements VoucherPercentInterface
     protected $quantity;
 
     /**
-     * @var float
-     * @ORM\Column(type="float")
-     * @Assert\Range(min=0.01, max=0.99)
+     * @var integer
+     * @ORM\Column(type="integer")
+     * @Assert\Range(min=1, max=100)
      */
     protected $percent;
 
@@ -95,29 +94,7 @@ class VoucherPercent extends AbstractVoucher implements VoucherPercentInterface
     }
 
     /**
-     * @return bool
-     */
-    public function isValid()
-    {
-        $now = new \DateTime();
-
-        if(($from = $this->getValidFrom()) && $from > $now){
-            return false;
-        }
-
-        if(($to = $this->getValidTo()) && $to < $now){
-            return false;
-        }
-
-        if(!$this->hasQuantity()){
-            return true;
-        }
-
-        return $this->getQuantity() > 0;
-    }
-
-    /**
-     * @return float
+     * @return integer
      */
     public function getPercent()
     {
@@ -125,7 +102,7 @@ class VoucherPercent extends AbstractVoucher implements VoucherPercentInterface
     }
 
     /**
-     * @param float $percent
+     * @param integer $percent
      * @return VoucherPercentInterface
      */
     public function setPercent($percent)
@@ -135,18 +112,40 @@ class VoucherPercent extends AbstractVoucher implements VoucherPercentInterface
     }
 
     /**
-     * @return string
-     */
-    public static function getPrefix()
-    {
-        return 'p';
-    }
-
-    /**
      * @return bool
      */
     public function hasQuantity()
     {
         return !is_null($this->getQuantity());
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return '#' . $this->getId() . ' Voucher "' . $this->getCode() . '" (' . $this->getPercent() . '%) | Quantity: ' . $this->getQuantity();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isValid()
+    {
+        $now = new \DateTime();
+
+        if (($from = $this->getValidFrom()) && $from > $now) {
+            return false;
+        }
+
+        if (($to = $this->getValidTo()) && $to < $now) {
+            return false;
+        }
+
+        if (!$this->hasQuantity()) {
+            return true;
+        }
+
+        return $this->getQuantity() > 0;
     }
 }

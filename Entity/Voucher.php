@@ -4,7 +4,6 @@ namespace Ibrows\SyliusShopBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Ibrows\SyliusShopBundle\Model\Product\ProductInterface;
-use Ibrows\SyliusShopBundle\Model\Voucher\VoucherCodeInterface;
 use Ibrows\SyliusShopBundle\Model\Voucher\VoucherInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints as DoctrineAssert;
 
@@ -23,7 +22,7 @@ class Voucher extends AbstractVoucher implements VoucherInterface, ProductInterf
 
     /**
      * @var float
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="decimal")
      */
     protected $value;
 
@@ -38,7 +37,7 @@ class Voucher extends AbstractVoucher implements VoucherInterface, ProductInterf
      */
     public function __toString()
     {
-        return '#'. $this->getId() .' Voucher "'. $this->getCode() .'" ('. $this->getValue() .') | Status: '. ($this->isPayed() ? 'payed' : 'unpayed');
+        return '#' . $this->getId() . ' Voucher "' . $this->getCode() . '" (' . $this->getValue() . ') | Status: ' . ($this->isPayed() ? 'payed' : 'unpayed');
     }
 
     /**
@@ -195,13 +194,5 @@ class Voucher extends AbstractVoucher implements VoucherInterface, ProductInterf
     {
         $this->currency = $currency;
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public static function getPrefix()
-    {
-        return 'v';
     }
 }

@@ -8,8 +8,6 @@ use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Ibrows\SyliusShopBundle\Model\Voucher\VoucherCodeInterface;
 use Ibrows\SyliusShopBundle\Model\Voucher\VoucherInterface;
-use Symfony\Bridge\Doctrine\RegistryInterface;
-use Doctrine\ORM\EntityRepository;
 
 class VoucherCartStrategy extends AbstractVoucherCartStrategy
 {
@@ -22,18 +20,18 @@ class VoucherCartStrategy extends AbstractVoucherCartStrategy
     {
         parent::redeemVouchers($cart, $cartManager);
 
-        foreach($cart->getAdditionalItemsByStrategy($this) as $additionalItem){
+        foreach ($cart->getAdditionalItemsByStrategy($this) as $additionalItem) {
             $data = $additionalItem->getStrategyData();
 
-            foreach(array('newValue', 'voucherId','voucherClass') as $neededKey){
-                if(!array_key_exists($neededKey, $data)){
+            foreach (array('newValue', 'voucherId', 'voucherClass') as $neededKey) {
+                if (!array_key_exists($neededKey, $data)) {
                     throw new VoucherRedemptionException("Key $neededKey not found");
                 }
             }
 
             /** @var VoucherInterface $voucher */
-            if(!$voucher = $this->voucherRepo->find($data['voucherId'])){
-                throw new VoucherRedemptionException("Voucher #". $data['voucherId']." not found");
+            if (!$voucher = $this->voucherRepo->find($data['voucherId'])) {
+                throw new VoucherRedemptionException("Voucher #" . $data['voucherId'] . " not found");
             }
 
             $voucher->setValue($data['newValue']);
@@ -49,7 +47,7 @@ class VoucherCartStrategy extends AbstractVoucherCartStrategy
     {
         $voucher = $this->getVoucher($voucherCode);
 
-        if(!$voucher instanceof VoucherInterface OR !$voucher->isValid()){
+        if (!$voucher instanceof VoucherInterface OR !$voucher->isValid()) {
             return null;
         }
 
@@ -64,37 +62,33 @@ class VoucherCartStrategy extends AbstractVoucherCartStrategy
      */
     protected function getAdditionalItemByVoucherCode(VoucherCodeInterface $voucherCode, CartInterface $cart, &$totalToReduce)
     {
-        if($totalToReduce <= 0){
-            $voucherCode->setValid(false);
+        if ($totalToReduce <= 0) {
             return null;
         }
 
         $voucher = $this->getVoucher($voucherCode);
 
-        /** @var VoucherInterface $voucher */
-        if(!$voucher instanceof VoucherInterface){
+        if (!$voucher instanceof VoucherInterface) {
+            return null;
+        }
+
+        if (!$voucher->isValid() && !$voucherCode->isRedeemed()) {
             $voucherCode->setValid(false);
             return null;
         }
 
-        if(!$voucher->isValid() && !$voucherCode->isRedeemed()){
-            $voucherCode->setValid(false);
-            return null;
-        }
-
-        if($cart->getCurrency() != $voucher->getCurrency()){
+        if ($cart->getCurrency() != $voucher->getCurrency()) {
             $voucherCode->setValid(false);
             return null;
         }
 
         $voucherCode->setValid(true);
-
         $voucherValue = $voucher->getValue();
 
-        if($voucherValue <= $totalToReduce){
+        if ($voucherValue <= $totalToReduce) {
             $reduction = $voucherValue;
             $totalToReduce = $totalToReduce - $voucherValue;
-        }else{
+        } else {
             $reduction = $totalToReduce;
             $totalToReduce = 0;
         }
@@ -111,12 +105,16 @@ class VoucherCartStrategy extends AbstractVoucherCartStrategy
      */
     protected function createAdditionalCartItemForVoucher($reduction, VoucherCodeInterface $voucherCode, VoucherInterface $voucher, $text = null)
     {
-        return $this->createAdditionalCartItem($reduction*-1, $text, array(
-            'code' => $voucherCode->getCode(),
-            'reduction' => $reduction,
-            'newValue' => $voucher->getValue() - $reduction,
-            'voucherId' => $voucher->getId(),
-            'voucherClass' => get_class($voucher)
-        ));
+        return $this->createAdditionalCartItem(
+            $reduction * -1,
+            $text,
+            array(
+                'code'         => $voucherCode->getCode(),
+                'reduction'    => $reduction,
+                'newValue'     => $voucher->getValue() - $reduction,
+                'voucherId'    => $voucher->getId(),
+                'voucherClass' => get_class($voucher)
+            )
+        );
     }
 }

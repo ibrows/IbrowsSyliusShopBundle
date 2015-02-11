@@ -23,5 +23,5 @@ interface BaseVoucherInterface
     /**
      * @return string
      */
-    public static function getPrefix();
+    public function getCode();
 }

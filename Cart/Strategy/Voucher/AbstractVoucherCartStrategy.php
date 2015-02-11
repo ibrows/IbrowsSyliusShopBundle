@@ -2,16 +2,16 @@
 
 namespace Ibrows\SyliusShopBundle\Cart\Strategy\Voucher;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use Ibrows\SyliusShopBundle\Cart\CartManager;
 use Ibrows\SyliusShopBundle\Cart\Strategy\AbstractCartStrategy;
-use Doctrine\ORM\EntityRepository;
+use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartVoucherStrategyInterface;
 use Ibrows\SyliusShopBundle\Model\Voucher\VoucherCodeInterface;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Ibrows\SyliusShopBundle\Model\Voucher\VoucherInterface;
-use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
-use Doctrine\ORM\EntityManager;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 
 abstract class AbstractVoucherCartStrategy extends AbstractCartStrategy implements CartVoucherStrategyInterface
 {
@@ -60,51 +60,11 @@ abstract class AbstractVoucherCartStrategy extends AbstractCartStrategy implemen
      */
     public function redeemVouchers(CartInterface $cart, CartManager $cartManager)
     {
-        foreach($cart->getVoucherCodes() as $voucherCode){
-            if($voucherCode->isValid() && !$voucherCode->isRedeemed()){
+        foreach ($cart->getVoucherCodes() as $voucherCode) {
+            if ($voucherCode->isValid() && !$voucherCode->isRedeemed()) {
                 $voucherCode->setRedeemedAt(new \DateTime());
             }
         }
-    }
-
-    /**
-     * @param CartInterface $cart
-     * @param CartManager $cartManager
-     * @return AdditionalCartItemInterface[]
-     */
-    public function compute(CartInterface $cart, CartManager $cartManager)
-    {
-        $additionalItems = array();
-
-        $totalToReduce = $cart->getTotalWithTax();
-
-        foreach($cart->getVoucherCodes() as $voucherCode){
-            /** @var VoucherInterface $voucherClass */
-            $voucherClass = $this->voucherClass;
-
-            if(!$voucherClass::acceptCode($voucherCode)){
-                continue;
-            }
-
-            if($additionalItem = $this->getAdditionalItemByVoucherCode($voucherCode, $cart, $totalToReduce)){
-                $additionalItems[] = $additionalItem;
-                if(!$this->isCumulative()){
-                    break;
-                }
-            }
-        }
-
-        return $additionalItems;
-    }
-
-    /**
-     * @param CartInterface $cart
-     * @param CartManager $cartManager
-     * @return bool
-     */
-    public function accept(CartInterface $cart, CartManager $cartManager)
-    {
-        return true;
     }
 
     /**
@@ -126,6 +86,47 @@ abstract class AbstractVoucherCartStrategy extends AbstractCartStrategy implemen
     }
 
     /**
+     * @param CartInterface $cart
+     * @param CartManager $cartManager
+     * @return AdditionalCartItemInterface[]
+     */
+    public function compute(CartInterface $cart, CartManager $cartManager)
+    {
+        $additionalItems = array();
+        $totalToReduce = $cart->getTotalWithTax();
+
+        foreach ($cart->getVoucherCodes() as $voucherCode) {
+            /** @var VoucherInterface $voucherClass */
+            $voucherClass = $this->voucherClass;
+
+            if (!$voucherClass::acceptCode($voucherCode)) {
+                continue;
+            }
+
+            $additionalItem = $this->getAdditionalItemByVoucherCode($voucherCode, $cart, $totalToReduce);
+
+            if ($additionalItem) {
+                $additionalItems[] = $additionalItem;
+                if (!$this->isCumulative()) {
+                    break;
+                }
+            }
+        }
+
+        return $additionalItems;
+    }
+
+    /**
+     * @param CartInterface $cart
+     * @param CartManager $cartManager
+     * @return bool
+     */
+    public function accept(CartInterface $cart, CartManager $cartManager)
+    {
+        return true;
+    }
+
+    /**
      * @param VoucherCodeInterface $voucherCode
      * @param CartInterface $cart
      * @param float $totalToReduce
@@ -139,12 +140,11 @@ abstract class AbstractVoucherCartStrategy extends AbstractCartStrategy implemen
      */
     protected function getVoucher(VoucherCodeInterface $voucherCode)
     {
-        /** @var VoucherInterface $voucherClass */
-        $voucherClass = $this->voucherClass;
-
         /** @var VoucherInterface $voucher */
-        return $this->voucherRepo->findOneBy(array(
-            'code' => substr($voucherCode->getCode(), strlen($voucherClass::getPrefix()))
-        ));
+        return $this->voucherRepo->findOneBy(
+            array(
+                'code' => $voucherCode->getCode()
+            )
+        );
     }
 }

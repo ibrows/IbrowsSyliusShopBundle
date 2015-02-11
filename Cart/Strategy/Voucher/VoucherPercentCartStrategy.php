@@ -4,10 +4,10 @@ namespace Ibrows\SyliusShopBundle\Cart\Strategy\Voucher;
 
 use Ibrows\SyliusShopBundle\Cart\CartManager;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Voucher\Exception\VoucherRedemptionException;
+use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Ibrows\SyliusShopBundle\Model\Voucher\VoucherCodeInterface;
 use Ibrows\SyliusShopBundle\Model\Voucher\VoucherPercentInterface;
-use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 
 class VoucherPercentCartStrategy extends AbstractVoucherCartStrategy
 {
@@ -20,18 +20,18 @@ class VoucherPercentCartStrategy extends AbstractVoucherCartStrategy
     {
         parent::redeemVouchers($cart, $cartManager);
 
-        foreach($cart->getAdditionalItemsByStrategy($this) as $additionalItem){
+        foreach ($cart->getAdditionalItemsByStrategy($this) as $additionalItem) {
             $data = $additionalItem->getStrategyData();
 
-            foreach(array('newQuantity', 'voucherId', 'voucherClass') as $neededKey){
-                if(!array_key_exists($neededKey, $data)){
+            foreach (array('newQuantity', 'voucherId', 'voucherClass') as $neededKey) {
+                if (!array_key_exists($neededKey, $data)) {
                     throw new VoucherRedemptionException("Key $neededKey not found");
                 }
             }
 
             /** @var VoucherPercentInterface $voucher */
-            if(!$voucher = $this->voucherRepo->find($data['voucherId'])){
-                throw new VoucherRedemptionException("Voucher #". $data['voucherId']." not found");
+            if (!$voucher = $this->voucherRepo->find($data['voucherId'])) {
+                throw new VoucherRedemptionException("Voucher #" . $data['voucherId'] . " not found");
             }
 
             $voucher->setQuantity($data['newQuantity']);
@@ -48,26 +48,26 @@ class VoucherPercentCartStrategy extends AbstractVoucherCartStrategy
      */
     protected function getAdditionalItemByVoucherCode(VoucherCodeInterface $voucherCode, CartInterface $cart, &$totalToReduce)
     {
+        if ($totalToReduce <= 0) {
+            return null;
+        }
+
         $voucher = $this->getVoucher($voucherCode);
 
         /** @var VoucherPercentInterface $voucher */
-        if(!$voucher instanceof VoucherPercentInterface){
+        if (!$voucher instanceof VoucherPercentInterface) {
+            return null;
+        }
+
+        if (!$voucher->isValid() && !$voucherCode->isRedeemed()) {
             $voucherCode->setValid(false);
             return null;
         }
 
-        if(!$voucher->isValid() && !$voucherCode->isRedeemed()){
-            $voucherCode->setValid(false);
-            return null;
-        }
-
+        $reduction = $cart->getItemsPriceTotalWithTax() * ($voucher->getPercent() / 100);
         $voucherCode->setValid(true);
 
-        return $this->createAdditionalCartItemForVoucher(
-            $cart->getItemsPriceTotalWithTax()*$voucher->getPercent(),
-            $voucherCode,
-            $voucher
-        );
+        return $this->createAdditionalCartItemForVoucher($reduction, $voucherCode, $voucher);
     }
 
     /**
@@ -81,16 +81,20 @@ class VoucherPercentCartStrategy extends AbstractVoucherCartStrategy
     {
         $quantity = $voucher->getQuantity();
 
-        return $this->createAdditionalCartItem($reduction*-1, $text, array(
-            'percentRate' => $voucher->getPercent()*100,
-            'code' => $voucherCode->getCode(),
-            'reduction' => $reduction,
-            'validFrom' => ($from = $voucher->getValidFrom()) ? $from->format('Y-m-d H:i:s') : null,
-            'validTo' => ($to = $voucher->getValidTo()) ? $to->format('Y-m-d H:i:s') : null,
-            'quantity' => $quantity,
-            'newQuantity' => $quantity-1,
-            'voucherId' => $voucher->getId(),
-            'voucherClass' => get_class($voucher)
-        ));
+        return $this->createAdditionalCartItem(
+            $reduction * -1,
+            $text,
+            array(
+                'percentRate'  => $voucher->getPercent(),
+                'code'         => $voucherCode->getCode(),
+                'reduction'    => $reduction,
+                'validFrom'    => ($from = $voucher->getValidFrom()) ? $from->format('Y-m-d H:i:s') : null,
+                'validTo'      => ($to = $voucher->getValidTo()) ? $to->format('Y-m-d H:i:s') : null,
+                'quantity'     => $quantity,
+                'newQuantity'  => $quantity - 1,
+                'voucherId'    => $voucher->getId(),
+                'voucherClass' => get_class($voucher)
+            )
+        );
     }
 }

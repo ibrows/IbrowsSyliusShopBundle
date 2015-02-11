@@ -73,7 +73,7 @@ class VoucherCode implements VoucherCodeInterface
      */
     public function __toString()
     {
-        return 'Code : "'. $this->getCode() .'" ('. ($this->isValid() ? 'valid' : 'invalid') .') '. ($this->isRedeemed() ? ' / RedeemedAt: '. $this->getRedeemedAt()->format('Y-m-d H:i:s') : null);
+        return 'Code : "' . $this->getCode() . '" (' . ($this->isValid() ? 'valid' : 'invalid') . ') ' . ($this->isRedeemed() ? ' / RedeemedAt: ' . $this->getRedeemedAt()->format('Y-m-d H:i:s') : null);
     }
 
     /**
@@ -136,5 +136,13 @@ class VoucherCode implements VoucherCodeInterface
     public function getCart()
     {
         return $this->cart;
+    }
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 }

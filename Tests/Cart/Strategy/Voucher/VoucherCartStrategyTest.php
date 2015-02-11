@@ -3,15 +3,8 @@
 namespace Ibrows\SyliusShopBundle\Tests\Cart\Strategy\Voucher;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Ibrows\SyliusShopBundle\Cart\CartManager;
-use Ibrows\SyliusShopBundle\Cart\Strategy\Voucher\VoucherCartStrategy;
-use Ibrows\SyliusShopBundle\Entity\AdditionalCartItem;
-use Ibrows\SyliusShopBundle\Entity\Cart;
 use Ibrows\SyliusShopBundle\Entity\Voucher;
 use Ibrows\SyliusShopBundle\Entity\VoucherCode;
-use Symfony\Bridge\Doctrine\RegistryInterface;
-use Doctrine\ORM\EntityRepository;
 
 class VoucherCartStrategyTest extends AbstractVoucherCartStrategyTest
 {
@@ -21,11 +14,6 @@ class VoucherCartStrategyTest extends AbstractVoucherCartStrategyTest
         $cartManager = $this->getCartManager();
 
         $this->assertTrue($this->getVoucherCartStrategy()->accept($cart, $cartManager));
-    }
-
-    public function testPrefix()
-    {
-        $this->assertSame('v', Voucher::getPrefix());
     }
 
     public function testEmptyCompute()
@@ -40,18 +28,26 @@ class VoucherCartStrategyTest extends AbstractVoucherCartStrategyTest
 
     public function testNotPayedAndPayedCompute()
     {
-        $voucherCartStrategy = $this->getVoucherCartStrategy(new ArrayCollection(array(
-            $this->getVoucher('ab', 50, new \DateTime()),
-            $this->getVoucher('cd', 100, new \DateTime()),
-            $this->getVoucher('ef', 150)
-        )));
+        $voucherCartStrategy = $this->getVoucherCartStrategy(
+            new ArrayCollection(
+                array(
+                    $this->getVoucher('ab', 50, new \DateTime()),
+                    $this->getVoucher('cd', 100, new \DateTime()),
+                    $this->getVoucher('ef', 150)
+                )
+            )
+        );
 
-        $prefix = Voucher::getPrefix();
-        $cart = $this->getCart(new ArrayCollection(array(
-            $this->getVoucherCode($prefix.'ab'),
-            $this->getVoucherCode($prefix.'cd'),
-            $this->getVoucherCode($prefix.'ef')
-        )), 5000);
+        $cart = $this->getCart(
+            new ArrayCollection(
+                array(
+                    $this->getVoucherCode('ab'),
+                    $this->getVoucherCode('cd'),
+                    $this->getVoucherCode('ef')
+                )
+            ),
+            5000
+        );
 
         $cartManager = $this->getCartManager();
         $additionalItems = $voucherCartStrategy->compute($cart, $cartManager);
@@ -59,9 +55,9 @@ class VoucherCartStrategyTest extends AbstractVoucherCartStrategyTest
         $this->assertCount(2, $additionalItems);
 
         $search = array(-50, -100);
-        foreach($additionalItems as $item){
+        foreach ($additionalItems as $item) {
             $this->assertNotSame(false, $key = array_search($item->getPriceWithTax(), $search));
-            if(false !== $key){
+            if (false !== $key) {
                 unset($search[$key]);
             }
         }
@@ -69,18 +65,26 @@ class VoucherCartStrategyTest extends AbstractVoucherCartStrategyTest
 
     public function testWrongCurrency()
     {
-        $voucherCartStrategy = $this->getVoucherCartStrategy(new ArrayCollection(array(
-            $this->getVoucher('ab', 50, new \DateTime()),
-            $this->getVoucher('cd', 100, new \DateTime(), 'EUR'),
-            $this->getVoucher('ef', 150)
-        )));
+        $voucherCartStrategy = $this->getVoucherCartStrategy(
+            new ArrayCollection(
+                array(
+                    $this->getVoucher('ab', 50, new \DateTime()),
+                    $this->getVoucher('cd', 100, new \DateTime(), 'EUR'),
+                    $this->getVoucher('ef', 150)
+                )
+            )
+        );
 
-        $prefix = Voucher::getPrefix();
-        $cart = $this->getCart(new ArrayCollection(array(
-            $this->getVoucherCode($prefix.'ab'),
-            $this->getVoucherCode($prefix.'cd'),
-            $this->getVoucherCode($prefix.'ef')
-        )), 5000);
+        $cart = $this->getCart(
+            new ArrayCollection(
+                array(
+                    $this->getVoucherCode('ab'),
+                    $this->getVoucherCode('cd'),
+                    $this->getVoucherCode('ef')
+                )
+            ),
+            5000
+        );
 
         $cartManager = $this->getCartManager();
         $additionalItems = $voucherCartStrategy->compute($cart, $cartManager);
@@ -88,9 +92,9 @@ class VoucherCartStrategyTest extends AbstractVoucherCartStrategyTest
         $this->assertCount(1, $additionalItems);
 
         $search = array(-50);
-        foreach($additionalItems as $item){
+        foreach ($additionalItems as $item) {
             $this->assertNotSame(false, $key = array_search($item->getPriceWithTax(), $search));
-            if(false !== $key){
+            if (false !== $key) {
                 unset($search[$key]);
             }
         }
@@ -98,18 +102,26 @@ class VoucherCartStrategyTest extends AbstractVoucherCartStrategyTest
 
     public function testCartAmountLowerThanVouchersCompute()
     {
-        $voucherCartStrategy = $this->getVoucherCartStrategy(new ArrayCollection(array(
-            $this->getVoucher('ab', 50, new \DateTime()),
-            $this->getVoucher('cd', 100, new \DateTime()),
-            $this->getVoucher('ef', 150)
-        )));
+        $voucherCartStrategy = $this->getVoucherCartStrategy(
+            new ArrayCollection(
+                array(
+                    $this->getVoucher('ab', 50, new \DateTime()),
+                    $this->getVoucher('cd', 100, new \DateTime()),
+                    $this->getVoucher('ef', 150)
+                )
+            )
+        );
 
-        $prefix = Voucher::getPrefix();
-        $cart = $this->getCart(new ArrayCollection(array(
-            $this->getVoucherCode($prefix.'ab'),
-            $this->getVoucherCode($prefix.'cd'),
-            $this->getVoucherCode($prefix.'ef')
-        )), 80);
+        $cart = $this->getCart(
+            new ArrayCollection(
+                array(
+                    $this->getVoucherCode('ab'),
+                    $this->getVoucherCode('cd'),
+                    $this->getVoucherCode('ef')
+                )
+            ),
+            80
+        );
 
         $cartManager = $this->getCartManager();
         $additionalItems = $voucherCartStrategy->compute($cart, $cartManager);
@@ -117,9 +129,9 @@ class VoucherCartStrategyTest extends AbstractVoucherCartStrategyTest
         $this->assertCount(2, $additionalItems);
 
         $search = array(-50, -30);
-        foreach($additionalItems as $item){
+        foreach ($additionalItems as $item) {
             $this->assertNotSame(false, $key = array_search($item->getPriceWithTax(), $search));
-            if(false !== $key){
+            if (false !== $key) {
                 unset($search[$key]);
             }
         }
@@ -127,20 +139,28 @@ class VoucherCartStrategyTest extends AbstractVoucherCartStrategyTest
 
     public function testNotCumulative()
     {
-        $voucherCartStrategy = $this->getVoucherCartStrategy(new ArrayCollection(array(
-            $this->getVoucher('ab', 50, new \DateTime()),
-            $this->getVoucher('cd', 100, new \DateTime()),
-            $this->getVoucher('ef', 150)
-        )));
+        $voucherCartStrategy = $this->getVoucherCartStrategy(
+            new ArrayCollection(
+                array(
+                    $this->getVoucher('ab', 50, new \DateTime()),
+                    $this->getVoucher('cd', 100, new \DateTime()),
+                    $this->getVoucher('ef', 150)
+                )
+            )
+        );
 
         $voucherCartStrategy->setCumulative(false);
 
-        $prefix = Voucher::getPrefix();
-        $cart = $this->getCart(new ArrayCollection(array(
-            $this->getVoucherCode($prefix.'ab'),
-            $this->getVoucherCode($prefix.'cd'),
-            $this->getVoucherCode($prefix.'ef')
-        )), 5000);
+        $cart = $this->getCart(
+            new ArrayCollection(
+                array(
+                    $this->getVoucherCode('ab'),
+                    $this->getVoucherCode('cd'),
+                    $this->getVoucherCode('ef')
+                )
+            ),
+            5000
+        );
 
         $cartManager = $this->getCartManager();
         $additionalItems = $voucherCartStrategy->compute($cart, $cartManager);
@@ -148,9 +168,9 @@ class VoucherCartStrategyTest extends AbstractVoucherCartStrategyTest
         $this->assertCount(1, $additionalItems);
 
         $search = array(-50);
-        foreach($additionalItems as $item){
+        foreach ($additionalItems as $item) {
             $this->assertNotSame(false, $key = array_search($item->getPriceWithTax(), $search));
-            if(false !== $key){
+            if (false !== $key) {
                 unset($search[$key]);
             }
         }
@@ -165,20 +185,18 @@ class VoucherCartStrategyTest extends AbstractVoucherCartStrategyTest
             $this->getVoucher('ef', 150)
         );
 
-        $prefix = Voucher::getPrefix();
         /** @var VoucherCode[] $voucherCodes */
         $voucherCodes = array(
-            $this->getVoucherCode($prefix.'ab'),
-            $this->getVoucherCode($prefix.'cd'),
-            $this->getVoucherCode($prefix.'ef')
+            $this->getVoucherCode('ab'),
+            $this->getVoucherCode('cd'),
+            $this->getVoucherCode('ef')
         );
 
         $cartTotal = 5500.50;
 
         $em = $this->getEntityManagerMock();
         $em->expects($this->exactly(2))
-            ->method('persist')
-        ;
+            ->method('persist');
 
         $voucherCartStrategy = $this->getVoucherCartStrategy(new ArrayCollection($vouchers), $em);
         $cart = $this->getCart(new ArrayCollection($voucherCodes), $cartTotal);
@@ -191,10 +209,9 @@ class VoucherCartStrategyTest extends AbstractVoucherCartStrategyTest
         $cart->expects($this->any())
             ->method('getAdditionalItemsByStrategy')
             ->with($voucherCartStrategy)
-            ->will($this->returnValue($additionalItems))
-        ;
+            ->will($this->returnValue($additionalItems));
 
-        foreach($voucherCodes as $voucherCode){
+        foreach ($voucherCodes as $voucherCode) {
             $this->assertFalse($voucherCode->isRedeemed());
         }
 
@@ -226,21 +243,19 @@ class VoucherCartStrategyTest extends AbstractVoucherCartStrategyTest
             $this->getVoucher('gh', 150)
         );
 
-        $prefix = Voucher::getPrefix();
         /** @var VoucherCode[] $voucherCodes */
         $voucherCodes = array(
-            $this->getVoucherCode($prefix.'ab'),
-            $this->getVoucherCode($prefix.'cd'),
-            $this->getVoucherCode($prefix.'ef'),
-            $this->getVoucherCode($prefix.'gh'),
+            $this->getVoucherCode('ab'),
+            $this->getVoucherCode('cd'),
+            $this->getVoucherCode('ef'),
+            $this->getVoucherCode('gh'),
         );
 
         $cartTotal = 80;
 
         $em = $this->getEntityManagerMock();
         $em->expects($this->exactly(2))
-            ->method('persist')
-        ;
+            ->method('persist');
 
         $voucherCartStrategy = $this->getVoucherCartStrategy(new ArrayCollection($vouchers), $em);
         $cart = $this->getCart(new ArrayCollection($voucherCodes), $cartTotal);
@@ -253,10 +268,9 @@ class VoucherCartStrategyTest extends AbstractVoucherCartStrategyTest
         $cart->expects($this->any())
             ->method('getAdditionalItemsByStrategy')
             ->with($voucherCartStrategy)
-            ->will($this->returnValue($additionalItems))
-        ;
+            ->will($this->returnValue($additionalItems));
 
-        foreach($voucherCodes as $voucherCode){
+        foreach ($voucherCodes as $voucherCode) {
             $this->assertFalse($voucherCode->isRedeemed());
         }
 
