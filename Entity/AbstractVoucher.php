@@ -5,12 +5,12 @@ namespace Ibrows\SyliusShopBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Ibrows\SyliusShopBundle\Model\Voucher\BaseVoucherInterface;
 use Ibrows\SyliusShopBundle\Model\Voucher\VoucherCodeInterface;
-use Symfony\Bridge\Doctrine\Validator\Constraints as DoctrineAssert;
 use Ibrows\SyliusShopBundle\Validator\Constraints as IbrowsShopAssert;
+use Symfony\Bridge\Doctrine\Validator\Constraints as DoctrineAssert;
 
 /**
  * @ORM\MappedSuperclass
- * @DoctrineAssert\UniqueEntity(fields={"code"}, message="code.already.exist" )
+ * @IbrowsShopAssert\IsUniqueVoucher(errorPath="code")
  */
 abstract class AbstractVoucher implements BaseVoucherInterface
 {
@@ -25,7 +25,6 @@ abstract class AbstractVoucher implements BaseVoucherInterface
     /**
      * @var string
      * @ORM\Column(type="string", unique=true)
-     * @IbrowsShopAssert\IsUniqueVoucher()
      */
     protected $code;
 
@@ -67,11 +66,20 @@ abstract class AbstractVoucher implements BaseVoucherInterface
     }
 
     /**
+     * @param VoucherCodeInterface $voucherCode
+     * @return bool
+     */
+    public static function acceptCode(VoucherCodeInterface $voucherCode)
+    {
+        return substr($voucherCode->getCode(), 0, strlen(static::getPrefix())) == static::getPrefix();
+    }
+
+    /**
      * @return string
      */
     public function getCodeWithPrefix()
     {
-        return static::getPrefix().$this->getCode();
+        return static::getPrefix() . $this->getCode();
     }
 
     /**
@@ -90,14 +98,5 @@ abstract class AbstractVoucher implements BaseVoucherInterface
     {
         $this->createdAt = $createdAt;
         return $this;
-    }
-
-    /**
-     * @param VoucherCodeInterface $voucherCode
-     * @return bool
-     */
-    public static function acceptCode(VoucherCodeInterface $voucherCode)
-    {
-        return substr($voucherCode->getCode(), 0, strlen(static::getPrefix())) == static::getPrefix();
     }
 }

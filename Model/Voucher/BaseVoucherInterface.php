@@ -15,6 +15,11 @@ interface BaseVoucherInterface
     public function getId();
 
     /**
+     * @return string
+     */
+    public function getCode();
+
+    /**
      * @param VoucherCodeInterface $voucherCode
      * @return bool
      */

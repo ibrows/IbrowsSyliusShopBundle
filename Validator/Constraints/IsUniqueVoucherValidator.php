@@ -3,6 +3,8 @@
 namespace Ibrows\SyliusShopBundle\Validator\Constraints;
 
 use Doctrine\Common\Persistence\ObjectRepository;
+use Ibrows\SyliusShopBundle\Model\Voucher\BaseVoucherInterface;
+use Ibrows\SyliusShopBundle\Model\Voucher\VoucherInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
@@ -29,18 +31,36 @@ class IsUniqueVoucherValidator extends ConstraintValidator
     }
 
     /**
-     * {@inheritdoc}
+     * @param BaseVoucherInterface $entity
+     * @param IsUniqueVoucher|Constraint $constraint
      */
-    public function validate($value, Constraint $constraint)
+    public function validate($entity, Constraint $constraint)
     {
-        if(
-            $this->voucherRepository->findOneBy(array('code' => $value)) ||
-            $this->percentVoucherRepository->findOneBy(array('code' => $value))
-        ) {
-            $this->context->addViolation(
-                $constraint->message,
-                array('%string%' => $value)
-            );
+        if (!$entity instanceof BaseVoucherInterface) {
+            return;
+        }
+
+        /** @var BaseVoucherInterface[] $alreadyExistings */
+        $alreadyExistings = array();
+
+        /** @var VoucherInterface $alreadyExisting */
+        if ($alreadyExisting = $this->voucherRepository->findOneBy(array('code' => $entity->getCode()))) {
+            $alreadyExistings[] = $alreadyExisting;
+        }
+
+        /** @var VoucherInterface $alreadyExisting */
+        if ($alreadyExisting = $this->percentVoucherRepository->findOneBy(array('code' => $entity->getCode()))) {
+            $alreadyExistings[] = $alreadyExisting;
+        }
+
+        foreach ($alreadyExistings as $alreadyExisting) {
+            if (get_class($alreadyExisting) !== get_class($entity) || $alreadyExisting->getId() !== $entity->getId()) {
+                $this->context->addViolationAt(
+                    $constraint->errorPath,
+                    $constraint->message,
+                    array('%string%' => $entity->getCode())
+                );
+            }
         }
     }
 }
