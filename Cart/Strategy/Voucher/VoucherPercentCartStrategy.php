@@ -9,6 +9,11 @@ use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Ibrows\SyliusShopBundle\Model\Voucher\VoucherCodeInterface;
 use Ibrows\SyliusShopBundle\Model\Voucher\VoucherPercentInterface;
 
+/**
+ * Class VoucherPercentCartStrategy
+ * @package Ibrows\SyliusShopBundle\Cart\Strategy\Voucher
+ * @deprecated use VoucherPercentGroupedTaxCartStrategy
+ */
 class VoucherPercentCartStrategy extends AbstractVoucherCartStrategy
 {
     /**

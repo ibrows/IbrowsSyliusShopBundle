@@ -23,7 +23,7 @@ class VoucherCartStrategy extends AbstractVoucherCartStrategy
         foreach ($cart->getAdditionalItemsByStrategy($this) as $additionalItem) {
             $data = $additionalItem->getStrategyData();
 
-            foreach (array('newValue', 'voucherId', 'voucherClass') as $neededKey) {
+            foreach (array('newValue', 'voucherId') as $neededKey) {
                 if (!array_key_exists($neededKey, $data)) {
                     throw new VoucherRedemptionException("Key $neededKey not found");
                 }
@@ -34,24 +34,14 @@ class VoucherCartStrategy extends AbstractVoucherCartStrategy
                 throw new VoucherRedemptionException("Voucher #" . $data['voucherId'] . " not found");
             }
 
-            $voucher->setValue($data['newValue']);
+            if ($voucher->hasQuantity()) {
+                $voucher->setQuantity($voucher->getQuantity() - 1);
+            } else {
+                $voucher->setValue($data['newValue']);
+            }
+
             $this->voucherEntityManager->persist($voucher);
         }
-    }
-
-    /**
-     * @param VoucherCodeInterface $voucherCode
-     * @return VoucherInterface
-     */
-    protected function getValidVoucher(VoucherCodeInterface $voucherCode)
-    {
-        $voucher = $this->getVoucher($voucherCode);
-
-        if (!$voucher instanceof VoucherInterface OR !$voucher->isValid()) {
-            return null;
-        }
-
-        return $voucher;
     }
 
     /**
@@ -77,9 +67,16 @@ class VoucherCartStrategy extends AbstractVoucherCartStrategy
             return null;
         }
 
-        if ($cart->getCurrency() != $voucher->getCurrency()) {
+        if ($voucher->hasCurrency() && $cart->getCurrency() != $voucher->getCurrency()) {
             $voucherCode->setValid(false);
             return null;
+        }
+
+        if($voucher->hasQuantity() && $voucher->hasMinimumOrderValue()){
+            if($cart->getTotal() < $voucher->getMinimumOrderValue()){
+                $voucherCode->setValid(false);
+                return null;
+            }
         }
 
         $voucherCode->setValid(true);
@@ -94,6 +91,21 @@ class VoucherCartStrategy extends AbstractVoucherCartStrategy
         }
 
         return $this->createAdditionalCartItemForVoucher($reduction, $voucherCode, $voucher);
+    }
+
+    /**
+     * @param VoucherCodeInterface $voucherCode
+     * @return VoucherInterface
+     */
+    protected function getValidVoucher(VoucherCodeInterface $voucherCode)
+    {
+        $voucher = $this->getVoucher($voucherCode);
+
+        if (!$voucher instanceof VoucherInterface OR !$voucher->isValid()) {
+            return null;
+        }
+
+        return $voucher;
     }
 
     /**

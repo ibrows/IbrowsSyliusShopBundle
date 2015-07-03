@@ -15,14 +15,11 @@ interface VoucherInterface extends BaseVoucherInterface
      */
     public function setValue($value);
 
-    /**
-     * @param string $currency
-     * @return VoucherInterface
-     */
-    public function setCurrency($currency);
+    public function getPayedAt();
 
     /**
-     * @return string
+     * @param \DateTime $payedAt
+     * @return mixed
      */
-    public function getCurrency();
+    public function setPayedAt(\DateTime $payedAt = null);
 }

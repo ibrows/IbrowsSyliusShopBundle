@@ -15,12 +15,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints as DoctrineAssert;
 class Voucher extends AbstractVoucher implements VoucherInterface, ProductInterface
 {
     /**
-     * @var string
-     * @ORM\Column(type="string")
-     */
-    protected $currency;
-
-    /**
      * @var float
      * @ORM\Column(type="decimal")
      */
@@ -138,7 +132,7 @@ class Voucher extends AbstractVoucher implements VoucherInterface, ProductInterf
      */
     public function isValid()
     {
-        return $this->isPayed() && $this->getValue() > 0;
+        return parent::isValid() && $this->isPayed() && $this->getValue() > 0;
     }
 
     /**
