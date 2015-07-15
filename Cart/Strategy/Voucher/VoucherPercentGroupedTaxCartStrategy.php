@@ -45,6 +45,12 @@ class VoucherPercentGroupedTaxCartStrategy extends AbstractCartStrategy implemen
     protected $doctrine;
 
     /**
+     * @var bool|float
+     * Set to 0.05 for rounding to 5 cents (Switzerland for example)
+     */
+    protected $roundToNearest = false;
+
+    /**
      * @param RegistryInterface $doctrine
      * @param string $voucherPercentClass
      */
@@ -139,6 +145,22 @@ class VoucherPercentGroupedTaxCartStrategy extends AbstractCartStrategy implemen
     }
 
     /**
+     * @return bool|float
+     */
+    public function getRoundToNearest()
+    {
+        return $this->roundToNearest;
+    }
+
+    /**
+     * @param bool|float $roundToNearest
+     */
+    public function setRoundToNearest($roundToNearest)
+    {
+        $this->roundToNearest = $roundToNearest;
+    }
+
+    /**
      * @param CartInterface $cart
      * @param VoucherCodeInterface $voucherCode
      * @param VoucherPercentInterface $voucher
@@ -164,7 +186,7 @@ class VoucherPercentGroupedTaxCartStrategy extends AbstractCartStrategy implemen
             $total += $item->getTotal();
         }
 
-        if($voucher->hasMinimumOrderValue() && $total < $voucher->getMinimumOrderValue()){
+        if ($voucher->hasMinimumOrderValue() && $total < $voucher->getMinimumOrderValue()) {
             $voucherCode->setValid(false);
             return null;
         }
@@ -174,6 +196,10 @@ class VoucherPercentGroupedTaxCartStrategy extends AbstractCartStrategy implemen
         $items = array();
         foreach ($taxGroups as $taxRate => $value) {
             $reduction = $value / 100 * $voucher->getPercent() * -1;
+            if (false !== ($roundToNearest = $this->getRoundToNearest())) {
+                $reduction = $this->roundToNearest($reduction, $roundToNearest);
+            }
+
             $item = $this->createAdditionalCartItem(
                 $reduction,
                 null,
