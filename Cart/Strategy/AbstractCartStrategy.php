@@ -149,4 +149,14 @@ abstract class AbstractCartStrategy implements CartStrategyInterface
         }
         return $costs;
     }
+
+    /**
+     * @param float $num
+     * @param int|float $nearest
+     * @return float
+     */
+    public static function roundToNearest($num, $nearest = 0.05)
+    {
+        return round($num / $nearest) * $nearest;
+    }
 }
