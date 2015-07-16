@@ -182,8 +182,10 @@ class VoucherPercentGroupedTaxCartStrategy extends AbstractCartStrategy implemen
             if (!isset($taxGroups[$taxRate])) {
                 $taxGroups[$taxRate] = 0;
             }
-            $taxGroups[$taxRate] += $item->getTotal();
-            $total += $item->getTotal();
+
+            $itemPrice = $this->getTaxincl() ? $item->getTotalWithTaxPrice() : $item->getTotal();
+            $taxGroups[$taxRate] += $itemPrice;
+            $total += $itemPrice;
         }
 
         if ($voucher->hasMinimumOrderValue() && $total < $voucher->getMinimumOrderValue()) {
@@ -217,7 +219,7 @@ class VoucherPercentGroupedTaxCartStrategy extends AbstractCartStrategy implemen
                 )
             );
 
-            $item->setTaxInclusive(false);
+            $item->setTaxInclusive($this->getTaxincl());
             $item->setTaxRate($taxRate);
 
             $items[] = $item;
