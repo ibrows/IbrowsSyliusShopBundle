@@ -1,14 +1,27 @@
 {% extends 'IbrowsSyliusShopBundle:Wizard:basewizard.html.twig' %}
+{% import 'IbrowsSyliusShopBundle::macros.html.twig' as macros %}
 
 {% block content %}
     <h1>Address</h1>
     <form action="{{ url('wizard_address') }}" method="POST">
-        <h2>Delivery</h2>
-        {{ form_widget(deliveryAddressForm) }}
-
-        <h2>Invoice</h2>
-        {{ form_widget(invoiceAddressForm) }}
-
+        <div>
+            <h2>Lieferadresse</h2>
+            {{ form_widget(deliveryAddressForm) }}
+        </div>
+        <div>
+            <h2>Lieferart</h2>
+            {{ macros.renderStrategyOptionForm(deliveryOptionStrategyForm) }}
+        </div>
+        <div>
+            <h2>Rechnungsadresse gleich Lieferadresse</h2>
+            {{ form_errors(invoiceSameAsDeliveryForm) }}
+            {{ form_widget(invoiceSameAsDeliveryForm.invoiceSameAsDelivery) }}
+            {{ form_rest(invoiceSameAsDeliveryForm) }}
+        </div>
+        <div>
+            <h2>Rechungsadresse</h2>
+            {{ form_widget(invoiceAddressForm) }}
+        </div>
         <input class="btn" type="submit" name="address" value="continue">
     </form>
 {% endblock content %}

@@ -1,0 +1,8 @@
+checkout:
+  wizard:
+    basket: Warenkorb
+    address: Adresse
+    payment_instruction: Zahlungsart
+    summary: Zusammenfassung
+    payment: Bezahlung
+    notification: Bestätigung

@@ -48,6 +48,23 @@ class TwigExtension extends \Twig_Extension
         );
     }
 
+    public function getFilters()
+    {
+        return array(
+            'price' => new \Twig_SimpleFilter('price', array($this, 'price'), array(
+                'is_safe' => array('html'),
+                'needs_environment' => true
+            ))
+        );
+    }
+
+    public function price(\Twig_Environment $twig, $num)
+    {
+        return $twig->render('IbrowsSyliusShopBundle:Misc:price.html.twig', array(
+            'price' => $num
+        ));
+    }
+
     /**
      * @return CurrentCartManager
      */

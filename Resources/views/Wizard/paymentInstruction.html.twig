@@ -1,10 +1,11 @@
 {% extends 'IbrowsSyliusShopBundle:Wizard:basewizard.html.twig' %}
+{% import 'IbrowsSyliusShopBundle::macros.html.twig' as macros %}
 
 {% block content %}
-    Payment
-    <form action="{{ url('wizard_payment_instruction') }}" method="post" {{ form_enctype(form) }}>
-    {{ form_errors(form) }}
-    {{ form_rest(form) }}
+    <h1>Zahlungsart</h1>
+    <form action="{{ url('wizard_payment_instruction') }}" method="post" {{ form_enctype(paymentOptionStrategyForm) }}>
+        {{ form_errors(paymentOptionStrategyForm) }}
+        {{ macros.renderStrategyOptionForm(paymentOptionStrategyForm) }}
     <input type="submit" />
     </form>
 {% endblock content %}

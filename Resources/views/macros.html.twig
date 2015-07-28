@@ -1,8 +1,8 @@
 {% macro renderStrategyOptionForm(strategyOptionForm) %}
     <div class="strategies" data-strategies>
         {{ form_errors(strategyOptionForm) }}
-        {% for choicekey, choice in strategyOptionForm.strategyServiceId.vars.choices %}
-            {% set strategy = choice.label %}
+        {% for choicekey, choice in strategyOptionForm.children.strategyServiceId.vars.choices %}
+            {% set strategy = choice.data %}
             {% set strategyChoice = strategyOptionForm.strategyServiceId[choicekey] %}
             <div class="strategy" data-strategy>
                 <div class="parent" data-parent {% if strategy.parentVisible != true %}style="display:none"{% endif %}>

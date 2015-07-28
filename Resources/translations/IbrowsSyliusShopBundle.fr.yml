@@ -1,0 +1,113 @@
+ibrows:
+  basket:
+    labels:
+      unitprice: Prix unitaire
+      name: Désignation
+      quantity: Quantité
+      total: Totalement
+      delete: Effacement
+
+  checkout:
+    wizard:
+      subtotal: Total
+
+  cart:
+    strategy:
+      delivery:
+        post: Poste
+
+signup:
+  title: S'inscrire
+  username: nom d'utilisateur
+  password: mot de passe
+  new: Nouveau client
+  text: Vous n'êtes pas encore client claro? Ici, vous pouvez vous enregistrer en seulement quelques clics.
+register:
+  title: Pas encore client?
+  sitetitle: s'enregistrer nouveau client / utilisateur
+  teaser: Choisissez ici un nom d'utilisateur et un mot de passe de votre choix.<br> Veuillez compléter les champs marqués d'un *.
+  link: se connecter
+edit:
+  password:
+    title: modifier le mot de passe
+  data:
+    title: données personnelles
+login:
+  title: Se connecter
+  teaser: Ici, vous pouvez vous connecter avec votre compte d'utilisateur existant.
+  forgotpw: j'ai oublié mon mot de passe
+forms:
+  registration:
+      error:
+        no_unique_existing_customer_found: le client n'a pas pu être trouvé
+  label:
+    gender: titre
+    first_name: prénom
+    last_name: nom
+    company_name: entreprise
+    street: route
+    house_nr: n° rue
+    po_box: case postale
+    zip: NPA
+    city: lieu
+    country: pays
+    tel_nr: n° de téléphone
+    mobile_nr: n° de natel
+    birthday: date de naissance
+    submit: enregistrer
+    newsletter_claro: Oui, je souhaite régulièrement recevoir des informations et des nouveautés sur claro et m'abonne à la newsletter.
+    newsletter_unica: Oui, je souhaite régulièrement recevoir des informations et des nouveautés sur UNICA et m'abonne à la newsletter "(disponible en allemand uniquement)".
+    agb: Oui, j'accepte les termes et conditions.
+    email: adresse e-mail
+    submit: s'inscrire
+    existing_customer_id: n° client ou adresse e-mail
+    newsletter_signup: Ok
+    newsletter_email: adresse e-mail
+
+gender:
+    male: Monsieur
+    female: Madame
+registration:
+  submit: envoyer
+existing:
+  title: client régulier
+  info: Vous êtes déjà client claro mais ne possedez pas d'identifiant pour la boutique en ligne?
+  label: n° client ou adresse e-mail
+  submit: s'inscrire
+  new_register: Pas encore client claro? <br> <a href="%link%">s'inscrire maintenant</a>.
+form:
+  country:
+    ch: Suisse
+    li: Liechtenstein
+
+title: titre
+firstname: prénom
+company: entreprise
+street: route
+city: lieu
+phone: n° de téléphone
+lastname: nom
+Zip: NPA
+country: pays
+email: e-mail
+TITLE_MAN: Monsieur
+TITLE_WOMAN: Madame
+TITLE_COMPANY: entreprise
+ibrows.cart.strategy.delivery.post: envoi postale
+ibrows.cart.strategy.saferpay: %method% (Saferpay)
+ibrows.cart.strategy.invoice: par facture
+invoiceSameAsDelivery:
+    yes: oui
+    no: non
+Method: méthode de paiement
+Remark: remarques
+'Delivery date': date de livraison souhaitée
+'Terms and conditions': accepter les conditions générales
+Username: nom d'utilisateur
+'Remember me': 'se souvenir du mot de passe'
+Password: mot de passe
+profile:
+  edit:
+    submit: envoyer
+newsletter_success:
+  text: Merci pour votre intérêt à nos produits. Vous allez dorénavant recevoir notre newsletter.

@@ -14,7 +14,7 @@ abstract class AbstractType extends BaseType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'translation_domain' => 'Forms'
+            'translation_domain' => 'IbrowsSyliusShopBundle'
         ));
     }
 }

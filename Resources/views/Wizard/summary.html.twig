@@ -19,6 +19,10 @@
     <h2>Total</h2>{{ cart.total }}
     <h2>deliveryAddress</h2>{{ cart.deliveryAddress }}
     <h2>invoiceAddress</h2>{{ cart.invoiceAddress }}
-    <h2>deliveryOption</h2>{{ cart.deliveryOption }}
-    <h2>paymentOptions</h2>{{ cart.paymentOptions }}
+    <h2>deliveryOption</h2>{{ dump(cart.deliveryOptionStrategyServiceData) }}
+    <h2>paymentOptions</h2>{{ dump(cart.paymentOptionStrategyServiceData) }}
+    {{ form_start(summaryForm) }}
+    {{ form_row(summaryForm.termsAndConditions) }}
+    <input type="submit">
+    {{ form_end(summaryForm) }}
 {% endblock content %}

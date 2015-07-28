@@ -1,17 +1,98 @@
 {% extends 'IbrowsSyliusShopBundle:Wizard:basewizard.html.twig' %}
-
+{% trans_default_domain 'IbrowsSyliusShopBundle' %}
 {% block content %}
     <h1>Basket</h1>
     {% if cart.items|length <= 0 %}
-        <div>
-            Empty cart.
-        </div>
+        <div class="empty-cart"><h2>{{ 'ibrows.cart.empty'|trans }}</h2></div>
     {% else %}
-        <form method="post" action="{{ url('wizard_basket') }}" {{ form_enctype(basketForm) }}>
-            <input type="submit" name="refresh" value="refresh">
-            <input type="submit" name="continue" value="continue">
+        <div id="basketContent">
+            {% block basketcontent %}
+                {{ form_errors(basketForm) }}
+                <form method="post" id="basketForm" {{ form_enctype(basketForm) }}>
+                    <div class="wizard-product-labels row hidden-xs">
+                        <div class="unitprice-label col-sm-offset-2 col-sm-2">
+                            {{ 'ibrows.basket.labels.unitprice'|trans }}
+                        </div>
+                        <div class="name-label col-sm-2">
+                            {{ 'ibrows.basket.labels.name'|trans }}
+                        </div>
+                        <div class="amount-label col-sm-3">
+                            {{ 'ibrows.basket.labels.quantity'|trans }}
 
-            {{ form_widget(basketForm) }}
-        </form>
+                        </div>
+                        <div class="total-label col-sm-3">
+                            {{ 'ibrows.basket.labels.total'|trans }}
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        {% for itemForm in basketForm.items %}
+                            <div class="item row{{ loop.last ? " last": "" }}">
+                                {% set item = itemForm.vars.data %}
+                                {% set article = item.product %}
+                                <div class="image col-xs-6 col-sm-2">
+                                    put image here
+                                    {#
+                                        Ex: {% media article.image, 'product_list' %}
+                                    #}
+                                </div>
+                                <div class="unitprice margin-top col-xs-6 col-sm-2">
+                                    <div class="name-label col-xs-12 visible-xs">
+                                        {{ 'ibrows.basket.labels.unitprice'|trans }}
+                                    </div>
+                                    {{ item.unitPrice | price }}
+                                </div>
+                                <div class="name margin-top col-xs-6 col-sm-2">
+                                    <div class="amount-label col-xs-12 visible-xs">
+                                        {{ 'ibrows.basket.labels.name'|trans }}
+                                    </div>
+                                    Link here:
+                                    {#
+                                        Ex: <a href="{{ url('article_show', {article: article.id}) }}">{{ article.name }}</a>
+                                    #}
+                                    {{ article.name }}
+                                </div>
+                                <div class="amount margin-top row col-xs-6 col-sm-3" data-quantity-change-container>
+                                    <div class="amount-label col-xs-12 visible-xs">
+                                        {{ 'ibrows.basket.labels.quantity'|trans }}
+                                    </div>
+                                    <div class="quantityInput">
+                                        <div class="quantity-inner " data-quantity-input-container>
+                                            {{ form_widget(itemForm.quantity, {'class': 'form-control'}) }}
+                                            <a href="#" class="quantityButton quantityAdd" data-quantity-change="1">
+                                                <span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+                                            </a>
+                                            <a href="#" class="quantityButton quantityRemove" data-quantity-change="-1">
+                                                <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+                                            </a>
+                                        </div>
+                                        <div class="delete">
+                                            {{ form_widget(itemForm.delete, {label: 'ibrows.basket.labels.delete'|trans}) }}
+                                            {% do itemForm.delete.setRendered %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="total margin-top col-xs-6 col-sm-3">
+                                    <div class="total-label col-xs-12 visible-xs">
+                                        {{ 'ibrows.basket.labels.total'|trans }}
+                                    </div>
+                                    {{ item.totalWithTaxPrice | price }}
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                        <div class="sum row">
+                            <div class="col-xs-12 col-sm-offset-2 col-sm-2 wizard-total text">{{ 'ibrows.checkout.wizard.subtotal'|trans }}</div>
+                            <div class="col-xs-12 col-sm-offset-6 col-sm-2 wizard-total unit">{{ cart.itemsPriceTotalWithTax | price }}</div>
+                        </div>
+
+                        <div class="wizard-buttons col-xs-12">
+                            {{ form_widget(basketForm.continue, {'attr': {'class': 'btn col-xs-12 col-sm-4 col-md-2 pull-right btn-default', label: 'cart.ibrows.basket.continue'} }) }}
+                        </div>
+                        {{ form_rest(basketForm) }}
+                    </div>
+                </form>
+            {% endblock %}
+        </div>
     {% endif %}
 {% endblock content %}

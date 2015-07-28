@@ -4,8 +4,10 @@ namespace Ibrows\SyliusShopBundle\Form;
 
 use Ibrows\SyliusShopBundle\Cart\CartManager;
 use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartDefaultOptionStrategyInterface;
+use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
 use Symfony\Component\Form\FormBuilderInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartFormStrategyInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class AbstractCartFormStrategyType extends AbstractType
 {
@@ -32,26 +34,35 @@ abstract class AbstractCartFormStrategyType extends AbstractType
 
         $choices = array();
         $default = null;
-        foreach($strategies as $strategy){
+        foreach ($strategies as $strategy) {
             $choices[$strategy->getServiceId()] = $strategy;
-            if($strategy instanceof CartDefaultOptionStrategyInterface && $strategy->isDefault()){
+            if ($strategy instanceof CartDefaultOptionStrategyInterface && $strategy->isDefault()) {
                 $default = $strategy->getServiceId();
             }
         }
 
         $strategyOptions = array(
-            'choices' => $choices,
+            'choice_list' => new ArrayChoiceList(
+                $choices,
+                function ($val) {
+                    if (!is_string($val)) {
+                        return $val->getServiceId();
+                    }
+
+                    return $val;
+                }
+            ),
             'multiple' => false,
             'expanded' => true
         );
 
-        if($default && (!isset($options['data']) OR $options['data'] == null)){
+        if ($default && (!isset($options['data']) or $options['data'] == null)) {
             $strategyOptions['data'] = $default;
         }
 
         $builder->add('strategyServiceId', 'choice', $strategyOptions);
 
-        foreach($strategies as $strategy){
+        foreach ($strategies as $strategy) {
             $builder->add($strategy->getName(), $strategy);
         }
     }

@@ -1,1 +1,113 @@
-{  }
+ibrows:
+  basket:
+    labels:
+      unitprice: Stückpreis
+      name: Bezeichnung
+      quantity: Menge
+      total: Total
+      delete: Löschen
+
+  checkout:
+    wizard:
+      subtotal: Zwischentotal
+
+  cart:
+    strategy:
+      delivery:
+        post: Post
+    empty: Ihr Warenkorb ist leer.
+
+signup:
+  title: Registrieren
+  username: Benutzername
+  password: Passwort
+  new: Neukunde
+  text: Sie sind noch kein claro Kunde? Hier können Sie sich schnell und einfach registrieren.
+register:
+  title: Noch nicht Kunde?
+  sitetitle: Anmeldung Neukunde / Benutzer
+  teaser: Wählen Sie einen beliebigen Benutzername und ein Passwort.<br> Bitte füllen Sie alle mit * gekennzeichneten Felder korrekt aus.
+  link: Registrieren
+edit:
+  password:
+    title: Passwort ändern
+  data:
+    title: Persönliche Daten
+login:
+  title: Anmeldung
+  teaser: Hier können Sie sich mit Ihrem bestehenden Konto anmelden
+  forgotpw: Passwort vergessen
+forms:
+  registration:
+      error:
+        no_unique_existing_customer_found: Kunde wurde nicht gefunden
+  label:
+    gender: Anrede
+    first_name: Vorname
+    last_name: Nachname
+    company_name: Firma
+    street: Strasse
+    house_nr: Hausnummer
+    po_box: Postfach
+    zip: Postleizahl
+    city: Stadt
+    country: Land
+    tel_nr: Telefonnummer
+    mobile_nr: Mobilenummer
+    birthday: Geburtstag
+    submit: regiestrieren
+    newsletter_claro: Ja, ich möchte regelmässig Informationen und Neuheiten über claro erhalten und abonniere den Newsletter.
+    newsletter_unica: Ja, ich möchte regelmässig Informationen und Neuheiten über UNICA erhalten und abonniere den Newsletter.
+    agb: Ja, ich akkzeptiere die Geschäftsbedingungen.
+    email: E-Mail-Adresse
+    submit: Registrieren
+    existing_customer_id: Kundenummer oder Emailadresse
+    newsletter_signup: Ok
+    newsletter_email: E-Mail-Adresse
+gender:
+    male: Herr
+    female: Frau
+registration:
+  submit: Senden
+existing:
+  title: Bestandskunden
+  info: Sind sie bereits claro Kunde, haben aber noch kein Shop-Login?
+  label: Kundennummer oder Emailadresse
+  submit: Registrieren
+  new_register: Noch kein claro Kunde? <br> <a href="%link%">Hier</a> neu registrieren.
+form:
+  country:
+    ch: Schweiz
+    li: Liechtenstein
+
+title: Anrede
+firstname: Vorname
+company: Firma
+street: Strasse
+city: Stadt
+phone: Telefonnummer
+lastname: Nachname
+Zip: Postleitzahl
+country: Land
+email: E-Mail
+TITLE_MAN: Herr
+TITLE_WOMAN: Frau
+TITLE_COMPANY: Firma
+ibrows.cart.strategy.delivery.post: Post-Versand
+ibrows.cart.strategy.saferpay: %method% (Saferpay)
+ibrows.cart.strategy.invoice: Rechnung
+invoiceSameAsDelivery:
+    yes: Ja
+    no: Nein
+Method: Zahlungsmethode
+Remark: Bemerkungen
+'Delivery date': Gewünschtes Lieferdatum
+'Terms and conditions': Allgemeine Geschäftsbedigungen akzeptieren
+Username: Benutzername
+'Remember me': 'Login merken'
+Password: Passwort
+profile:
+  edit:
+    submit: Senden
+newsletter_success:
+  text: Vielen Dank Sie haben sich erfolgreich für den Newsletter angemeldet.
