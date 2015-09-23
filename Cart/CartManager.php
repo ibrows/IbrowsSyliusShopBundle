@@ -584,6 +584,24 @@ class CartManager
         }
 
         foreach($this->strategies as $strategy){
+            if(
+                $strategy === $this->getSelectedPaymentOptionStrategyService()
+                && (!$strategy->isPossible($cart, $this) || !$strategy->isEnabled())
+            ){
+                $cart->setPaymentOptionStrategyServiceId(null);
+                $cart->setPaymentOptionStrategyServiceData(null);
+            }
+
+            if(
+                $strategy === $this->getSelectedDeliveryOptionStrategyService()
+                && (!$strategy->isPossible($cart, $this) || !$strategy->isEnabled())
+            ){
+                $cart->setDeliveryOptionStrategyServiceId(null);
+                $cart->setDeliveryOptionStrategyServiceData(null);
+            }
+        }
+
+        foreach($this->strategies as $strategy){
             foreach($cart->getAdditionalItemsByStrategy($strategy) as $item){
                 $this->removeAdditionalItem($item);
             }
