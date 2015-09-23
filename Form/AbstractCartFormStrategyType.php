@@ -45,6 +45,10 @@ abstract class AbstractCartFormStrategyType extends AbstractType
             'choice_list' => new ArrayChoiceList(
                 $choices,
                 function ($val) {
+                    if(is_null($val)){
+                        return null;
+                    }
+
                     if (!is_string($val)) {
                         return $val->getServiceId();
                     }
