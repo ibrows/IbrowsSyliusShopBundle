@@ -79,7 +79,6 @@ form:
   country:
     ch: Schweiz
     li: Liechtenstein
-
 title: Anrede
 firstname: Vorname
 company: Firma
@@ -102,7 +101,7 @@ invoiceSameAsDelivery:
 Method: Zahlungsmethode
 Remark: Bemerkungen
 'Delivery date': Gewünschtes Lieferdatum
-'Terms and conditions': Allgemeine Geschäftsbedigungen akzeptieren
+'Terms and conditions': Allgemeine Geschäftsbedingungen akzeptieren
 Username: Benutzername
 'Remember me': 'Login merken'
 Password: Passwort
@@ -111,3 +110,4 @@ profile:
     submit: Senden
 newsletter_success:
   text: Vielen Dank Sie haben sich erfolgreich für den Newsletter angemeldet.
+basketForm.continue : Weiter
