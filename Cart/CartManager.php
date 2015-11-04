@@ -585,7 +585,7 @@ class CartManager
 
         foreach($this->strategies as $strategy){
             if(
-                $strategy === $this->getSelectedPaymentOptionStrategyService()
+                $strategy->getServiceId() === $cart->getPaymentOptionStrategyServiceId()
                 && (!$strategy->isPossible($cart, $this) || !$strategy->isEnabled())
             ){
                 $cart->setPaymentOptionStrategyServiceId(null);
@@ -593,7 +593,7 @@ class CartManager
             }
 
             if(
-                $strategy === $this->getSelectedDeliveryOptionStrategyService()
+                $strategy->getServiceId() === $cart->getDeliveryOptionStrategyServiceId()
                 && (!$strategy->isPossible($cart, $this) || !$strategy->isEnabled())
             ){
                 $cart->setDeliveryOptionStrategyServiceId(null);
