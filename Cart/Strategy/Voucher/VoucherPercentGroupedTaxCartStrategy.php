@@ -1,14 +1,5 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * Project: claro.
- *
- * User: mikemeier
- * Date: 03.07.15
- * Time: 14:05
- */
-
 namespace Ibrows\SyliusShopBundle\Cart\Strategy\Voucher;
 
 use Doctrine\ORM\EntityManager;
@@ -52,7 +43,7 @@ class VoucherPercentGroupedTaxCartStrategy extends AbstractCartStrategy implemen
 
     /**
      * @param RegistryInterface $doctrine
-     * @param string            $voucherPercentClass
+     * @param string $voucherPercentClass
      */
     public function __construct(RegistryInterface $doctrine, $voucherPercentClass)
     {
@@ -65,7 +56,7 @@ class VoucherPercentGroupedTaxCartStrategy extends AbstractCartStrategy implemen
 
     /**
      * @param CartInterface $cart
-     * @param CartManager   $cartManager
+     * @param CartManager $cartManager
      *
      * @return bool
      */
@@ -76,7 +67,7 @@ class VoucherPercentGroupedTaxCartStrategy extends AbstractCartStrategy implemen
 
     /**
      * @param CartInterface $cart
-     * @param CartManager   $cartManager
+     * @param CartManager $cartManager
      *
      * @return AdditionalCartItemInterface[]
      */
@@ -111,7 +102,7 @@ class VoucherPercentGroupedTaxCartStrategy extends AbstractCartStrategy implemen
 
     /**
      * @param CartInterface $cart
-     * @param CartManager   $cartManager
+     * @param CartManager $cartManager
      */
     public function redeemVouchers(CartInterface $cart, CartManager $cartManager)
     {
@@ -163,8 +154,8 @@ class VoucherPercentGroupedTaxCartStrategy extends AbstractCartStrategy implemen
     }
 
     /**
-     * @param CartInterface           $cart
-     * @param VoucherCodeInterface    $voucherCode
+     * @param CartInterface $cart
+     * @param VoucherCodeInterface $voucherCode
      * @param VoucherPercentInterface $voucher
      *
      * @return AdditionalCartItemInterface[]|null
@@ -211,16 +202,16 @@ class VoucherPercentGroupedTaxCartStrategy extends AbstractCartStrategy implemen
                 $reduction,
                 null,
                 array(
-                    'percentRate' => $voucher->getPercent(),
-                    'code' => $voucherCode->getCode(),
-                    'reduction' => $reduction,
-                    'validFrom' => ($from = $voucher->getValidFrom()) ? $from->format('Y-m-d H:i:s') : null,
-                    'validTo' => ($to = $voucher->getValidTo()) ? $to->format('Y-m-d H:i:s') : null,
-                    'quantity' => $quantity,
-                    'voucherId' => $voucher->getId(),
+                    'percentRate'  => $voucher->getPercent(),
+                    'code'         => $voucherCode->getCode(),
+                    'reduction'    => $reduction,
+                    'validFrom'    => ($from = $voucher->getValidFrom()) ? $from->format('Y-m-d H:i:s') : null,
+                    'validTo'      => ($to = $voucher->getValidTo()) ? $to->format('Y-m-d H:i:s') : null,
+                    'quantity'     => $quantity,
+                    'voucherId'    => $voucher->getId(),
                     'voucherClass' => get_class($voucher),
-                    'taxRate' => $taxRate,
-                    'value' => $value,
+                    'taxRate'      => $taxRate,
+                    'value'        => $value,
                 )
             );
 

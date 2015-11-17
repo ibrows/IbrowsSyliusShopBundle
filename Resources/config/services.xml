@@ -4,15 +4,15 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
-        <parameters>
-        	<parameter key="ibrows_sylius_shop.cart.itemresolver.class">Ibrows\SyliusShopBundle\Cart\BaseItemResolver</parameter>
-        	<parameter key="ibrows_sylius_shop.cart.manager.class">Ibrows\SyliusShopBundle\Cart\CartManager</parameter>
-
-        	<parameter key="ibrows_syliusshop.cartitem.class">Ibrows\SyliusShopBundle\Entity\CartItem</parameter>
-            <parameter key="ibrows_sylius_shop.currentcart.manager.class">Ibrows\SyliusShopBundle\Cart\CurrentCartManager</parameter>
-            <parameter key="ibrows_sylius_shop.logininformation.class">Ibrows\SyliusShopBundle\Login\LoginInformation</parameter>
-            <parameter key="ibrows_sylius_shop.product.skufield">sku</parameter>
-         </parameters>
+    <parameters>
+        <parameter key="ibrows_sylius_shop.cart.itemresolver.class">Ibrows\SyliusShopBundle\Cart\BaseItemResolver</parameter>
+        <parameter key="ibrows_sylius_shop.cart.manager.class">Ibrows\SyliusShopBundle\Cart\CartManager</parameter>
+        <parameter key="ibrows_syliusshop.cartitem.class">Ibrows\SyliusShopBundle\Entity\CartItem</parameter>
+        <parameter key="ibrows_sylius_shop.currentcart.manager.class">Ibrows\SyliusShopBundle\Cart\CurrentCartManager</parameter>
+        <parameter key="ibrows_sylius_shop.logininformation.class">Ibrows\SyliusShopBundle\Login\LoginInformation</parameter>
+        <parameter key="ibrows_sylius_shop.product.skufield">sku</parameter>
+        <parameter key="ibrows_sylius_shop.basket.persistent">false</parameter>
+    </parameters>
 
     <services>
 
@@ -25,54 +25,65 @@
         </service>
         <!-- Cart -->
 
-
         <service id="ibrows_syliusshop.cart.resolver" class="%ibrows_sylius_shop.cart.itemresolver.class%">
-			<argument type="service" id="doctrine" />
-			<argument type="string" >%ibrows_sylius_shop.product.class%</argument>
-			 <argument type="service" id="form.factory" />
-            <argument type="service" id="sylius.availability_checker.default" />
-        </service>
-        
-        <service id="ibrows_syliusshop.cart.manager" class="%ibrows_sylius_shop.cart.manager.class%" >
-			<argument type="service" id="sylius.manager.cart" />
-			<argument type="service" id="sylius.repository.cart" />
-			<argument type="service" id="sylius.manager.cart_item" />
-            <argument type="service" id="sylius.repository.cart_item" />
-			<argument type="service" id="ibrows_syliusshop.repository.additional_cart_item" />
-			<argument type="service" id="sylius.cart_resolver" />
-            <argument type="service" id="sylius.availability_checker.default" />
+            <argument type="service" id="doctrine"/>
+            <argument type="string">%ibrows_sylius_shop.product.class%</argument>
+            <argument type="service" id="form.factory"/>
+            <argument type="service" id="sylius.availability_checker.default"/>
         </service>
 
-        <service id="ibrows_syliusshop.currentcart.manager" class="%ibrows_sylius_shop.currentcart.manager.class%" >
-            <argument type="service" id="sylius.manager.cart" />
-            <argument type="service" id="sylius.repository.cart" />
-            <argument type="service" id="sylius.manager.cart_item" />
-            <argument type="service" id="sylius.repository.cart_item" />
-            <argument type="service" id="ibrows_syliusshop.repository.additional_cart_item" />
-            <argument type="service" id="sylius.cart_resolver" />
-            <argument type="service" id="sylius.availability_checker.default" />
-            <argument type="service" id="sylius.cart_provider" />
+        <service id="ibrows_syliusshop.cart.manager" class="%ibrows_sylius_shop.cart.manager.class%">
+            <argument type="service" id="sylius.manager.cart"/>
+            <argument type="service" id="sylius.repository.cart"/>
+            <argument type="service" id="sylius.manager.cart_item"/>
+            <argument type="service" id="sylius.repository.cart_item"/>
+            <argument type="service" id="ibrows_syliusshop.repository.additional_cart_item"/>
+            <argument type="service" id="sylius.cart_resolver"/>
+            <argument type="service" id="sylius.availability_checker.default"/>
         </service>
 
-        <service id="ibrows_syliusshop.login.logininformation" class="%ibrows_sylius_shop.logininformation.class%" scope="request">
-            <argument type="service" id="request" />
-            <argument type="service" id="security.csrf.token_manager" />
-            <argument type="service" id="security.token_storage" />
+        <service id="ibrows_syliusshop.currentcart.manager" class="%ibrows_sylius_shop.currentcart.manager.class%">
+            <argument type="service" id="sylius.manager.cart"/>
+            <argument type="service" id="sylius.repository.cart"/>
+            <argument type="service" id="sylius.manager.cart_item"/>
+            <argument type="service" id="sylius.repository.cart_item"/>
+            <argument type="service" id="ibrows_syliusshop.repository.additional_cart_item"/>
+            <argument type="service" id="sylius.cart_resolver"/>
+            <argument type="service" id="sylius.availability_checker.default"/>
+            <argument type="service" id="sylius.cart_provider"/>
+        </service>
+
+        <service id="ibrows_syliusshop.login.logininformation" class="%ibrows_sylius_shop.logininformation.class%"
+                 scope="request">
+            <argument type="service" id="request"/>
+            <argument type="service" id="security.csrf.token_manager"/>
+            <argument type="service" id="security.token_storage"/>
         </service>
 
         <service id="ibrows_syliusshop.twig.extension" class="Ibrows\SyliusShopBundle\Twig\TwigExtension">
-            <argument type="service" id="ibrows_syliusshop.currentcart.manager" />
+            <argument type="service" id="ibrows_syliusshop.currentcart.manager"/>
             <argument>%ibrows_sylius_shop.hinclude.defaultTemplate%</argument>
             <argument>%kernel.charset%</argument>
-            <tag name="twig.extension" />
+            <tag name="twig.extension"/>
         </service>
 
-        <service id="ibrows_syliusshop.cart.serializer.address" class="Ibrows\SyliusShopBundle\Cart\Serializer\AddressCartSerializer">
-            <tag priority="-20" name="ibrows_syliusshop.serializer.cart" />
+        <service id="ibrows_syliusshop.cart.serializer.address"
+                 class="Ibrows\SyliusShopBundle\Cart\Serializer\AddressCartSerializer">
+            <tag priority="-20" name="ibrows_syliusshop.serializer.cart"/>
         </service>
 
-        <service id="ibrows_syliusshop.cart.serializer.product" class="Ibrows\SyliusShopBundle\Cart\Serializer\ProductCartItemSerializer">
-            <tag prioritiy="-20" name="ibrows_syliusshop.serializer.cartitem" />
+        <service id="ibrows_syliusshop.cart.serializer.product"
+                 class="Ibrows\SyliusShopBundle\Cart\Serializer\ProductCartItemSerializer">
+            <tag prioritiy="-20" name="ibrows_syliusshop.serializer.cartitem"/>
+        </service>
+
+        <service id="ibrows_syliusshop.cart.provider" class="Ibrows\SyliusShopBundle\Cart\PersistentCartProvider">
+            <argument type="service" id="sylius.cart_storage"/>
+            <argument type="service" id="sylius.manager.cart"/>
+            <argument type="service" id="sylius.repository.cart"/>
+            <argument type="service" id="security.token_storage"/>
+            <argument type="service" id="event_dispatcher"/>
+            <argument>%ibrows_sylius_shop.basket.persistent%</argument>
         </service>
     </services>
 </container>

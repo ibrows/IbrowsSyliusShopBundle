@@ -2,11 +2,12 @@ sylius_cart:
   driver: doctrine/orm
   engine: twig 
   resolver: ibrows_syliusshop.cart.resolver
+  provider: ibrows_syliusshop.cart.provider
   classes:
     cart:
-      model: %ibrows_sylius_shop.cart.class%
+      model: "%ibrows_sylius_shop.cart.class%"
       repository: Ibrows\SyliusShopBundle\Repository\CartRepository
     item:
-      model: %ibrows_sylius_shop.cartitem.class%
+      model: "%ibrows_sylius_shop.cartitem.class%"
       form: Sylius\Bundle\CartBundle\Form\Type\CartItemType 
       repository: Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository
