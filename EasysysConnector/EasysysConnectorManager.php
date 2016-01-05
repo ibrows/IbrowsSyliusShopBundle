@@ -37,11 +37,11 @@ class EasysysConnectorManager extends BaseEasysysConnectorManager
     }
 
     /**
-     * @param int $invoiceId
-     * @param $recipient
+     * @param int    $invoiceId
+     * @param        $recipient
      * @param string $message
      * @param string $subject
-     * @param bool $markAsOpen
+     * @param bool   $markAsOpen
      * @throws \Exception
      * @return HttpResponse
      */
@@ -69,9 +69,9 @@ class EasysysConnectorManager extends BaseEasysysConnectorManager
     }
 
     /**
-     * @param int $invoiceId
+     * @param int   $invoiceId
      * @param float $invoiceValue
-     * @param bool $setFirstToIssued
+     * @param bool  $setFirstToIssued
      * @throws \Exception
      * @return HttpResponse
      */
@@ -171,10 +171,13 @@ class EasysysConnectorManager extends BaseEasysysConnectorManager
 
     /**
      * @param ResourceOrderInterface $cart
-     * @param string $text
+     * @param string                 $text
+     * @param bool                   $public
+     * @param int                    $userId
      * @return HttpResponse
+     * @throws \Exception
      */
-    public function pushKbComment(ResourceOrderInterface $cart, $text)
+    public function pushKbComment(ResourceOrderInterface $cart, $text, $public = false, $userId = null)
     {
         $parameterBag = clone $this->getEasysysConnector()->getHttpParameterBag();
 
@@ -182,9 +185,9 @@ class EasysysConnectorManager extends BaseEasysysConnectorManager
         $parameterBag->setParameterPostFormat('application/json');
         $parameterBag->setParameterPost(
             array(
-                'user_id'   => $cart->getEsUserId(),
+                'user_id'   => $userId ?: $cart->getEsUserId(),
                 'text'      => $text,
-                'is_public' => false
+                'is_public' => $public
             )
         );
 
