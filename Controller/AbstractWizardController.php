@@ -485,6 +485,13 @@ abstract class AbstractWizardController extends AbstractController
             $deliveryAddressForm = $this->createDeliveryAddressForm(null, $this->getNewDeliveryAddress());
         }
 
+        //different delivery selected but cart has no addresses and invoice and delivery are the same
+        //we need to create a new delivery address, otherwise the form binding of the deliveryAddressForm would also change the invoice address
+        $deliveryAddressData = $deliveryAddressForm->getData();
+        if ($deliveryAddressData && $invoiceAddress && $deliveryAddressData === $invoiceAddress) {
+            $deliveryAddressForm = $this->createDeliveryAddressForm(null, $this->getNewDeliveryAddress());
+        }
+
         $deliveryAddressForm->bind($this->getRequest());
         if (!$deliveryAddressForm->isValid()) {
             return $deliveryAddressForm;
