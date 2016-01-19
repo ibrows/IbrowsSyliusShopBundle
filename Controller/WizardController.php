@@ -39,18 +39,24 @@ class WizardController extends AbstractWizardController
 
         if ("POST" == $request->getMethod()) {
             $basketForm->handleRequest($request);
+
+            /** @var FormInterface $basketFormItem */
+            foreach ($basketForm->get('items') as $basketFormItem) {
+                /** @var ClickableInterface $deleteSubmit */
+                $deleteSubmit = $basketFormItem->get('delete');
+                $hasDeletedItems = false;
+                if ($deleteSubmit->isClicked()) {
+                    $cartManager->removeItem($basketFormItem->getData());
+                    $hasDeletedItems = true;
+                }
+                if ($hasDeletedItems) {
+                    $this->persistCurrentCart();
+                }
+            }
+
             if ($basketForm->isValid()) {
                 if (($postAction = $this->postBasketFormValidationAction($cart)) instanceof Response) {
                     return $postAction;
-                }
-
-                /** @var FormInterface $basketFormItem */
-                foreach ($basketForm->get('items') as $basketFormItem) {
-                    /** @var ClickableInterface $deleteSubmit */
-                    $deleteSubmit = $basketFormItem->get('delete');
-                    if ($deleteSubmit->isClicked()) {
-                        $cartManager->removeItem($basketFormItem->getData());
-                    }
                 }
 
                 $this->persistCurrentCart();
