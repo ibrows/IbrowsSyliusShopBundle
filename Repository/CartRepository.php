@@ -17,7 +17,7 @@ class CartRepository extends BaseCartRepository
      * @param null $lockVersion
      * @return mixed|null|object
      */
-    public function find($id, $lockMode = LockMode::NONE, $lockVersion = null)
+    public function find($id, $lockMode = null, $lockVersion = null)
     {
         return $this->_em->find($this->_entityName, $id, $lockMode, $lockVersion);
     }
