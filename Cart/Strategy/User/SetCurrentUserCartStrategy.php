@@ -44,8 +44,8 @@ class SetCurrentUserCartStrategy extends AbstractCartStrategy
      */
     public function compute(CartInterface $cart, CartManager $cartManager)
     {
-        if ($cart instanceof UserCartInterface) {
-            $cart->setUser($this->getUser());
+        if ($cart instanceof UserCartInterface && ($user = $this->getUser())) {
+            $cart->setUser($user);
         }
         return array();
     }

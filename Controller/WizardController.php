@@ -33,7 +33,7 @@ class WizardController extends AbstractWizardController
     public function basketAction(Request $request)
     {
         $cart = $this->getCurrentCart();
-        if (($preAction = $this->preBasketAction($cart)) instanceof Response) {
+        if (($preAction = $this->preBasketAction($request, $cart)) instanceof Response) {
             return $preAction;
         }
 
@@ -57,7 +57,7 @@ class WizardController extends AbstractWizardController
             }
 
             if ($basketForm->isValid()) {
-                if (($postAction = $this->postBasketFormValidationAction($cart)) instanceof Response) {
+                if (($postAction = $this->postBasketFormValidationAction($request, $cart)) instanceof Response) {
                     return $postAction;
                 }
 
@@ -72,13 +72,14 @@ class WizardController extends AbstractWizardController
                 $this->getManagerForClass($cart)->refresh($cart);
                 $basketForm = $this->createForm($this->getBasketType(), $cart);
             } else {
-                if (($postAction = $this->postInvalidBasketFormValidationAction($basketForm, $cart)) instanceof Response) {
+                if (($postAction = $this->postInvalidBasketFormValidationAction($request, $basketForm, $cart)) instanceof Response) {
                     return $postAction;
                 }
             }
         }
 
         return $this->getViewData(
+            $request,
             'basket',
             array(
                 'basketForm'                    => $basketForm->createView(),
@@ -93,11 +94,13 @@ class WizardController extends AbstractWizardController
      * @Route("/auth", name="wizard_auth")
      * @Template
      * @Wizard(name="auth", number=2, validationMethod="authValidation", visible=false)
+     * @param Request $request
+     * @return array|null|RedirectResponse|Response
      */
     public function authAction(Request $request)
     {
         $cart = $this->getCurrentCart();
-        if (($preAction = $this->preAuthAction($cart)) instanceof Response) {
+        if (($preAction = $this->preAuthAction($request, $cart)) instanceof Response) {
             return $preAction;
         }
 
@@ -162,6 +165,7 @@ class WizardController extends AbstractWizardController
         }
 
         return $this->getViewData(
+            $request,
             'auth',
             array(
                 'cart'                 => $cart,
@@ -185,7 +189,7 @@ class WizardController extends AbstractWizardController
     public function addressAction(Request $request)
     {
         $cart = $this->getCurrentCart();
-        if (($preAction = $this->preAddressAction($cart)) instanceof Response) {
+        if (($preAction = $this->preAddressAction($request, $cart)) instanceof Response) {
             return $preAction;
         }
 
@@ -234,6 +238,7 @@ class WizardController extends AbstractWizardController
         }
 
         return $this->getViewData(
+            $request,
             'address',
             array(
                 'invoiceAddressForm'                    => $invoiceAddressForm->createView(),
@@ -296,6 +301,7 @@ class WizardController extends AbstractWizardController
         }
 
         return $this->getViewData(
+            $request,
             'paymentinstruction',
             array(
                 'cart'                      => $cart,
@@ -314,7 +320,7 @@ class WizardController extends AbstractWizardController
     public function summaryAction(Request $request)
     {
         $cart = $this->getCurrentCart();
-        if (($preAction = $this->preSummaryAction($cart)) instanceof Response) {
+        if (($preAction = $this->preSummaryAction($request, $cart)) instanceof Response) {
             return $preAction;
         }
 
@@ -347,6 +353,7 @@ class WizardController extends AbstractWizardController
         $this->persistCurrentCart(false);
 
         return $this->getViewData(
+            $request,
             'summary',
             array(
                 'deliveryOptionStrategy'     => $cartManager->getSelectedDeliveryOptionStrategyService(),
@@ -371,7 +378,7 @@ class WizardController extends AbstractWizardController
     public function paymentAction(Request $request)
     {
         $cart = $this->getCurrentCart();
-        if (($preAction = $this->prePaymentAction($cart)) instanceof Response) {
+        if (($preAction = $this->prePaymentAction($request, $cart)) instanceof Response) {
             return $preAction;
         }
 
@@ -407,8 +414,10 @@ class WizardController extends AbstractWizardController
      * @Route("/notification", name="wizard_notification")
      * @Template
      * @Wizard(name="notification", number=7, validationMethod="notificationValidation")
+     * @param Request $request
+     * @return array
      */
-    public function notificationAction()
+    public function notificationAction(Request $request)
     {
         $cart = $this->getCurrentCart();
 
@@ -416,6 +425,7 @@ class WizardController extends AbstractWizardController
         $this->closeCurrentCart();
 
         return $this->getViewData(
+            $request,
             'notification',
             array(
                 'cart' => $cart,

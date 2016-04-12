@@ -56,8 +56,8 @@
 
         <service id="ibrows_syliusshop.login.logininformation" class="%ibrows_sylius_shop.logininformation.class%" scope="request">
             <argument type="service" id="request" />
-            <argument type="service" id="form.csrf_provider" />
-            <argument type="service" id="security.context" />
+            <argument type="service" id="security.csrf.token_manager" />
+            <argument type="service" id="security.token_storage" />
         </service>
 
         <service id="ibrows_syliusshop.twig.extension" class="Ibrows\SyliusShopBundle\Twig\TwigExtension">

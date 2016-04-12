@@ -10,6 +10,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 abstract class AbstractCartFormStrategy extends AbstractCartStrategy implements CartFormStrategyInterface
 {
@@ -167,5 +168,17 @@ abstract class AbstractCartFormStrategy extends AbstractCartStrategy implements 
         $resolver->setDefaults(array(
             'translation_domain' => $this->getDefaultTranslationDomain(),
         ));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        if (!$resolver instanceof OptionsResolver) {
+            throw new \InvalidArgumentException(sprintf('Custom resolver "%s" must extend "Symfony\Component\OptionsResolver\OptionsResolver".', get_class($resolver)));
+        }
+
+        $this->configureOptions($resolver);
     }
 }

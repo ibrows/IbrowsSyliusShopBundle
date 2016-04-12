@@ -21,17 +21,19 @@ use Symfony\Component\HttpFoundation\Response;
 abstract class AbstractWizardController extends AbstractController
 {
     /**
+     * @param Request $request
      * @return bool|Response
      */
-    public function basketValidation()
+    public function basketValidation(Request $request)
     {
         return true;
     }
 
     /**
+     * @param Request $request
      * @return bool|Response
      */
-    public function authValidation()
+    public function authValidation(Request $request)
     {
         if ($this->getCurrentCart()->isEmpty()) {
             return Wizard::REDIRECT_STEP_BACK;
@@ -41,9 +43,10 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
+     * @param Request $request
      * @return bool|Response
      */
-    public function addressValidation()
+    public function addressValidation(Request $request)
     {
         if (!$this->getCurrentCart()->getEmail()) {
             return Wizard::REDIRECT_STEP_BACK;
@@ -53,9 +56,10 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
+     * @param Request $request
      * @return bool|Response
      */
-    public function paymentinstructionValidation()
+    public function paymentinstructionValidation(Request $request)
     {
         $cart = $this->getCurrentCart();
         if (
@@ -70,9 +74,10 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
+     * @param Request $request
      * @return bool|Response
      */
-    public function summaryValidation()
+    public function summaryValidation(Request $request)
     {
         $cart = $this->getCurrentCart();
         $cartManager = $this->getCurrentCartManager();
@@ -89,9 +94,10 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
+     * @param Request $request
      * @return bool|Response
      */
-    public function paymentValidation()
+    public function paymentValidation(Request $request)
     {
         $cart = $this->getCurrentCart();
         if (!$cart->isTermsAndConditions() or round($cart->getTotalWithTax(), 2) !== round($cart->getAmountToPay(), 2)) {
@@ -102,9 +108,10 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
+     * @param Request $request
      * @return bool|Response
      */
-    public function notificationValidation()
+    public function notificationValidation(Request $request)
     {
         $cart = $this->getCurrentCart();
         if (!$cart->isConfirmed()) {
@@ -136,12 +143,12 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
+     * @param Request $request
      * @param FormInterface $basketForm
      * @param CartInterface $cart
-     *
      * @return null|Response
      */
-    protected function postInvalidBasketFormValidationAction(FormInterface $basketForm, CartInterface $cart)
+    protected function postInvalidBasketFormValidationAction(Request $request, FormInterface $basketForm, CartInterface $cart)
     {
         return;
     }
@@ -300,51 +307,51 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
+     * @param Request $request
      * @param CartInterface $cart
-     *
-     * @return Response|null
+     * @return null|Response
      */
-    protected function preAddressAction(CartInterface $cart)
+    protected function preAddressAction(Request $request, CartInterface $cart)
     {
         return;
     }
 
     /**
+     * @param Request $request
      * @param CartInterface $cart
-     *
-     * @return Response|null
+     * @return null|Response
      */
-    protected function preBasketAction(CartInterface $cart)
+    protected function preBasketAction(Request $request, CartInterface $cart)
     {
         return;
     }
 
     /**
+     * @param Request $request
      * @param CartInterface $cart
-     *
-     * @return Response|null
+     * @return null|Response
      */
-    protected function preAuthAction(CartInterface $cart)
+    protected function preAuthAction(Request $request, CartInterface $cart)
     {
         return;
     }
 
     /**
+     * @param Request $request
      * @param CartInterface $cart
-     *
-     * @return Response|null
+     * @return null|Response
      */
-    protected function prePaymentAction(CartInterface $cart)
+    protected function prePaymentAction(Request $request, CartInterface $cart)
     {
         return;
     }
 
     /**
+     * @param Request $request
      * @param CartInterface $cart
-     *
-     * @return Response|null
+     * @return null|Response
      */
-    protected function preSummaryAction(CartInterface $cart)
+    protected function preSummaryAction(Request $request, CartInterface $cart)
     {
         $cart->setTermsAndConditions(false);
         $this->persistCurrentCart();
@@ -353,11 +360,11 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
+     * @param Request $request
      * @param CartInterface $cart
-     *
      * @return null|Response
      */
-    protected function postBasketFormValidationAction(CartInterface $cart)
+    protected function postBasketFormValidationAction(Request $request, CartInterface $cart)
     {
         return;
     }
@@ -367,11 +374,12 @@ abstract class AbstractWizardController extends AbstractController
      */
     protected function getInvoiceAddress()
     {
-        if ($this->getCurrentCart()->getInvoiceAddress()) {
-            return $this->getCurrentCart()->getInvoiceAddress();
+        if ($invoiceAddress = $this->getCurrentCart()->getInvoiceAddress()) {
+            return $invoiceAddress;
         }
-        if ($this->getUser() && $this->getUser()->getInvoiceAddress()) {
-            return $this->getUser()->getInvoiceAddress();
+
+        if (($user = $this->getUser()) && ($invoiceAddress = $user->getInvoiceAddress())) {
+            return $invoiceAddress;
         }
 
         return $this->getNewInvoiceAddress();
@@ -500,8 +508,7 @@ abstract class AbstractWizardController extends AbstractController
 
         //same
         if ($invoiceSameAsDelivery) {
-            $this->handleInvoiceIsSameAsDelivery($deliveryAddressForm, $invoiceAddress);
-
+            $this->handleInvoiceIsSameAsDelivery($request, $deliveryAddressForm, $invoiceAddress);
             return $deliveryAddressForm;
         }
 
@@ -533,12 +540,12 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
+     * @param Request $request
      * @param FormInterface $deliveryAddressForm
      * @param InvoiceAddressInterface $invoiceAddress
-     *
      * @return bool
      */
-    protected function handleInvoiceIsSameAsDelivery(FormInterface &$deliveryAddressForm, InvoiceAddressInterface $invoiceAddress)
+    protected function handleInvoiceIsSameAsDelivery(Request $request, FormInterface &$deliveryAddressForm, InvoiceAddressInterface $invoiceAddress)
     {
         $currentcart = $this->getCurrentCart();
         $currentcart->setDeliveryAddress($invoiceAddress);
@@ -574,12 +581,12 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
+     * @param Request $request
      * @param string $action
      * @param array $data
-     *
      * @return array
      */
-    protected function getViewData($action, array $data = array())
+    protected function getViewData(Request $request, $action, array $data = array())
     {
         return $data;
     }
