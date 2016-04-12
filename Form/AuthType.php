@@ -21,12 +21,4 @@ class AuthType extends AbstractType
             ),
         ));
     }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return 'ibr_sylius_auth';
-    }
 }

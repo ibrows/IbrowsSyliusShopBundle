@@ -36,7 +36,6 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\SecurityContextInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -44,16 +43,14 @@ use Symfony\Component\Translation\TranslatorInterface;
 abstract class AbstractController extends Controller
 {
     /**
+     * @param Request $request
      * @param ObjectRepository $repo
-     * @param array            $criteria
-     *
+     * @param array $criteria
      * @return object
-     *
-     * @throws NotFoundHttpException
      */
-    public function findOr404(ObjectRepository $repo, array $criteria = null)
+    public function findOr404(Request $request, ObjectRepository $repo, array $criteria = null)
     {
-        $id = $this->getRequest()->get('id');
+        $id = $request->get('id');
 
         if (null === $criteria) {
             $criteria = array(
@@ -265,7 +262,7 @@ abstract class AbstractController extends Controller
 
     /**
      * @param CartManager $cartManager
-     * @param bool        $refreshAndCheckAvailability
+     * @param bool $refreshAndCheckAvailability
      */
     protected function persistCart(CartManager $cartManager, $refreshAndCheckAvailability = true)
     {
@@ -275,12 +272,12 @@ abstract class AbstractController extends Controller
             foreach ($e->getCartItemsNotOnStock() as $itemNotOnStock) {
                 $item = $itemNotOnStock->getItem();
                 if (!$item->getProduct()->isEnabled()) {
-                    $message = $item.' not found';
+                    $message = $item . ' not found';
                     $this->addFlashMessage($message);
                     $cartManager->removeItem($item);
                     continue;
                 }
-                $message = $item.' '.$item->getQuantityNotAvailable().' not there...';
+                $message = $item . ' ' . $item->getQuantityNotAvailable() . ' not there...';
                 $this->addFlashMessage($message);
                 $item->setQuantityToAvailable();
             }
@@ -318,7 +315,7 @@ abstract class AbstractController extends Controller
 
     /**
      * @param string $id
-     * @param array  $parameters
+     * @param array $parameters
      * @param string $domain
      * @param string $locale
      *
@@ -326,7 +323,7 @@ abstract class AbstractController extends Controller
      */
     protected function translateWithPrefix($id, array $parameters = array(), $domain = null, $locale = null)
     {
-        $id = $this->getTranslationPrefix().'.'.$id;
+        $id = $this->getTranslationPrefix() . '.' . $id;
 
         return $this->getTranslator()->trans($id, $parameters, $domain, $locale);
     }
@@ -361,9 +358,9 @@ abstract class AbstractController extends Controller
     }
 
     /**
-     * @param Request       $request
+     * @param Request $request
      * @param FormInterface $authForm
-     * @param CartManager   $cartManager
+     * @param CartManager $cartManager
      * @param WizardHandler $wizard
      *
      * @return RedirectResponse|null
@@ -403,7 +400,7 @@ abstract class AbstractController extends Controller
     }
 
     /**
-     * @param InvoiceAddressInterface  $invoiceAddress
+     * @param InvoiceAddressInterface $invoiceAddress
      * @param DeliveryAddressInterface $deliveryAddress
      *
      * @return Form
@@ -417,7 +414,7 @@ abstract class AbstractController extends Controller
     }
 
     /**
-     * @param InvoiceAddressInterface  $invoiceAddress
+     * @param InvoiceAddressInterface $invoiceAddress
      * @param DeliveryAddressInterface $deliveryAddress
      *
      * @return array

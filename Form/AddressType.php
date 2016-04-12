@@ -2,8 +2,8 @@
 
 namespace Ibrows\SyliusShopBundle\Form;
 
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AddressType extends AbstractType
 {
@@ -28,9 +28,9 @@ class AddressType extends AbstractType
     protected $dataClass;
 
     /**
-     * @param array  $countryChoices
-     * @param array  $preferredCountryChoices
-     * @param array  $titleChoices
+     * @param array $countryChoices
+     * @param array $preferredCountryChoices
+     * @param array $titleChoices
      * @param string $dataClass
      */
     public function __construct(
@@ -38,7 +38,8 @@ class AddressType extends AbstractType
         array $preferredCountryChoices = array(),
         array $titleChoices = array(),
         $dataClass = null
-    ) {
+    )
+    {
         $this->countryChoices = $countryChoices;
         $this->preferredCountryChoices = $preferredCountryChoices;
         $this->titleChoices = $titleChoices;
@@ -47,7 +48,7 @@ class AddressType extends AbstractType
 
     /**
      * @param FormBuilderInterface $builder
-     * @param array                $options
+     * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -71,16 +72,15 @@ class AddressType extends AbstractType
             ->add('city')
             ->add('country', 'country', $countryOptions)
             ->add('phone')
-            ->add('email', 'email')
-        ;
+            ->add('email', 'email');
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * @param OptionsResolver $resolver
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        parent::setDefaultOptions($resolver);
+        parent::configureOptions($resolver);
         if ($this->dataClass) {
             $resolver->setDefaults(array(
                 'data_class' => $this->dataClass,
@@ -146,13 +146,5 @@ class AddressType extends AbstractType
         $this->titleChoices = $titleChoices;
 
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return 'ibr_sylius_address';
     }
 }

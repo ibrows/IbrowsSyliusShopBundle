@@ -8,17 +8,11 @@ class SummaryType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
-     * @param array                $options
+     * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('termsAndConditions', 'checkbox')
-        ;
-    }
-
-    public function getName()
-    {
-        return 'ibr_sylius_summary';
+            ->add('termsAndConditions', 'checkbox');
     }
 }

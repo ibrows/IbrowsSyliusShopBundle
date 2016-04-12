@@ -17,7 +17,7 @@ class ProductController extends AbstractController
      * @Template("")
      * Get collection (paginated by default) of resources.
      */
-    public function listAction(Request $request)
+    public function listAction()
     {
         $resources = $this->getProductRepository()->findBy(array(), array(), 100);
 
@@ -25,13 +25,17 @@ class ProductController extends AbstractController
             'products' => $resources,
         );
     }
+
     /**
      * @Route("/show/{slug}", name="product_show")
      * @Template("")
+     * @param Request $request
+     * @param $slug
+     * @return array
      */
-    public function showAction($slug)
+    public function showAction(Request $request, $slug)
     {
-        $data = $this->findOr404($this->getProductRepository(), array('slug' => $slug));
+        $data = $this->findOr404($request, $this->getProductRepository(), array('slug' => $slug));
 
         return array(
             'product' => $data,

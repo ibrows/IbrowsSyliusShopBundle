@@ -13,12 +13,4 @@ class DeliveryOptionStrategyType extends AbstractCartFormStrategyType
     {
         return $this->cartManager->getPossibleDeliveryOptionStrategies();
     }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return 'ibr_sylius_deliveryoptionstrategy';
-    }
 }

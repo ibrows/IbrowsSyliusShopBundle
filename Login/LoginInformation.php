@@ -3,43 +3,48 @@
 namespace Ibrows\SyliusShopBundle\Login;
 
 use FOS\UserBundle\Model\UserInterface;
-use Symfony\Component\Security\Core\SecurityContextInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Form\Extension\Csrf\CsrfProvider\CsrfProviderInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 class LoginInformation implements LoginInformationInterface
 {
     /**
      * @var Request
      */
-    protected $request;
-
-    /**
-     * @var CsrfProviderInterface
-     */
-    protected $csrfProvider;
+    private $request;
 
     /**
      * @var string
      */
-    protected $lastUsername;
+    private $lastUsername;
 
     /**
      * @var string
      */
-    protected $error;
+    private $error;
 
     /**
-     * @param Request                  $request
-     * @param CsrfProviderInterface    $csrfProvider
-     * @param SecurityContextInterface $securityContext
+     * @var CsrfTokenManagerInterface
      */
-    public function __construct(Request $request, CsrfProviderInterface $csrfProvider, SecurityContextInterface $securityContext)
+    private $csrfTokenManager;
+
+    /**
+     * @var TokenStorageInterface
+     */
+    private $tokenStorage;
+
+    /**
+     * @param Request $request
+     * @param CsrfTokenManagerInterface $csrfTokenManager
+     * @param TokenStorageInterface $tokenStorage
+     */
+    public function __construct(Request $request, CsrfTokenManagerInterface $csrfTokenManager, TokenStorageInterface $tokenStorage)
     {
         $this->request = $request;
-        $this->csrfProvicer = $csrfProvider;
-        $this->securityContext = $securityContext;
-
+        $this->csrfTokenManager = $csrfTokenManager;
+        $this->tokenStorage = $tokenStorage;
         $this->setInformation();
         $this->removeInformation();
     }
@@ -65,15 +70,14 @@ class LoginInformation implements LoginInformationInterface
      */
     public function getCsrfToken()
     {
-        return $this->csrfProvicer->generateCsrfToken('authenticate');
+        return $this->csrfTokenManager->getToken('authenticate');
     }
 
     protected function removeInformation()
     {
         $session = $this->request->getSession();
-
-        $session->remove(SecurityContextInterface::LAST_USERNAME);
-        $session->remove(SecurityContextInterface::AUTHENTICATION_ERROR);
+        $session->remove(Security::LAST_USERNAME);
+        $session->remove(Security::AUTHENTICATION_ERROR);
     }
 
     protected function setInformation()
@@ -81,7 +85,7 @@ class LoginInformation implements LoginInformationInterface
         $request = $this->request;
         $session = $request->getSession();
 
-        $key = SecurityContextInterface::AUTHENTICATION_ERROR;
+        $key = Security::AUTHENTICATION_ERROR;
         $error = null;
 
         if ($request->attributes->has($key)) {
@@ -95,20 +99,20 @@ class LoginInformation implements LoginInformationInterface
         }
 
         $this->error = $error;
-        $this->lastUsername = $session->get(SecurityContextInterface::LAST_USERNAME);
+        $this->lastUsername = $session->get(Security::LAST_USERNAME);
     }
 
     /**
-     * @return UserInterface
+     * @return UserInterface|null
      */
     public function getUser()
     {
-        if (null === $token = $this->securityContext->getToken()) {
-            return;
+        if (null === $token = $this->tokenStorage->getToken()) {
+            return null;
         }
 
         if (!is_object($user = $token->getUser())) {
-            return;
+            return null;
         }
 
         return $user;

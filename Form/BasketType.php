@@ -33,12 +33,4 @@ class BasketType extends AbstractType
             ->add('continue', 'submit')
         ;
     }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return 'ibr_sylius_basket';
-    }
 }

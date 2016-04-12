@@ -9,7 +9,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class AbstractCartFormStrategy extends AbstractCartStrategy implements CartFormStrategyInterface
 {
@@ -77,6 +77,7 @@ abstract class AbstractCartFormStrategy extends AbstractCartStrategy implements 
     }
 
     /**
+     * @param CartInterface $cart
      * @return string
      */
     public function getTranslationKey(CartInterface $cart)
@@ -155,14 +156,13 @@ abstract class AbstractCartFormStrategy extends AbstractCartStrategy implements 
     public function setDefaultTranslationDomain($domain)
     {
         $this->defaultTranslationDomain = $domain;
-
         return $this;
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * @param OptionsResolver $resolver
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'translation_domain' => $this->getDefaultTranslationDomain(),

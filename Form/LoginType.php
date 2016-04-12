@@ -8,7 +8,7 @@ class LoginType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
-     * @param array                $options
+     * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -20,15 +20,6 @@ class LoginType extends AbstractType
             ->add('_remember_me', 'checkbox', array('required' => false))
             ->add('_failure_path', 'hidden')
             ->add('_target_path', 'hidden')
-            ->add('_csrf_token', 'hidden')
-        ;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return '';
+            ->add('_csrf_token', 'hidden');
     }
 }

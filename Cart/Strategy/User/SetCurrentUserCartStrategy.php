@@ -8,23 +8,26 @@ use Ibrows\SyliusShopBundle\Cart\Strategy\AbstractCartStrategy;
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\UserCartInterface;
-use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class SetCurrentUserCartStrategy extends AbstractCartStrategy
 {
-    protected $securityContext;
+    /**
+     * @var TokenStorageInterface
+     */
+    protected $tokenStorage;
 
     /**
-     * @param SecurityContextInterface $securityContext
+     * @param TokenStorageInterface $tokenStorage
      */
-    public function __construct(SecurityContextInterface $securityContext)
+    public function __construct(TokenStorageInterface $tokenStorage)
     {
-        $this->securityContext = $securityContext;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
      * @param CartInterface $cart
-     * @param CartManager   $cartManager
+     * @param CartManager $cartManager
      *
      * @return bool
      */
@@ -35,23 +38,35 @@ class SetCurrentUserCartStrategy extends AbstractCartStrategy
 
     /**
      * @param CartInterface $cart
-     * @param CartManager   $cartManager
+     * @param CartManager $cartManager
      *
      * @return AdditionalCartItemInterface[]
      */
     public function compute(CartInterface $cart, CartManager $cartManager)
     {
-        if (!$token = $this->securityContext->getToken()) {
-            return array();
+        if ($cart instanceof UserCartInterface) {
+            $cart->setUser($this->getUser());
         }
-        if (!$user = $token->getUser()) {
-            return array();
-        }
-        if (!$user instanceof UserInterface) {
-            return array();
-        }
-        $cart->setUser($user);
-
         return array();
+    }
+
+    /**
+     * @return UserInterface|null
+     */
+    protected function getUser()
+    {
+        if (!$token = $this->tokenStorage->getToken()) {
+            return null;
+        }
+
+        if (!$user = $token->getUser()) {
+            return null;
+        }
+
+        if (!$user instanceof UserInterface) {
+            return null;
+        }
+
+        return $user;
     }
 }

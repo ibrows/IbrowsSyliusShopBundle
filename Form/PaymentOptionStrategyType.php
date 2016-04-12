@@ -13,12 +13,4 @@ class PaymentOptionStrategyType extends AbstractCartFormStrategyType
     {
         return $this->cartManager->getPossiblePaymentOptionStrategies();
     }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return 'ibr_sylius_paymentoptionstrategy';
-    }
 }

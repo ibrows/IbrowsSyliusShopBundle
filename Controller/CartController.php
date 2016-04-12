@@ -33,7 +33,9 @@ class CartController extends AbstractController
         $cart = $manager->getCart();
         $form = $this->createForm('sylius_cart', $cart);
 
-        if ($request->getMethod() == 'POST' && $request->request->get('sylius_cart') != null && $form->bind($request)->isValid()) {
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
             $this->persistCart($manager);
 
             /* @var $dispatcher EventDispatcherInterface */

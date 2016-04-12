@@ -3,7 +3,7 @@
 namespace Ibrows\SyliusShopBundle\Form;
 
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class BasketItemType extends AbstractType
 {
@@ -22,35 +22,24 @@ class BasketItemType extends AbstractType
 
     /**
      * @param FormBuilderInterface $builder
-     * @param array                $options
+     * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('quantity')
-            ->add('delete', 'submit')
-        ;
+            ->add('delete', 'submit');
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * @param OptionsResolver $resolver
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        parent::setDefaultOptions($resolver);
-
+        parent::configureOptions($resolver);
         $resolver
             ->setDefaults(array(
                 'data_class' => $this->dataClass,
-            ))
-        ;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return 'ibr_sylius_basketitem';
+            ));
     }
 }

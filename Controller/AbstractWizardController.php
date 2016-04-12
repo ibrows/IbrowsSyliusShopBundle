@@ -148,7 +148,7 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param PaymentFinishedResponse $response
-     * @param Context                 $context
+     * @param Context $context
      *
      * @return RedirectResponse
      */
@@ -170,7 +170,7 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param PaymentFinishedResponse $response
-     * @param Context                 $context
+     * @param Context $context
      *
      * @return RedirectResponse
      */
@@ -189,7 +189,7 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param PaymentFinishedResponse $response
-     * @param Context                 $context
+     * @param Context $context
      *
      * @return RedirectResponse
      */
@@ -212,7 +212,7 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param PaymentFinishedResponse $response
-     * @param Context                 $context
+     * @param Context $context
      *
      * @return RedirectResponse
      */
@@ -230,7 +230,7 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param PaymentFinishedResponse $response
-     * @param Context                 $context
+     * @param Context $context
      *
      * @return RedirectResponse
      */
@@ -248,7 +248,7 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param PaymentFinishedResponse $response
-     * @param Context                 $context
+     * @param Context $context
      *
      * @return RedirectResponse
      */
@@ -265,7 +265,7 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param PaymentFinishedResponse $response
-     * @param Context                 $context
+     * @param Context $context
      *
      * @return RedirectResponse
      */
@@ -283,7 +283,7 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param PaymentFinishedResponse $response
-     * @param Context                 $context
+     * @param Context $context
      *
      * @return RedirectResponse
      */
@@ -399,30 +399,30 @@ abstract class AbstractWizardController extends AbstractController
      */
     protected function isInvoiceSameAsDelivery(FormInterface $invoiceSameAsDeliveryForm)
     {
-        return (bool) $invoiceSameAsDeliveryForm->get('invoiceSameAsDelivery')->getData();
+        return (bool)$invoiceSameAsDeliveryForm->get('invoiceSameAsDelivery')->getData();
     }
 
     /**
-     * @param Request                 $request
-     * @param FormInterface           $deliveryOptionStrategyForm
-     * @param FormInterface           $invoiceAddressForm
-     * @param FormInterface           $invoiceSameAsDeliveryForm
+     * @param Request $request
+     * @param FormInterface $deliveryOptionStrategyForm
+     * @param FormInterface $invoiceAddressForm
+     * @param FormInterface $invoiceSameAsDeliveryForm
      * @param InvoiceAddressInterface $invoiceAddress
-     * @param FormInterface           $deliveryAddressForm
+     * @param FormInterface $deliveryAddressForm
      *
      * @return bool
      */
     protected function saveAddressForm(Request $request, FormInterface $deliveryOptionStrategyForm, FormInterface &$invoiceAddressForm, FormInterface &$invoiceSameAsDeliveryForm, InvoiceAddressInterface $invoiceAddress, FormInterface &$deliveryAddressForm)
     {
-        $validDeliveryOptionStrategyFormData = $this->bindDeliveryOptions($deliveryOptionStrategyForm);
+        $validDeliveryOptionStrategyFormData = $this->bindDeliveryOptions($request, $deliveryOptionStrategyForm);
 
-        $invoiceAddressForm->bind($request);
-        $invoiceSameAsDeliveryForm->bind($request);
+        $invoiceAddressForm->handleRequest($request);
+        $invoiceSameAsDeliveryForm->handleRequest($request);
 
         $invoiceSameAsDelivery = false;
         if ($invoiceSameAsDeliveryForm->isValid()) {
             $invoiceSameAsDelivery = $this->isInvoiceSameAsDelivery($invoiceSameAsDeliveryForm);
-            $deliveryAddressForm = $this->handleDeliveryAddress($invoiceSameAsDelivery, $invoiceAddress);
+            $deliveryAddressForm = $this->handleDeliveryAddress($request, $invoiceSameAsDelivery, $invoiceAddress);
         }
 
         if ($validDeliveryOptionStrategyFormData && $invoiceAddressForm->isValid() && $invoiceSameAsDeliveryForm->isValid()) {
@@ -455,9 +455,9 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
-     * @param FormTypeInterface        $type
+     * @param FormTypeInterface $type
      * @param DeliveryAddressInterface $deliveryAddress
-     * @param array                    $formOptions
+     * @param array $formOptions
      *
      * @return FormInterface
      */
@@ -467,7 +467,7 @@ abstract class AbstractWizardController extends AbstractController
         $deliveryAddress = $deliveryAddress ?: $this->getDeliveryAddress();
 
         $formoptions = $formOptions ?: array(
-            'data_class' => $this->getDeliveryAddressClass(),
+            'data_class'        => $this->getDeliveryAddressClass(),
             'validation_groups' => array(
                 'sylius_wizard_address',
             ),
@@ -479,14 +479,13 @@ abstract class AbstractWizardController extends AbstractController
     /**
      * returns true or the form if its not valid.
      *
+     * @param Request $request
      * @param bool $invoiceSameAsDelivery
      * @param null $invoiceAddress
-     *
      * @return FormInterface
-     *
      * @throws \Exception
      */
-    protected function handleDeliveryAddress($invoiceSameAsDelivery = null, $invoiceAddress = null)
+    protected function handleDeliveryAddress(Request $request, $invoiceSameAsDelivery = null, $invoiceAddress = null)
     {
         $deliveryAddressForm = $this->createDeliveryAddressForm();
 
@@ -520,7 +519,7 @@ abstract class AbstractWizardController extends AbstractController
             $deliveryAddressForm = $this->createDeliveryAddressForm(null, $this->getNewDeliveryAddress());
         }
 
-        $deliveryAddressForm->bind($this->getRequest());
+        $deliveryAddressForm->handleRequest($request);
         if (!$deliveryAddressForm->isValid()) {
             return $deliveryAddressForm;
         }
@@ -534,7 +533,7 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
-     * @param FormInterface           $deliveryAddressForm
+     * @param FormInterface $deliveryAddressForm
      * @param InvoiceAddressInterface $invoiceAddress
      *
      * @return bool
@@ -548,13 +547,13 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
+     * @param Request $request
      * @param FormInterface $deliveryOptionStrategyForm
-     *
      * @return bool
      */
-    protected function bindDeliveryOptions(FormInterface $deliveryOptionStrategyForm)
+    protected function bindDeliveryOptions(Request $request, FormInterface $deliveryOptionStrategyForm)
     {
-        $deliveryOptionStrategyForm->bind($this->getRequest());
+        $deliveryOptionStrategyForm->handleRequest($request);
 
         $deliveryOptionStrategyServiceId = $deliveryOptionStrategyForm->get('strategyServiceId')->getData();
         $deliveryOptioStrategy = $this->getCurrentCartManager()->getPossibleDeliveryOptionStrategyById($deliveryOptionStrategyServiceId);
@@ -576,7 +575,7 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param string $action
-     * @param array  $data
+     * @param array $data
      *
      * @return array
      */

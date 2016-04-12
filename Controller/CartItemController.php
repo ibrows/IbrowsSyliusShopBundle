@@ -2,14 +2,12 @@
 
 namespace Ibrows\SyliusShopBundle\Controller;
 
-use Ibrows\SyliusShopBundle\Entity\Cart;
-use Ibrows\SyliusShopBundle\Entity\CartItem;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
-use Sylius\Bundle\CartBundle\SyliusCartEvents;
 use Sylius\Bundle\CartBundle\Event\FlashEvent;
 use Sylius\Bundle\CartBundle\Resolver\ItemResolvingException;
+use Sylius\Bundle\CartBundle\SyliusCartEvents;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @Route("/cartitem")
@@ -59,23 +57,25 @@ class CartItemController extends AbstractController
      * it will be removed and the cart - refreshed and saved.
      *
      * @param Request $request
+     * @param $id
+     * @return Response
+     * @throws \Exception
      * @Route("/remove/{id}", name="cart_item_remove")
      *
-     * @return Response
      */
-    public function removeAction($id)
+    public function removeAction(Request $request, $id)
     {
         $cartmanger = $this->getCurrentCartManager();
         $cart = $cartmanger->getCart();
 
-        $item = $this->findOr404($cartmanger->getItemObjectRepo());
+        $item = $this->findOr404($request, $cartmanger->getItemObjectRepo());
 
         /* @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */
         $dispatcher = $this->container->get('event_dispatcher');
 
         if (!$item || false === $cart->hasItem($item)) {
             $dispatcher->dispatch(SyliusCartEvents::ITEM_REMOVE_ERROR, new FlashEvent());
-            throw new \Exception('item not found: '.$id);
+            throw new \Exception('item not found: ' . $id);
         }
 
         $cartmanger->removeItem($item);
