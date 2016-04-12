@@ -22,4 +22,12 @@ class LoginType extends AbstractType
             ->add('_target_path', 'hidden')
             ->add('_csrf_token', 'hidden');
     }
+
+    /**
+     * @return string
+     */
+    public function getBlockPrefix()
+    {
+        return '';
+    }
 }
