@@ -6,7 +6,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Ibrows\SyliusShopBundle\Model\Voucher\BaseVoucherInterface;
 use Ibrows\SyliusShopBundle\Model\Voucher\VoucherCodeInterface;
 use Ibrows\SyliusShopBundle\Validator\Constraints as IbrowsShopAssert;
-use Symfony\Bridge\Doctrine\Validator\Constraints as DoctrineAssert;
 
 /**
  * @ORM\MappedSuperclass
@@ -79,6 +78,7 @@ abstract class AbstractVoucher implements BaseVoucherInterface
 
     /**
      * @param VoucherCodeInterface $voucherCode
+     *
      * @return bool
      */
     public static function acceptCode(VoucherCodeInterface $voucherCode)
@@ -96,11 +96,13 @@ abstract class AbstractVoucher implements BaseVoucherInterface
 
     /**
      * @param string $code
+     *
      * @return $this
      */
     public function setCode($code)
     {
         $this->code = $code;
+
         return $this;
     }
 
@@ -114,11 +116,13 @@ abstract class AbstractVoucher implements BaseVoucherInterface
 
     /**
      * @param \DateTime $createdAt
+     *
      * @return $this
      */
     public function setCreatedAt(\DateTime $createdAt = null)
     {
         $this->createdAt = $createdAt;
+
         return $this;
     }
 
@@ -132,11 +136,13 @@ abstract class AbstractVoucher implements BaseVoucherInterface
 
     /**
      * @param float $minimumOrderValue
+     *
      * @return $this
      */
     public function setMinimumOrderValue($minimumOrderValue)
     {
         $this->minimumOrderValue = $minimumOrderValue;
+
         return $this;
     }
 
@@ -158,11 +164,13 @@ abstract class AbstractVoucher implements BaseVoucherInterface
 
     /**
      * @param \DateTime $validFrom
+     *
      * @return $this
      */
     public function setValidFrom(\DateTime $validFrom = null)
     {
         $this->validFrom = $validFrom;
+
         return $this;
     }
 
@@ -176,11 +184,13 @@ abstract class AbstractVoucher implements BaseVoucherInterface
 
     /**
      * @param \DateTime $validTo
+     *
      * @return $this
      */
     public function setValidTo(\DateTime $validTo = null)
     {
         $this->validTo = $validTo;
+
         return $this;
     }
 
@@ -194,11 +204,13 @@ abstract class AbstractVoucher implements BaseVoucherInterface
 
     /**
      * @param int $quantity
+     *
      * @return $this
      */
     public function setQuantity($quantity)
     {
         $this->quantity = $quantity;
+
         return $this;
     }
 
@@ -242,11 +254,13 @@ abstract class AbstractVoucher implements BaseVoucherInterface
 
     /**
      * @param string $currency
+     *
      * @return $this
      */
     public function setCurrency($currency)
     {
         $this->currency = $currency;
+
         return $this;
     }
 

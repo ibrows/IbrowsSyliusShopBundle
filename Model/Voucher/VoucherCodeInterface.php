@@ -13,6 +13,7 @@ interface VoucherCodeInterface
 
     /**
      * @param bool $valid
+     *
      * @return VoucherCodeInterface
      */
     public function setValid($valid = true);
@@ -24,6 +25,7 @@ interface VoucherCodeInterface
 
     /**
      * @param CartInterface $cart
+     *
      * @return VoucherCodeInterface
      */
     public function setCart(CartInterface $cart);
@@ -35,6 +37,7 @@ interface VoucherCodeInterface
 
     /**
      * @param string $code
+     *
      * @return VoucherCodeInterface
      */
     public function setCode($code);
@@ -46,6 +49,7 @@ interface VoucherCodeInterface
 
     /**
      * @param \DateTime $redeemedAt
+     *
      * @return VoucherCodeInterface
      */
     public function setRedeemedAt(\DateTime $redeemedAt);

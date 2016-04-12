@@ -18,7 +18,8 @@ interface PaymentInterface
 
     /**
      * @param CartInterface $cart
-     * @param bool $stopPropagation
+     * @param bool          $stopPropagation
+     *
      * @return $this
      */
     public function setCart(CartInterface $cart = null, $stopPropagation = false);
@@ -30,6 +31,7 @@ interface PaymentInterface
 
     /**
      * @param float $amount
+     *
      * @return CartInterface
      */
     public function setAmount($amount = 0.0);
@@ -41,6 +43,7 @@ interface PaymentInterface
 
     /**
      * @param null $strategyId
+     *
      * @return $this|PaymentInterface
      */
     public function setStrategyId($strategyId = null);
@@ -52,6 +55,7 @@ interface PaymentInterface
 
     /**
      * @param array $strategyData
+     *
      * @return $this|PaymentInterface
      */
     public function setStrategyData(array $strategyData = null);
@@ -63,8 +67,8 @@ interface PaymentInterface
 
     /**
      * @param array $data
+     *
      * @return CartInterface
      */
     public function setData(array $data = null);
-
 }

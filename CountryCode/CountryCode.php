@@ -2,7 +2,7 @@
 
 /**
  * Created by PhpStorm.
- * Project: coffeeconnection
+ * Project: coffeeconnection.
  *
  * User: mikemeier
  * Date: 04.12.14
@@ -25,21 +25,25 @@ class CountryCode
 
     /**
      * @param string $alpha2
+     *
      * @return string
      */
     public static function getAlpha3FromAlpha2($alpha2)
     {
         $data = self::getData();
+
         return isset($data['alpha2'][$alpha2]) ? $data['alpha2'][$alpha2] : null;
     }
 
     /**
      * @param string $alpha3
+     *
      * @return string
      */
     public static function getAlpha2FromAlpha3($alpha3)
     {
         $data = self::getData();
+
         return isset($data['alpha3'][$alpha3]) ? $data['alpha3'][$alpha3] : null;
     }
 
@@ -52,9 +56,8 @@ class CountryCode
             return self::$data;
         }
 
-        if (($handle = fopen(__DIR__ . '/country_codes.csv', 'r')) !== false) {
-
-            while (($data = fgetcsv($handle, 1000, ";")) !== false) {
+        if (($handle = fopen(__DIR__.'/country_codes.csv', 'r')) !== false) {
+            while (($data = fgetcsv($handle, 1000, ';')) !== false) {
                 self::$data['alpha2'][$data[1]] = $data[2];
                 self::$data['alpha3'][$data[2]] = $data[1];
             }
@@ -62,9 +65,10 @@ class CountryCode
             fclose($handle);
 
             self::$initialized = true;
+
             return self::$data;
         }
 
-        throw new \Exception("Could not open data");
+        throw new \Exception('Could not open data');
     }
 }

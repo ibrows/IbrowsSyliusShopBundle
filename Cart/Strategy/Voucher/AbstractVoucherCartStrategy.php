@@ -42,8 +42,8 @@ abstract class AbstractVoucherCartStrategy extends AbstractCartStrategy implemen
 
     /**
      * @param RegistryInterface $doctrine
-     * @param string $voucherClass
-     * @param bool $cumulative
+     * @param string            $voucherClass
+     * @param bool              $cumulative
      */
     public function __construct(RegistryInterface $doctrine, $voucherClass, $cumulative = true)
     {
@@ -56,7 +56,7 @@ abstract class AbstractVoucherCartStrategy extends AbstractCartStrategy implemen
 
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
      */
     public function redeemVouchers(CartInterface $cart, CartManager $cartManager)
     {
@@ -68,7 +68,7 @@ abstract class AbstractVoucherCartStrategy extends AbstractCartStrategy implemen
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isCumulative()
     {
@@ -76,18 +76,21 @@ abstract class AbstractVoucherCartStrategy extends AbstractCartStrategy implemen
     }
 
     /**
-     * @param boolean $cumulative
+     * @param bool $cumulative
+     *
      * @return VoucherCartStrategy
      */
     public function setCumulative($cumulative)
     {
         $this->cumulative = $cumulative;
+
         return $this;
     }
 
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return AdditionalCartItemInterface[]
      */
     public function compute(CartInterface $cart, CartManager $cartManager)
@@ -118,7 +121,8 @@ abstract class AbstractVoucherCartStrategy extends AbstractCartStrategy implemen
 
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return bool
      */
     public function accept(CartInterface $cart, CartManager $cartManager)
@@ -128,22 +132,24 @@ abstract class AbstractVoucherCartStrategy extends AbstractCartStrategy implemen
 
     /**
      * @param VoucherCodeInterface $voucherCode
-     * @param CartInterface $cart
-     * @param float $totalToReduce
+     * @param CartInterface        $cart
+     * @param float                $totalToReduce
+     *
      * @return AdditionalCartItemInterface[]
      */
     abstract protected function getAdditionalItemByVoucherCode(VoucherCodeInterface $voucherCode, CartInterface $cart, &$totalToReduce);
 
     /**
      * @param VoucherCodeInterface $voucherCode
+     *
      * @return VoucherInterface
      */
     protected function getVoucher(VoucherCodeInterface $voucherCode)
     {
-        /** @var VoucherInterface $voucher */
+        /* @var VoucherInterface $voucher */
         return $this->voucherRepo->findOneBy(
             array(
-                'code' => $voucherCode->getCode()
+                'code' => $voucherCode->getCode(),
             )
         );
     }

@@ -6,6 +6,7 @@ interface BaseVoucherInterface
 {
     /**
      * @param VoucherCodeInterface $voucherCode
+     *
      * @return bool
      */
     public static function acceptCode(VoucherCodeInterface $voucherCode);
@@ -32,6 +33,7 @@ interface BaseVoucherInterface
 
     /**
      * @param int $quantity
+     *
      * @return BaseVoucherInterface
      */
     public function setQuantity($quantity);
@@ -48,6 +50,7 @@ interface BaseVoucherInterface
 
     /**
      * @param \DateTime $validFrom
+     *
      * @return BaseVoucherInterface
      */
     public function setValidFrom(\DateTime $validFrom = null);
@@ -59,6 +62,7 @@ interface BaseVoucherInterface
 
     /**
      * @param \DateTime $validTo
+     *
      * @return BaseVoucherInterface
      */
     public function setValidTo(\DateTime $validTo = null);
@@ -70,6 +74,7 @@ interface BaseVoucherInterface
 
     /**
      * @param float $minimumOrderValue
+     *
      * @return BaseVoucherInterface
      */
     public function setMinimumOrderValue($minimumOrderValue);
@@ -86,6 +91,7 @@ interface BaseVoucherInterface
 
     /**
      * @param string $currency
+     *
      * @return BaseVoucherInterface
      */
     public function setCurrency($currency);

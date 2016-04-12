@@ -8,15 +8,10 @@ use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\PaymentFinishedRespon
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\SelfRedirectResponse;
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
- * Class PosPaymentOptionCartStrategy
- * @package Ibrows\SyliusShopBundle\Cart\Strategy\Payment
- *
- * This payment service is coupled with a delivery strategy id
- * As an example: If SelfpickupDeliveryCartStrategy is selected, this option is valid for payment
+ * Class PosPaymentOptionCartStrategy.
  */
 class PosPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrategy
 {
@@ -35,7 +30,8 @@ class PosPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrategy
 
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return bool
      */
     public function isPossible(CartInterface $cart, CartManager $cartManager)
@@ -45,7 +41,8 @@ class PosPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrategy
 
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return AdditionalCartItemInterface[]
      */
     public function compute(CartInterface $cart, CartManager $cartManager)
@@ -54,9 +51,10 @@ class PosPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrategy
     }
 
     /**
-     * @param Context $context
+     * @param Context       $context
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return RedirectResponse|PaymentFinishedResponse|ErrorRedirectResponse|SelfRedirectResponse
      */
     public function pay(Context $context, CartInterface $cart, CartManager $cartManager)

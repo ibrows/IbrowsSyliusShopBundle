@@ -2,7 +2,7 @@
 
 /**
  * Created by PhpStorm.
- * Project: claro
+ * Project: claro.
  *
  * User: mikemeier
  * Date: 03.07.15
@@ -46,13 +46,13 @@ class VoucherPercentGroupedTaxCartStrategy extends AbstractCartStrategy implemen
 
     /**
      * @var bool|float
-     * Set to 0.05 for rounding to 5 cents (Switzerland for example)
+     *                 Set to 0.05 for rounding to 5 cents (Switzerland for example)
      */
     protected $roundToNearest = false;
 
     /**
      * @param RegistryInterface $doctrine
-     * @param string $voucherPercentClass
+     * @param string            $voucherPercentClass
      */
     public function __construct(RegistryInterface $doctrine, $voucherPercentClass)
     {
@@ -65,7 +65,8 @@ class VoucherPercentGroupedTaxCartStrategy extends AbstractCartStrategy implemen
 
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return bool
      */
     public function accept(CartInterface $cart, CartManager $cartManager)
@@ -75,7 +76,8 @@ class VoucherPercentGroupedTaxCartStrategy extends AbstractCartStrategy implemen
 
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return AdditionalCartItemInterface[]
      */
     public function compute(CartInterface $cart, CartManager $cartManager)
@@ -109,7 +111,7 @@ class VoucherPercentGroupedTaxCartStrategy extends AbstractCartStrategy implemen
 
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
      */
     public function redeemVouchers(CartInterface $cart, CartManager $cartManager)
     {
@@ -161,16 +163,18 @@ class VoucherPercentGroupedTaxCartStrategy extends AbstractCartStrategy implemen
     }
 
     /**
-     * @param CartInterface $cart
-     * @param VoucherCodeInterface $voucherCode
+     * @param CartInterface           $cart
+     * @param VoucherCodeInterface    $voucherCode
      * @param VoucherPercentInterface $voucher
+     *
      * @return AdditionalCartItemInterface[]|null
      */
     protected function getAdditionalItemsForVoucher(CartInterface $cart, VoucherCodeInterface $voucherCode, VoucherPercentInterface $voucher)
     {
         if (!$voucher->isValid() && !$voucherCode->isRedeemed()) {
             $voucherCode->setValid(false);
-            return null;
+
+            return;
         }
 
         $voucherCode->setValid(true);
@@ -190,7 +194,8 @@ class VoucherPercentGroupedTaxCartStrategy extends AbstractCartStrategy implemen
 
         if ($voucher->hasMinimumOrderValue() && $total < $voucher->getMinimumOrderValue()) {
             $voucherCode->setValid(false);
-            return null;
+
+            return;
         }
 
         $quantity = $voucher->getQuantity();
@@ -206,16 +211,16 @@ class VoucherPercentGroupedTaxCartStrategy extends AbstractCartStrategy implemen
                 $reduction,
                 null,
                 array(
-                    'percentRate'  => $voucher->getPercent(),
-                    'code'         => $voucherCode->getCode(),
-                    'reduction'    => $reduction,
-                    'validFrom'    => ($from = $voucher->getValidFrom()) ? $from->format('Y-m-d H:i:s') : null,
-                    'validTo'      => ($to = $voucher->getValidTo()) ? $to->format('Y-m-d H:i:s') : null,
-                    'quantity'     => $quantity,
-                    'voucherId'    => $voucher->getId(),
+                    'percentRate' => $voucher->getPercent(),
+                    'code' => $voucherCode->getCode(),
+                    'reduction' => $reduction,
+                    'validFrom' => ($from = $voucher->getValidFrom()) ? $from->format('Y-m-d H:i:s') : null,
+                    'validTo' => ($to = $voucher->getValidTo()) ? $to->format('Y-m-d H:i:s') : null,
+                    'quantity' => $quantity,
+                    'voucherId' => $voucher->getId(),
                     'voucherClass' => get_class($voucher),
-                    'taxRate'      => $taxRate,
-                    'value'        => $value
+                    'taxRate' => $taxRate,
+                    'value' => $value,
                 )
             );
 
@@ -230,13 +235,14 @@ class VoucherPercentGroupedTaxCartStrategy extends AbstractCartStrategy implemen
 
     /**
      * @param VoucherCodeInterface $voucherCode
+     *
      * @return VoucherPercentInterface
      */
     protected function getVoucher(VoucherCodeInterface $voucherCode)
     {
         return $this->voucherRepo->findOneBy(
             array(
-                'code' => $voucherCode->getCode()
+                'code' => $voucherCode->getCode(),
             )
         );
     }

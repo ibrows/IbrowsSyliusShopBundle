@@ -12,7 +12,6 @@ use Ibrows\SyliusShopBundle\Model\Cart\Serializer\CartSerializerInterface;
 use Sylius\Bundle\CartBundle\Provider\CartProviderInterface;
 use Sylius\Bundle\CartBundle\Resolver\ItemResolverInterface;
 use Sylius\Bundle\InventoryBundle\Checker\AvailabilityCheckerInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 class CurrentCartManager extends CartManager
 {
@@ -32,14 +31,14 @@ class CurrentCartManager extends CartManager
     protected $cartItemSerializers;
 
     /**
-     * @param ObjectManager $cartManager
-     * @param ObjectRepository $cartRepo
-     * @param ObjectManager $itemManager
-     * @param ObjectRepository $itemRepo
-     * @param ObjectRepository $additionalItemObjectRepo
-     * @param ItemResolverInterface $resolver
+     * @param ObjectManager                $cartManager
+     * @param ObjectRepository             $cartRepo
+     * @param ObjectManager                $itemManager
+     * @param ObjectRepository             $itemRepo
+     * @param ObjectRepository             $additionalItemObjectRepo
+     * @param ItemResolverInterface        $resolver
      * @param AvailabilityCheckerInterface $availablityChecker
-     * @param CartProviderInterface $provider
+     * @param CartProviderInterface        $provider
      */
     public function __construct(
         ObjectManager $cartManager,
@@ -59,7 +58,9 @@ class CurrentCartManager extends CartManager
 
     /**
      * @param bool $throwException
+     *
      * @return CartInterface
+     *
      * @throws \BadMethodCallException
      */
     public function getCart($throwException = false)
@@ -69,82 +70,95 @@ class CurrentCartManager extends CartManager
             $cart = $this->provider->getCart();
             parent::setCart($cart);
         }
+
         return parent::getCart($throwException);
     }
 
     /**
      * @param CartInterface $cart
-     * @return void
+     *
      * @throws \BadMethodCallException
      */
     public function setCart(CartInterface $cart = null)
     {
-        throw new \BadMethodCallException("You dont want to change the current cart");
+        throw new \BadMethodCallException('You dont want to change the current cart');
     }
 
     /**
      * @param bool $refreshAndCheckAvailability
+     *
      * @return CartManager
      */
     public function persistCart($refreshAndCheckAvailability = true)
     {
         parent::persistCart($refreshAndCheckAvailability);
         $this->provider->setCart($this->getCart());
+
         return $this;
     }
 
     /**
      * @param CartSerializerInterface $serializer
+     *
      * @return CurrentCartManager
      */
     public function addCartSerializer(CartSerializerInterface $serializer)
     {
         $this->cartSerializers->add($serializer);
+
         return $this;
     }
 
     /**
      * @param CartSerializerInterface $serializer
+     *
      * @return CurrentCartManager
      */
     public function removeCartSerializer(CartSerializerInterface $serializer)
     {
         $this->cartSerializers->removeElement($serializer);
+
         return $this;
     }
 
     /**
      * @param CartItemSerializerInterface $serializer
+     *
      * @return CurrentCartManager
      */
     public function addCartItemSerializer(CartItemSerializerInterface $serializer)
     {
         $this->cartItemSerializers->add($serializer);
+
         return $this;
     }
 
     /**
      * @param CartItemSerializerInterface $serializer
+     *
      * @return CurrentCartManager
      */
     public function removeCartItemSerializer(CartItemSerializerInterface $serializer)
     {
         $this->cartItemSerializers->removeElement($serializer);
+
         return $this;
     }
 
     /**
      * @param bool $persistCart
      * @param bool $returnExceptions
+     *
      * @throws \BadMethodCallException
      * @throws \Exception
+     *
      * @return \Exception[]|CurrentCartManager
      */
     public function closeCart($persistCart = true, $returnExceptions = false)
     {
         $cart = $this->getCart();
         if ($cart->isClosed()) {
-            $exception = new \BadMethodCallException("Cart is already closed");
+            $exception = new \BadMethodCallException('Cart is already closed');
             if ($returnExceptions) {
                 return array($exception);
             }
@@ -182,13 +196,16 @@ class CurrentCartManager extends CartManager
     {
         $this->provider->abandonCart();
         parent::setCart(null);
+
         return $this;
     }
 
     /**
      * @param CartInterface $cart
-     * @param bool $returnExceptions
+     * @param bool          $returnExceptions
+     *
      * @throws \Exception
+     *
      * @return null|\Exception[]
      */
     protected function serializeCart(CartInterface $cart, $returnExceptions = false)
@@ -213,8 +230,10 @@ class CurrentCartManager extends CartManager
 
     /**
      * @param CartInterface $cart
-     * @param bool $returnExceptions
+     * @param bool          $returnExceptions
+     *
      * @throws \Exception
+     *
      * @return null|\Exception[]
      */
     protected function serializeCartItems(CartInterface $cart, $returnExceptions = false)

@@ -5,7 +5,6 @@ namespace Ibrows\SyliusShopBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Ibrows\SyliusShopBundle\Model\Product\ProductInterface;
 use Ibrows\SyliusShopBundle\Model\Voucher\VoucherInterface;
-use Symfony\Bridge\Doctrine\Validator\Constraints as DoctrineAssert;
 
 /**
  * @ORM\Entity
@@ -31,7 +30,7 @@ class Voucher extends AbstractVoucher implements VoucherInterface, ProductInterf
      */
     public function __toString()
     {
-        return '#' . $this->getId() . ' Voucher "' . $this->getCode() . '" (' . $this->getValue() . ') | Status: ' . ($this->isPayed() ? 'payed' : 'unpayed');
+        return '#'.$this->getId().' Voucher "'.$this->getCode().'" ('.$this->getValue().') | Status: '.($this->isPayed() ? 'payed' : 'unpayed');
     }
 
     /**
@@ -44,11 +43,13 @@ class Voucher extends AbstractVoucher implements VoucherInterface, ProductInterf
 
     /**
      * @param float $value
+     *
      * @return Voucher
      */
     public function setValue($value)
     {
         $this->value = $value;
+
         return $this;
     }
 
@@ -69,7 +70,7 @@ class Voucher extends AbstractVoucher implements VoucherInterface, ProductInterf
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isEnabled()
     {
@@ -100,7 +101,7 @@ class Voucher extends AbstractVoucher implements VoucherInterface, ProductInterf
      * Simply checks if there any stock available.
      * It should also return true for items available on demand.
      *
-     * @return Boolean
+     * @return bool
      */
     public function isInStock()
     {
@@ -110,7 +111,7 @@ class Voucher extends AbstractVoucher implements VoucherInterface, ProductInterf
     /**
      * Is stockable available on demand?
      *
-     * @return Boolean
+     * @return bool
      */
     public function isAvailableOnDemand()
     {
@@ -120,7 +121,7 @@ class Voucher extends AbstractVoucher implements VoucherInterface, ProductInterf
     /**
      * Get stock on hand.
      *
-     * @return integer
+     * @return int
      */
     public function getOnHand()
     {
@@ -138,12 +139,13 @@ class Voucher extends AbstractVoucher implements VoucherInterface, ProductInterf
     /**
      * Set stock on hand.
      *
-     * @param integer $onHand
+     * @param int $onHand
+     *
      * @throws \Exception
      */
     public function setOnHand($onHand)
     {
-        throw new \Exception("Not implemented");
+        throw new \Exception('Not implemented');
     }
 
     /**
@@ -156,11 +158,13 @@ class Voucher extends AbstractVoucher implements VoucherInterface, ProductInterf
 
     /**
      * @param \DateTime $payedAt
+     *
      * @return Voucher
      */
     public function setPayedAt(\DateTime $payedAt = null)
     {
         $this->payedAt = $payedAt;
+
         return $this;
     }
 
@@ -182,11 +186,13 @@ class Voucher extends AbstractVoucher implements VoucherInterface, ProductInterf
 
     /**
      * @param string $currency
+     *
      * @return Voucher
      */
     public function setCurrency($currency)
     {
         $this->currency = $currency;
+
         return $this;
     }
 }

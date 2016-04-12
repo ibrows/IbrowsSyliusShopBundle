@@ -13,7 +13,8 @@ class VoucherCartStrategy extends AbstractVoucherCartStrategy
 {
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @throws VoucherRedemptionException
      */
     public function redeemVouchers(CartInterface $cart, CartManager $cartManager)
@@ -31,7 +32,7 @@ class VoucherCartStrategy extends AbstractVoucherCartStrategy
 
             /** @var VoucherInterface $voucher */
             if (!$voucher = $this->voucherRepo->find($data['voucherId'])) {
-                throw new VoucherRedemptionException("Voucher #" . $data['voucherId'] . " not found");
+                throw new VoucherRedemptionException('Voucher #'.$data['voucherId'].' not found');
             }
 
             if ($voucher->hasQuantity()) {
@@ -46,36 +47,40 @@ class VoucherCartStrategy extends AbstractVoucherCartStrategy
 
     /**
      * @param VoucherCodeInterface $voucherCode
-     * @param CartInterface $cart
-     * @param float $totalToReduce
+     * @param CartInterface        $cart
+     * @param float                $totalToReduce
+     *
      * @return AdditionalCartItemInterface
      */
     protected function getAdditionalItemByVoucherCode(VoucherCodeInterface $voucherCode, CartInterface $cart, &$totalToReduce)
     {
         if ($totalToReduce <= 0) {
-            return null;
+            return;
         }
 
         $voucher = $this->getVoucher($voucherCode);
 
         if (!$voucher instanceof VoucherInterface) {
-            return null;
+            return;
         }
 
         if (!$voucher->isValid() && !$voucherCode->isRedeemed()) {
             $voucherCode->setValid(false);
-            return null;
+
+            return;
         }
 
         if ($voucher->hasCurrency() && $cart->getCurrency() != $voucher->getCurrency()) {
             $voucherCode->setValid(false);
-            return null;
+
+            return;
         }
 
-        if($voucher->hasQuantity() && $voucher->hasMinimumOrderValue()){
-            if($cart->getTotal() < $voucher->getMinimumOrderValue()){
+        if ($voucher->hasQuantity() && $voucher->hasMinimumOrderValue()) {
+            if ($cart->getTotal() < $voucher->getMinimumOrderValue()) {
                 $voucherCode->setValid(false);
-                return null;
+
+                return;
             }
         }
 
@@ -95,24 +100,26 @@ class VoucherCartStrategy extends AbstractVoucherCartStrategy
 
     /**
      * @param VoucherCodeInterface $voucherCode
+     *
      * @return VoucherInterface
      */
     protected function getValidVoucher(VoucherCodeInterface $voucherCode)
     {
         $voucher = $this->getVoucher($voucherCode);
 
-        if (!$voucher instanceof VoucherInterface OR !$voucher->isValid()) {
-            return null;
+        if (!$voucher instanceof VoucherInterface or !$voucher->isValid()) {
+            return;
         }
 
         return $voucher;
     }
 
     /**
-     * @param int $reduction
+     * @param int                  $reduction
      * @param VoucherCodeInterface $voucherCode
-     * @param VoucherInterface $voucher
-     * @param string $text
+     * @param VoucherInterface     $voucher
+     * @param string               $text
+     *
      * @return AdditionalCartItemInterface
      */
     protected function createAdditionalCartItemForVoucher($reduction, VoucherCodeInterface $voucherCode, VoucherInterface $voucher, $text = null)
@@ -121,11 +128,11 @@ class VoucherCartStrategy extends AbstractVoucherCartStrategy
             $reduction * -1,
             $text,
             array(
-                'code'         => $voucherCode->getCode(),
-                'reduction'    => $reduction,
-                'newValue'     => $voucher->getValue() - $reduction,
-                'voucherId'    => $voucher->getId(),
-                'voucherClass' => get_class($voucher)
+                'code' => $voucherCode->getCode(),
+                'reduction' => $reduction,
+                'newValue' => $voucher->getValue() - $reduction,
+                'voucherId' => $voucher->getId(),
+                'voucherClass' => get_class($voucher),
             )
         );
     }

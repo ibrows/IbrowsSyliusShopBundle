@@ -58,55 +58,69 @@ abstract class Product implements ProductInterface
 
     /**
      * Product description.
+     *
      * @ORM\Column(type="string", nullable=true)
+     *
      * @var string
      */
     protected $description;
 
     /**
      * Available on.
+     *
      * @ORM\Column(type="datetime")
+     *
      * @var \DateTime
      */
     protected $availableOn;
 
     /**
      * Meta keywords.
+     *
      * @ORM\Column(type="string", nullable=true)
+     *
      * @var string
      */
     protected $metaKeywords;
 
     /**
      * Meta description.
+     *
      * @ORM\Column(type="string", nullable=true)
+     *
      * @var string
      */
     protected $metaDescription;
 
     /**
      * Creation time.
+     *
      * @ORM\Column(type="datetime")
+     *
      * @var \DateTime
      */
     protected $createdAt;
 
     /**
      * Last update time.
+     *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @var \DateTime
      */
     protected $updatedAt;
 
     /**
      * Deletion time.
+     *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @var \DateTime
      */
     protected $deletedAt;
 
     /**
-     * @var boolean
+     * @var bool
      * @ORM\Column(type="boolean")
      */
     protected $enabled = true;
@@ -242,21 +256,25 @@ abstract class Product implements ProductInterface
 
     /**
      * @param \DateTime $createdAt
+     *
      * @return Product
      */
     public function setCreatedAt(\DateTime $createdAt = null)
     {
         $this->createdAt = $createdAt;
+
         return $this;
     }
 
     /**
      * @param \DateTime $updatedAt
+     *
      * @return Product
      */
     public function setUpdatedAt(\DateTime $updatedAt = null)
     {
         $this->updatedAt = $updatedAt;
+
         return $this;
     }
 
@@ -324,7 +342,7 @@ abstract class Product implements ProductInterface
      */
     public function isInStock()
     {
-        return (0 < $this->onHand || $this->availableOnDemand);
+        return 0 < $this->onHand || $this->availableOnDemand;
     }
 
     /**
@@ -383,10 +401,10 @@ abstract class Product implements ProductInterface
      */
     public function __toString()
     {
-        return (string)$this->getInventoryName();
+        return (string) $this->getInventoryName();
     }
     /**
-     * @return boolean
+     * @return bool
      */
     public function isEnabled()
     {
@@ -395,11 +413,13 @@ abstract class Product implements ProductInterface
 
     /**
      * @param bool $enabled
+     *
      * @return $this
      */
     public function setEnabled($enabled)
     {
         $this->enabled = $enabled;
+
         return $this;
     }
 }

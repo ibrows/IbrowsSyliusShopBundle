@@ -16,7 +16,7 @@ class QuantityDiscountStrategy extends AbstractCartStrategy
     /**
      * @var string
      */
-    protected $quantitymethod = "getTotal";
+    protected $quantitymethod = 'getTotal';
     /**
      * @var bool
      */
@@ -33,13 +33,13 @@ class QuantityDiscountStrategy extends AbstractCartStrategy
     protected $totalMethod;
 
     /**
-     * @param array $steps
+     * @param array  $steps
      * @param string $quantitymethod
-     * @param bool $quantityFromProduct
-     * @param bool $roundpercent
+     * @param bool   $quantityFromProduct
+     * @param bool   $roundpercent
      * @param string $totalMethod
      */
-    public function __construct(array $steps, $quantitymethod = "getTotal", $quantityFromProduct = false, $roundpercent = true, $totalMethod = null)
+    public function __construct(array $steps, $quantitymethod = 'getTotal', $quantityFromProduct = false, $roundpercent = true, $totalMethod = null)
     {
         $this->steps = $steps;
         $this->quantitymethod = $quantitymethod;
@@ -50,7 +50,8 @@ class QuantityDiscountStrategy extends AbstractCartStrategy
 
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return bool
      */
     public function accept(CartInterface $cart, CartManager $cartManager)
@@ -60,20 +61,22 @@ class QuantityDiscountStrategy extends AbstractCartStrategy
 
     /**
      * @param number $value
+     *
      * @return number
      */
-    private static function roundfivers($value){
+    private static function roundfivers($value)
+    {
         return round(2 * $value, 1) / 2;
     }
 
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return AdditionalCartItemInterface[]
      */
     public function compute(CartInterface $cart, CartManager $cartManager)
     {
-
         $steps = $this->steps;
         if (!$steps) {
             return array();
@@ -86,14 +89,14 @@ class QuantityDiscountStrategy extends AbstractCartStrategy
         $costs = $this->getStepCosts($this->steps, $quantity, true);
         if ($costs != 0) {
             $totalmethod = $this->totalMethod;
-            if($totalmethod){
+            if ($totalmethod) {
                 $total = $cart->$totalmethod();
             }
 
             if (stripos($costs, '%') !== false) {
                 $percent = intval($costs);
                 $costs = $total * $percent / 100;
-                if($this->roundpercent){
+                if ($this->roundpercent) {
                     $costs = self::roundfivers($costs);
                 }
             }
@@ -104,8 +107,9 @@ class QuantityDiscountStrategy extends AbstractCartStrategy
 
             $item->setText($this->getItemText($costs, $cart, $cartManager, $item));
             $item->setStrategyData(array('costs' => $costs, 'total' => $total, 'quantity' => $quantity));
+
             return array(
-                    $item
+                    $item,
             );
         }
 
@@ -114,11 +118,11 @@ class QuantityDiscountStrategy extends AbstractCartStrategy
 
     /**
      * @param CartInterface $cart
+     *
      * @return int
      */
     protected function getQuantity(CartInterface $cart)
     {
-
         $quant = 0;
         $quantitymethod = $this->quantitymethod;
         foreach ($cart->getItems() as $item) {
@@ -127,13 +131,14 @@ class QuantityDiscountStrategy extends AbstractCartStrategy
             } else {
                 $quant += $item->$quantitymethod();
             }
-
         }
+
         return $quant;
     }
 
     /**
      * @param float $cost
+     *
      * @return string
      */
     protected function getItemText($cost)
@@ -151,11 +156,13 @@ class QuantityDiscountStrategy extends AbstractCartStrategy
 
     /**
      * @param string $quantitymethod
+     *
      * @return \Ibrows\SyliusShopBundle\Cart\Strategy\Discount\QuantityDiscountStrategy
      */
     public function setQuantitymethod($quantitymethod)
     {
         $this->quantitymethod = $quantitymethod;
+
         return $this;
     }
 
@@ -169,11 +176,13 @@ class QuantityDiscountStrategy extends AbstractCartStrategy
 
     /**
      * @param bool $quantityFromProduct
+     *
      * @return \Ibrows\SyliusShopBundle\Cart\Strategy\Discount\QuantityDiscountStrategy
      */
     public function setQuantityFromProduct($quantityFromProduct)
     {
         $this->quantityFromProduct = $quantityFromProduct;
+
         return $this;
     }
 
@@ -191,6 +200,7 @@ class QuantityDiscountStrategy extends AbstractCartStrategy
     public function setRoundpercent($roundpercent)
     {
         $this->roundpercent = $roundpercent;
+
         return $this;
     }
 
@@ -204,12 +214,13 @@ class QuantityDiscountStrategy extends AbstractCartStrategy
 
     /**
      * @param string $totalMethod
+     *
      * @return QuantityDiscountStrategy
      */
     public function setTotalMethod($totalMethod)
     {
         $this->totalMethod = $totalMethod;
+
         return $this;
     }
-
 }

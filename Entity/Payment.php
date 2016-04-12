@@ -4,9 +4,7 @@ namespace Ibrows\SyliusShopBundle\Entity;
 
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\Payment\PaymentInterface;
-use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
-use DateTime;
 
 /**
  * @ORM\Entity
@@ -31,19 +29,19 @@ class Payment implements PaymentInterface
     protected $cart;
 
     /**
-     * @var string $strategyId
+     * @var string
      * @ORM\Column(type="string", name="strategy_id", nullable=false)
      */
     protected $strategyId;
 
     /**
-     * @var array $strategyData
+     * @var array
      * @ORM\Column(type="json_array", name="strategy_data", nullable=true)
      */
     protected $strategyData;
 
     /**
-     * @var array $data
+     * @var array
      * @ORM\Column(type="json_array", name="data", nullable=true)
      */
     protected $data;
@@ -66,7 +64,8 @@ class Payment implements PaymentInterface
 
     /**
      * @param CartInterface $cart
-     * @param bool $stopPropagation
+     * @param bool          $stopPropagation
+     *
      * @return $this|PaymentInterface
      */
     public function setCart(CartInterface $cart = null, $stopPropagation = false)
@@ -94,6 +93,7 @@ class Payment implements PaymentInterface
 
     /**
      * @param float $amount
+     *
      * @return $this|PaymentInterface
      */
     public function setAmount($amount = 0.0)
@@ -113,6 +113,7 @@ class Payment implements PaymentInterface
 
     /**
      * @param array $data
+     *
      * @return $this|PaymentInterface
      */
     public function setData(array $data = null)
@@ -132,6 +133,7 @@ class Payment implements PaymentInterface
 
     /**
      * @param null $strategyId
+     *
      * @return $this|PaymentInterface
      */
     public function setStrategyId($strategyId = null)
@@ -151,6 +153,7 @@ class Payment implements PaymentInterface
 
     /**
      * @param array $strategyData
+     *
      * @return $this|PaymentInterface
      */
     public function setStrategyData(array $strategyData = null)

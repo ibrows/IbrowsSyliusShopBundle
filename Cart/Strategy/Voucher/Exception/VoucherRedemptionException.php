@@ -6,5 +6,4 @@ use Ibrows\SyliusShopBundle\Cart\Exception\CartException;
 
 class VoucherRedemptionException extends CartException
 {
-
 }

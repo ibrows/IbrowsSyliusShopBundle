@@ -60,11 +60,13 @@ class VoucherCode implements VoucherCodeInterface
 
     /**
      * @param string $code
+     *
      * @return VoucherCode
      */
     public function setCode($code)
     {
         $this->code = $code;
+
         return $this;
     }
 
@@ -73,7 +75,7 @@ class VoucherCode implements VoucherCodeInterface
      */
     public function __toString()
     {
-        return 'Code : "' . $this->getCode() . '" (' . ($this->isValid() ? 'valid' : 'invalid') . ') ' . ($this->isRedeemed() ? ' / RedeemedAt: ' . $this->getRedeemedAt()->format('Y-m-d H:i:s') : null);
+        return 'Code : "'.$this->getCode().'" ('.($this->isValid() ? 'valid' : 'invalid').') '.($this->isRedeemed() ? ' / RedeemedAt: '.$this->getRedeemedAt()->format('Y-m-d H:i:s') : null);
     }
 
     /**
@@ -94,11 +96,13 @@ class VoucherCode implements VoucherCodeInterface
 
     /**
      * @param \DateTime $redeemedAt
+     *
      * @return VoucherCode
      */
     public function setRedeemedAt(\DateTime $redeemedAt = null)
     {
         $this->redeemedAt = $redeemedAt;
+
         return $this;
     }
 
@@ -112,21 +116,25 @@ class VoucherCode implements VoucherCodeInterface
 
     /**
      * @param bool $valid
+     *
      * @return VoucherCode
      */
     public function setValid($valid = true)
     {
         $this->valid = $valid;
+
         return $this;
     }
 
     /**
      * @param CartInterface $cart
+     *
      * @return VoucherCode
      */
     public function setCart(CartInterface $cart = null)
     {
         $this->cart = $cart;
+
         return $this;
     }
 

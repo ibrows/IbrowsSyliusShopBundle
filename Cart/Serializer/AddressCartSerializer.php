@@ -9,6 +9,7 @@ class AddressCartSerializer implements CartSerializerInterface
 {
     /**
      * @param CartInterface $cart
+     *
      * @return bool
      */
     public function accept(CartInterface $cart)

@@ -16,6 +16,7 @@ interface AdditionalCartItemInterface
 
     /**
      * @param CartInterface
+     *
      * @return AdditionalCartItemInterface
      */
     public function setCart(CartInterface $cart = null);
@@ -27,6 +28,7 @@ interface AdditionalCartItemInterface
 
     /**
      * @param string $identifier
+     *
      * @return AdditionalCartItemInterface
      */
     public function setStrategyIdentifier($identifier);
@@ -38,6 +40,7 @@ interface AdditionalCartItemInterface
 
     /**
      * @param array $data
+     *
      * @return AdditionalCartItemInterface
      */
     public function setStrategyData(array $data);
@@ -49,6 +52,7 @@ interface AdditionalCartItemInterface
 
     /**
      * @param float $price
+     *
      * @return AdditionalCartItemInterface
      */
     public function setPrice($price);
@@ -60,6 +64,7 @@ interface AdditionalCartItemInterface
 
     /**
      * @param string $text
+     *
      * @return AdditionalCartItemInterface
      */
     public function setText($text);
@@ -71,6 +76,7 @@ interface AdditionalCartItemInterface
 
     /**
      * @param float $rate
+     *
      * @return AdditionalCartItemInterface
      */
     public function setTaxRate($rate);
@@ -82,6 +88,7 @@ interface AdditionalCartItemInterface
 
     /**
      * @param float $price
+     *
      * @return AdditionalCartItemInterface
      */
     public function setTaxPrice($price);
@@ -93,21 +100,22 @@ interface AdditionalCartItemInterface
 
     /**
      * @param float $total
+     *
      * @return AdditionalCartItemInterface
      */
     public function setPriceWithTax($price);
 
     public function calculateTotal();
 
-
     /**
-     * @return boolean
+     * @return bool
      */
     public function isTaxInclusive();
 
     /**
-     * @param boolean $mwstinclusive
+     * @param bool $mwstinclusive
+     *
      * @return CartItemInterface
-    */
+     */
     public function setTaxInclusive($taxInclusive);
 }

@@ -15,6 +15,7 @@ interface CartItemInterface extends BaseCartItemInterface
 
     /**
      * @param $quantity
+     *
      * @return int
      */
     public function setReducedQuantity($quantity);
@@ -26,6 +27,7 @@ interface CartItemInterface extends BaseCartItemInterface
 
     /**
      * @param bool $flag
+     *
      * @return CartItemInterface
      */
     public function setDelivered($flag = true);
@@ -57,12 +59,14 @@ interface CartItemInterface extends BaseCartItemInterface
 
     /**
      * @param ProductInterface $product
+     *
      * @return CartItemInterface
      */
     public function setProduct(ProductInterface $product = null);
 
     /**
      * @param ProductInterface $product
+     *
      * @return CartItemInterface
      */
     public function setProductObj(ProductInterface $product = null);
@@ -79,6 +83,7 @@ interface CartItemInterface extends BaseCartItemInterface
 
     /**
      * @param float $rate
+     *
      * @return CartItemInterface
      */
     public function setTaxRate($rate);
@@ -90,6 +95,7 @@ interface CartItemInterface extends BaseCartItemInterface
 
     /**
      * @param float $price
+     *
      * @return CartItemInterface
      */
     public function setTaxPrice($price);
@@ -101,17 +107,19 @@ interface CartItemInterface extends BaseCartItemInterface
 
     /**
      * @param float $total
+     *
      * @return CartItemInterface
      */
     public function setTotalWithTaxPrice($total);
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isTaxInclusive();
 
     /**
-     * @param boolean $taxInclusive
+     * @param bool $taxInclusive
+     *
      * @return CartItemInterface
      */
     public function setTaxInclusive($taxInclusive);

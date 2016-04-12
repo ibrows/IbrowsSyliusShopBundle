@@ -3,7 +3,6 @@
 namespace Ibrows\SyliusShopBundle\Model\Cart;
 
 use Doctrine\Common\Collections\Collection;
-use Ibrows\SyliusShopBundle\Model\Cart\CartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface;
 use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\Payment\PaymentInterface;
@@ -26,12 +25,14 @@ interface CartInterface extends BaseCartInterface
 
     /**
      * @param string $currency
+     *
      * @return CartInterface
      */
     public function setCurrency($currency);
 
     /**
      * @param AdditionalCartItemInterface $item
+     *
      * @return CartInterface
      */
     public function addAdditionalItem(AdditionalCartItemInterface $item);
@@ -48,30 +49,35 @@ interface CartInterface extends BaseCartInterface
 
     /**
      * @param VoucherCodeInterface $voucherCode
+     *
      * @return CartInterface
      */
     public function addVoucherCode(VoucherCodeInterface $voucherCode);
 
     /**
      * @param VoucherCodeInterface $voucherCode
+     *
      * @return CartInterface
      */
     public function removeVoucherCode(VoucherCodeInterface $voucherCode);
 
     /**
      * @param float $amountToPay
+     *
      * @return CartInterface
      */
     public function setAmountToPay($amountToPay);
 
     /**
      * @param AdditionalCartItemInterface $item
+     *
      * @return CartInterface
      */
     public function removeAdditionalItem(AdditionalCartItemInterface $item);
 
     /**
      * @param Collection $items
+     *
      * @return CartInterface
      */
     public function setAdditionalItems(Collection $items);
@@ -83,6 +89,7 @@ interface CartInterface extends BaseCartInterface
 
     /**
      * @param int $total
+     *
      * @return CartInterface
      */
     public function setTotalAdditionalItems($total);
@@ -94,6 +101,7 @@ interface CartInterface extends BaseCartInterface
 
     /**
      * @param CartStrategyInterface $strategy
+     *
      * @return AdditionalCartItemInterface[]
      */
     public function getAdditionalItemsByStrategy(CartStrategyInterface $strategy);
@@ -105,6 +113,7 @@ interface CartInterface extends BaseCartInterface
 
     /**
      * @param string $email
+     *
      * @return CartInterface
      */
     public function setEmail($email = null);
@@ -116,6 +125,7 @@ interface CartInterface extends BaseCartInterface
 
     /**
      * @param InvoiceAddressInterface $invoiceAddress
+     *
      * @return CartInterface
      */
     public function setInvoiceAddress(InvoiceAddressInterface $invoiceAddress = null);
@@ -127,6 +137,7 @@ interface CartInterface extends BaseCartInterface
 
     /**
      * @param InvoiceAddressInterface $invoiceAddressObj
+     *
      * @return CartInterface
      */
     public function setInvoiceAddressObj(InvoiceAddressInterface $invoiceAddressObj = null);
@@ -138,6 +149,7 @@ interface CartInterface extends BaseCartInterface
 
     /**
      * @param DeliveryAddressInterface $deliveryAddress
+     *
      * @return CartInterface
      */
     public function setDeliveryAddress(DeliveryAddressInterface $deliveryAddress = null);
@@ -149,12 +161,14 @@ interface CartInterface extends BaseCartInterface
 
     /**
      * @param DeliveryAddressInterface $deliveryAddressObj
+     *
      * @return CartInterface
      */
     public function setDeliveryAddressObj(DeliveryAddressInterface $deliveryAddressObj = null);
 
     /**
      * @param bool $flag
+     *
      * @return CartInterface
      */
     public function setPayed($flag = true);
@@ -171,6 +185,7 @@ interface CartInterface extends BaseCartInterface
 
     /**
      * @param bool $flag
+     *
      * @return CartInterface
      */
     public function setConfirmed($flag = true);
@@ -187,6 +202,7 @@ interface CartInterface extends BaseCartInterface
 
     /**
      * @param bool $flag
+     *
      * @return CartInterface
      */
     public function setCreated($flag = true);
@@ -203,6 +219,7 @@ interface CartInterface extends BaseCartInterface
 
     /**
      * @param bool $flag
+     *
      * @return CartInterface
      */
     public function setClosed($flag = true);
@@ -234,12 +251,14 @@ interface CartInterface extends BaseCartInterface
 
     /**
      * @param bool $flag
+     *
      * @return CartInterface
      */
     public function setTermsAndConditions($flag = true);
 
     /**
      * @param string $serviceId
+     *
      * @return CartInterface
      */
     public function setDeliveryOptionStrategyServiceId($serviceId);
@@ -251,6 +270,7 @@ interface CartInterface extends BaseCartInterface
 
     /**
      * @param array $data
+     *
      * @return CartInterface
      */
     public function setDeliveryOptionStrategyServiceData(array $data = null);
@@ -262,6 +282,7 @@ interface CartInterface extends BaseCartInterface
 
     /**
      * @param string $serviceId
+     *
      * @return CartInterface
      */
     public function setPaymentOptionStrategyServiceId($serviceId);
@@ -273,6 +294,7 @@ interface CartInterface extends BaseCartInterface
 
     /**
      * @param array $data
+     *
      * @return CartInterface
      */
     public function setPaymentOptionStrategyServiceData(array $data = null);
@@ -284,6 +306,7 @@ interface CartInterface extends BaseCartInterface
 
     /**
      * @param float $total
+     *
      * @return CartInterface
      */
     public function setItemsPriceTotal($total);
@@ -300,6 +323,7 @@ interface CartInterface extends BaseCartInterface
 
     /**
      * @param float $total
+     *
      * @return CartInterface
      */
     public function setAdditionalItemsPriceTotal($total);
@@ -311,6 +335,7 @@ interface CartInterface extends BaseCartInterface
 
     /**
      * @param float $total
+     *
      * @return CartInterface
      */
     public function setItemsPriceTotalWithTax($total);
@@ -322,6 +347,7 @@ interface CartInterface extends BaseCartInterface
 
     /**
      * @param float $total
+     *
      * @return CartInterface
      */
     public function setAdditionalItemsPriceTotalWithTax($total);
@@ -338,6 +364,7 @@ interface CartInterface extends BaseCartInterface
 
     /**
      * @param float $additionalItemsPriceTotalTax
+     *
      * @return CartInterface
      */
     public function setAdditionalItemsPriceTotalTax($additionalItemsPriceTotalTax);
@@ -349,12 +376,14 @@ interface CartInterface extends BaseCartInterface
 
     /**
      * @param float $itemsPriceTotalTax
+     *
      * @return CartInterface
      */
     public function setItemsPriceTotalTax($itemsPriceTotalTax);
 
     /**
-     * @param integer $itemId
+     * @param int $itemId
+     *
      * @return CartItemInterface
      */
     public function getItemById($itemId);
@@ -366,6 +395,7 @@ interface CartInterface extends BaseCartInterface
 
     /**
      * @param float $totalWithTax
+     *
      * @return CartInterface
      */
     public function setTotalWithTax($totalWithTax);
@@ -377,20 +407,23 @@ interface CartInterface extends BaseCartInterface
 
     /**
      * @param PaymentInterface $payment
-     * @param bool $stopPropagation
+     * @param bool             $stopPropagation
+     *
      * @return $this
      */
     public function addPayment(PaymentInterface $payment, $stopPropagation = false);
 
     /**
      * @param PaymentInterface $payment
-     * @param bool $stopPropagation
+     * @param bool             $stopPropagation
+     *
      * @return $this
      */
     public function removePayment(PaymentInterface $payment, $stopPropagation = false);
 
     /**
      * @param Collection|PaymentInterFace[] $payments
+     *
      * @return $this
      */
     public function setPayments(Collection $payments);

@@ -3,10 +3,8 @@
 namespace Ibrows\SyliusShopBundle\Login;
 
 use FOS\UserBundle\Model\UserInterface;
-
 use Symfony\Component\Security\Core\SecurityContextInterface;
 use Symfony\Component\HttpFoundation\Request;
-
 use Symfony\Component\Form\Extension\Csrf\CsrfProvider\CsrfProviderInterface;
 
 class LoginInformation implements LoginInformationInterface
@@ -32,8 +30,8 @@ class LoginInformation implements LoginInformationInterface
     protected $error;
 
     /**
-     * @param Request $request
-     * @param CsrfProviderInterface $csrfProvider
+     * @param Request                  $request
+     * @param CsrfProviderInterface    $csrfProvider
      * @param SecurityContextInterface $securityContext
      */
     public function __construct(Request $request, CsrfProviderInterface $csrfProvider, SecurityContextInterface $securityContext)
@@ -92,7 +90,7 @@ class LoginInformation implements LoginInformationInterface
             $error = $session->get($key);
         }
 
-        if($error && $error instanceof \Exception){
+        if ($error && $error instanceof \Exception) {
             $error = $error->getMessage();
         }
 
@@ -106,11 +104,11 @@ class LoginInformation implements LoginInformationInterface
     public function getUser()
     {
         if (null === $token = $this->securityContext->getToken()) {
-            return null;
+            return;
         }
 
         if (!is_object($user = $token->getUser())) {
-            return null;
+            return;
         }
 
         return $user;

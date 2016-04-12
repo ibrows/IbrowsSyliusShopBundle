@@ -10,15 +10,16 @@ use Ibrows\SyliusShopBundle\Model\Voucher\VoucherCodeInterface;
 use Ibrows\SyliusShopBundle\Model\Voucher\VoucherPercentInterface;
 
 /**
- * Class VoucherPercentCartStrategy
- * @package Ibrows\SyliusShopBundle\Cart\Strategy\Voucher
+ * Class VoucherPercentCartStrategy.
+ *
  * @deprecated use VoucherPercentGroupedTaxCartStrategy
  */
 class VoucherPercentCartStrategy extends AbstractVoucherCartStrategy
 {
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @throws VoucherRedemptionException
      */
     public function redeemVouchers(CartInterface $cart, CartManager $cartManager)
@@ -36,7 +37,7 @@ class VoucherPercentCartStrategy extends AbstractVoucherCartStrategy
 
             /** @var VoucherPercentInterface $voucher */
             if (!$voucher = $this->voucherRepo->find($data['voucherId'])) {
-                throw new VoucherRedemptionException("Voucher #" . $data['voucherId'] . " not found");
+                throw new VoucherRedemptionException('Voucher #'.$data['voucherId'].' not found');
             }
 
             $voucher->setQuantity($data['newQuantity']);
@@ -47,26 +48,28 @@ class VoucherPercentCartStrategy extends AbstractVoucherCartStrategy
 
     /**
      * @param VoucherCodeInterface $voucherCode
-     * @param CartInterface $cart
-     * @param float $totalToReduce
+     * @param CartInterface        $cart
+     * @param float                $totalToReduce
+     *
      * @return AdditionalCartItemInterface
      */
     protected function getAdditionalItemByVoucherCode(VoucherCodeInterface $voucherCode, CartInterface $cart, &$totalToReduce)
     {
         if ($totalToReduce <= 0) {
-            return null;
+            return;
         }
 
         $voucher = $this->getVoucher($voucherCode);
 
         /** @var VoucherPercentInterface $voucher */
         if (!$voucher instanceof VoucherPercentInterface) {
-            return null;
+            return;
         }
 
         if (!$voucher->isValid() && !$voucherCode->isRedeemed()) {
             $voucherCode->setValid(false);
-            return null;
+
+            return;
         }
 
         $reduction = $cart->getItemsPriceTotalWithTax() * ($voucher->getPercent() / 100);
@@ -76,10 +79,11 @@ class VoucherPercentCartStrategy extends AbstractVoucherCartStrategy
     }
 
     /**
-     * @param int $reduction
-     * @param VoucherCodeInterface $voucherCode
+     * @param int                     $reduction
+     * @param VoucherCodeInterface    $voucherCode
      * @param VoucherPercentInterface $voucher
-     * @param string $text
+     * @param string                  $text
+     *
      * @return AdditionalCartItemInterface
      */
     protected function createAdditionalCartItemForVoucher($reduction, VoucherCodeInterface $voucherCode, VoucherPercentInterface $voucher, $text = null)
@@ -90,15 +94,15 @@ class VoucherPercentCartStrategy extends AbstractVoucherCartStrategy
             $reduction * -1,
             $text,
             array(
-                'percentRate'  => $voucher->getPercent(),
-                'code'         => $voucherCode->getCode(),
-                'reduction'    => $reduction,
-                'validFrom'    => ($from = $voucher->getValidFrom()) ? $from->format('Y-m-d H:i:s') : null,
-                'validTo'      => ($to = $voucher->getValidTo()) ? $to->format('Y-m-d H:i:s') : null,
-                'quantity'     => $quantity,
-                'newQuantity'  => $quantity - 1,
-                'voucherId'    => $voucher->getId(),
-                'voucherClass' => get_class($voucher)
+                'percentRate' => $voucher->getPercent(),
+                'code' => $voucherCode->getCode(),
+                'reduction' => $reduction,
+                'validFrom' => ($from = $voucher->getValidFrom()) ? $from->format('Y-m-d H:i:s') : null,
+                'validTo' => ($to = $voucher->getValidTo()) ? $to->format('Y-m-d H:i:s') : null,
+                'quantity' => $quantity,
+                'newQuantity' => $quantity - 1,
+                'voucherId' => $voucher->getId(),
+                'voucherClass' => get_class($voucher),
             )
         );
     }

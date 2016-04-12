@@ -3,29 +3,21 @@
 namespace Ibrows\SyliusShopBundle\Controller;
 
 use Ibrows\SyliusShopBundle\Entity\Cart;
-
 use Ibrows\SyliusShopBundle\Entity\CartItem;
-
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-
 use Sylius\Bundle\CartBundle\SyliusCartEvents;
-use Sylius\Bundle\CartBundle\Event\CartItemEvent;
 use Sylius\Bundle\CartBundle\Event\FlashEvent;
 use Sylius\Bundle\CartBundle\Resolver\ItemResolvingException;
 
 /**
  * @Route("/cartitem")
- * @author marcsteiner
  *
+ * @author marcsteiner
  */
 class CartItemController extends AbstractController
 {
-
     /**
      * Adds item to cart.
      * It uses the resolver service so you can populate the new item instance
@@ -35,6 +27,7 @@ class CartItemController extends AbstractController
      *
      * @param Request $request
      * @Route("/add", name="cart_item_add")
+     *
      * @return Response
      */
     public function addAction(Request $request)
@@ -67,6 +60,7 @@ class CartItemController extends AbstractController
      *
      * @param Request $request
      * @Route("/remove/{id}", name="cart_item_remove")
+     *
      * @return Response
      */
     public function removeAction($id)
@@ -81,7 +75,7 @@ class CartItemController extends AbstractController
 
         if (!$item || false === $cart->hasItem($item)) {
             $dispatcher->dispatch(SyliusCartEvents::ITEM_REMOVE_ERROR, new FlashEvent());
-            throw new \Exception('item not found: ' . $id);
+            throw new \Exception('item not found: '.$id);
         }
 
         $cartmanger->removeItem($item);
@@ -91,5 +85,4 @@ class CartItemController extends AbstractController
 
         return $this->forwardByRoute($this->getCartSummaryRoute());
     }
-
 }

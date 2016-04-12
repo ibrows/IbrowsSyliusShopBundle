@@ -6,6 +6,7 @@ interface CartDefaultOptionStrategyInterface extends CartStrategyInterface
 {
     /**
      * @param bool $flag
+     *
      * @return CartDefaultOptionStrategyInterface
      */
     public function setDefault($flag = true);

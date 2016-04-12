@@ -1,25 +1,25 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Cart\Strategy\Payment;
+
 use Ibrows\SyliusShopBundle\Cart\CartManager;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\ErrorRedirectResponse;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\PaymentFinishedResponse;
-use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartDefaultOptionStrategyInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\SelfRedirectResponse;
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 class InvoicePaymentOptionCartStrategy extends AbstractPaymentOptionCartStrategy
 {
     protected $skonto = 0;
-    protected $totalMethod = "getTotal";
+    protected $totalMethod = 'getTotal';
     protected $roundpercent = true;
 
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return bool
      */
     public function isPossible(CartInterface $cart, CartManager $cartManager)
@@ -29,7 +29,8 @@ class InvoicePaymentOptionCartStrategy extends AbstractPaymentOptionCartStrategy
 
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return AdditionalCartItemInterface[]
      */
     public function compute(CartInterface $cart, CartManager $cartManager)
@@ -38,12 +39,12 @@ class InvoicePaymentOptionCartStrategy extends AbstractPaymentOptionCartStrategy
             return array();
         }
         $totalmethod = $this->totalMethod;
-        if (!method_exists($cart,$totalmethod)) {
+        if (!method_exists($cart, $totalmethod)) {
             throw new \Exception("$totalmethod dont exists in $cart, use setTotalMethod() to set one wich exists");
         }
         $total = $cart->$totalmethod();
         $costs = $this->skonto;
-        if (stripos($costs,'%') !== false) {
+        if (stripos($costs, '%') !== false) {
             $percent = intval($costs);
             $costs = $total * $percent / 100;
             if ($this->roundpercent) {
@@ -57,29 +58,32 @@ class InvoicePaymentOptionCartStrategy extends AbstractPaymentOptionCartStrategy
 
         $item->setText($this->getServiceId());
         $item->setStrategyData(array('costs' => $costs, 'total' => $total, 'skonto' => $this->skonto));
+
         return array(
-                $item
+                $item,
         );
     }
 
     /**
      * @param number $value
+     *
      * @return number
      */
     private static function roundfivers($value)
     {
-        return round(2 * $value,1) / 2;
+        return round(2 * $value, 1) / 2;
     }
 
     /**
-     * @param Context $context
+     * @param Context       $context
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return RedirectResponse|PaymentFinishedResponse|ErrorRedirectResponse|SelfRedirectResponse
      */
     public function pay(Context $context, CartInterface $cart, CartManager $cartManager)
     {
-        return new PaymentFinishedResponse($this->getServiceId(),PaymentFinishedResponse::STATUS_ERROR,PaymentFinishedResponse::ERROR_COMPLETION);
+        return new PaymentFinishedResponse($this->getServiceId(), PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_COMPLETION);
     }
 
     public function getSkonto()
@@ -90,6 +94,7 @@ class InvoicePaymentOptionCartStrategy extends AbstractPaymentOptionCartStrategy
     public function setSkonto($skonto)
     {
         $this->skonto = $skonto;
+
         return $this;
     }
 
@@ -101,6 +106,7 @@ class InvoicePaymentOptionCartStrategy extends AbstractPaymentOptionCartStrategy
     public function setTotalMethod($totalMethod)
     {
         $this->totalMethod = $totalMethod;
+
         return $this;
     }
 
@@ -112,7 +118,7 @@ class InvoicePaymentOptionCartStrategy extends AbstractPaymentOptionCartStrategy
     public function setRoundpercent($roundpercent)
     {
         $this->roundpercent = $roundpercent;
+
         return $this;
     }
-
 }

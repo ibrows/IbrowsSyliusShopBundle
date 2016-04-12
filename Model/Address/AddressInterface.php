@@ -39,6 +39,7 @@ interface AddressInterface
 
     /**
      * @param string $title
+     *
      * @return AddressInterface
      */
     public function setTitle($title);
@@ -50,6 +51,7 @@ interface AddressInterface
 
     /**
      * @param string $city
+     *
      * @return AddressInterface
      */
     public function setCity($city);
@@ -61,6 +63,7 @@ interface AddressInterface
 
     /**
      * @param string $company
+     *
      * @return AddressInterface
      */
     public function setCompany($company);
@@ -72,6 +75,7 @@ interface AddressInterface
 
     /**
      * @param string $country
+     *
      * @return AddressInterface
      */
     public function setCountry($country);
@@ -83,6 +87,7 @@ interface AddressInterface
 
     /**
      * @param string $email
+     *
      * @return AddressInterface
      */
     public function setEmail($email);
@@ -94,6 +99,7 @@ interface AddressInterface
 
     /**
      * @param string $firstname
+     *
      * @return AddressInterface
      */
     public function setFirstname($firstname);
@@ -105,6 +111,7 @@ interface AddressInterface
 
     /**
      * @param string $lastname
+     *
      * @return AddressInterface
      */
     public function setLastname($lastname);
@@ -116,6 +123,7 @@ interface AddressInterface
 
     /**
      * @param string $phone
+     *
      * @return AddressInterface
      */
     public function setPhone($phone);
@@ -127,6 +135,7 @@ interface AddressInterface
 
     /**
      * @param string $street
+     *
      * @return AddressInterface
      */
     public function setStreet($street);
@@ -138,6 +147,7 @@ interface AddressInterface
 
     /**
      * @param string $zip
+     *
      * @return AddressInterface
      */
     public function setZip($zip);
@@ -149,12 +159,14 @@ interface AddressInterface
 
     /**
      * @param AddressInterface $address
+     *
      * @return bool
      */
     public function compare(AddressInterface $address);
 
     /**
      * @param UserInterface $user
+     *
      * @return AddressInterface
      */
     public function setUser(UserInterface $user);

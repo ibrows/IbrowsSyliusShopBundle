@@ -10,7 +10,7 @@ class AuthType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -18,7 +18,7 @@ class AuthType extends AbstractType
             'constraints' => array(
                 new NotBlank(array('groups' => array('sylius_wizard_auth'))),
                 new Email(array('groups' => array('sylius_wizard_auth'))),
-            )
+            ),
         ));
     }
 

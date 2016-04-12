@@ -7,7 +7,6 @@ use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartDefaultOptionStrategyInterfa
 use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
 use Symfony\Component\Form\FormBuilderInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartFormStrategyInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 abstract class AbstractCartFormStrategyType extends AbstractType
 {
@@ -26,7 +25,7 @@ abstract class AbstractCartFormStrategyType extends AbstractType
 
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -45,8 +44,8 @@ abstract class AbstractCartFormStrategyType extends AbstractType
             'choice_list' => new ArrayChoiceList(
                 $choices,
                 function ($val) {
-                    if(is_null($val)){
-                        return null;
+                    if (is_null($val)) {
+                        return;
                     }
 
                     if (!is_string($val)) {
@@ -57,7 +56,7 @@ abstract class AbstractCartFormStrategyType extends AbstractType
                 }
             ),
             'multiple' => false,
-            'expanded' => true
+            'expanded' => true,
         );
 
         if ($default && (!isset($options['data']) or $options['data'] == null)) {

@@ -6,5 +6,4 @@ use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartCurrencyStrategyInterface;
 
 abstract class AbstractCurrencyCartStrategy implements CartCurrencyStrategyInterface
 {
-
 }

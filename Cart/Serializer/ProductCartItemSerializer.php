@@ -9,16 +9,16 @@ class ProductCartItemSerializer implements CartItemSerializerInterface
 {
     /**
      * @param CartItemInterface $item
+     *
      * @return bool
      */
     public function accept(CartItemInterface $item)
     {
-        return (bool)$item->getProduct();
+        return (bool) $item->getProduct();
     }
 
     /**
      * @param CartItemInterface $item
-     * @return void
      */
     public function serialize(CartItemInterface $item)
     {

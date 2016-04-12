@@ -13,7 +13,8 @@ class ReduceStocksStrategy extends AbstractCartStrategy
     /**
      * /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return bool
      */
     public function accept(CartInterface $cart, CartManager $cartManager)
@@ -23,7 +24,8 @@ class ReduceStocksStrategy extends AbstractCartStrategy
 
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return AdditionalCartItemInterface[]
      */
     public function compute(CartInterface $cart, CartManager $cartManager)
@@ -31,11 +33,13 @@ class ReduceStocksStrategy extends AbstractCartStrategy
         foreach ($cart->getItems() as $item) {
             $this->reduceItem($item);
         }
+
         return array();
     }
 
     /**
      * @param CartItemInterface $item
+     *
      * @return bool
      */
     public function reduceItem(CartItemInterface $item)

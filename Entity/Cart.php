@@ -61,7 +61,7 @@ class Cart extends BaseCart implements CartInterface
     protected $deliveryOptionStrategyServiceId;
 
     /**
-     * @var array $deliveryOptionStrategyServiceData
+     * @var array
      * @ORM\Column(type="json_array", name="delivery_option_strategy_service_data", nullable=true)
      */
     protected $deliveryOptionStrategyServiceData;
@@ -73,7 +73,7 @@ class Cart extends BaseCart implements CartInterface
     protected $paymentOptionStrategyServiceId;
 
     /**
-     * @var array $paymentOptionStrategyServiceData
+     * @var array
      * @ORM\Column(type="json_array", name="payment_option_strategy_service_data", nullable=true)
      */
     protected $paymentOptionStrategyServiceData;
@@ -188,7 +188,7 @@ class Cart extends BaseCart implements CartInterface
     protected $voucherCodes;
 
     /**
-     * @var InvoiceAddressInterface $invoiceAddressObj
+     * @var InvoiceAddressInterface
      * @ORM\Column(type="object", name="invoice_address_obj", nullable=true)
      */
     protected $invoiceAddressObj;
@@ -201,7 +201,7 @@ class Cart extends BaseCart implements CartInterface
     protected $deliveryAddress;
 
     /**
-     * @var InvoiceAddressInterface $deliveryAddressObj
+     * @var InvoiceAddressInterface
      * @ORM\Column(type="object", name="delivery_address_obj", nullable=true)
      */
     protected $deliveryAddressObj;
@@ -233,7 +233,7 @@ class Cart extends BaseCart implements CartInterface
      */
     public function __toString()
     {
-        return 'Cart #'. $this->getId();
+        return 'Cart #'.$this->getId();
     }
 
     /**
@@ -350,69 +350,83 @@ class Cart extends BaseCart implements CartInterface
     /**
      * @return Cart
      */
-    public function refreshCart(){
+    public function refreshCart()
+    {
         $this->calculateTotal();
         $this->setTotalItems($this->countItems());
         $this->setTotalAdditionalItems($this->countAdditionalItems());
+
         return $this;
     }
 
     /**
      * @param AdditionalCartItemInterface $item
+     *
      * @return Cart
      */
-    public function addAdditionalItem(AdditionalCartItemInterface $item){
+    public function addAdditionalItem(AdditionalCartItemInterface $item)
+    {
         $this->additionalItems->add($item);
         $item->setCart($this);
         $this->refreshCart();
+
         return $this;
     }
 
     /**
      * @param AdditionalCartItemInterface $item
+     *
      * @return Cart
      */
-    public function removeAdditionalItem(AdditionalCartItemInterface $item){
+    public function removeAdditionalItem(AdditionalCartItemInterface $item)
+    {
         $this->additionalItems->removeElement($item);
         $item->setCart(null);
         $this->refreshCart();
+
         return $this;
     }
 
     /**
      * @param SyliusCartItemInterface $item
+     *
      * @return $this
      */
     public function addItem(SyliusCartItemInterface $item)
     {
         parent::addItem($item);
         $this->refreshCart();
+
         return $this;
     }
 
     /**
      * @param SyliusCartItemInterface $item
+     *
      * @return $this
      */
     public function removeItem(SyliusCartItemInterface $item)
     {
         parent::removeItem($item);
         $this->refreshCart();
+
         return $this;
     }
 
     /**
      * @param CartStrategyInterface $strategy
+     *
      * @return AdditionalCartItemInterface[]
      */
     public function getAdditionalItemsByStrategy(CartStrategyInterface $strategy)
     {
         $items = array();
-        foreach($this->additionalItems as $item){
-            if($item->getStrategyIdentifier() == $strategy->getServiceId()){
+        foreach ($this->additionalItems as $item) {
+            if ($item->getStrategyIdentifier() == $strategy->getServiceId()) {
                 $items[] = $item;
             }
         }
+
         return $items;
     }
 
@@ -426,31 +440,37 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @param Collection|CartItemInterface[] $items
+     *
      * @return Cart
      */
-    public function setItems(Collection $items){
-        foreach($this->items as $item){
+    public function setItems(Collection $items)
+    {
+        foreach ($this->items as $item) {
             $this->removeItem($item);
         }
-        foreach($items as $item){
+        foreach ($items as $item) {
             $this->addItem($item);
         }
         $this->refreshCart();
+
         return $this;
     }
 
     /**
      * @param Collection|AdditionalCartItemInterface[] $items
+     *
      * @return Cart
      */
-    public function setAdditionalItems(Collection $items){
-        foreach($this->additionalItems as $item){
+    public function setAdditionalItems(Collection $items)
+    {
+        foreach ($this->additionalItems as $item) {
             $this->removeAdditionalItem($item);
         }
-        foreach($items as $item){
+        foreach ($items as $item) {
             $this->addAdditionalItem($item);
         }
         $this->refreshCart();
+
         return $this;
     }
 
@@ -464,11 +484,13 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @param string $email
+     *
      * @return Cart
      */
     public function setEmail($email = null)
     {
         $this->email = $email;
+
         return $this;
     }
 
@@ -482,11 +504,13 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @param InvoiceAddressInterface $invoiceAddress
+     *
      * @return Cart
      */
     public function setInvoiceAddress(InvoiceAddressInterface $invoiceAddress = null)
     {
         $this->invoiceAddress = $invoiceAddress;
+
         return $this;
     }
 
@@ -500,25 +524,29 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @param DeliveryAddressInterface $deliveryAddress
+     *
      * @return Cart
      */
     public function setDeliveryAddress(DeliveryAddressInterface $deliveryAddress = null)
     {
         $this->deliveryAddress = $deliveryAddress;
+
         return $this;
     }
 
     /**
      * @param bool $flag
+     *
      * @return Cart
      */
     public function setPayed($flag = true)
     {
-        if(false === $flag){
+        if (false === $flag) {
             $this->payedAt = null;
-        }else{
-            $this->payedAt = new \DateTime;
+        } else {
+            $this->payedAt = new \DateTime();
         }
+
         return $this;
     }
 
@@ -548,15 +576,17 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @param bool $flag
+     *
      * @return Cart
      */
     public function setClosed($flag = true)
     {
-        if(false === $flag){
+        if (false === $flag) {
             $this->closedAt = null;
-        }else{
-            $this->closedAt = new \DateTime;
+        } else {
+            $this->closedAt = new \DateTime();
         }
+
         return $this;
     }
 
@@ -570,11 +600,13 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @param InvoiceAddressInterface $invoiceAddressObj
+     *
      * @return CartInterface
      */
     public function setInvoiceAddressObj(InvoiceAddressInterface $invoiceAddressObj = null)
     {
         $this->invoiceAddressObj = $invoiceAddressObj;
+
         return $this;
     }
 
@@ -588,16 +620,19 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @param DeliveryAddressInterface $deliveryAddressObj
+     *
      * @return CartInterface
      */
     public function setDeliveryAddressObj(DeliveryAddressInterface $deliveryAddressObj = null)
     {
         $this->deliveryAddressObj = $deliveryAddressObj;
+
         return $this;
     }
 
     /**
-     * Get deliveryAddressObj
+     * Get deliveryAddressObj.
+     *
      * @return \stdClass
      */
     public function getDeliveryAddressObj()
@@ -615,11 +650,13 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @param string $currency
+     *
      * @return Cart
      */
     public function setCurrency($currency)
     {
         $this->currency = $currency;
+
         return $this;
     }
 
@@ -642,25 +679,29 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @param bool $flag
+     *
      * @return Cart
      */
     public function setTermsAndConditions($flag = true)
     {
-        if(false === $flag){
+        if (false === $flag) {
             $this->termsAndConditionsAt = null;
-        }else{
-            $this->termsAndConditionsAt = new \DateTime;
+        } else {
+            $this->termsAndConditionsAt = new \DateTime();
         }
+
         return $this;
     }
 
     /**
      * @param string $serviceId
+     *
      * @return Cart
      */
     public function setDeliveryOptionStrategyServiceId($serviceId)
     {
         $this->deliveryOptionStrategyServiceId = $serviceId;
+
         return $this;
     }
 
@@ -679,7 +720,7 @@ class Cart extends BaseCart implements CartInterface
     {
         return array(
             'id' => $this->getDeliveryOptionStrategyServiceId(),
-            'data' => $this->getDeliveryOptionStrategyServiceData()
+            'data' => $this->getDeliveryOptionStrategyServiceData(),
         );
     }
 
@@ -690,7 +731,7 @@ class Cart extends BaseCart implements CartInterface
     {
         return array(
             'id' => $this->getPaymentOptionStrategyServiceId(),
-            'data' => $this->getPaymentOptionStrategyServiceData()
+            'data' => $this->getPaymentOptionStrategyServiceData(),
         );
     }
 
@@ -704,11 +745,13 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @param int $totalAdditionalItems
+     *
      * @return Cart
      */
     public function setTotalAdditionalItems($totalAdditionalItems)
     {
         $this->totalAdditionalItems = $totalAdditionalItems;
+
         return $this;
     }
 
@@ -722,11 +765,13 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @param float $total
+     *
      * @return CartInterface
      */
     public function setItemsPriceTotal($total)
     {
         $this->itemsPriceTotal = $total;
+
         return $this;
     }
 
@@ -748,11 +793,13 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @param float $total
+     *
      * @return CartInterface
      */
     public function setAdditionalItemsPriceTotal($total)
     {
         $this->additionalItemsPriceTotal = $total;
+
         return $this;
     }
 
@@ -774,11 +821,13 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @param float $additionalItemsPriceTotalWithTax
+     *
      * @return Cart
      */
     public function setAdditionalItemsPriceTotalWithTax($additionalItemsPriceTotalWithTax)
     {
         $this->additionalItemsPriceTotalWithTax = $additionalItemsPriceTotalWithTax;
+
         return $this;
     }
 
@@ -792,11 +841,13 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @param float $itemsPriceTotalWithTax
+     *
      * @return Cart
      */
     public function setItemsPriceTotalWithTax($itemsPriceTotalWithTax)
     {
         $this->itemsPriceTotalWithTax = $itemsPriceTotalWithTax;
+
         return $this;
     }
 
@@ -810,11 +861,13 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @param float $additionalItemsPriceTotalTax
+     *
      * @return Cart
      */
     public function setAdditionalItemsPriceTotalTax($additionalItemsPriceTotalTax)
     {
         $this->additionalItemsPriceTotalTax = $additionalItemsPriceTotalTax;
+
         return $this;
     }
 
@@ -828,26 +881,30 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @param float $itemsPriceTotalTax
+     *
      * @return Cart
      */
     public function setItemsPriceTotalTax($itemsPriceTotalTax)
     {
         $this->itemsPriceTotalTax = $itemsPriceTotalTax;
+
         return $this;
     }
 
     /**
-     * @param integer $itemId
+     * @param int $itemId
+     *
      * @return CartItemInterface
      */
     public function getItemById($itemId)
     {
-        foreach($this->items as $item){
-            if($item->getId() == $itemId){
+        foreach ($this->items as $item) {
+            if ($item->getId() == $itemId) {
                 return $item;
             }
         }
-        return null;
+
+        return;
     }
 
     /**
@@ -860,11 +917,13 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @param array $data
+     *
      * @return Cart
      */
     public function setDeliveryOptionStrategyServiceData(array $data = null)
     {
         $this->deliveryOptionStrategyServiceData = $data;
+
         return $this;
     }
 
@@ -878,16 +937,19 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @param array $data
+     *
      * @return Cart
      */
     public function setPaymentOptionStrategyServiceData(array $data = null)
     {
         $this->paymentOptionStrategyServiceData = $data;
+
         return $this;
     }
 
     /**
      * @param string $serviceId
+     *
      * @return CartInterface
      */
     public function setPaymentOptionStrategyServiceId($serviceId)
@@ -913,11 +975,13 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @param float $totalWithTax
+     *
      * @return Cart
      */
     public function setTotalWithTax($totalWithTax)
     {
         $this->totalWithTax = $totalWithTax;
+
         return $this;
     }
 
@@ -931,25 +995,29 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @param float $totalTax
+     *
      * @return Cart
      */
     public function setTotalTax($totalTax)
     {
         $this->totalTax = $totalTax;
+
         return $this;
     }
 
     /**
      * @param bool $flag
+     *
      * @return CartInterface
      */
     public function setConfirmed($flag = true)
     {
-        if(false === $flag){
+        if (false === $flag) {
             $this->confirmedAt = null;
-        }else{
-            $this->confirmedAt = new \DateTime;
+        } else {
+            $this->confirmedAt = new \DateTime();
         }
+
         return $this;
     }
 
@@ -987,27 +1055,30 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @param bool $flag
+     *
      * @return Cart
      */
     public function setCreated($flag = true)
     {
-        if(false === $flag){
+        if (false === $flag) {
             $this->createdAt = null;
-        }else{
-            $this->createdAt = new \DateTime;
+        } else {
+            $this->createdAt = new \DateTime();
         }
+
         return $this;
     }
 
     /**
      * @param PaymentInterface $payment
-     * @param bool $stopPropagation
+     * @param bool             $stopPropagation
+     *
      * @return $this
      */
     public function addPayment(PaymentInterface $payment, $stopPropagation = false)
     {
         $this->payments->add($payment);
-        if(!$stopPropagation) {
+        if (!$stopPropagation) {
             $payment->setCart($this, true);
         }
 
@@ -1016,13 +1087,14 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @param PaymentInterface $payment
-     * @param bool $stopPropagation
+     * @param bool             $stopPropagation
+     *
      * @return $this
      */
     public function removePayment(PaymentInterface $payment, $stopPropagation = false)
     {
         $this->payments->removeElement($payment);
-        if(!$stopPropagation) {
+        if (!$stopPropagation) {
             $payment->setCart(null, true);
         }
 
@@ -1031,14 +1103,15 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @param Collection|Paymentinterface[] $payments
+     *
      * @return $this
      */
     public function setPayments(Collection $payments)
     {
-        foreach($this->payments as $payment) {
+        foreach ($this->payments as $payment) {
             $this->removePayment($payment);
         }
-        foreach($payments as $payment) {
+        foreach ($payments as $payment) {
             $this->addPayment($payment);
         }
 
@@ -1063,11 +1136,13 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @param float $amountToPay
+     *
      * @return Cart
      */
     public function setAmountToPay($amountToPay)
     {
         $this->amountToPay = $amountToPay;
+
         return $this;
     }
 
@@ -1081,28 +1156,32 @@ class Cart extends BaseCart implements CartInterface
 
     /**
      * @param VoucherCodeInterface $voucherCode
+     *
      * @return CartInterface
      */
     public function addVoucherCode(VoucherCodeInterface $voucherCode)
     {
-        foreach($this->getVoucherCodes() as $existingVoucherCode){
-            if($existingVoucherCode->getCode() == $voucherCode->getCode()){
+        foreach ($this->getVoucherCodes() as $existingVoucherCode) {
+            if ($existingVoucherCode->getCode() == $voucherCode->getCode()) {
                 return $this;
             }
         }
         $voucherCode->setCart($this);
         $this->voucherCodes->add($voucherCode);
+
         return $this;
     }
 
     /**
      * @param VoucherCodeInterface $voucherCode
+     *
      * @return CartInterface
      */
     public function removeVoucherCode(VoucherCodeInterface $voucherCode)
     {
         $voucherCode->setCart(null);
         $this->voucherCodes->removeElement($voucherCode);
+
         return $this;
     }
 }

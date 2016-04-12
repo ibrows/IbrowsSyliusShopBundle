@@ -52,12 +52,13 @@ class OrderConfirmationSerializer implements CartSerializerInterface
 
     /**
      * @param ContainerInterface $container
-     * @param string $subject
-     * @param string $from
-     * @param string $templatePlain
-     * @param string $templateHtml
-     * @param string|array $bcc
-     * @param string $translationDomain
+     * @param string             $subject
+     * @param string             $from
+     * @param string             $templatePlain
+     * @param string             $templateHtml
+     * @param string|array       $bcc
+     * @param string             $translationDomain
+     *
      * @internal param string $template
      */
     public function __construct(ContainerInterface $container, $subject = null, $from = null, $templatePlain = null, $templateHtml = null, $bcc = null, $translationDomain = null)
@@ -81,16 +82,19 @@ class OrderConfirmationSerializer implements CartSerializerInterface
 
     /**
      * @param ContainerInterface $container
+     *
      * @return OrderConfirmationSerializer
      */
     public function setContainer($container)
     {
         $this->container = $container;
+
         return $this;
     }
 
     /**
      * @param CartInterface $cart
+     *
      * @return bool
      */
     public function accept(CartInterface $cart)
@@ -100,7 +104,6 @@ class OrderConfirmationSerializer implements CartSerializerInterface
 
     /**
      * @param CartInterface $cart
-     * @return void
      */
     public function serialize(CartInterface $cart)
     {
@@ -125,11 +128,13 @@ class OrderConfirmationSerializer implements CartSerializerInterface
 
     /**
      * @param string $templatePlain
+     *
      * @return OrderConfirmationSerializer
      */
     public function setTemplatePlain($templatePlain)
     {
         $this->templatePlain = $templatePlain;
+
         return $this;
     }
 
@@ -143,11 +148,13 @@ class OrderConfirmationSerializer implements CartSerializerInterface
 
     /**
      * @param string $templateHtml
+     *
      * @return OrderConfirmationSerializer
      */
     public function setTemplateHtml($templateHtml)
     {
         $this->templateHtml = $templateHtml;
+
         return $this;
     }
 
@@ -161,6 +168,7 @@ class OrderConfirmationSerializer implements CartSerializerInterface
 
     /**
      * @param CartInterface $cart
+     *
      * @return \Swift_Message
      */
     protected function getMessage(CartInterface $cart)
@@ -177,6 +185,7 @@ class OrderConfirmationSerializer implements CartSerializerInterface
 
     /**
      * @param CartInterface $cart
+     *
      * @return string
      */
     protected function getPlainBody(CartInterface $cart)
@@ -186,6 +195,7 @@ class OrderConfirmationSerializer implements CartSerializerInterface
 
     /**
      * @param CartInterface $cart
+     *
      * @return string
      */
     protected function getHtmlBody(CartInterface $cart)
@@ -195,11 +205,13 @@ class OrderConfirmationSerializer implements CartSerializerInterface
 
     /**
      * @param CartInterface $cart
+     *
      * @return array
      */
     protected function getTemplateVariables(CartInterface $cart)
     {
         $cartManager = $this->container->get('ibrows_syliusshop.currentcart.manager');
+
         return array(
             'subject' => $this->getSubject($cart),
             'cart' => $cart,
@@ -214,6 +226,7 @@ class OrderConfirmationSerializer implements CartSerializerInterface
 
     /**
      * @param CartInterface $cart
+     *
      * @return EngineInterface
      */
     protected function getTemplating(CartInterface $cart = null)
@@ -223,6 +236,7 @@ class OrderConfirmationSerializer implements CartSerializerInterface
 
     /**
      * @param CartInterface $cart
+     *
      * @return string|array
      */
     public function getBcc(CartInterface $cart = null)
@@ -232,25 +246,28 @@ class OrderConfirmationSerializer implements CartSerializerInterface
 
     /**
      * @param array|string $bcc
+     *
      * @return OrderConfirmationSerializer
      */
     public function setBcc($bcc)
     {
         $this->bcc = $bcc;
+
         return $this;
     }
 
     /**
      * @param CartInterface $cart
+     *
      * @return string|array
      */
     public function getTo(CartInterface $cart = null)
     {
         $to = array();
 
-        if(is_array($this->to)){
+        if (is_array($this->to)) {
             $to = $this->to;
-        }elseif(is_string($this->to)){
+        } elseif (is_string($this->to)) {
             $to = array($this->to);
         }
 
@@ -261,16 +278,19 @@ class OrderConfirmationSerializer implements CartSerializerInterface
 
     /**
      * @param array|string $to
+     *
      * @return OrderConfirmationSerializer
      */
     public function setTo($to)
     {
         $this->to = $to;
+
         return $this;
     }
 
     /**
      * @param CartInterface $cart
+     *
      * @return string
      */
     public function getFrom(CartInterface $cart = null)
@@ -280,16 +300,19 @@ class OrderConfirmationSerializer implements CartSerializerInterface
 
     /**
      * @param string $from
+     *
      * @return OrderConfirmationSerializer
      */
     public function setFrom($from)
     {
         $this->from = $from;
+
         return $this;
     }
 
     /**
      * @param CartInterface $cart
+     *
      * @return string
      */
     public function getSubject(CartInterface $cart = null)
@@ -299,11 +322,13 @@ class OrderConfirmationSerializer implements CartSerializerInterface
 
     /**
      * @param string $subject
+     *
      * @return OrderConfirmationSerializer
      */
     public function setSubject($subject)
     {
         $this->subject = $subject;
+
         return $this;
     }
 
@@ -317,23 +342,26 @@ class OrderConfirmationSerializer implements CartSerializerInterface
 
     /**
      * @param string $translationDomain
+     *
      * @return OrderConfirmationSerializer
      */
     public function setTranslationDomain($translationDomain)
     {
         $this->translationDomain = $translationDomain;
+
         return $this;
     }
 
     /**
      * @param string $id
-     * @param array $parameters
+     * @param array  $parameters
      * @param string $domain
      * @param string $locale
+     *
      * @return string
      */
     protected function trans($id, array $parameters = array(), $domain = null, $locale = null)
     {
-        return $this->getTranslator()->trans($id, $parameters, $domain?:$this->getTranslationDomain(), $locale);
+        return $this->getTranslator()->trans($id, $parameters, $domain ?: $this->getTranslationDomain(), $locale);
     }
 }

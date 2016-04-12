@@ -11,6 +11,7 @@ interface VoucherPercentInterface extends BaseVoucherInterface
 
     /**
      * @param float $percent
+     *
      * @return VoucherPercentInterface
      */
     public function setPercent($percent);

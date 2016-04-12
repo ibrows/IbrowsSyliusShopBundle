@@ -39,11 +39,13 @@ class QuantitySurchargeCartStrategy extends AbstractCartStrategy
 
     /**
      * @param float $surchargePrice
+     *
      * @return QuantitySurchargeCartStrategy
      */
     public function setSurchargePrice($surchargePrice)
     {
         $this->surchargePrice = $surchargePrice;
+
         return $this;
     }
 
@@ -57,17 +59,20 @@ class QuantitySurchargeCartStrategy extends AbstractCartStrategy
 
     /**
      * @param float $minPrice
+     *
      * @return QuantitySurchargeCartStrategy
      */
     public function setMinPrice($minPrice)
     {
         $this->minPrice = $minPrice;
+
         return $this;
     }
 
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return bool
      */
     public function accept(CartInterface $cart, CartManager $cartManager)
@@ -77,7 +82,8 @@ class QuantitySurchargeCartStrategy extends AbstractCartStrategy
 
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return AdditionalCartItemInterface[]
      */
     public function compute(CartInterface $cart, CartManager $cartManager)

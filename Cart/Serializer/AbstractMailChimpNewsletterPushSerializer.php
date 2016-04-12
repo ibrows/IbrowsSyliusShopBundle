@@ -42,9 +42,9 @@ abstract class AbstractMailChimpNewsletterPushSerializer implements CartSerializ
 
     /**
      * @param HttpClientInterface $httpClient
-     * @param string $apiKey
-     * @param array $listIds
-     * @param string $endPointSchema
+     * @param string              $apiKey
+     * @param array               $listIds
+     * @param string              $endPointSchema
      */
     public function __construct(HttpClientInterface $httpClient, $apiKey, array $listIds = array(), $endPointSchema = 'https://{{datacenter}}.api.mailchimp.com/2.0/')
     {
@@ -56,17 +56,16 @@ abstract class AbstractMailChimpNewsletterPushSerializer implements CartSerializ
 
     /**
      * @param CartInterface $cart
-     * @return void
      */
     public function serialize(CartInterface $cart)
     {
-        foreach($this->getEmailsToPush($cart) as $listId => $email){
+        foreach ($this->getEmailsToPush($cart) as $listId => $email) {
             $this->subscribe($listId, $email);
         }
     }
 
     /**
-     * @param int $listId
+     * @param int    $listId
      * @param string $email
      */
     protected function subscribe($listId, $email)
@@ -78,11 +77,11 @@ abstract class AbstractMailChimpNewsletterPushSerializer implements CartSerializ
             'apikey' => $this->getApiKey(),
             'id' => $listId,
             'email' => array(
-                'email' => $email
-            )
+                'email' => $email,
+            ),
         );
 
-        if(!$this->isTestMode()){
+        if (!$this->isTestMode()) {
             $httpClient = $this->httpClient;
             $response = $httpClient->request(
                 $httpClient::METHOD_POST,
@@ -90,20 +89,20 @@ abstract class AbstractMailChimpNewsletterPushSerializer implements CartSerializ
                 json_encode($data)
             );
 
-            $logger->info('MailChimp email add '. $email .' to list #'. $listId .' / Response: '. json_encode(array(
+            $logger->info('MailChimp email add '.$email.' to list #'.$listId.' / Response: '.json_encode(array(
                 'statusCode' => $response->getStatusCode(),
-                'content' => json_decode($response->getContent())
+                'content' => json_decode($response->getContent()),
             )));
-        }else{
-            $logger->info('MailChimp email add '. $email .' to list #'. $listId .' (TestMode) / Request: '. json_encode(array(
+        } else {
+            $logger->info('MailChimp email add '.$email.' to list #'.$listId.' (TestMode) / Request: '.json_encode(array(
                 'url' => $url,
-                'data' => $data
+                'data' => $data,
             )));
         }
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isTestMode()
     {
@@ -111,12 +110,14 @@ abstract class AbstractMailChimpNewsletterPushSerializer implements CartSerializ
     }
 
     /**
-     * @param boolean $testMode
+     * @param bool $testMode
+     *
      * @return AbstractMailChimpNewsletterPushSerializer
      */
     public function setTestMode($testMode)
     {
         $this->testMode = $testMode;
+
         return $this;
     }
 
@@ -130,11 +131,13 @@ abstract class AbstractMailChimpNewsletterPushSerializer implements CartSerializ
 
     /**
      * @param LoggerInterface $logger
+     *
      * @return AbstractMailChimpNewsletterPushSerializer
      */
     public function setLogger(LoggerInterface $logger = null)
     {
         $this->logger = $logger;
+
         return $this;
     }
 
@@ -148,11 +151,13 @@ abstract class AbstractMailChimpNewsletterPushSerializer implements CartSerializ
 
     /**
      * @param string $apiKey
+     *
      * @return AbstractMailChimpNewsletterPushSerializer
      */
     public function setApiKey($apiKey)
     {
         $this->apiKey = $apiKey;
+
         return $this;
     }
 
@@ -166,48 +171,56 @@ abstract class AbstractMailChimpNewsletterPushSerializer implements CartSerializ
 
     /**
      * @param string $endPointSchema
+     *
      * @return AbstractMailChimpNewsletterPushSerializer
      */
     public function setEndPointSchema($endPointSchema)
     {
         $this->endPointSchema = $endPointSchema;
+
         return $this;
     }
 
     /**
      * @param string $schema
      * @param string $apiKey
+     *
      * @return string
      */
     protected function getEndpoint($schema = null, $apiKey = null)
     {
         $schema = $schema ?: $this->getEndPointSchema();
+
         return str_replace('{{datacenter}}', $this->getDatacenter($apiKey), $schema);
     }
 
     /**
      * @param string $apiKey
+     *
      * @return string
      */
     protected function getDatacenter($apiKey = null)
     {
         $apiKey = $apiKey ?: $this->getApiKey();
-        $explode = explode("-", $apiKey);
+        $explode = explode('-', $apiKey);
+
         return isset($explode[1]) ? $explode[1] : null;
     }
 
     /**
-     * Override for giving correct mail addresses
+     * Override for giving correct mail addresses.
      *
      * @param CartInterface $cart
+     *
      * @return array [mailChimpListId] => email
      */
     protected function getEmailsToPush(CartInterface $cart)
     {
         $emails = array();
-        foreach($this->getListIds() as $listId){
+        foreach ($this->getListIds() as $listId) {
             $emails[$listId] = $cart->getEmail();
         }
+
         return $emails;
     }
 
@@ -221,11 +234,13 @@ abstract class AbstractMailChimpNewsletterPushSerializer implements CartSerializ
 
     /**
      * @param array $listIds
+     *
      * @return AbstractMailChimpNewsletterPushSerializer
      */
     public function setListIds($listIds)
     {
         $this->listIds = $listIds;
+
         return $this;
     }
 }

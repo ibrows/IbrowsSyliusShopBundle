@@ -13,7 +13,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class InventoryUnit extends BaseInventoryUnit
 {
-
     /**
      * @var int
      * @ORM\Id
@@ -43,11 +42,13 @@ class InventoryUnit extends BaseInventoryUnit
 
     /**
      * @param CartInterface $cart
+     *
      * @return InventoryUnit
      */
     public function setCart(CartInterface $cart)
     {
         $this->cart = $cart;
+
         return $this;
     }
 }

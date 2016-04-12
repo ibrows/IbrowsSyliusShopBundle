@@ -38,11 +38,13 @@ abstract class AbstractCartStrategy implements CartStrategyInterface
 
     /**
      * @param ObjectRepository $repo
+     *
      * @return ObjectRepository
      */
     public function setAdditionalCartItemRepo(ObjectRepository $repo)
     {
         $this->additionalCartItemRepo = $repo;
+
         return $this;
     }
 
@@ -55,7 +57,7 @@ abstract class AbstractCartStrategy implements CartStrategyInterface
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isEnabled()
     {
@@ -63,12 +65,14 @@ abstract class AbstractCartStrategy implements CartStrategyInterface
     }
 
     /**
-     * @param boolean $enabled
+     * @param bool $enabled
+     *
      * @return AbstractCartStrategy
      */
     public function setEnabled($enabled)
     {
         $this->enabled = $enabled;
+
         return $this;
     }
 
@@ -82,17 +86,18 @@ abstract class AbstractCartStrategy implements CartStrategyInterface
 
     /**
      * @param string $serviceId
+     *
      * @return AbstractCartStrategy
      */
     public function setServiceId($serviceId)
     {
         $this->serviceId = $serviceId;
+
         return $this;
     }
 
-
     /**
-     * @return boolean
+     * @return bool
      */
     public function getTaxincl()
     {
@@ -100,19 +105,22 @@ abstract class AbstractCartStrategy implements CartStrategyInterface
     }
 
     /**
-     * @param boolean $taxincl
+     * @param bool $taxincl
+     *
      * @return AbstractCartStrategy
      */
     public function setTaxincl($taxincl)
     {
         $this->taxincl = $taxincl;
+
         return $this;
     }
 
     /**
-     * @param int $price
+     * @param int    $price
      * @param string $text
-     * @param array $data
+     * @param array  $data
+     *
      * @return AdditionalCartItemInterface
      */
     protected function createAdditionalCartItem($price = 0, $text = null, array $data = array())
@@ -122,37 +130,42 @@ abstract class AbstractCartStrategy implements CartStrategyInterface
         /* @var AdditionalCartItemInterface $item */
         $item = new $className();
         $item->setStrategyIdentifier($this->getServiceId());
-        if($this->getTaxincl())
+        if ($this->getTaxincl()) {
             $item->setPriceWithTax($price);
-        else
+        } else {
             $item->setPrice($price);
+        }
         $item->setStrategyData($data);
-        $item->setText($text?:$this->getServiceId());
+        $item->setText($text ?: $this->getServiceId());
+
         return $item;
     }
 
     /**
      * @param array $steps
      * @param mixed $step
-     * @param bool $firstAsZero
+     * @param bool  $firstAsZero
+     *
      * @return mixed
      */
     protected function getStepCosts(array $steps, $step, $firstAsZero = false)
     {
         $firstStep = reset($steps);
         $costs = !$firstAsZero && $firstStep ? $firstStep : 0;
-        foreach($steps as $minTotal => $stepCosts){
-            if($step < $minTotal){
+        foreach ($steps as $minTotal => $stepCosts) {
+            if ($step < $minTotal) {
                 break;
             }
             $costs = $stepCosts;
         }
+
         return $costs;
     }
 
     /**
-     * @param float $num
+     * @param float     $num
      * @param int|float $nearest
+     *
      * @return float
      */
     public static function roundToNearest($num, $nearest = 0.05)

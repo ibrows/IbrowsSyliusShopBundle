@@ -2,7 +2,6 @@
 
 namespace Ibrows\SyliusShopBundle\Cart\Strategy\Delivery;
 
-use Ibrows\SyliusShopBundle\Cart\Strategy\Delivery\SelfpickupDeliveryCartStrategy;
 use Ibrows\SyliusShopBundle\Cart\CartManager;
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
@@ -35,6 +34,7 @@ class SelfpickupOneStoreDeliveryCartStrategy extends SelfpickupDeliveryCartStrat
 
     /**
      * @param string $oneStore
+     *
      * @return $this
      */
     public function setOneStore($oneStore = null)
@@ -46,14 +46,15 @@ class SelfpickupOneStoreDeliveryCartStrategy extends SelfpickupDeliveryCartStrat
 
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return AdditionalCartItemInterface[]
      */
     public function compute(CartInterface $cart, CartManager $cartManager)
     {
         $cart->setDeliveryOptionStrategyServiceData(
             array(
-                'store' => $this->getOneStore($cart)
+                'store' => $this->getOneStore($cart),
             )
         );
 
@@ -62,11 +63,10 @@ class SelfpickupOneStoreDeliveryCartStrategy extends SelfpickupDeliveryCartStrat
 
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         return;
     }
-
 }

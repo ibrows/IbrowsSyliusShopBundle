@@ -9,7 +9,7 @@ interface CartVoucherStrategyInterface extends CartStrategyInterface
 {
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
      */
     public function redeemVouchers(CartInterface $cart, CartManager $cartManager);
 

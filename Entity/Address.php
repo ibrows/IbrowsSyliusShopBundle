@@ -4,11 +4,8 @@ namespace Ibrows\SyliusShopBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Ibrows\Bundle\SonataAdminAnnotationBundle\Annotation as Sonata;
-use Ibrows\SyliusShopBundle\Model\Address\AddressInterface;
 use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
 use Ibrows\SyliusShopBundle\Model\Address\InvoiceAddressInterface;
-use Ibrows\SyliusShopBundle\Model\User\UserInterface;
-use Symfony\Component\Validator\Constraints as Assert;
 use Ibrows\SyliusShopBundle\Model\Address\Address as BaseAddress;
 
 /**
@@ -20,5 +17,4 @@ use Ibrows\SyliusShopBundle\Model\Address\Address as BaseAddress;
  */
 class Address extends BaseAddress implements InvoiceAddressInterface, DeliveryAddressInterface
 {
-
 }

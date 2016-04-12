@@ -44,19 +44,22 @@ abstract class User extends FOSUser implements UserInterface
      */
     protected $addresses;
 
-    public function __construct(){
+    public function __construct()
+    {
         parent::__construct();
         $this->addresses = new ArrayCollection();
     }
 
     /**
      * @param string $email
+     *
      * @return User
      */
     public function setEmail($email)
     {
         parent::setEmail($email);
         $this->setUsername($email);
+
         return $this;
     }
 
@@ -70,12 +73,14 @@ abstract class User extends FOSUser implements UserInterface
 
     /**
      * @param InvoiceAddressInterface $invoiceAddress
+     *
      * @return $this
      */
     public function setInvoiceAddress(InvoiceAddressInterface $invoiceAddress = null)
     {
         $this->invoiceAddress = $invoiceAddress;
         $this->addAddress($invoiceAddress);
+
         return $this;
     }
 
@@ -89,18 +94,21 @@ abstract class User extends FOSUser implements UserInterface
 
     /**
      * @param DeliveryAddressInterface $deliveryAddress
+     *
      * @return $this
      */
     public function setDeliveryAddress(DeliveryAddressInterface $deliveryAddress = null)
     {
         $this->deliveryAddress = $deliveryAddress;
         $this->addAddress($deliveryAddress);
+
         return $this;
     }
 
     /**
      * @param AddressInterface $addresss
-     * @param bool $stopPropagation
+     * @param bool             $stopPropagation
+     *
      * @return $this
      */
     public function addAddress(AddressInterface $addresss, $stopPropagation = false)
@@ -109,12 +117,14 @@ abstract class User extends FOSUser implements UserInterface
         if (!$stopPropagation) {
             $addresss->setUser($this, true);
         }
+
         return $this;
     }
 
     /**
      * @param AddressInterface $address
-     * @param bool $stopPropagation
+     * @param bool             $stopPropagation
+     *
      * @return $this
      */
     public function removeAddress(AddressInterface $address, $stopPropagation = false)
@@ -123,6 +133,7 @@ abstract class User extends FOSUser implements UserInterface
         if (!$stopPropagation) {
             $address->setUser(null, true);
         }
+
         return $this;
     }
 
@@ -136,6 +147,7 @@ abstract class User extends FOSUser implements UserInterface
 
     /**
      * @param AddressInterface[] $addresses
+     *
      * @return $this
      */
     public function setAddresses($addresses)
@@ -147,7 +159,7 @@ abstract class User extends FOSUser implements UserInterface
             $this->addAddress($address);
         }
         $this->addresses = $addresses;
+
         return $this;
     }
-
 }

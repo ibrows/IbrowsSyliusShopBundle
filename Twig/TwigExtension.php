@@ -24,14 +24,14 @@ class TwigExtension extends \Twig_Extension
 
     /**
      * @param CurrentCartManager $currentCartManager
-     * @param string $defaultHincludeTemplate
-     * @param string $charset
+     * @param string             $defaultHincludeTemplate
+     * @param string             $charset
      */
     public function __construct(
         CurrentCartManager $currentCartManager,
         $defaultHincludeTemplate,
         $charset
-    ){
+    ) {
         $this->currentCartManager = $currentCartManager;
         $this->defaultHincludeTemplate = $defaultHincludeTemplate;
         $this->charset = $charset;
@@ -40,11 +40,12 @@ class TwigExtension extends \Twig_Extension
     /**
      * @return array
      */
-    public function getFunctions(){
+    public function getFunctions()
+    {
         return array(
             'getCurrentCartManager' => new \Twig_Function_Method($this, 'getCurrentCartManager'),
             'getCurrentCart' => new \Twig_Function_Method($this, 'getCurrentCart'),
-            'getCurrentCartCurrency' => new \Twig_Function_Method($this, 'getCurrentCartCurrency')
+            'getCurrentCartCurrency' => new \Twig_Function_Method($this, 'getCurrentCartCurrency'),
         );
     }
 
@@ -53,15 +54,15 @@ class TwigExtension extends \Twig_Extension
         return array(
             'price' => new \Twig_SimpleFilter('price', array($this, 'price'), array(
                 'is_safe' => array('html'),
-                'needs_environment' => true
-            ))
+                'needs_environment' => true,
+            )),
         );
     }
 
     public function price(\Twig_Environment $twig, $num)
     {
         return $twig->render('IbrowsSyliusShopBundle:Misc:price.html.twig', array(
-            'price' => $num
+            'price' => $num,
         ));
     }
 
@@ -78,7 +79,7 @@ class TwigExtension extends \Twig_Extension
      */
     public function getCurrentCart()
     {
-       return $this->currentCartManager->getCart();
+        return $this->currentCartManager->getCart();
     }
 
     /**
@@ -92,7 +93,8 @@ class TwigExtension extends \Twig_Extension
     /**
      * @return string
      */
-    public function getName() {
+    public function getName()
+    {
         return 'ibrows_sylius_shop_bundle_extension';
     }
 }

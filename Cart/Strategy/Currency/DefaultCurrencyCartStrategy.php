@@ -22,7 +22,8 @@ class DefaultCurrencyCartStrategy extends AbstractCurrencyCartStrategy
 
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return bool
      */
     public function acceptAsDefaultCurrency(CartInterface $cart, CartManager $cartManager)
@@ -32,7 +33,8 @@ class DefaultCurrencyCartStrategy extends AbstractCurrencyCartStrategy
 
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return string
      */
     public function getDefaultCurrency(CartInterface $cart, CartManager $cartManager)
@@ -41,10 +43,11 @@ class DefaultCurrencyCartStrategy extends AbstractCurrencyCartStrategy
     }
 
     /**
-     * @param string $fromCurrency
-     * @param string $toCurrency
+     * @param string        $fromCurrency
+     * @param string        $toCurrency
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return bool
      */
     public function acceptCurrencyChange($fromCurrency, $toCurrency, CartInterface $cart, CartManager $cartManager)
@@ -53,10 +56,11 @@ class DefaultCurrencyCartStrategy extends AbstractCurrencyCartStrategy
     }
 
     /**
-     * @param string $fromCurrency
-     * @param string $toCurrency
+     * @param string        $fromCurrency
+     * @param string        $toCurrency
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @throws \LogicException
      */
     public function changeCurrency($fromCurrency, $toCurrency, CartInterface $cart, CartManager $cartManager)

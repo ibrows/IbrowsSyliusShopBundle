@@ -4,7 +4,6 @@ namespace Ibrows\SyliusShopBundle\Model\Cart\Strategy;
 
 use Ibrows\SyliusShopBundle\Cart\CartManager;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouterInterface;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Context;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -15,9 +14,10 @@ use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\SelfRedirectResponse;
 interface CartPaymentOptionStrategyInterface extends CartStrategyInterface, CartFormStrategyInterface
 {
     /**
-     * @param Context $context
+     * @param Context       $context
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return RedirectResponse|PaymentFinishedResponse|ErrorRedirectResponse|SelfRedirectResponse
      */
     public function pay(Context $context, CartInterface $cart, CartManager $cartManager);
@@ -29,12 +29,14 @@ interface CartPaymentOptionStrategyInterface extends CartStrategyInterface, Cart
 
     /**
      * @param bool $flag
+     *
      * @return CartPaymentOptionStrategyInterface
      */
     public function setTestMode($flag);
 
     /**
      * @param RouterInterface $router
+     *
      * @return CartPaymentOptionStrategyInterface
      */
     public function setRouter(RouterInterface $router);

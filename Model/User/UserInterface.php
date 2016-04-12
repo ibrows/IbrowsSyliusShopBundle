@@ -2,7 +2,6 @@
 
 namespace Ibrows\SyliusShopBundle\Model\User;
 
-use Doctrine\Common\Collections\Collection;
 use FOS\UserBundle\Model\UserInterface as FosUserInterface;
 use Ibrows\SyliusShopBundle\Model\Address\AddressInterface;
 use Ibrows\SyliusShopBundle\Model\Address\DeliveryAddressInterface;
@@ -17,6 +16,7 @@ interface UserInterface extends FosUserInterface
 
     /**
      * @param InvoiceAddressInterface $invoiceAddress
+     *
      * @return UserInterface
      */
     public function setInvoiceAddress(InvoiceAddressInterface $invoiceAddress = null);
@@ -33,18 +33,21 @@ interface UserInterface extends FosUserInterface
 
     /**
      * @param DeliveryAddressInterface $deliveryAddress
+     *
      * @return UserInterface
      */
     public function setDeliveryAddress(DeliveryAddressInterface $deliveryAddress = null);
 
     /**
      * @param AddressInterface $addresss
+     *
      * @return UserInterface
      */
     public function removeAddress(AddressInterface $addresss);
 
     /**
      * @param AddressInterface $addresss
+     *
      * @return UserInterface
      */
     public function addAddress(AddressInterface $addresss);
@@ -56,8 +59,8 @@ interface UserInterface extends FosUserInterface
 
     /**
      * @param AddressInterface[] $addresses
+     *
      * @return AddressInterface
      */
     public function setAddresses($addresses);
-
 }

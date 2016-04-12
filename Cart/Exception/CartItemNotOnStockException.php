@@ -16,7 +16,7 @@ class CartItemNotOnStockException extends CartItemException
      */
     public function __construct(array $notOnStockItems)
     {
-        foreach($notOnStockItems as $item){
+        foreach ($notOnStockItems as $item) {
             $this->addNotOnStockItem($item);
         }
     }

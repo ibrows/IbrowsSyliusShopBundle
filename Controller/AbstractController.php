@@ -45,8 +45,10 @@ abstract class AbstractController extends Controller
 {
     /**
      * @param ObjectRepository $repo
-     * @param array $criteria
+     * @param array            $criteria
+     *
      * @return object
+     *
      * @throws NotFoundHttpException
      */
     public function findOr404(ObjectRepository $repo, array $criteria = null)
@@ -55,7 +57,7 @@ abstract class AbstractController extends Controller
 
         if (null === $criteria) {
             $criteria = array(
-                'id' => $id
+                'id' => $id,
             );
         }
 
@@ -116,6 +118,7 @@ abstract class AbstractController extends Controller
 
     /**
      * @throws AccessDeniedException
+     *
      * @return UserInterface
      */
     protected function getUserOrException()
@@ -123,11 +126,13 @@ abstract class AbstractController extends Controller
         if (!$user = $this->getUser()) {
             throw new AccessDeniedException();
         }
+
         return $user;
     }
 
     /**
      * @param string|object $className
+     *
      * @return EntityRepository
      */
     protected function getRepository($className)
@@ -135,11 +140,13 @@ abstract class AbstractController extends Controller
         if (is_object($className)) {
             $className = get_class($className);
         }
+
         return $this->getManagerForClass($className)->getRepository($className);
     }
 
     /**
      * @param string $className
+     *
      * @return ObjectManager
      */
     protected function getManagerForClass($className)
@@ -148,6 +155,7 @@ abstract class AbstractController extends Controller
             /** @var object $className */
             $className = get_class($className);
         }
+
         return $this->getDoctrine()->getManagerForClass($className);
     }
 
@@ -161,6 +169,7 @@ abstract class AbstractController extends Controller
 
     /**
      * @param string $name
+     *
      * @return mixed
      */
     protected function getParameter($name)
@@ -170,6 +179,7 @@ abstract class AbstractController extends Controller
 
     /**
      * @param string $name
+     *
      * @return ObjectManager
      */
     protected function getObjectManager($name = null)
@@ -187,11 +197,13 @@ abstract class AbstractController extends Controller
 
     /**
      * @param string $name
+     *
      * @return Response
      */
     protected function forwardByRoute($name)
     {
         $defaults = $this->get('router')->getRouteCollection()->get($name)->getDefaults();
+
         return $this->forward($defaults['_controller'], array(), $this->container->get('request')->query->all());
     }
 
@@ -232,6 +244,7 @@ abstract class AbstractController extends Controller
     /**
      * @param bool $persistCart
      * @param bool $returnExceptions
+     *
      * @return \Exception[]|CurrentCartManager
      */
     protected function closeCurrentCart($persistCart = true, $returnExceptions = false)
@@ -252,7 +265,7 @@ abstract class AbstractController extends Controller
 
     /**
      * @param CartManager $cartManager
-     * @param bool $refreshAndCheckAvailability
+     * @param bool        $refreshAndCheckAvailability
      */
     protected function persistCart(CartManager $cartManager, $refreshAndCheckAvailability = true)
     {
@@ -262,12 +275,12 @@ abstract class AbstractController extends Controller
             foreach ($e->getCartItemsNotOnStock() as $itemNotOnStock) {
                 $item = $itemNotOnStock->getItem();
                 if (!$item->getProduct()->isEnabled()) {
-                    $message = $item . ' not found';
+                    $message = $item.' not found';
                     $this->addFlashMessage($message);
                     $cartManager->removeItem($item);
                     continue;
                 }
-                $message = $item . ' ' . $item->getQuantityNotAvailable() . " not there...";
+                $message = $item.' '.$item->getQuantityNotAvailable().' not there...';
                 $this->addFlashMessage($message);
                 $item->setQuantityToAvailable();
             }
@@ -291,6 +304,7 @@ abstract class AbstractController extends Controller
         $registry = $this->get('doctrine');
         $classname = $this->container->getParameter('ibrows_sylius_shop.product.class');
         $manager = $registry->getManagerForClass($classname);
+
         return $manager->getRepository($classname);
     }
 
@@ -304,14 +318,16 @@ abstract class AbstractController extends Controller
 
     /**
      * @param string $id
-     * @param array $parameters
+     * @param array  $parameters
      * @param string $domain
      * @param string $locale
+     *
      * @return string
      */
     protected function translateWithPrefix($id, array $parameters = array(), $domain = null, $locale = null)
     {
-        $id = $this->getTranslationPrefix() . '.' . $id;
+        $id = $this->getTranslationPrefix().'.'.$id;
+
         return $this->getTranslator()->trans($id, $parameters, $domain, $locale);
     }
 
@@ -333,20 +349,23 @@ abstract class AbstractController extends Controller
 
     /**
      * @param CartManager $cartManager
+     *
      * @return null|Response
      */
     protected function authDelete(CartManager $cartManager)
     {
         $cartManager->getCart()->setEmail(null);
         $this->persistCart($cartManager);
-        return null;
+
+        return;
     }
 
     /**
-     * @param Request $request
+     * @param Request       $request
      * @param FormInterface $authForm
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
      * @param WizardHandler $wizard
+     *
      * @return RedirectResponse|null
      */
     protected function authByEmail(Request $request, FormInterface $authForm, CartManager $cartManager, WizardHandler $wizard)
@@ -355,15 +374,16 @@ abstract class AbstractController extends Controller
         if ($authForm->isValid()) {
             $email = $authForm->get('email')->getData();
             if ($this->getFOSUserManager()->findUserByEmail($email)) {
-                $authForm->addError(new FormError($this->translateWithPrefix("user.emailallreadyexisting", array('%email%' => $email), "validators")));
+                $authForm->addError(new FormError($this->translateWithPrefix('user.emailallreadyexisting', array('%email%' => $email), 'validators')));
             } else {
                 $cartManager->getCart()->setEmail($email);
                 $this->persistCart($cartManager);
+
                 return $this->redirect($wizard->getNextStepUrl());
             }
         }
 
-        return null;
+        return;
     }
 
     /**
@@ -383,8 +403,9 @@ abstract class AbstractController extends Controller
     }
 
     /**
-     * @param InvoiceAddressInterface $invoiceAddress
+     * @param InvoiceAddressInterface  $invoiceAddress
      * @param DeliveryAddressInterface $deliveryAddress
+     *
      * @return Form
      */
     protected function getInvoiceSameAsDeliveryForm(InvoiceAddressInterface $invoiceAddress, DeliveryAddressInterface $deliveryAddress)
@@ -396,14 +417,15 @@ abstract class AbstractController extends Controller
     }
 
     /**
-     * @param InvoiceAddressInterface $invoiceAddress
+     * @param InvoiceAddressInterface  $invoiceAddress
      * @param DeliveryAddressInterface $deliveryAddress
+     *
      * @return array
      */
     protected function getInvoiceSameAsDeliveryData(InvoiceAddressInterface $invoiceAddress, DeliveryAddressInterface $deliveryAddress)
     {
         return array(
-            'invoiceSameAsDelivery' => $invoiceAddress->compare($deliveryAddress)
+            'invoiceSameAsDelivery' => $invoiceAddress->compare($deliveryAddress),
         );
     }
 
@@ -425,6 +447,7 @@ abstract class AbstractController extends Controller
 
     /**
      * @param CartManager $cartManager
+     *
      * @return DeliveryOptionStrategyType
      */
     protected function getDeliveryOptionStrategyType(CartManager $cartManager)
@@ -434,6 +457,7 @@ abstract class AbstractController extends Controller
 
     /**
      * @param CartManager $cartManager
+     *
      * @return PaymentOptionStrategyType
      */
     protected function getPaymentOptionStrategyType(CartManager $cartManager)

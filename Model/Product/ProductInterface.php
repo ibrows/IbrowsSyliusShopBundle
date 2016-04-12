@@ -17,7 +17,7 @@ interface ProductInterface extends StockableInterface
     public function getName();
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isEnabled();
 

@@ -48,6 +48,7 @@ abstract class AbstractWizardController extends AbstractController
         if (!$this->getCurrentCart()->getEmail()) {
             return Wizard::REDIRECT_STEP_BACK;
         }
+
         return true;
     }
 
@@ -64,6 +65,7 @@ abstract class AbstractWizardController extends AbstractController
         ) {
             return Wizard::REDIRECT_STEP_BACK;
         }
+
         return true;
     }
 
@@ -92,9 +94,10 @@ abstract class AbstractWizardController extends AbstractController
     public function paymentValidation()
     {
         $cart = $this->getCurrentCart();
-        if (!$cart->isTermsAndConditions() OR round($cart->getTotalWithTax(), 2) !== round($cart->getAmountToPay(), 2)) {
+        if (!$cart->isTermsAndConditions() or round($cart->getTotalWithTax(), 2) !== round($cart->getAmountToPay(), 2)) {
             return Wizard::REDIRECT_STEP_BACK;
         }
+
         return true;
     }
 
@@ -107,6 +110,7 @@ abstract class AbstractWizardController extends AbstractController
         if (!$cart->isConfirmed()) {
             return Wizard::REDIRECT_STEP_BACK;
         }
+
         return true;
     }
 
@@ -134,16 +138,18 @@ abstract class AbstractWizardController extends AbstractController
     /**
      * @param FormInterface $basketForm
      * @param CartInterface $cart
+     *
      * @return null|Response
      */
     protected function postInvalidBasketFormValidationAction(FormInterface $basketForm, CartInterface $cart)
     {
-        return null;
+        return;
     }
 
     /**
      * @param PaymentFinishedResponse $response
-     * @param Context $context
+     * @param Context                 $context
+     *
      * @return RedirectResponse
      */
     protected function handlePaymentFinishedResponse(PaymentFinishedResponse $response, Context $context)
@@ -158,12 +164,14 @@ abstract class AbstractWizardController extends AbstractController
                 return $this->handlePaymentFinishedResponseStatusError($response, $context);
                 break;
         }
+
         return $this->handlePaymentFinishedResponseStatusUnknown($response, $context);
     }
 
     /**
      * @param PaymentFinishedResponse $response
-     * @param Context $context
+     * @param Context                 $context
+     *
      * @return RedirectResponse
      */
     protected function handlePaymentFinishedResponseStatusOk(PaymentFinishedResponse $response, Context $context)
@@ -181,7 +189,8 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param PaymentFinishedResponse $response
-     * @param Context $context
+     * @param Context                 $context
+     *
      * @return RedirectResponse
      */
     protected function handlePaymentFinishedResponseStatusError(PaymentFinishedResponse $response, Context $context)
@@ -197,12 +206,14 @@ abstract class AbstractWizardController extends AbstractController
                 $this->handlePaymentFinishedResponseStatusErrorValidation($response, $context);
                 break;
         }
+
         return $this->handlePaymentFinishedResponseStatusErrorUnknown($response, $context);
     }
 
     /**
      * @param PaymentFinishedResponse $response
-     * @param Context $context
+     * @param Context                 $context
+     *
      * @return RedirectResponse
      */
     protected function handlePaymentFinishedResponseStatusErrorConfirmation(PaymentFinishedResponse $response, Context $context)
@@ -211,7 +222,7 @@ abstract class AbstractWizardController extends AbstractController
             $this->generateUrl(
                 $context->getErrorRouteName(),
                 array(
-                    'paymenterror' => 'confirmation'
+                    'paymenterror' => 'confirmation',
                 )
             )
         );
@@ -219,7 +230,8 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param PaymentFinishedResponse $response
-     * @param Context $context
+     * @param Context                 $context
+     *
      * @return RedirectResponse
      */
     protected function handlePaymentFinishedResponseStatusErrorValidation(PaymentFinishedResponse $response, Context $context)
@@ -228,7 +240,7 @@ abstract class AbstractWizardController extends AbstractController
             $this->generateUrl(
                 $context->getErrorRouteName(),
                 array(
-                    'paymenterror' => 'validation'
+                    'paymenterror' => 'validation',
                 )
             )
         );
@@ -236,7 +248,8 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param PaymentFinishedResponse $response
-     * @param Context $context
+     * @param Context                 $context
+     *
      * @return RedirectResponse
      */
     protected function handlePaymentFinishedResponseStatusErrorCompletion(PaymentFinishedResponse $response, Context $context)
@@ -252,7 +265,8 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param PaymentFinishedResponse $response
-     * @param Context $context
+     * @param Context                 $context
+     *
      * @return RedirectResponse
      */
     protected function handlePaymentFinishedResponseStatusErrorUnknown(PaymentFinishedResponse $response, Context $context)
@@ -261,7 +275,7 @@ abstract class AbstractWizardController extends AbstractController
             $this->generateUrl(
                 $context->getErrorRouteName(),
                 array(
-                    'paymenterror' => 'unknown'
+                    'paymenterror' => 'unknown',
                 )
             )
         );
@@ -269,7 +283,8 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param PaymentFinishedResponse $response
-     * @param Context $context
+     * @param Context                 $context
+     *
      * @return RedirectResponse
      */
     protected function handlePaymentFinishedResponseStatusUnknown(PaymentFinishedResponse $response, Context $context)
@@ -278,7 +293,7 @@ abstract class AbstractWizardController extends AbstractController
             $this->generateUrl(
                 $context->getErrorRouteName(),
                 array(
-                    'paymenterror' => 'general'
+                    'paymenterror' => 'general',
                 )
             )
         );
@@ -286,58 +301,65 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param CartInterface $cart
+     *
      * @return Response|null
      */
     protected function preAddressAction(CartInterface $cart)
     {
-        return null;
+        return;
     }
 
     /**
      * @param CartInterface $cart
+     *
      * @return Response|null
      */
     protected function preBasketAction(CartInterface $cart)
     {
-        return null;
+        return;
     }
 
     /**
      * @param CartInterface $cart
+     *
      * @return Response|null
      */
     protected function preAuthAction(CartInterface $cart)
     {
-        return null;
+        return;
     }
 
     /**
      * @param CartInterface $cart
+     *
      * @return Response|null
      */
     protected function prePaymentAction(CartInterface $cart)
     {
-        return null;
+        return;
     }
 
     /**
      * @param CartInterface $cart
+     *
      * @return Response|null
      */
     protected function preSummaryAction(CartInterface $cart)
     {
         $cart->setTermsAndConditions(false);
         $this->persistCurrentCart();
-        return null;
+
+        return;
     }
 
     /**
      * @param CartInterface $cart
+     *
      * @return null|Response
      */
     protected function postBasketFormValidationAction(CartInterface $cart)
     {
-        return null;
+        return;
     }
 
     /**
@@ -372,20 +394,22 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param FormInterface $invoiceSameAsDeliveryForm
+     *
      * @return bool
      */
     protected function isInvoiceSameAsDelivery(FormInterface $invoiceSameAsDeliveryForm)
     {
-        return (bool)$invoiceSameAsDeliveryForm->get('invoiceSameAsDelivery')->getData();
+        return (bool) $invoiceSameAsDeliveryForm->get('invoiceSameAsDelivery')->getData();
     }
 
     /**
-     * @param Request $request
-     * @param FormInterface $deliveryOptionStrategyForm
-     * @param FormInterface $invoiceAddressForm
-     * @param FormInterface $invoiceSameAsDeliveryForm
+     * @param Request                 $request
+     * @param FormInterface           $deliveryOptionStrategyForm
+     * @param FormInterface           $invoiceAddressForm
+     * @param FormInterface           $invoiceSameAsDeliveryForm
      * @param InvoiceAddressInterface $invoiceAddress
-     * @param FormInterface $deliveryAddressForm
+     * @param FormInterface           $deliveryAddressForm
+     *
      * @return bool
      */
     protected function saveAddressForm(Request $request, FormInterface $deliveryOptionStrategyForm, FormInterface &$invoiceAddressForm, FormInterface &$invoiceSameAsDeliveryForm, InvoiceAddressInterface $invoiceAddress, FormInterface &$deliveryAddressForm)
@@ -402,8 +426,7 @@ abstract class AbstractWizardController extends AbstractController
         }
 
         if ($validDeliveryOptionStrategyFormData && $invoiceAddressForm->isValid() && $invoiceSameAsDeliveryForm->isValid()) {
-
-            if ($invoiceSameAsDelivery OR $deliveryAddressForm->isValid()) {
+            if ($invoiceSameAsDelivery or $deliveryAddressForm->isValid()) {
                 $cart = $this->getCurrentCart();
                 $cart->setInvoiceAddress($invoiceAddress);
 
@@ -416,12 +439,13 @@ abstract class AbstractWizardController extends AbstractController
                 $om->persist($invoiceAddress);
 
                 $this->persistCurrentCart();
+
                 return true;
             } else {
                 $invoiceSameAsDeliveryForm = $this->createForm(
                     $this->getInvoiceSameAsDeliveryType(),
                     array(
-                        'invoiceSameAsDelivery' => false
+                        'invoiceSameAsDelivery' => false,
                     )
                 );
             }
@@ -431,9 +455,10 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
-     * @param FormTypeInterface $type
+     * @param FormTypeInterface        $type
      * @param DeliveryAddressInterface $deliveryAddress
-     * @param array $formOptions
+     * @param array                    $formOptions
+     *
      * @return FormInterface
      */
     protected function createDeliveryAddressForm(FormTypeInterface $type = null, DeliveryAddressInterface $deliveryAddress = null, array $formOptions = null)
@@ -442,21 +467,23 @@ abstract class AbstractWizardController extends AbstractController
         $deliveryAddress = $deliveryAddress ?: $this->getDeliveryAddress();
 
         $formoptions = $formOptions ?: array(
-            'data_class'        => $this->getDeliveryAddressClass(),
+            'data_class' => $this->getDeliveryAddressClass(),
             'validation_groups' => array(
-                'sylius_wizard_address'
-            )
+                'sylius_wizard_address',
+            ),
         );
 
         return $this->createForm($type, $deliveryAddress, $formoptions);
     }
 
     /**
-     * returns true or the form if its not valid
+     * returns true or the form if its not valid.
      *
-     * @param boolean $invoiceSameAsDelivery
+     * @param bool $invoiceSameAsDelivery
      * @param null $invoiceAddress
+     *
      * @return FormInterface
+     *
      * @throws \Exception
      */
     protected function handleDeliveryAddress($invoiceSameAsDelivery = null, $invoiceAddress = null)
@@ -475,6 +502,7 @@ abstract class AbstractWizardController extends AbstractController
         //same
         if ($invoiceSameAsDelivery) {
             $this->handleInvoiceIsSameAsDelivery($deliveryAddressForm, $invoiceAddress);
+
             return $deliveryAddressForm;
         }
 
@@ -506,20 +534,23 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
-     * @param FormInterface $deliveryAddressForm
+     * @param FormInterface           $deliveryAddressForm
      * @param InvoiceAddressInterface $invoiceAddress
+     *
      * @return bool
      */
     protected function handleInvoiceIsSameAsDelivery(FormInterface &$deliveryAddressForm, InvoiceAddressInterface $invoiceAddress)
     {
         $currentcart = $this->getCurrentCart();
         $currentcart->setDeliveryAddress($invoiceAddress);
+
         return true;
     }
 
     /**
      * @param FormInterface $deliveryOptionStrategyForm
-     * @return boolean
+     *
+     * @return bool
      */
     protected function bindDeliveryOptions(FormInterface $deliveryOptionStrategyForm)
     {
@@ -536,6 +567,7 @@ abstract class AbstractWizardController extends AbstractController
             $cart = $this->getCurrentCart();
             $cart->setDeliveryOptionStrategyServiceId($deliveryOptioStrategy->getServiceId());
             $cart->setDeliveryOptionStrategyServiceData($deliveryOptionStrategyForm->get($deliveryOptioStrategy->getName())->getViewData());
+
             return true;
         }
 
@@ -544,7 +576,8 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param string $action
-     * @param array $data
+     * @param array  $data
+     *
      * @return array
      */
     protected function getViewData($action, array $data = array())

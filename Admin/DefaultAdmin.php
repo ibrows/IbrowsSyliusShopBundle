@@ -1,24 +1,18 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Admin;
+
 use Ibrows\Bundle\SonataAdminAnnotationBundle\Admin\AbstractSonataAdminAnnotationAdmin;
-
-use Sonata\AdminBundle\Admin\Pool;
-
 use Sonata\AdminBundle\Admin\Admin;
 use Sonata\AdminBundle\Form\FormMapper;
-use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
-use Sonata\AdminBundle\Route\RouteCollection;
-use Knp\Menu\ItemInterface as MenuItemInterface;
 
 class DefaultAdmin extends AbstractSonataAdminAnnotationAdmin
 {
-
     protected $translationDomain = 'Admin';
 
     protected function addDefaults($mapper, $search = 'get', $excludes = array(
-            'deletedat'
+            'deletedat',
     ))
     {
         $class = $this->getClass();
@@ -46,14 +40,13 @@ class DefaultAdmin extends AbstractSonataAdminAnnotationAdmin
                 $mapper->remove($method);//be sure don't add twice
                 $mapper->add($method);
             }
-
         }
     }
 
     protected function addActions($listMapper, array $actions = array(
             'show' => array(),
             'edit' => array(),
-            'delete' => array()
+            'delete' => array(),
     ))
     {
         $listMapper->add('_action', 'actions', array('actions' => $actions));
@@ -67,18 +60,15 @@ class DefaultAdmin extends AbstractSonataAdminAnnotationAdmin
             $this->addDefaults($listMapper);
             $this->addActions($listMapper);
         }
-
     }
 
     private function hasAnnotations()
     {
-
-        return (sizeof($this->getSonataAnnotationReader()->getFormMapperAnnotations($this->getClass())) > 0);
+        return sizeof($this->getSonataAnnotationReader()->getFormMapperAnnotations($this->getClass())) > 0;
     }
 
     protected function configureFormFields(FormMapper $form)
     {
-
         if ($this->hasAnnotations()) {
             parent::configureFormFields($form);
         } else {
@@ -88,13 +78,11 @@ class DefaultAdmin extends AbstractSonataAdminAnnotationAdmin
 
     protected function configureShowField(\Sonata\AdminBundle\Show\ShowMapper $showMapper)
     {
-
         if ($this->hasAnnotations()) {
             parent::configureShowField($showMapper);
         } else {
             $this->addDefaults($showMapper);
         }
-
     }
 
     public function getFormData(FormMapper $formMapper)
@@ -104,7 +92,7 @@ class DefaultAdmin extends AbstractSonataAdminAnnotationAdmin
             $data = $this->configurationPool->getContainer()->get('request')->get($this->getIdParameter());
         }
         if (!$data) {
-            $data = "" . intval($this->configurationPool->getContainer()->get('request')->get('objectId'));
+            $data = ''.intval($this->configurationPool->getContainer()->get('request')->get('objectId'));
         }
         if (!$data) {
             $data = $this->getSubject();
@@ -112,7 +100,7 @@ class DefaultAdmin extends AbstractSonataAdminAnnotationAdmin
         if (!$data) {
             $data = $formMapper->getFormBuilder()->getData();
         }
+
         return $data;
     }
-
 }

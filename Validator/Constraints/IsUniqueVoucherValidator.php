@@ -31,7 +31,7 @@ class IsUniqueVoucherValidator extends ConstraintValidator
     }
 
     /**
-     * @param BaseVoucherInterface $entity
+     * @param BaseVoucherInterface       $entity
      * @param IsUniqueVoucher|Constraint $constraint
      */
     public function validate($entity, Constraint $constraint)

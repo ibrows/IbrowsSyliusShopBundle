@@ -10,7 +10,8 @@ interface CartFormStrategyInterface extends CartStrategyInterface, FormTypeInter
 {
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return bool
      */
     public function isPossible(CartInterface $cart, CartManager $cartManager);
@@ -27,12 +28,14 @@ interface CartFormStrategyInterface extends CartStrategyInterface, FormTypeInter
 
     /**
      * @param CartInterface $cart
+     *
      * @return string
      */
     public function getTranslationKey(CartInterface $cart);
 
     /**
      * @param CartInterface $cart
+     *
      * @return array
      */
     public function getTranslationParameters(CartInterface $cart);
@@ -44,16 +47,18 @@ interface CartFormStrategyInterface extends CartStrategyInterface, FormTypeInter
 
     /**
      * @param bool $flag
+     *
      * @return CartFormStrategyInterface
      */
     public function setParentVisible($flag);
-    
+
     /**
      * @param string $domain
+     *
      * @return CartFormStrategyInterface
      */
     public function setDefaultTranslationDomain($domain);
-    
+
     /**
      * @return string
      */

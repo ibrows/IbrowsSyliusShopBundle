@@ -40,9 +40,9 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
 
     /**
      * @param Authorization $authorization
-     * @param array $paymentMethods
-     * @param string $defaultPaymentMethod
-     * @param string $merchandId
+     * @param array         $paymentMethods
+     * @param string        $defaultPaymentMethod
+     * @param string        $merchandId
      */
     public function __construct(
         Authorization $authorization,
@@ -74,6 +74,7 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
 
     /**
      * @param CartInterface $cart
+     *
      * @return string
      */
     public function getTranslationKey(CartInterface $cart)
@@ -89,12 +90,13 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
             return parent::getTranslationKey($cart);
         }
 
-        return $methods[$data['method']] . ' (Datatrans)';
+        return $methods[$data['method']].' (Datatrans)';
     }
 
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return bool
      */
     public function accept(CartInterface $cart, CartManager $cartManager)
@@ -107,6 +109,7 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
         if (!$selectedServiceId && $this->isDefault()) {
             $cart->setPaymentOptionStrategyServiceId($this->getServiceId());
             $cart->setPaymentOptionStrategyServiceData(array('method' => $this->getDefaultPaymentMethod()));
+
             return true;
         }
 
@@ -115,7 +118,8 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
 
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return bool
      */
     public function isPossible(CartInterface $cart, CartManager $cartManager)
@@ -125,7 +129,8 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
 
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return AdditionalCartItemInterface[]
      */
     public function compute(CartInterface $cart, CartManager $cartManager)
@@ -134,14 +139,17 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
         if (!$this->isParentVisible() && !isset($data['method'])) {
             $this->removeStrategy($cart);
         }
+
         return array();
     }
 
     /**
-     * @param Context $context
+     * @param Context       $context
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @throws \Exception if createPayInit creates an exception
+     *
      * @return RedirectResponse|PaymentFinishedResponse|ErrorRedirectResponse|SelfRedirectResponse
      */
     public function pay(Context $context, CartInterface $cart, CartManager $cartManager)
@@ -172,7 +180,7 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
 
                     return new ErrorRedirectResponse(
                         array(
-                            'status' => $canceledAuthorizationResponse->getStatus()
+                            'status' => $canceledAuthorizationResponse->getStatus(),
                         )
                     );
                     break;
@@ -188,12 +196,12 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
 
                     return new ErrorRedirectResponse(
                         array(
-                            'status'   => $failedAuthorizationResponse->getStatus(),
+                            'status' => $failedAuthorizationResponse->getStatus(),
                             'response' => array(
-                                'errorCode'    => $failedAuthorizationResponse->getErrorCode(),
+                                'errorCode' => $failedAuthorizationResponse->getErrorCode(),
                                 'errorMessage' => $failedAuthorizationResponse->getErrorMessage(),
-                                'errorDetail'  => $failedAuthorizationResponse->getErrorDetail()
-                            )
+                                'errorDetail' => $failedAuthorizationResponse->getErrorDetail(),
+                            ),
                         )
                     );
                     break;
@@ -202,9 +210,10 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
 
         try {
             $authorizationRequestData = $this->getAuthorization()->buildAuthorizationRequestData($authorizationRequest);
-            if ($url = DataInterface::URL_AUTHORIZATION . '?' . http_build_query($authorizationRequestData)) {
+            if ($url = DataInterface::URL_AUTHORIZATION.'?'.http_build_query($authorizationRequestData)) {
                 return new RedirectResponse($url);
             }
+
             return new ErrorRedirectResponse(array('paymenterror' => 'connectionerror'));
         } catch (\Exception $e) {
             return new ErrorRedirectResponse(array('paymenterror' => 'connectionerror'));
@@ -213,7 +222,7 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
 
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -222,8 +231,8 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
                 'method',
                 'choice',
                 array(
-                    'choices'  => $this->getPaymentMethods(),
-                    'expanded' => true
+                    'choices' => $this->getPaymentMethods(),
+                    'expanded' => true,
                 )
             );
         }
@@ -278,8 +287,9 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
     }
 
     /**
-     * @param Context $context
+     * @param Context       $context
      * @param CartInterface $cart
+     *
      * @return StandardAuthorizationRequest
      */
     protected function getAuthorizationRequest(Context $context, CartInterface $cart)
@@ -292,7 +302,7 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
             $this->getMerchandId(),
             round($cart->getAmountToPay() * 100),
             $cart->getCurrency(),
-            'Order #' . $cart->getId(),
+            'Order #'.$cart->getId(),
             $router->generate($currentRouteName, array('status' => PaymentFinishedResponse::STATUS_OK), true),
             $router->generate($currentRouteName, array('status' => PaymentFinishedResponse::STATUS_ERROR), true),
             $router->generate($currentRouteName, array('status' => PaymentFinishedResponse::STATUS_CANCEL), true)

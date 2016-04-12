@@ -33,7 +33,7 @@ class VoucherCartStrategyTest extends AbstractVoucherCartStrategyTest
                 array(
                     $this->getVoucher('ab', 50, new \DateTime()),
                     $this->getVoucher('cd', 100, new \DateTime()),
-                    $this->getVoucher('ef', 150)
+                    $this->getVoucher('ef', 150),
                 )
             )
         );
@@ -43,7 +43,7 @@ class VoucherCartStrategyTest extends AbstractVoucherCartStrategyTest
                 array(
                     $this->getVoucherCode('ab'),
                     $this->getVoucherCode('cd'),
-                    $this->getVoucherCode('ef')
+                    $this->getVoucherCode('ef'),
                 )
             ),
             5000
@@ -70,7 +70,7 @@ class VoucherCartStrategyTest extends AbstractVoucherCartStrategyTest
                 array(
                     $this->getVoucher('ab', 50, new \DateTime()),
                     $this->getVoucher('cd', 100, new \DateTime(), 'EUR'),
-                    $this->getVoucher('ef', 150)
+                    $this->getVoucher('ef', 150),
                 )
             )
         );
@@ -80,7 +80,7 @@ class VoucherCartStrategyTest extends AbstractVoucherCartStrategyTest
                 array(
                     $this->getVoucherCode('ab'),
                     $this->getVoucherCode('cd'),
-                    $this->getVoucherCode('ef')
+                    $this->getVoucherCode('ef'),
                 )
             ),
             5000
@@ -107,7 +107,7 @@ class VoucherCartStrategyTest extends AbstractVoucherCartStrategyTest
                 array(
                     $this->getVoucher('ab', 50, new \DateTime()),
                     $this->getVoucher('cd', 100, new \DateTime()),
-                    $this->getVoucher('ef', 150)
+                    $this->getVoucher('ef', 150),
                 )
             )
         );
@@ -117,7 +117,7 @@ class VoucherCartStrategyTest extends AbstractVoucherCartStrategyTest
                 array(
                     $this->getVoucherCode('ab'),
                     $this->getVoucherCode('cd'),
-                    $this->getVoucherCode('ef')
+                    $this->getVoucherCode('ef'),
                 )
             ),
             80
@@ -144,7 +144,7 @@ class VoucherCartStrategyTest extends AbstractVoucherCartStrategyTest
                 array(
                     $this->getVoucher('ab', 50, new \DateTime()),
                     $this->getVoucher('cd', 100, new \DateTime()),
-                    $this->getVoucher('ef', 150)
+                    $this->getVoucher('ef', 150),
                 )
             )
         );
@@ -156,7 +156,7 @@ class VoucherCartStrategyTest extends AbstractVoucherCartStrategyTest
                 array(
                     $this->getVoucherCode('ab'),
                     $this->getVoucherCode('cd'),
-                    $this->getVoucherCode('ef')
+                    $this->getVoucherCode('ef'),
                 )
             ),
             5000
@@ -182,14 +182,14 @@ class VoucherCartStrategyTest extends AbstractVoucherCartStrategyTest
         $vouchers = array(
             $this->getVoucher('ab', 50, new \DateTime()),
             $this->getVoucher('cd', 100, new \DateTime()),
-            $this->getVoucher('ef', 150)
+            $this->getVoucher('ef', 150),
         );
 
         /** @var VoucherCode[] $voucherCodes */
         $voucherCodes = array(
             $this->getVoucherCode('ab'),
             $this->getVoucherCode('cd'),
-            $this->getVoucherCode('ef')
+            $this->getVoucherCode('ef'),
         );
 
         $cartTotal = 5500.50;
@@ -240,7 +240,7 @@ class VoucherCartStrategyTest extends AbstractVoucherCartStrategyTest
             $this->getVoucher('ab', 50, new \DateTime()),
             $this->getVoucher('cd', 100, new \DateTime()),
             $this->getVoucher('ef', 800, new \DateTime()),
-            $this->getVoucher('gh', 150)
+            $this->getVoucher('gh', 150),
         );
 
         /** @var VoucherCode[] $voucherCodes */

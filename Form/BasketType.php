@@ -22,13 +22,13 @@ class BasketType extends AbstractType
 
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('items', 'collection', array(
-                'type' => $this->basketItemType
+                'type' => $this->basketItemType,
             ))
             ->add('continue', 'submit')
         ;

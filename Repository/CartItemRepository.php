@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: Faebeee
  * Date: 06.11.14
- * Time: 14:35
+ * Time: 14:35.
  */
 
 namespace Ibrows\SyliusShopBundle\Repository;
@@ -16,6 +16,7 @@ class CartItemRepository extends EntityRepository
 {
     /**
      * @param int $limit
+     *
      * @return ProductInterface[]
      */
     public function findByMostBoughtProducts($limit = 50)
@@ -52,4 +53,4 @@ class CartItemRepository extends EntityRepository
 
         return $products;
     }
-} 
+}

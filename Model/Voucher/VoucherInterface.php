@@ -11,6 +11,7 @@ interface VoucherInterface extends BaseVoucherInterface
 
     /**
      * @param float $value
+     *
      * @return VoucherInterface
      */
     public function setValue($value);
@@ -19,6 +20,7 @@ interface VoucherInterface extends BaseVoucherInterface
 
     /**
      * @param \DateTime $payedAt
+     *
      * @return mixed
      */
     public function setPayedAt(\DateTime $payedAt = null);

@@ -2,7 +2,7 @@
 
 /**
  * Created by PhpStorm.
- * Project: coffeeconnection
+ * Project: coffeeconnection.
  *
  * User: mikemeier
  * Date: 24.12.14
@@ -29,14 +29,14 @@ class ReduceStocksSerializer implements CartSerializerInterface
     protected $reduceStocksStrategy;
 
     /**
-     * @param CartManager $cartManager
+     * @param CartManager          $cartManager
      * @param ReduceStocksStrategy $reduceStocksStrategy
      */
     public function __construct(CartManager $cartManager, ReduceStocksStrategy $reduceStocksStrategy = null)
     {
-        if($reduceStocksStrategy){
+        if ($reduceStocksStrategy) {
             $reduceStocksStrategy->setEnabled(false);
-        }else{
+        } else {
             $reduceStocksStrategy = new ReduceStocksStrategy();
         }
 
@@ -46,6 +46,7 @@ class ReduceStocksSerializer implements CartSerializerInterface
 
     /**
      * @param CartInterface $cart
+     *
      * @return bool
      */
     public function accept(CartInterface $cart)
@@ -53,12 +54,12 @@ class ReduceStocksSerializer implements CartSerializerInterface
         if (!$cart === $this->cartManager->getCart(false)) {
             return false;
         }
+
         return $this->reduceStocksStrategy->accept($cart, $this->cartManager);
     }
 
     /**
      * @param CartInterface $cart
-     * @return void
      */
     public function serialize(CartInterface $cart)
     {

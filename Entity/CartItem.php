@@ -47,7 +47,7 @@ class CartItem extends BaseCartItem implements CartItemInterface
     protected $product;
 
     /**
-     * @var ProductInterface $productObj
+     * @var ProductInterface
      * @ORM\Column(type="object", name="product_obj", nullable=true)
      */
     protected $productObj;
@@ -77,14 +77,16 @@ class CartItem extends BaseCartItem implements CartItemInterface
     protected $totalWithTaxPrice = 0;
 
     /**
-     * @var boolean
+     * @var bool
      * @ORM\Column(type="boolean", name="tax_inclusive")
      */
     protected $taxInclusive = false;
 
     /**
-     * ReducedQuantity
+     * ReducedQuantity.
+     *
      * @ORM\Column(type="integer", name="reduced_quantity")
+     *
      * @var int
      */
     protected $reducedQuantity = 0;
@@ -105,14 +107,12 @@ class CartItem extends BaseCartItem implements CartItemInterface
         $this->reducedQuantity = $reducedQuantity;
     }
 
-
-
     /**
      * @return string
      */
     public function __toString()
     {
-        return (string)$this->product;
+        return (string) $this->product;
     }
 
     public function calculateTotal()
@@ -120,12 +120,12 @@ class CartItem extends BaseCartItem implements CartItemInterface
         $total = $this->quantity * $this->unitPrice;
         $taxfactor = $this->getTaxFactor();
 
-        if($this->isTaxInclusive()){
+        if ($this->isTaxInclusive()) {
             $this->totalWithTaxPrice = $total;
-            $this->total =  ( $total / ($taxfactor + 1) );
+            $this->total = ($total / ($taxfactor + 1));
             $taxPrice = $this->totalWithTaxPrice - $this->total;
             $this->setTaxPrice($taxPrice);
-        }else{
+        } else {
             $this->total = $total;
             $taxPrice = $total * $taxfactor;
             $this->setTaxPrice($taxPrice);
@@ -180,12 +180,14 @@ class CartItem extends BaseCartItem implements CartItemInterface
 
     /**
      * @param ProductInterface $product
+     *
      * @return CartItem
      */
     public function setProduct(ProductInterface $product = null)
     {
         $this->product = $product;
         $this->setUnitPrice($product->getPrice());
+
         return $this;
     }
 
@@ -199,16 +201,19 @@ class CartItem extends BaseCartItem implements CartItemInterface
 
     /**
      * @param ProductInterface $product
+     *
      * @return CartItem
      */
     public function setProductObj(ProductInterface $product = null)
     {
         $this->productObj = $product;
+
         return $this;
     }
 
     /**
      * @param BaseCartItemInterface $item
+     *
      * @return bool
      */
     public function equals(BaseCartItemInterface $item)
@@ -226,6 +231,7 @@ class CartItem extends BaseCartItem implements CartItemInterface
 
     /**
      * @param bool $flag
+     *
      * @return CartItemInterface
      */
     public function setDelivered($flag = true)
@@ -233,8 +239,9 @@ class CartItem extends BaseCartItem implements CartItemInterface
         if (false === $flag) {
             $this->delivered = null;
         } else {
-            $this->delivered = new \DateTime;
+            $this->delivered = new \DateTime();
         }
+
         return $this;
     }
 
@@ -252,6 +259,7 @@ class CartItem extends BaseCartItem implements CartItemInterface
     public function setQuantityToAvailable()
     {
         $this->setQuantity($this->getProduct()->getOnHand());
+
         return $this;
     }
 
@@ -281,16 +289,19 @@ class CartItem extends BaseCartItem implements CartItemInterface
 
     /**
      * @param float $taxRate (eg. 8)
+     *
      * @return CartItem
      */
     public function setTaxRate($taxRate)
     {
         $this->taxRate = $taxRate;
+
         return $this;
     }
 
     /**
-     * eg. 0.08
+     * eg. 0.08.
+     *
      * @return number
      */
     public function getTaxFactor()
@@ -308,11 +319,13 @@ class CartItem extends BaseCartItem implements CartItemInterface
 
     /**
      * @param float $taxPrice
+     *
      * @return CartItem
      */
     public function setTaxPrice($taxPrice)
     {
         $this->taxPrice = $taxPrice;
+
         return $this;
     }
 
@@ -326,16 +339,18 @@ class CartItem extends BaseCartItem implements CartItemInterface
 
     /**
      * @param float $totalWithTaxPrice
+     *
      * @return CartItem
      */
     public function setTotalWithTaxPrice($totalWithTaxPrice)
     {
         $this->totalWithTaxPrice = $totalWithTaxPrice;
+
         return $this;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isTaxInclusive()
     {
@@ -343,13 +358,14 @@ class CartItem extends BaseCartItem implements CartItemInterface
     }
 
     /**
-     * @param boolean $mwstinclusive
+     * @param bool $mwstinclusive
+     *
      * @return \Ibrows\SyliusShopBundle\Entity\CartItem
      */
     public function setTaxInclusive($taxInclusive)
     {
         $this->taxInclusive = $taxInclusive;
+
         return $this;
     }
-
 }

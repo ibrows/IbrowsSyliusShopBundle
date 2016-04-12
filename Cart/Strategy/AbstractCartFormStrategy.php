@@ -17,24 +17,26 @@ abstract class AbstractCartFormStrategy extends AbstractCartStrategy implements 
      * @var bool
      */
     protected $isParentVisible = true;
-    
+
     /**
      * @var string
      */
-    protected $defaultTranslationDomain = "messages";
+    protected $defaultTranslationDomain = 'messages';
 
     /**
      * @param array $parameters
      * @param string $prefix
      * @param string $suffix
+     *
      * @return array
      */
     protected function transformToTranslationKeys(array $parameters, $prefix = '%', $suffix = '%')
     {
         $newParameters = array();
-        foreach($parameters as $key => $value){
-            $newParameters[$prefix.$key.$suffix] = $value;
+        foreach ($parameters as $key => $value) {
+            $newParameters[$prefix . $key . $suffix] = $value;
         }
+
         return $newParameters;
     }
 
@@ -48,11 +50,13 @@ abstract class AbstractCartFormStrategy extends AbstractCartStrategy implements 
 
     /**
      * @param bool $flag
+     *
      * @return AbstractCartFormStrategy
      */
     public function setParentVisible($flag)
     {
         $this->isParentVisible = $flag;
+
         return $this;
     }
 
@@ -69,7 +73,7 @@ abstract class AbstractCartFormStrategy extends AbstractCartStrategy implements 
      */
     public function getName()
     {
-        return str_replace(".", "_", $this->getServiceId());
+        return str_replace('.', '_', $this->getServiceId());
     }
 
     /**
@@ -82,6 +86,7 @@ abstract class AbstractCartFormStrategy extends AbstractCartStrategy implements 
 
     /**
      * @param CartInterface $cart
+     *
      * @return array
      */
     public function getTranslationParameters(CartInterface $cart)
@@ -92,6 +97,7 @@ abstract class AbstractCartFormStrategy extends AbstractCartStrategy implements 
     /**
      * @param CartInterface $cart
      * @param CartManager $cartManager
+     *
      * @return bool
      */
     public function isPossible(CartInterface $cart, CartManager $cartManager)
@@ -105,7 +111,6 @@ abstract class AbstractCartFormStrategy extends AbstractCartStrategy implements 
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-
     }
 
     /**
@@ -115,7 +120,6 @@ abstract class AbstractCartFormStrategy extends AbstractCartStrategy implements 
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-
     }
 
     /**
@@ -125,7 +129,6 @@ abstract class AbstractCartFormStrategy extends AbstractCartStrategy implements 
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-
     }
 
     /**
@@ -135,7 +138,7 @@ abstract class AbstractCartFormStrategy extends AbstractCartStrategy implements 
     {
         return 'form';
     }
-    
+
     /**
      * @return string
      */
@@ -146,14 +149,16 @@ abstract class AbstractCartFormStrategy extends AbstractCartStrategy implements 
 
     /**
      * @param string $domain
+     *
      * @return AbstractCartFormStrategy
      */
     public function setDefaultTranslationDomain($domain)
     {
         $this->defaultTranslationDomain = $domain;
+
         return $this;
     }
-    
+
     /**
      * @param OptionsResolverInterface $resolver
      */

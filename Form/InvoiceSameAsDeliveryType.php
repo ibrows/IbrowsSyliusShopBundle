@@ -3,13 +3,12 @@
 namespace Ibrows\SyliusShopBundle\Form;
 
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class InvoiceSameAsDeliveryType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -17,10 +16,10 @@ class InvoiceSameAsDeliveryType extends AbstractType
             ->add('invoiceSameAsDelivery', 'choice', array(
                 'choices' => array(
                     '1' => 'invoiceSameAsDelivery.yes',
-                    '0' => 'invoiceSameAsDelivery.no'
+                    '0' => 'invoiceSameAsDelivery.no',
                 ),
                 'multiple' => false,
-                'expanded' => true
+                'expanded' => true,
             ))
         ;
     }

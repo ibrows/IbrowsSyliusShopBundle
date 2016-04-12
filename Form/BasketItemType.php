@@ -22,7 +22,7 @@ class BasketItemType extends AbstractType
 
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -41,7 +41,7 @@ class BasketItemType extends AbstractType
 
         $resolver
             ->setDefaults(array(
-                'data_class' => $this->dataClass
+                'data_class' => $this->dataClass,
             ))
         ;
     }

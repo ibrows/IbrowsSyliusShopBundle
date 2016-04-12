@@ -1,6 +1,7 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Cart\Strategy\Tax;
+
 use Ibrows\SyliusShopBundle\Cart\CartManager;
 use Ibrows\SyliusShopBundle\Cart\Strategy\AbstractCartStrategy;
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
@@ -24,7 +25,8 @@ class ProductTaxRateCartStrategy extends AbstractCartStrategy
 
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return bool
      */
     public function accept(CartInterface $cart, CartManager $cartManager)
@@ -34,7 +36,8 @@ class ProductTaxRateCartStrategy extends AbstractCartStrategy
 
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return AdditionalCartItemInterface[]
      */
     public function compute(CartInterface $cart, CartManager $cartManager)
@@ -64,13 +67,15 @@ class ProductTaxRateCartStrategy extends AbstractCartStrategy
                 $item->setTaxRate($this->getDefaultTaxRate());
             }
         }
+
         return array();
     }
 
     /**
      * @param CartItemInterface $item
-     * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartInterface     $cart
+     * @param CartManager       $cartManager
+     *
      * @return float
      */
     protected function getTaxRateForItem(CartItemInterface $item, CartInterface $cart, CartManager $cartManager)
@@ -78,16 +83,17 @@ class ProductTaxRateCartStrategy extends AbstractCartStrategy
         $method = $this->taxRateMethod;
         $product = $item->getProduct();
         if (method_exists($product, $method)) {
-            return floatval('' . $product->$method());
+            return floatval(''.$product->$method());
         }
-        throw new \Exception('No Taxrate found:' . $product . '->' . $method);
+        throw new \Exception('No Taxrate found:'.$product.'->'.$method);
     }
 
     /**
-     * @param float $taxRate
-     * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param float                       $taxRate
+     * @param CartInterface               $cart
+     * @param CartManager                 $cartManager
      * @param AdditionalCartItemInterface $item
+     *
      * @return string
      */
     protected function getItemText($taxRate, CartInterface $cart, CartManager $cartManager, AdditionalCartItemInterface $item)
@@ -109,6 +115,7 @@ class ProductTaxRateCartStrategy extends AbstractCartStrategy
     public function setTaxRateMethod($taxRateMethod)
     {
         $this->taxRateMethod = $taxRateMethod;
+
         return $this;
     }
 
@@ -120,7 +127,7 @@ class ProductTaxRateCartStrategy extends AbstractCartStrategy
     public function setDefaultTaxRate($defaultTaxRate)
     {
         $this->defaultTaxRate = $defaultTaxRate;
+
         return $this;
     }
-
 }

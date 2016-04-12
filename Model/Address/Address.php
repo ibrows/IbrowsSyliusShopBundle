@@ -20,7 +20,7 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
     protected $id;
 
     /**
-     * @var string $firstname
+     * @var string
      * @ORM\Column(type="string", nullable=true)
      * @Assert\NotBlank(groups={"sylius_wizard_address"})
      * @Sonata\ListMapper()
@@ -29,7 +29,7 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
     protected $firstname;
 
     /**
-     * @var string $lastname
+     * @var string
      * @ORM\Column(type="string", nullable=true)
      * @Assert\NotBlank(groups={"sylius_wizard_address"})
      * @Sonata\ListMapper()
@@ -38,27 +38,27 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
     protected $lastname;
 
     /**
-     * @var string $title
+     * @var string
      * @ORM\Column(type="string", nullable=true)
      * @Assert\NotBlank(groups={"sylius_wizard_address"})
      */
     protected $title;
 
     /**
-     * @var string $company
+     * @var string
      * @ORM\Column(type="string", nullable=true)
      */
     protected $company;
 
     /**
-     * @var string $street
+     * @var string
      * @ORM\Column(type="string", nullable=true)
      * @Assert\NotBlank(groups={"sylius_wizard_address"})
      */
     protected $street;
 
     /**
-     * @var string $zip
+     * @var string
      * @ORM\Column(type="string", nullable=true)
      * @Assert\NotBlank(groups={"sylius_wizard_address"})
      * @Sonata\DatagridMapper
@@ -67,7 +67,7 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
     protected $zip;
 
     /**
-     * @var string $city
+     * @var string
      * @ORM\Column(type="string", nullable=true)
      * @Assert\NotBlank(groups={"sylius_wizard_address"})
      * @Sonata\DatagridMapper
@@ -76,7 +76,7 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
     protected $city;
 
     /**
-     * @var string $country
+     * @var string
      * @ORM\Column(type="string", nullable=true)
      * @Assert\Country(groups={"sylius_wizard_address"})
      * @Assert\NotBlank(groups={"sylius_wizard_address"})
@@ -84,13 +84,13 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
     protected $country;
 
     /**
-     * @var string $phone
+     * @var string
      * @ORM\Column( type="string", nullable=true)
      */
     protected $phone;
 
     /**
-     * @var string $email
+     * @var string
      * @ORM\Column(type="string", nullable=true)
      * @Assert\Email(groups={"sylius_wizard_address"})
      * @Sonata\ListMapper()
@@ -124,19 +124,22 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
 
         foreach ($this->getStringTemplateVariables() as $var => $value) {
             $var = ucfirst($var);
-            if (method_exists($this, 'get' . $var)) {
-                $value = call_user_func(array($this, 'get' . $var));
+            if (method_exists($this, 'get'.$var)) {
+                $value = call_user_func(array($this, 'get'.$var));
             }
-            $template = preg_replace('!%%' . $var . '%%!', $value, $template);
+            $template = preg_replace('!%%'.$var.'%%!', $value, $template);
         }
+
         return preg_replace("!\n+\s*\n+!", "\n", $template);
     }    /**
      * @param string $city
+     *
      * @return Address
      */
     public function setCity($city)
     {
         $this->city = $city;
+
         return $this;
     }
 
@@ -146,10 +149,10 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
     protected function getStringTemplate()
     {
         return
-            "%%Company%%
+            '%%Company%%
 %%Firstname%% %%Lastname%%
 %%Street%%
-%%Zip%% %%City%%";
+%%Zip%% %%City%%';
     }    /**
      * @return string
      */
@@ -164,14 +167,17 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
     protected function getStringTemplateVariables()
     {
         $vars = get_object_vars($this);
+
         return $vars;
     }    /**
      * @param string $company
+     *
      * @return Address
      */
     public function setCompany($company)
     {
         $this->company = $company;
+
         return $this;
     }
 
@@ -185,11 +191,13 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
 
     /**
      * @param string $country
+     *
      * @return Address
      */
     public function setCountry($country)
     {
         $this->country = $country;
+
         return $this;
     }
 
@@ -203,11 +211,13 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
 
     /**
      * @param string $email
+     *
      * @return Address
      */
     public function setEmail($email)
     {
         $this->email = $email;
+
         return $this;
     }
 
@@ -221,11 +231,13 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
 
     /**
      * @param string $firstname
+     *
      * @return Address
      */
     public function setFirstname($firstname)
     {
         $this->firstname = $firstname;
+
         return $this;
     }
 
@@ -239,11 +251,13 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
 
     /**
      * @param string $lastname
+     *
      * @return Address
      */
     public function setLastname($lastname)
     {
         $this->lastname = $lastname;
+
         return $this;
     }
 
@@ -257,11 +271,13 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
 
     /**
      * @param string $phone
+     *
      * @return Address
      */
     public function setPhone($phone)
     {
         $this->phone = $phone;
+
         return $this;
     }
 
@@ -275,11 +291,13 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
 
     /**
      * @param string $street
+     *
      * @return Address
      */
     public function setStreet($street)
     {
         $this->street = $street;
+
         return $this;
     }
 
@@ -293,11 +311,13 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
 
     /**
      * @param string $zip
+     *
      * @return Address
      */
     public function setZip($zip)
     {
         $this->zip = $zip;
+
         return $this;
     }
 
@@ -309,19 +329,14 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
         return $this->zip;
     }
 
-
-
-
-
-
-
     /**
      * @param AddressInterface $address
+     *
      * @return bool
      */
     public function compare(AddressInterface $address)
     {
-        return (
+        return
             $this->getCity() == $address->getCity() &&
             $this->getCompany() == $address->getCompany() &&
             $this->getCountry() == $address->getCountry() &&
@@ -335,7 +350,7 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
             $this->isTitleCompany() == $address->isTitleCompany() &&
             $this->isTitleWoman() == $address->isTitleWoman() &&
             $this->isTitleMan() == $address->isTitleMan()
-        );
+        ;
     }
 
     /**
@@ -364,7 +379,8 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
 
     /**
      * @param UserInterface $user
-     * @param bool $stopPropagation
+     * @param bool          $stopPropagation
+     *
      * @return $this
      */
     public function setUser(UserInterface $user = null, $stopPropagation = false)
@@ -378,6 +394,7 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
             }
         }
         $this->user = $user;
+
         return $this;
     }
 
@@ -399,11 +416,13 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
 
     /**
      * @param string $title
+     *
      * @return AddressInterface
      */
     public function setTitle($title)
     {
         $this->title = $title;
+
         return $this;
     }
 
@@ -413,9 +432,9 @@ class Address implements InvoiceAddressInterface, DeliveryAddressInterface
     public static function getTitles()
     {
         return array(
-            'TITLE_WOMAN'   => self::TITLE_WOMAN,
-            'TITLE_MAN'     => self::TITLE_MAN,
-            'TITLE_COMPANY' => self::TITLE_COMPANY
+            'TITLE_WOMAN' => self::TITLE_WOMAN,
+            'TITLE_MAN' => self::TITLE_MAN,
+            'TITLE_COMPANY' => self::TITLE_COMPANY,
         );
     }
 }

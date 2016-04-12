@@ -24,7 +24,8 @@ class FlatrateDeliveryCartStrategy extends AbstractDeliveryCartStrategy
 
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return bool
      */
     public function isPossible(CartInterface $cart, CartManager $cartManager)
@@ -34,30 +35,33 @@ class FlatrateDeliveryCartStrategy extends AbstractDeliveryCartStrategy
 
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return AdditionalCartItemInterface[]
      */
     public function compute(CartInterface $cart, CartManager $cartManager)
     {
         $steps = $this->steps;
-        if(!$steps){
+        if (!$steps) {
             return array();
         }
-        if($this->getTaxincl())
+        if ($this->getTaxincl()) {
             $total = $cart->getTotalWithTax();
-        else
+        } else {
             $total = $cart->getTotal();
-        if($total <= 0){
+        }
+        if ($total <= 0) {
             return array();
         }
         $costs = $this->getStepCosts($this->steps, $total);
-        if($costs != 0){
+        if ($costs != 0) {
             $item = $this->createAdditionalCartItem($costs);
             $item->setText($this->getItemText($costs, $cart, $cartManager, $item));
             $item->setStrategyData(array(
                 'costs' => $costs,
-                'total' => $total
+                'total' => $total,
             ));
+
             return array($item);
         }
 
@@ -65,10 +69,11 @@ class FlatrateDeliveryCartStrategy extends AbstractDeliveryCartStrategy
     }
 
     /**
-     * @param float $costs
-     * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param float                       $costs
+     * @param CartInterface               $cart
+     * @param CartManager                 $cartManager
      * @param AdditionalCartItemInterface $item
+     *
      * @return string
      */
     protected function getItemText($costs, CartInterface $cart, CartManager $cartManager, AdditionalCartItemInterface $item)

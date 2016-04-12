@@ -47,7 +47,7 @@ class VoucherAdmin extends DefaultAdmin
             ->add('payedAt', 'datetime', array(
                 'date_widget' => 'single_text',
                 'time_widget' => 'single_text',
-                'required' => false
+                'required' => false,
             ))
         ;
     }

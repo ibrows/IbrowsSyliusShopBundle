@@ -29,11 +29,13 @@ class Costs
 
     /**
      * @param float $totalWithTax
+     *
      * @return Costs
      */
     public function setTotalWithTax($totalWithTax)
     {
         $this->totalWithTax = $totalWithTax;
+
         return $this;
     }
 
@@ -47,11 +49,13 @@ class Costs
 
     /**
      * @param float $tax
+     *
      * @return Costs
      */
     public function setTax($tax)
     {
         $this->tax = $tax;
+
         return $this;
     }
 
@@ -65,11 +69,13 @@ class Costs
 
     /**
      * @param float $total
+     *
      * @return Costs
      */
     public function setTotal($total)
     {
         $this->total = $total;
+
         return $this;
     }
 }

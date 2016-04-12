@@ -27,11 +27,13 @@ abstract class AbstractRedirectResponse
 
     /**
      * @param array $parameters
+     *
      * @return SelfRedirectResponse
      */
     public function setParameters($parameters)
     {
         $this->parameters = $parameters;
+
         return $this;
     }
 }

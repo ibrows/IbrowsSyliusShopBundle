@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: Faebeee
  * Date: 24.07.14
- * Time: 16:20
+ * Time: 16:20.
  */
 
 namespace Ibrows\SyliusShopBundle\Cart;
@@ -43,9 +43,9 @@ class CartItemManager
 
     /**
      * @param EntityManager $em
-     * @param string $productClass
+     * @param string        $productClass
      * @param $cartClass
-     * @param string $skuProperty
+     * @param string             $skuProperty
      * @param CartItemRepository $cartItemRepo
      */
     public function __construct(EntityManager $em, $productClass, $cartClass, $skuProperty = 'sku', CartItemRepository $cartItemRepo = null)
@@ -59,6 +59,7 @@ class CartItemManager
 
     /**
      * @param CartItemInterface $cartItemInterface
+     *
      * @return array
      */
     public function getBoughtWith(CartItemInterface $cartItemInterface)
@@ -71,7 +72,8 @@ class CartItemManager
 
     /**
      * @param ProductInterface $product
-     * @param CartInterface $cart
+     * @param CartInterface    $cart
+     *
      * @return array
      */
     public function getBoughtWithProduct(ProductInterface $product, CartInterface $cart = null)
@@ -97,11 +99,13 @@ class CartItemManager
                 $articles[$article->getId()] = $article;
             }
         }
+
         return $articles;
     }
 
     /**
      * @param CartInterface $cart
+     *
      * @return ProductInterface[]
      */
     public function getBoughtProducts(CartInterface $cart)
@@ -118,12 +122,14 @@ class CartItemManager
         if (count($_sku) > 0) {
             return $this->getProductsBySku($_sku);
         }
+
         return array();
     }
 
     /**
      * @param CartInterface[] $carts
-     * @param int $limit
+     * @param int             $limit
+     *
      * @return ProductInterface[]
      */
     public function getMostBoughtProductsFromCarts(array $carts, $limit = null)
@@ -153,6 +159,7 @@ class CartItemManager
 
     /**
      * @param int $limit
+     *
      * @return ProductInterface[]
      */
     public function getMostBoughtProducts($limit = 50)
@@ -162,7 +169,8 @@ class CartItemManager
 
     /**
      * @param array $skus
-     * @param int $limit
+     * @param int   $limit
+     *
      * @return ProductInterface[]
      */
     protected function getProductsBySku(array $skus, $limit = null)
@@ -173,17 +181,19 @@ class CartItemManager
 
         $repo = $this->em->getRepository($this->productClass);
         $qb = $repo->createQueryBuilder('p');
-        $qb->where('p.' . $this->skuField . ' IN (:sku)');
+        $qb->where('p.'.$this->skuField.' IN (:sku)');
         $qb->setParameter('sku', $skus);
 
         if ($limit != null) {
             $qb->setMaxResults($limit);
         }
+
         return $qb->getQuery()->execute();
     }
 
     /**
      * @param $class
+     *
      * @return \Doctrine\ORM\EntityRepository
      */
     protected function getRepositoryForClass($class)
@@ -191,6 +201,7 @@ class CartItemManager
         if (is_object($class)) {
             $class = get_class($class);
         }
+
         return $this->em->getRepository($class);
     }
 }

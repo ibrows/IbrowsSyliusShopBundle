@@ -2,7 +2,6 @@
 
 namespace Ibrows\SyliusShopBundle\Form;
 
-use Ibrows\SyliusShopBundle\Entity\Address;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -29,9 +28,9 @@ class AddressType extends AbstractType
     protected $dataClass;
 
     /**
-     * @param array $countryChoices
-     * @param array $preferredCountryChoices
-     * @param array $titleChoices
+     * @param array  $countryChoices
+     * @param array  $preferredCountryChoices
+     * @param array  $titleChoices
      * @param string $dataClass
      */
     public function __construct(
@@ -39,7 +38,7 @@ class AddressType extends AbstractType
         array $preferredCountryChoices = array(),
         array $titleChoices = array(),
         $dataClass = null
-    ){
+    ) {
         $this->countryChoices = $countryChoices;
         $this->preferredCountryChoices = $preferredCountryChoices;
         $this->titleChoices = $titleChoices;
@@ -48,21 +47,21 @@ class AddressType extends AbstractType
 
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $countryOptions = array();
-        if($this->countryChoices){
+        if ($this->countryChoices) {
             $countryOptions['choices'] = $this->countryChoices;
         }
-        if($this->preferredCountryChoices){
+        if ($this->preferredCountryChoices) {
             $countryOptions['preferred_choices'] = $this->preferredCountryChoices;
         }
 
         $builder
             ->add('title', 'choice', array(
-                'choices' => $this->titleChoices
+                'choices' => $this->titleChoices,
             ))
             ->add('firstname')
             ->add('lastname')
@@ -82,9 +81,9 @@ class AddressType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         parent::setDefaultOptions($resolver);
-        if($this->dataClass){
+        if ($this->dataClass) {
             $resolver->setDefaults(array(
-                'data_class' => $this->dataClass
+                'data_class' => $this->dataClass,
             ));
         }
     }
@@ -99,6 +98,7 @@ class AddressType extends AbstractType
 
     /**
      * @param array $preferredCountryChoices
+     *
      * @return AddressType
      */
     public function setPreferredCountryChoices($preferredCountryChoices)
@@ -118,11 +118,13 @@ class AddressType extends AbstractType
 
     /**
      * @param array $countryChoices
+     *
      * @return AddressType
      */
     public function setCountryChoices($countryChoices)
     {
         $this->countryChoices = $countryChoices;
+
         return $this;
     }
 
@@ -136,11 +138,13 @@ class AddressType extends AbstractType
 
     /**
      * @param array $titleChoices
+     *
      * @return AddressType
      */
     public function setTitleChoices($titleChoices)
     {
         $this->titleChoices = $titleChoices;
+
         return $this;
     }
 

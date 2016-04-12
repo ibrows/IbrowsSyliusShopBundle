@@ -43,17 +43,17 @@ class VoucherPercentAdmin extends DefaultAdmin
             ->add('code')
             ->add('percent')
             ->add('quantity', null, array(
-                'required' => false
+                'required' => false,
             ))
             ->add('validFrom', 'datetime', array(
                 'date_widget' => 'single_text',
                 'time_widget' => 'single_text',
-                'required' => false
+                'required' => false,
             ))
             ->add('validTo', 'datetime', array(
                 'date_widget' => 'single_text',
                 'time_widget' => 'single_text',
-                'required' => false
+                'required' => false,
             ))
         ;
     }

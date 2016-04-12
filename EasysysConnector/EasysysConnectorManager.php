@@ -14,17 +14,20 @@ class EasysysConnectorManager extends BaseEasysysConnectorManager
 {
     /**
      * @param ResourceOrderInterface $cart
+     *
      * @return mixed
      */
     public function pushKbOrder(ResourceOrderInterface $cart)
     {
         /** @var ResourceOrderManager $manager */
         $manager = $this->get($cart->getEsResource());
+
         return $manager->createData($cart);
     }
 
     /**
      * @param ResourcePositionCustomInterface $positionCustom
+     *
      * @return ResourcePositionCustomInterface
      */
     public function pushKbPositionCustom(ResourcePositionCustomInterface $positionCustom)
@@ -41,8 +44,10 @@ class EasysysConnectorManager extends BaseEasysysConnectorManager
      * @param $recipient
      * @param string $message
      * @param string $subject
-     * @param bool $markAsOpen
+     * @param bool   $markAsOpen
+     *
      * @throws \Exception
+     *
      * @return HttpResponse
      */
     public function sendInvoice($invoiceId, $recipient, $message, $subject, $markAsOpen = true)
@@ -53,14 +58,14 @@ class EasysysConnectorManager extends BaseEasysysConnectorManager
         $parameterBag->setParameterPostFormat('application/json');
         $parameterBag->setParameterPost(
             array(
-                'message'         => $message,
+                'message' => $message,
                 'recipient_email' => $recipient,
-                'subject'         => $subject,
-                'mark_as_open'    => $markAsOpen
+                'subject' => $subject,
+                'mark_as_open' => $markAsOpen,
             )
         );
 
-        $requestUri = (string)vsprintf('kb_invoice/%d/send', array($invoiceId));
+        $requestUri = (string) vsprintf('kb_invoice/%d/send', array($invoiceId));
         $parameterBag->setUri($requestUri);
 
         $parameterBag->setHeaders($this->easysysConnector->getAuthAdapter()->getDefaultHeaders($parameterBag));
@@ -69,10 +74,12 @@ class EasysysConnectorManager extends BaseEasysysConnectorManager
     }
 
     /**
-     * @param int $invoiceId
+     * @param int   $invoiceId
      * @param float $invoiceValue
-     * @param bool $setFirstToIssued
+     * @param bool  $setFirstToIssued
+     *
      * @throws \Exception
+     *
      * @return HttpResponse
      */
     public function setInvoiceToPayed($invoiceId, $invoiceValue = null, $setFirstToIssued = true)
@@ -95,7 +102,7 @@ class EasysysConnectorManager extends BaseEasysysConnectorManager
             )
         );
 
-        $requestUri = (string)vsprintf('kb_invoice/%d/payment', array($invoiceId));
+        $requestUri = (string) vsprintf('kb_invoice/%d/payment', array($invoiceId));
         $parameterBag->setUri($requestUri);
 
         $parameterBag->setHeaders($this->easysysConnector->getAuthAdapter()->getDefaultHeaders($parameterBag));
@@ -105,7 +112,9 @@ class EasysysConnectorManager extends BaseEasysysConnectorManager
 
     /**
      * @param $invoiceId
+     *
      * @return HttpResponse
+     *
      * @throws \Exception
      */
     public function getInvoiceValue($invoiceId)
@@ -114,7 +123,7 @@ class EasysysConnectorManager extends BaseEasysysConnectorManager
 
         $parameterBag->setMethod(HttpAdapterInterface::HTTP_METHOD_GET);
 
-        $requestUri = (string)vsprintf('kb_bill/%d', array($invoiceId));
+        $requestUri = (string) vsprintf('kb_bill/%d', array($invoiceId));
         $parameterBag->setUri($requestUri);
 
         $parameterBag->setHeaders($this->easysysConnector->getAuthAdapter()->getDefaultHeaders($parameterBag));
@@ -127,12 +136,15 @@ class EasysysConnectorManager extends BaseEasysysConnectorManager
                 $value += $position['position_total'];
             }
         }
+
         return $value;
     }
 
     /**
      * @param int $invoiceId
+     *
      * @return HttpResponse
+     *
      * @throws \Exception
      */
     public function setInvoiceToIssued($invoiceId)
@@ -142,7 +154,7 @@ class EasysysConnectorManager extends BaseEasysysConnectorManager
         $parameterBag->setMethod(HttpAdapterInterface::HTTP_METHOD_POST);
         $parameterBag->setParameterPostFormat('application/json');
 
-        $requestUri = (string)vsprintf('kb_invoice/%d/issue', array($invoiceId));
+        $requestUri = (string) vsprintf('kb_invoice/%d/issue', array($invoiceId));
         $parameterBag->setUri($requestUri);
 
         $parameterBag->setHeaders($this->easysysConnector->getAuthAdapter()->getDefaultHeaders($parameterBag));
@@ -152,6 +164,7 @@ class EasysysConnectorManager extends BaseEasysysConnectorManager
 
     /**
      * @param int $invoiceId
+     *
      * @return array
      */
     public function getInvoicePayments($invoiceId)
@@ -160,18 +173,20 @@ class EasysysConnectorManager extends BaseEasysysConnectorManager
 
         $parameterBag->setMethod(HttpAdapterInterface::HTTP_METHOD_GET);
 
-        $requestUri = (string)vsprintf('kb_invoice/%d/payment', array($invoiceId));
+        $requestUri = (string) vsprintf('kb_invoice/%d/payment', array($invoiceId));
         $parameterBag->setUri($requestUri);
 
         $parameterBag->setHeaders($this->easysysConnector->getAuthAdapter()->getDefaultHeaders($parameterBag));
 
         $response = $this->easysysConnector->getManager()->execute($parameterBag);
+
         return json_decode($response->getContent(), true);
     }
 
     /**
      * @param ResourceOrderInterface $cart
-     * @param string $text
+     * @param string                 $text
+     *
      * @return HttpResponse
      */
     public function pushKbComment(ResourceOrderInterface $cart, $text)
@@ -182,13 +197,13 @@ class EasysysConnectorManager extends BaseEasysysConnectorManager
         $parameterBag->setParameterPostFormat('application/json');
         $parameterBag->setParameterPost(
             array(
-                'user_id'   => $cart->getEsUserId(),
-                'text'      => $text,
-                'is_public' => false
+                'user_id' => $cart->getEsUserId(),
+                'text' => $text,
+                'is_public' => false,
             )
         );
 
-        $requestUri = (string)vsprintf('kb_order/%d/comment', array($cart->getEsId()));
+        $requestUri = (string) vsprintf('kb_order/%d/comment', array($cart->getEsId()));
         $parameterBag->setUri($requestUri);
 
         $parameterBag->setHeaders($this->easysysConnector->getAuthAdapter()->getDefaultHeaders($parameterBag));

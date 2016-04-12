@@ -19,10 +19,11 @@ abstract class AbstractVoucherCartStrategyTest extends \PHPUnit_Framework_TestCa
     protected $lastVoucherId = 0;
 
     /**
-     * @param string $code
-     * @param float $value
+     * @param string    $code
+     * @param float     $value
      * @param \DateTime $payedAt
-     * @param string $currency
+     * @param string    $currency
+     *
      * @return Voucher
      */
     protected function getVoucher($code, $value, \DateTime $payedAt = null, $currency = 'CHF')
@@ -46,8 +47,9 @@ abstract class AbstractVoucherCartStrategyTest extends \PHPUnit_Framework_TestCa
     }
 
     /**
-     * @param string $code
+     * @param string    $code
      * @param \DateTime $redeemedAt
+     *
      * @return VoucherCode
      */
     protected function getVoucherCode($code, \DateTime $redeemedAt = null)
@@ -62,8 +64,9 @@ abstract class AbstractVoucherCartStrategyTest extends \PHPUnit_Framework_TestCa
     }
 
     /**
-     * @param Collection|VoucherInterface[] $vouchers
+     * @param Collection|VoucherInterface[]                          $vouchers
      * @param \PHPUnit_Framework_MockObject_MockObject|EntityManager $em
+     *
      * @return VoucherCartStrategy
      */
     protected function getVoucherCartStrategy(Collection $vouchers = null, $em = null)
@@ -82,14 +85,15 @@ abstract class AbstractVoucherCartStrategyTest extends \PHPUnit_Framework_TestCa
                 $this->returnCallback(
                     function (array $criterias) use ($vouchers) {
                         if (!isset($criterias['code'])) {
-                            return null;
+                            return;
                         }
                         foreach ($vouchers as $voucher) {
                             if ($voucher->getCode() == $criterias['code']) {
                                 return $voucher;
                             }
                         }
-                        return null;
+
+                        return;
                     }
                 )
             );
@@ -104,7 +108,8 @@ abstract class AbstractVoucherCartStrategyTest extends \PHPUnit_Framework_TestCa
                                 return $voucher;
                             }
                         }
-                        return null;
+
+                        return;
                     }
                 )
             );
@@ -162,7 +167,8 @@ abstract class AbstractVoucherCartStrategyTest extends \PHPUnit_Framework_TestCa
 
     /**
      * @param Collection|VoucherCode[] $voucherCodes
-     * @param float $totalWithTax
+     * @param float                    $totalWithTax
+     *
      * @return Cart|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getCart(Collection $voucherCodes = null, $totalWithTax = null)

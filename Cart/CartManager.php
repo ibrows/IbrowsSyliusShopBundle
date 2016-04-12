@@ -76,12 +76,12 @@ class CartManager
     protected $currencyStrategies;
 
     /**
-     * @param ObjectManager $cartObjectManager
-     * @param ObjectRepository $cartObjectRepo
-     * @param ObjectManager $itemObjectManager
-     * @param ObjectRepository $itemObjectRepo
-     * @param ObjectRepository $additionalItemObjectRepo
-     * @param ItemResolverInterface $resolver
+     * @param ObjectManager                $cartObjectManager
+     * @param ObjectRepository             $cartObjectRepo
+     * @param ObjectManager                $itemObjectManager
+     * @param ObjectRepository             $itemObjectRepo
+     * @param ObjectRepository             $additionalItemObjectRepo
+     * @param ItemResolverInterface        $resolver
      * @param AvailabilityCheckerInterface $availablityChecker
      */
     public function __construct(
@@ -92,7 +92,7 @@ class CartManager
         ObjectRepository $additionalItemObjectRepo,
         ItemResolverInterface $resolver,
         AvailabilityCheckerInterface $availablityChecker
-    ){
+    ) {
         $this->cartObjectManager = $cartObjectManager;
         $this->cartObjectRepo = $cartObjectRepo;
         $this->itemObjectManager = $itemObjectManager;
@@ -106,40 +106,47 @@ class CartManager
 
     /**
      * @param CartStrategyInterface $strategy
+     *
      * @return CartManager
      */
     public function addStrategy(CartStrategyInterface $strategy)
     {
         $this->strategies->add($strategy);
+
         return $this;
     }
 
     /**
      * @param array|\Traversable $strategies
+     *
      * @return CartManager
+     *
      * @throws \InvalidArgumentException
      */
     public function setStrategies($strategies)
     {
-        if(!is_array($strategies) && !$strategies instanceof \Traversable){
-            throw new \InvalidArgumentException("strategies has to implement Traversable or array");
+        if (!is_array($strategies) && !$strategies instanceof \Traversable) {
+            throw new \InvalidArgumentException('strategies has to implement Traversable or array');
         }
-        foreach($this->getStrategies() as $strategy){
+        foreach ($this->getStrategies() as $strategy) {
             $this->removeStrategy($strategy);
         }
-        foreach($strategies as $strategy){
+        foreach ($strategies as $strategy) {
             $this->addStrategy($strategy);
         }
+
         return $this;
     }
 
     /**
      * @param CartStrategyInterface $strategy
+     *
      * @return CartManager
      */
     public function removeStrategy(CartStrategyInterface $strategy)
     {
         $this->strategies->removeElement($strategy);
+
         return $this;
     }
 
@@ -158,44 +165,49 @@ class CartManager
     {
         $strategies = array();
         $cart = $this->getCart(true);
-        foreach($this->strategies as $strategy){
-            if(
+        foreach ($this->strategies as $strategy) {
+            if (
                 $strategy instanceof CartDeliveryOptionStrategyInterface &&
-                $strategy->isEnabled() && 
+                $strategy->isEnabled() &&
                 $strategy->isPossible($cart, $this)
-            ){
+            ) {
                 $strategies[] = $strategy;
             }
         }
+
         return $strategies;
     }
 
     /**
      * @param string $strategyId
+     *
      * @return CartDeliveryOptionStrategyInterface
      */
     public function getPossibleDeliveryOptionStrategyById($strategyId)
     {
-        foreach($this->getPossibleDeliveryOptionStrategies() as $strategy){
-            if($strategy->getServiceId() == $strategyId){
+        foreach ($this->getPossibleDeliveryOptionStrategies() as $strategy) {
+            if ($strategy->getServiceId() == $strategyId) {
                 return $strategy;
             }
         }
-        return null;
+
+        return;
     }
 
     /**
      * @param string $strategyId
+     *
      * @return CartDeliveryOptionStrategyInterface
      */
     public function getPossiblePaymentOptionStrategyById($strategyId)
     {
-        foreach($this->getPossiblePaymentOptionStrategies() as $strategy){
-            if($strategy->getServiceId() == $strategyId){
+        foreach ($this->getPossiblePaymentOptionStrategies() as $strategy) {
+            if ($strategy->getServiceId() == $strategyId) {
                 return $strategy;
             }
         }
-        return null;
+
+        return;
     }
 
     /**
@@ -205,15 +217,16 @@ class CartManager
     {
         $strategies = array();
         $cart = $this->getCart(true);
-        foreach($this->strategies as $strategy){
-            if(
+        foreach ($this->strategies as $strategy) {
+            if (
                 $strategy instanceof CartPaymentOptionStrategyInterface &&
                 $strategy->isEnabled() &&
                 $strategy->isPossible($cart, $this)
-            ){
+            ) {
                 $strategies[] = $strategy;
             }
         }
+
         return $strategies;
     }
 
@@ -223,9 +236,10 @@ class CartManager
     public function getSelectedPaymentOptionStrategyService()
     {
         $serviceId = $this->getCart()->getPaymentOptionStrategyServiceId();
-        if(!$serviceId){
-            return null;
+        if (!$serviceId) {
+            return;
         }
+
         return $this->getPossiblePaymentOptionStrategyById($serviceId);
     }
 
@@ -235,9 +249,10 @@ class CartManager
     public function getSelectedDeliveryOptionStrategyService()
     {
         $serviceId = $this->getCart()->getDeliveryOptionStrategyServiceId();
-        if(!$serviceId){
-            return null;
+        if (!$serviceId) {
+            return;
         }
+
         return $this->getPossibleDeliveryOptionStrategyById($serviceId);
     }
 
@@ -259,19 +274,20 @@ class CartManager
 
     /**
      * @param CartStrategyInterface $strategy
+     *
      * @return Costs
      */
     public function getStrategyServiceCostsByStrategy(CartStrategyInterface $strategy = null)
     {
         $costs = new Costs();
-        if(!$strategy){
+        if (!$strategy) {
             return $costs;
         }
 
-        foreach($this->getCart(true)->getAdditionalItemsByStrategy($strategy) as $item){
-            $costs->setTotal($costs->getTotal()+$item->getPrice());
-            $costs->setTax($costs->getTax()+$item->getTaxPrice());
-            $costs->setTotalWithTax($costs->getTotalWithTax()+$item->getPriceWithTax());
+        foreach ($this->getCart(true)->getAdditionalItemsByStrategy($strategy) as $item) {
+            $costs->setTotal($costs->getTotal() + $item->getPrice());
+            $costs->setTax($costs->getTax() + $item->getTaxPrice());
+            $costs->setTotalWithTax($costs->getTotalWithTax() + $item->getPriceWithTax());
         }
 
         return $costs;
@@ -279,71 +295,82 @@ class CartManager
 
     /**
      * @param CartStrategyInterface[] $strategies
+     *
      * @return Costs
      */
     public function getStrategyServiceCostsByStrategies(array $strategies)
     {
         $costs = new Costs();
-        foreach($strategies as $strategy){
+        foreach ($strategies as $strategy) {
             $strategyCosts = $this->getStrategyServiceCostsByStrategy($strategy);
-            $costs->setTotal($costs->getTotal()+$strategyCosts->getTotal());
-            $costs->setTax($costs->getTax()+$strategyCosts->getTax());
-            $costs->setTotalWithTax($costs->getTotalWithTax()+$strategyCosts->getTotalWithTax());
+            $costs->setTotal($costs->getTotal() + $strategyCosts->getTotal());
+            $costs->setTax($costs->getTax() + $strategyCosts->getTax());
+            $costs->setTotalWithTax($costs->getTotalWithTax() + $strategyCosts->getTotalWithTax());
         }
+
         return $costs;
     }
 
     /**
      * @param AdditionalCartItem $item
+     *
      * @return CartManager
      */
     public function addAdditionalItem(AdditionalCartItem $item)
     {
         $this->getCart(true)->addAdditionalItem($item);
+
         return $this;
     }
 
     /**
      * @param CartItemInterface $item
+     *
      * @return CartManager
      */
     public function addItem(CartItemInterface $item)
     {
         $this->getCart(true)->addItem($item);
         $this->refreshCart();
+
         return $this;
     }
 
     /**
      * @param CartItemInterface $item
+     *
      * @return CartManager
      */
     public function removeItem(CartItemInterface $item)
     {
         $this->getCart(true)->removeItem($item);
         $this->refreshCart();
+
         return $this;
     }
 
     /**
      * @param AdditionalCartItemInterface $item
+     *
      * @return CartManager
      */
     public function removeAdditionalItem(AdditionalCartItemInterface $item)
     {
         $this->getCart(true)->removeAdditionalItem($item);
+
         return $this;
     }
 
     /**
      * @param bool $refreshAndCheckAvailability
+     *
      * @return CartManager
      */
     public function persistCart($refreshAndCheckAvailability = true)
     {
         $cart = $this->getCart(true);
 
-        if(true === $refreshAndCheckAvailability){
+        if (true === $refreshAndCheckAvailability) {
             $this->refreshCart();
             $this->checkAvailability();
         }
@@ -357,22 +384,23 @@ class CartManager
 
     /**
      * @return bool
+     *
      * @throws CartItemNotOnStockException
      */
     public function checkAvailability()
     {
         $notOnStockItems = array();
-        foreach($this->getCart(true)->getItems() as $item){
-            if(!$item->getProduct()->isEnabled()){
+        foreach ($this->getCart(true)->getItems() as $item) {
+            if (!$item->getProduct()->isEnabled()) {
                 $notOnStockItems[] = $item;
                 continue;
             }
-            if(!$this->availabilityChecker->isStockSufficient($item->getProduct(), $item->getQuantity())){
+            if (!$this->availabilityChecker->isStockSufficient($item->getProduct(), $item->getQuantity())) {
                 $notOnStockItems[] = $item;
             }
         }
 
-        if(count($notOnStockItems) > 0){
+        if (count($notOnStockItems) > 0) {
             throw new CartItemNotOnStockException($notOnStockItems);
         }
 
@@ -398,6 +426,7 @@ class CartManager
     /**
      * @param $item
      * @param Request $request
+     *
      * @return CartItemInterface
      */
     public function resolve($item, Request $request)
@@ -411,11 +440,13 @@ class CartManager
     public function createNewItem()
     {
         $class = $this->getCartItemClassName();
+
         return new $class();
     }
 
     /**
      * @param CartStrategyInterface $strategy
+     *
      * @return AdditionalCartItemInterface
      */
     public function createNewAdditionalCartItem(CartStrategyInterface $strategy)
@@ -431,35 +462,39 @@ class CartManager
 
     /**
      * @param CartInterface $cart
+     *
      * @return CartManager
      */
     public function setCart(CartInterface $cart = null)
     {
         $this->cart = $cart;
+
         return $this;
     }
 
     /**
      * @param bool $throwException
+     *
      * @throws \LogicException
      * @throws \BadMethodCallException
+     *
      * @return CartInterface
      */
     public function getCart($throwException = false)
     {
-        if(!$cart = $this->cart){
-            if(true === $throwException){
-                throw new \BadMethodCallException("Use setCart first!");
-            }else{
-                return null;
+        if (!$cart = $this->cart) {
+            if (true === $throwException) {
+                throw new \BadMethodCallException('Use setCart first!');
+            } else {
+                return;
             }
         }
 
-        $hasCurrency = (bool)$cart->getCurrency();
+        $hasCurrency = (bool) $cart->getCurrency();
 
-        if(!$hasCurrency){
-            foreach($this->currencyStrategies as $currencyStrategy){
-                if($currencyStrategy->acceptAsDefaultCurrency($cart, $this)){
+        if (!$hasCurrency) {
+            foreach ($this->currencyStrategies as $currencyStrategy) {
+                if ($currencyStrategy->acceptAsDefaultCurrency($cart, $this)) {
                     $cart->setCurrency($currencyStrategy->getDefaultCurrency($cart, $this));
                     $hasCurrency = true;
                     break;
@@ -467,8 +502,8 @@ class CartManager
             }
         }
 
-        if(!$hasCurrency){
-            throw new \LogicException("No currency set on cart and no strategy could provide it");
+        if (!$hasCurrency) {
+            throw new \LogicException('No currency set on cart and no strategy could provide it');
         }
 
         return $cart;
@@ -476,29 +511,33 @@ class CartManager
 
     /**
      * @param VoucherCodeInterface $voucherCode
+     *
      * @return $this
      */
     public function addVoucherCode(VoucherCodeInterface $voucherCode)
     {
         $this->getCart(true)->addVoucherCode($voucherCode);
+
         return $this;
     }
 
     /**
      * @param VoucherCodeInterface $voucherCode
+     *
      * @return $this
      */
     public function removeVoucherCode(VoucherCodeInterface $voucherCode)
     {
         $this->getCart(true)->removeVoucherCode($voucherCode);
+
         return $this;
     }
 
     public function redeemVouchers()
     {
         $cart = $this->getCart();
-        foreach($this->getStrategies() as $strategy){
-            if($strategy instanceof CartVoucherStrategyInterface){
+        foreach ($this->getStrategies() as $strategy) {
+            if ($strategy instanceof CartVoucherStrategyInterface) {
                 $strategy->redeemVouchers($cart, $this);
             }
         }
@@ -506,7 +545,9 @@ class CartManager
 
     /**
      * @param string $toCurrency
+     *
      * @return CartManager
+     *
      * @throws CartCurrencyChangeException
      */
     public function changeCurrency($toCurrency)
@@ -514,14 +555,14 @@ class CartManager
         $cart = $this->getCart(true);
         $fromCurrency = $cart->getCurrency();
 
-        if($fromCurrency == $toCurrency){
+        if ($fromCurrency == $toCurrency) {
             return $this;
         }
 
         $foundStrategy = false;
 
-        foreach($this->currencyStrategies as $strategy){
-            if($strategy->acceptCurrencyChange($fromCurrency, $toCurrency, $cart, $this)){
+        foreach ($this->currencyStrategies as $strategy) {
+            if ($strategy->acceptCurrencyChange($fromCurrency, $toCurrency, $cart, $this)) {
                 $strategy->changeCurrency($fromCurrency, $toCurrency, $cart, $this);
                 $foundStrategy = true;
                 $this->persistCart();
@@ -529,7 +570,7 @@ class CartManager
             }
         }
 
-        if(!$foundStrategy){
+        if (!$foundStrategy) {
             throw new CartCurrencyChangeException("No currency strategy could provide currency change from $fromCurrency to $toCurrency");
         }
 
@@ -568,10 +609,11 @@ class CartManager
         return $this->itemObjectRepo;
     }
 
-    public function refreshCart(){
+    public function refreshCart()
+    {
         $cart = $this->getCart(true);
-        if($cart->isClosed()){
-            throw new \BadMethodCallException("Cart is already closed");
+        if ($cart->isClosed()) {
+            throw new \BadMethodCallException('Cart is already closed');
         }
         $this->computeStrategies();
     }
@@ -579,39 +621,39 @@ class CartManager
     public function computeStrategies()
     {
         $cart = $this->getCart(true);
-        if($cart->isClosed()){
-            throw new \BadMethodCallException("Cart is already closed");
+        if ($cart->isClosed()) {
+            throw new \BadMethodCallException('Cart is already closed');
         }
 
-        foreach($this->strategies as $strategy){
-            if(
+        foreach ($this->strategies as $strategy) {
+            if (
                 $strategy->getServiceId() === $cart->getPaymentOptionStrategyServiceId()
                 && (!$strategy->isPossible($cart, $this) || !$strategy->isEnabled())
-            ){
+            ) {
                 $cart->setPaymentOptionStrategyServiceId(null);
                 $cart->setPaymentOptionStrategyServiceData(null);
             }
 
-            if(
+            if (
                 $strategy->getServiceId() === $cart->getDeliveryOptionStrategyServiceId()
                 && (!$strategy->isPossible($cart, $this) || !$strategy->isEnabled())
-            ){
+            ) {
                 $cart->setDeliveryOptionStrategyServiceId(null);
                 $cart->setDeliveryOptionStrategyServiceData(null);
             }
         }
 
-        foreach($this->strategies as $strategy){
-            foreach($cart->getAdditionalItemsByStrategy($strategy) as $item){
+        foreach ($this->strategies as $strategy) {
+            foreach ($cart->getAdditionalItemsByStrategy($strategy) as $item) {
                 $this->removeAdditionalItem($item);
             }
         }
 
         $cart->refreshCart();
 
-        foreach($this->strategies as $strategy){
-            if($strategy->isEnabled() && $strategy->accept($cart, $this)){
-                foreach($strategy->compute($cart, $this) as $item){
+        foreach ($this->strategies as $strategy) {
+            if ($strategy->isEnabled() && $strategy->accept($cart, $this)) {
+                foreach ($strategy->compute($cart, $this) as $item) {
                     $this->addAdditionalItem($item);
                 }
                 $cart->refreshCart();
@@ -629,21 +671,25 @@ class CartManager
 
     /**
      * @param CartCurrencyStrategyInterface $strategy
+     *
      * @return CartManager
      */
     public function addCurrencyStrategy(CartCurrencyStrategyInterface $strategy)
     {
         $this->currencyStrategies->add($strategy);
+
         return $this;
     }
 
     /**
      * @param CartCurrencyStrategyInterface $strategy
+     *
      * @return CartManager
      */
     public function removeCurrencyStrategy(CartCurrencyStrategyInterface $strategy)
     {
         $this->currencyStrategies->removeElement($strategy);
+
         return $this;
     }
 }

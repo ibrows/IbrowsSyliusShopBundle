@@ -69,7 +69,7 @@ class AdditionalCartItem implements AdditionalCartItemInterface
     protected $strategyData = array();
 
     /**
-     * @var boolean
+     * @var bool
      * @ORM\Column(type="boolean", name="tax_inclusive")
      */
     protected $taxInclusive = false;
@@ -79,7 +79,7 @@ class AdditionalCartItem implements AdditionalCartItemInterface
      */
     public function __toString()
     {
-        return (string)$this->getText();
+        return (string) $this->getText();
     }
 
     public function calculateTotal()
@@ -87,14 +87,14 @@ class AdditionalCartItem implements AdditionalCartItemInterface
         $price = $this->getPrice();
         $tax = $this->getTaxFactor();
 
-        if($this->isTaxInclusive() ||  $price == 0 ){
-            $this->price =  ( $this->priceWithTax / ($tax + 1) );
+        if ($this->isTaxInclusive() ||  $price == 0) {
+            $this->price = ($this->priceWithTax / ($tax + 1));
             $taxPrice = $this->priceWithTax - $this->price;
             $this->setTaxPrice($taxPrice);
-        }else {
-            $taxPrice = $price*$tax;
+        } else {
+            $taxPrice = $price * $tax;
             $this->setTaxPrice($taxPrice);
-            $this->setPriceWithTax($price+$taxPrice);
+            $this->setPriceWithTax($price + $taxPrice);
         }
     }
 
@@ -148,11 +148,13 @@ class AdditionalCartItem implements AdditionalCartItemInterface
 
     /**
      * @param CartInterface $cart
+     *
      * @return CartInterface
      */
     public function setCart(CartInterface $cart = null)
     {
         $this->cart = $cart;
+
         return $this;
     }
 
@@ -166,11 +168,13 @@ class AdditionalCartItem implements AdditionalCartItemInterface
 
     /**
      * @param string $identifier
+     *
      * @return AdditionalCartItem
      */
     public function setStrategyIdentifier($identifier)
     {
         $this->strategyIdentifier = $identifier;
+
         return $this;
     }
 
@@ -184,11 +188,13 @@ class AdditionalCartItem implements AdditionalCartItemInterface
 
     /**
      * @param array $data
+     *
      * @return AdditionalCartItem
      */
     public function setStrategyData(array $data = array())
     {
         $this->strategyData = $data;
+
         return $this;
     }
 
@@ -202,11 +208,13 @@ class AdditionalCartItem implements AdditionalCartItemInterface
 
     /**
      * @param float $price
+     *
      * @return AdditionalCartItem
      */
     public function setPrice($price)
     {
         $this->price = $price;
+
         return $this;
     }
 
@@ -220,11 +228,13 @@ class AdditionalCartItem implements AdditionalCartItemInterface
 
     /**
      * @param string $text
+     *
      * @return AdditionalCartItem
      */
     public function setText($text)
     {
         $this->text = $text;
+
         return $this;
     }
 
@@ -238,11 +248,13 @@ class AdditionalCartItem implements AdditionalCartItemInterface
 
     /**
      * @param float $taxPrice
+     *
      * @return AdditionalCartItem
      */
     public function setTaxPrice($taxPrice)
     {
         $this->taxPrice = $taxPrice;
+
         return $this;
     }
 
@@ -255,20 +267,24 @@ class AdditionalCartItem implements AdditionalCartItemInterface
     }
 
     /**
-     * eg. 0.08
+     * eg. 0.08.
+     *
      * @return number
      */
-    public function getTaxFactor(){
+    public function getTaxFactor()
+    {
         return $this->taxRate / 100;
     }
 
     /**
      * @param float $taxRate
+     *
      * @return AdditionalCartItem
      */
     public function setTaxRate($taxRate)
     {
         $this->taxRate = $taxRate;
+
         return $this;
     }
 
@@ -282,17 +298,18 @@ class AdditionalCartItem implements AdditionalCartItemInterface
 
     /**
      * @param float $priceWithTax
+     *
      * @return AdditionalCartItem
      */
     public function setPriceWithTax($priceWithTax)
     {
         $this->priceWithTax = $priceWithTax;
+
         return $this;
     }
 
-
     /**
-     * @return boolean
+     * @return bool
      */
     public function isTaxInclusive()
     {
@@ -300,13 +317,14 @@ class AdditionalCartItem implements AdditionalCartItemInterface
     }
 
     /**
-     * @param boolean $mwstinclusive
+     * @param bool $mwstinclusive
+     *
      * @return \Ibrows\SyliusShopBundle\Entity\CartItem
      */
     public function setTaxInclusive($taxInclusive)
     {
         $this->taxInclusive = $taxInclusive;
+
         return $this;
     }
-
 }

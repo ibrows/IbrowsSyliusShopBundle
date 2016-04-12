@@ -51,10 +51,10 @@ class IbrowsSyliusShopBundle extends Bundle
             new \Ibrows\Bundle\SonataAdminAnnotationBundle\IbrowsSonataAdminAnnotationBundle(),
             new \Knp\Bundle\MenuBundle\KnpMenuBundle(),
 
-            new \Ibrows\SyliusShopBundle\IbrowsSyliusShopBundle()
+            new \Ibrows\SyliusShopBundle\IbrowsSyliusShopBundle(),
         );
 
-        if(class_exists('\\Sonata\\CoreBundle\\SonataCoreBundle')){
+        if (class_exists('\\Sonata\\CoreBundle\\SonataCoreBundle')) {
             $bundles[] = new \Sonata\CoreBundle\SonataCoreBundle();
         }
 

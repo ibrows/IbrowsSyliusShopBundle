@@ -20,24 +20,28 @@ class ZeroAmountPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrat
 
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return bool
      */
     public function accept(CartInterface $cart, CartManager $cartManager)
     {
-        if($cart->getTotalWithTax() <= 0){
+        if ($cart->getTotalWithTax() <= 0) {
             $cart->setPaymentOptionStrategyServiceId($this->getServiceId());
+
             return true;
-        }elseif($cart->getPaymentOptionStrategyServiceId() == $this->getServiceId()){
+        } elseif ($cart->getPaymentOptionStrategyServiceId() == $this->getServiceId()) {
             $this->removeStrategy($cart);
         }
+
         return false;
     }
 
     /**
-     * @param Context $context
+     * @param Context       $context
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return RedirectResponse|PaymentFinishedResponse|ErrorRedirectResponse|SelfRedirectResponse
      */
     public function pay(Context $context, CartInterface $cart, CartManager $cartManager)
@@ -47,7 +51,8 @@ class ZeroAmountPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrat
 
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return AdditionalCartItemInterface[]
      */
     public function compute(CartInterface $cart, CartManager $cartManager)

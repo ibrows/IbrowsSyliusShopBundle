@@ -11,20 +11,23 @@ interface CartStrategyInterface
 {
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return bool
      */
     public function accept(CartInterface $cart, CartManager $cartManager);
 
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return AdditionalCartItemInterface[]
      */
     public function compute(CartInterface $cart, CartManager $cartManager);
 
     /**
      * @param ObjectRepository $repo
+     *
      * @return ObjectRepository
      */
     public function setAdditionalCartItemRepo(ObjectRepository $repo);
@@ -41,6 +44,7 @@ interface CartStrategyInterface
 
     /**
      * @param string $id
+     *
      * @return CartStrategyInterface
      */
     public function setServiceId($id);
@@ -52,6 +56,7 @@ interface CartStrategyInterface
 
     /**
      * @param bool $flag
+     *
      * @return mixed
      */
     public function setEnabled($flag);

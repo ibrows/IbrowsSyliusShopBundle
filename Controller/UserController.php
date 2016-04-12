@@ -1,12 +1,9 @@
 <?php
 
 namespace Ibrows\SyliusShopBundle\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
 use Ibrows\SyliusShopBundle\Model\User\UserInterface;
 
 /**
@@ -14,7 +11,6 @@ use Ibrows\SyliusShopBundle\Model\User\UserInterface;
  */
 class UserController extends AbstractController
 {
-
     /**
      * @Route("/register", name="user_register")
      * @Template("")
@@ -39,7 +35,7 @@ class UserController extends AbstractController
         $userform->remove('username');
 
         $builder->add('address', $this->getInvoiceAddressType(), array(
-                        'data_class' => $addressclass
+                        'data_class' => $addressclass,
                 ));
         $builder->get('address')->remove('email');
         $registerForm = $builder->getForm();
@@ -59,14 +55,14 @@ class UserController extends AbstractController
             }
         }
 
-        if($this->getUser() != null){
+        if ($this->getUser() != null) {
             return $this->redirect($this->generateUrl('wizard_address'));
         }
 
         return array(
                 'userform' => $userform->createView(),
                 'registerform' => $registerForm->createView(),
-                'user' => $this->getUser()
+                'user' => $this->getUser(),
         );
     }
 
@@ -77,7 +73,7 @@ class UserController extends AbstractController
     public function profileAction()
     {
         return array(
-                'user' => $this->getUser()
+                'user' => $this->getUser(),
         );
     }
 }

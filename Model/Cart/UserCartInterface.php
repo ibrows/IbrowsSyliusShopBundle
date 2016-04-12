@@ -8,6 +8,7 @@ interface UserCartInterface extends CartInterface
 {
     /**
      * @param UserInterface $user
+     *
      * @return UserCartInterface
      */
     public function setUser(UserInterface $user);

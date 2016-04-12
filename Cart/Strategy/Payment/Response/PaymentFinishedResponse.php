@@ -40,9 +40,9 @@ class PaymentFinishedResponse
     /**
      * @param $strategyId
      * @param string $status
-     * @param null $errorCode
-     * @param array $strategyData
-     * @param array $data
+     * @param null   $errorCode
+     * @param array  $strategyData
+     * @param array  $data
      */
     public function __construct($strategyId, $status = self::STATUS_OK, $errorCode = null, array $strategyData = array(), array $data = array())
     {
@@ -54,7 +54,6 @@ class PaymentFinishedResponse
     }
 
     /**
-     * @return null
      */
     public function getErrorCode()
     {
@@ -63,11 +62,13 @@ class PaymentFinishedResponse
 
     /**
      * @param int $errorCode
+     *
      * @return PaymentFinishedResponse
      */
     public function setErrorCode($errorCode)
     {
         $this->errorCode = $errorCode;
+
         return $this;
     }
 
@@ -81,11 +82,13 @@ class PaymentFinishedResponse
 
     /**
      * @param string $status
+     *
      * @return PaymentFinishedResponse
      */
     public function setStatus($status)
     {
         $this->status = $status;
+
         return $this;
     }
 
@@ -99,11 +102,13 @@ class PaymentFinishedResponse
 
     /**
      * @param string $strategyId
+     *
      * @return PaymentFinishedResponse
      */
     public function setStrategyId($strategyId)
     {
         $this->strategyId = $strategyId;
+
         return $this;
     }
 
@@ -117,11 +122,13 @@ class PaymentFinishedResponse
 
     /**
      * @param array $strategyData
+     *
      * @return PaymentFinishedResponse
      */
     public function setStrategyData($strategyData)
     {
         $this->strategyData = $strategyData;
+
         return $this;
     }
 
@@ -135,11 +142,13 @@ class PaymentFinishedResponse
 
     /**
      * @param array $data
+     *
      * @return PaymentFinishedResponse
      */
     public function setData($data)
     {
         $this->data = $data;
+
         return $this;
     }
 }

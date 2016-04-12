@@ -32,18 +32,21 @@ abstract class AbstractPaymentOptionCartStrategy extends AbstractCartFormStrateg
 
     /**
      * @return RouterInterface
+     *
      * @throws \Exception
      */
     public function getRouter()
     {
-        if(!$this->router){
-            throw new \Exception("Set Router first");
+        if (!$this->router) {
+            throw new \Exception('Set Router first');
         }
+
         return $this->router;
     }
 
     /**
      * @param CartInterface $cart
+     *
      * @return array
      */
     public function getTranslationParameters(CartInterface $cart)
@@ -53,11 +56,13 @@ abstract class AbstractPaymentOptionCartStrategy extends AbstractCartFormStrateg
 
     /**
      * @param bool $flag
+     *
      * @return AbstractPaymentOptionCartStrategy
      */
     public function setDefault($flag = true)
     {
         $this->default = $flag;
+
         return $this;
     }
 
@@ -66,16 +71,18 @@ abstract class AbstractPaymentOptionCartStrategy extends AbstractCartFormStrateg
      */
     public function isDefault()
     {
-        return (bool)$this->default;
+        return (bool) $this->default;
     }
 
     /**
      * @param RouterInterface $router
+     *
      * @return AbstractPaymentOptionCartStrategy
      */
     public function setRouter(RouterInterface $router)
     {
         $this->router = $router;
+
         return $this;
     }
 
@@ -89,28 +96,32 @@ abstract class AbstractPaymentOptionCartStrategy extends AbstractCartFormStrateg
 
     /**
      * @param bool $flag
+     *
      * @return AbstractPaymentOptionCartStrategy
      */
     public function setTestMode($flag)
     {
         $this->testMode = $flag;
+
         return $this;
     }
 
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
+     *
      * @return bool
      */
     public function accept(CartInterface $cart, CartManager $cartManager)
     {
         $selectedServiceId = $cart->getPaymentOptionStrategyServiceId();
-        if($selectedServiceId == $this->getServiceId()){
+        if ($selectedServiceId == $this->getServiceId()) {
             return true;
         }
 
-        if(!$selectedServiceId && $this->isDefault()){
+        if (!$selectedServiceId && $this->isDefault()) {
             $cart->setPaymentOptionStrategyServiceId($this->getServiceId());
+
             return true;
         }
 
@@ -118,7 +129,7 @@ abstract class AbstractPaymentOptionCartStrategy extends AbstractCartFormStrateg
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isSkip()
     {
@@ -126,12 +137,14 @@ abstract class AbstractPaymentOptionCartStrategy extends AbstractCartFormStrateg
     }
 
     /**
-     * @param boolean $skip
+     * @param bool $skip
+     *
      * @return AbstractPaymentOptionCartStrategy
      */
     public function setSkip($skip)
     {
         $this->skip = $skip;
+
         return $this;
     }
 

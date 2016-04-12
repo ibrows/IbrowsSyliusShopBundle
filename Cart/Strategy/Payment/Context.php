@@ -23,8 +23,8 @@ class Context
 
     /**
      * @param Request $request
-     * @param string $currentRouteName
-     * @param string $errorRouteName
+     * @param string  $currentRouteName
+     * @param string  $errorRouteName
      */
     public function __construct(Request $request, $currentRouteName, $errorRouteName)
     {
@@ -43,11 +43,13 @@ class Context
 
     /**
      * @param string $currentRouteName
+     *
      * @return Context
      */
     public function setCurrentRouteName($currentRouteName)
     {
         $this->currentRouteName = $currentRouteName;
+
         return $this;
     }
 
@@ -61,11 +63,13 @@ class Context
 
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
+     *
      * @return Context
      */
     public function setRequest($request)
     {
         $this->request = $request;
+
         return $this;
     }
 
@@ -79,11 +83,13 @@ class Context
 
     /**
      * @param string $errorRouteName
+     *
      * @return Context
      */
     public function setErrorRouteName($errorRouteName)
     {
         $this->errorRouteName = $errorRouteName;
+
         return $this;
     }
 }

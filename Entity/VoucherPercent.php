@@ -4,7 +4,6 @@ namespace Ibrows\SyliusShopBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Ibrows\SyliusShopBundle\Model\Voucher\VoucherPercentInterface;
-use Symfony\Bridge\Doctrine\Validator\Constraints as DoctrineAssert;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -15,14 +14,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 class VoucherPercent extends AbstractVoucher implements VoucherPercentInterface
 {
     /**
-     * @var integer
+     * @var int
      * @ORM\Column(type="integer")
      * @Assert\Range(min=1, max=100)
      */
     protected $percent;
 
     /**
-     * @return integer
+     * @return int
      */
     public function getPercent()
     {
@@ -30,12 +29,14 @@ class VoucherPercent extends AbstractVoucher implements VoucherPercentInterface
     }
 
     /**
-     * @param integer $percent
+     * @param int $percent
+     *
      * @return VoucherPercentInterface
      */
     public function setPercent($percent)
     {
         $this->percent = $percent;
+
         return $this;
     }
 
@@ -44,6 +45,6 @@ class VoucherPercent extends AbstractVoucher implements VoucherPercentInterface
      */
     public function __toString()
     {
-        return '#' . $this->getId() . ' Voucher "' . $this->getCode() . '" (' . $this->getPercent() . '%) | Quantity: ' . $this->getQuantity();
+        return '#'.$this->getId().' Voucher "'.$this->getCode().'" ('.$this->getPercent().'%) | Quantity: '.$this->getQuantity();
     }
 }
