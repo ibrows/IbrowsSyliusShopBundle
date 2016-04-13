@@ -433,7 +433,11 @@ abstract class AbstractWizardController extends AbstractController
             $deliveryAddressForm = $this->handleDeliveryAddress($request, $invoiceSameAsDelivery, $invoiceAddress);
         }
 
-        if ($validDeliveryOptionStrategyFormData && $invoiceAddressForm->isValid() && $invoiceSameAsDeliveryForm->isValid()) {
+        if (
+            $validDeliveryOptionStrategyFormData &&
+            ($invoiceAddressForm->isValid() || !$invoiceAddressForm->isSubmitted()) &&
+            $invoiceSameAsDeliveryForm->isValid()
+        ) {
             if ($invoiceSameAsDelivery or $deliveryAddressForm->isValid()) {
                 $cart = $this->getCurrentCart();
                 $cart->setInvoiceAddress($invoiceAddress);
