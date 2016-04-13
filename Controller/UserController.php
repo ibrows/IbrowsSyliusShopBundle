@@ -17,7 +17,9 @@ class UserController extends AbstractController
     /**
      * @Route("/register", name="user_register")
      * @Template("")
+     *
      * @param Request $request
+     *
      * @return array|RedirectResponse
      */
     public function registerAction(Request $request)
@@ -69,9 +71,9 @@ class UserController extends AbstractController
         }
 
         return array(
-            'userform'     => $userform->createView(),
+            'userform' => $userform->createView(),
             'registerform' => $registerForm->createView(),
-            'user'         => $this->getUser(),
+            'user' => $this->getUser(),
         );
     }
 

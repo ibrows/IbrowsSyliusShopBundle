@@ -27,7 +27,7 @@ class SetCurrentUserCartStrategy extends AbstractCartStrategy
 
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
      *
      * @return bool
      */
@@ -38,7 +38,7 @@ class SetCurrentUserCartStrategy extends AbstractCartStrategy
 
     /**
      * @param CartInterface $cart
-     * @param CartManager $cartManager
+     * @param CartManager   $cartManager
      *
      * @return AdditionalCartItemInterface[]
      */
@@ -47,6 +47,7 @@ class SetCurrentUserCartStrategy extends AbstractCartStrategy
         if ($cart instanceof UserCartInterface && ($user = $this->getUser())) {
             $cart->setUser($user);
         }
+
         return array();
     }
 
@@ -56,15 +57,15 @@ class SetCurrentUserCartStrategy extends AbstractCartStrategy
     protected function getUser()
     {
         if (!$token = $this->tokenStorage->getToken()) {
-            return null;
+            return;
         }
 
         if (!$user = $token->getUser()) {
-            return null;
+            return;
         }
 
         if (!$user instanceof UserInterface) {
-            return null;
+            return;
         }
 
         return $user;

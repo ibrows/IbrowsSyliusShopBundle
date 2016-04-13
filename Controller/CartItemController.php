@@ -58,10 +58,11 @@ class CartItemController extends AbstractController
      *
      * @param Request $request
      * @param $id
+     *
      * @return Response
+     *
      * @throws \Exception
      * @Route("/remove/{id}", name="cart_item_remove")
-     *
      */
     public function removeAction(Request $request, $id)
     {
@@ -75,7 +76,7 @@ class CartItemController extends AbstractController
 
         if (!$item || false === $cart->hasItem($item)) {
             $dispatcher->dispatch(SyliusCartEvents::ITEM_REMOVE_ERROR, new FlashEvent());
-            throw new \Exception('item not found: ' . $id);
+            throw new \Exception('item not found: '.$id);
         }
 
         $cartmanger->removeItem($item);

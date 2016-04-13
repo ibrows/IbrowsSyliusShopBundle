@@ -22,6 +22,7 @@ abstract class AbstractWizardController extends AbstractController
 {
     /**
      * @param Request $request
+     *
      * @return bool|Response
      */
     public function basketValidation(Request $request)
@@ -31,6 +32,7 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param Request $request
+     *
      * @return bool|Response
      */
     public function authValidation(Request $request)
@@ -44,6 +46,7 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param Request $request
+     *
      * @return bool|Response
      */
     public function addressValidation(Request $request)
@@ -57,6 +60,7 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param Request $request
+     *
      * @return bool|Response
      */
     public function paymentinstructionValidation(Request $request)
@@ -75,6 +79,7 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param Request $request
+     *
      * @return bool|Response
      */
     public function summaryValidation(Request $request)
@@ -95,6 +100,7 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param Request $request
+     *
      * @return bool|Response
      */
     public function paymentValidation(Request $request)
@@ -109,6 +115,7 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param Request $request
+     *
      * @return bool|Response
      */
     public function notificationValidation(Request $request)
@@ -143,9 +150,10 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
-     * @param Request $request
+     * @param Request       $request
      * @param FormInterface $basketForm
      * @param CartInterface $cart
+     *
      * @return null|Response
      */
     protected function postInvalidBasketFormValidationAction(Request $request, FormInterface $basketForm, CartInterface $cart)
@@ -155,7 +163,7 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param PaymentFinishedResponse $response
-     * @param Context $context
+     * @param Context                 $context
      *
      * @return RedirectResponse
      */
@@ -177,7 +185,7 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param PaymentFinishedResponse $response
-     * @param Context $context
+     * @param Context                 $context
      *
      * @return RedirectResponse
      */
@@ -196,7 +204,7 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param PaymentFinishedResponse $response
-     * @param Context $context
+     * @param Context                 $context
      *
      * @return RedirectResponse
      */
@@ -219,7 +227,7 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param PaymentFinishedResponse $response
-     * @param Context $context
+     * @param Context                 $context
      *
      * @return RedirectResponse
      */
@@ -237,7 +245,7 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param PaymentFinishedResponse $response
-     * @param Context $context
+     * @param Context                 $context
      *
      * @return RedirectResponse
      */
@@ -255,7 +263,7 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param PaymentFinishedResponse $response
-     * @param Context $context
+     * @param Context                 $context
      *
      * @return RedirectResponse
      */
@@ -272,7 +280,7 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param PaymentFinishedResponse $response
-     * @param Context $context
+     * @param Context                 $context
      *
      * @return RedirectResponse
      */
@@ -290,7 +298,7 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param PaymentFinishedResponse $response
-     * @param Context $context
+     * @param Context                 $context
      *
      * @return RedirectResponse
      */
@@ -307,8 +315,9 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
-     * @param Request $request
+     * @param Request       $request
      * @param CartInterface $cart
+     *
      * @return null|Response
      */
     protected function preAddressAction(Request $request, CartInterface $cart)
@@ -317,8 +326,9 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
-     * @param Request $request
+     * @param Request       $request
      * @param CartInterface $cart
+     *
      * @return null|Response
      */
     protected function preBasketAction(Request $request, CartInterface $cart)
@@ -327,8 +337,9 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
-     * @param Request $request
+     * @param Request       $request
      * @param CartInterface $cart
+     *
      * @return null|Response
      */
     protected function preAuthAction(Request $request, CartInterface $cart)
@@ -337,8 +348,9 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
-     * @param Request $request
+     * @param Request       $request
      * @param CartInterface $cart
+     *
      * @return null|Response
      */
     protected function prePaymentAction(Request $request, CartInterface $cart)
@@ -347,8 +359,9 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
-     * @param Request $request
+     * @param Request       $request
      * @param CartInterface $cart
+     *
      * @return null|Response
      */
     protected function preSummaryAction(Request $request, CartInterface $cart)
@@ -360,8 +373,9 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
-     * @param Request $request
+     * @param Request       $request
      * @param CartInterface $cart
+     *
      * @return null|Response
      */
     protected function postBasketFormValidationAction(Request $request, CartInterface $cart)
@@ -407,16 +421,16 @@ abstract class AbstractWizardController extends AbstractController
      */
     protected function isInvoiceSameAsDelivery(FormInterface $invoiceSameAsDeliveryForm)
     {
-        return (bool)$invoiceSameAsDeliveryForm->get('invoiceSameAsDelivery')->getData();
+        return (bool) $invoiceSameAsDeliveryForm->get('invoiceSameAsDelivery')->getData();
     }
 
     /**
-     * @param Request $request
-     * @param FormInterface $deliveryOptionStrategyForm
-     * @param FormInterface $invoiceAddressForm
-     * @param FormInterface $invoiceSameAsDeliveryForm
+     * @param Request                 $request
+     * @param FormInterface           $deliveryOptionStrategyForm
+     * @param FormInterface           $invoiceAddressForm
+     * @param FormInterface           $invoiceSameAsDeliveryForm
      * @param InvoiceAddressInterface $invoiceAddress
-     * @param FormInterface $deliveryAddressForm
+     * @param FormInterface           $deliveryAddressForm
      *
      * @return bool
      */
@@ -467,9 +481,9 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
-     * @param FormTypeInterface $type
+     * @param FormTypeInterface        $type
      * @param DeliveryAddressInterface $deliveryAddress
-     * @param array $formOptions
+     * @param array                    $formOptions
      *
      * @return FormInterface
      */
@@ -479,7 +493,7 @@ abstract class AbstractWizardController extends AbstractController
         $deliveryAddress = $deliveryAddress ?: $this->getDeliveryAddress();
 
         $formoptions = $formOptions ?: array(
-            'data_class'        => $this->getDeliveryAddressClass(),
+            'data_class' => $this->getDeliveryAddressClass(),
             'validation_groups' => array(
                 'sylius_wizard_address',
             ),
@@ -492,9 +506,11 @@ abstract class AbstractWizardController extends AbstractController
      * returns true or the form if its not valid.
      *
      * @param Request $request
-     * @param bool $invoiceSameAsDelivery
-     * @param null $invoiceAddress
+     * @param bool    $invoiceSameAsDelivery
+     * @param null    $invoiceAddress
+     *
      * @return FormInterface
+     *
      * @throws \Exception
      */
     protected function handleDeliveryAddress(Request $request, $invoiceSameAsDelivery = null, $invoiceAddress = null)
@@ -513,6 +529,7 @@ abstract class AbstractWizardController extends AbstractController
         //same
         if ($invoiceSameAsDelivery) {
             $this->handleInvoiceIsSameAsDelivery($request, $deliveryAddressForm, $invoiceAddress);
+
             return $deliveryAddressForm;
         }
 
@@ -544,9 +561,10 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @param FormInterface $deliveryAddressForm
+     * @param Request                 $request
+     * @param FormInterface           $deliveryAddressForm
      * @param InvoiceAddressInterface $invoiceAddress
+     *
      * @return bool
      */
     protected function handleInvoiceIsSameAsDelivery(Request $request, FormInterface &$deliveryAddressForm, InvoiceAddressInterface $invoiceAddress)
@@ -558,8 +576,9 @@ abstract class AbstractWizardController extends AbstractController
     }
 
     /**
-     * @param Request $request
+     * @param Request       $request
      * @param FormInterface $deliveryOptionStrategyForm
+     *
      * @return bool
      */
     protected function bindDeliveryOptions(Request $request, FormInterface $deliveryOptionStrategyForm)
@@ -586,8 +605,9 @@ abstract class AbstractWizardController extends AbstractController
 
     /**
      * @param Request $request
-     * @param string $action
-     * @param array $data
+     * @param string  $action
+     * @param array   $data
+     *
      * @return array
      */
     protected function getViewData(Request $request, $action, array $data = array())

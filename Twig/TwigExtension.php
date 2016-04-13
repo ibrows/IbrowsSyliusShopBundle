@@ -24,15 +24,14 @@ class TwigExtension extends \Twig_Extension
 
     /**
      * @param CurrentCartManager $currentCartManager
-     * @param string $defaultHincludeTemplate
-     * @param string $charset
+     * @param string             $defaultHincludeTemplate
+     * @param string             $charset
      */
     public function __construct(
         CurrentCartManager $currentCartManager,
         $defaultHincludeTemplate,
         $charset
-    )
-    {
+    ) {
         $this->currentCartManager = $currentCartManager;
         $this->defaultHincludeTemplate = $defaultHincludeTemplate;
         $this->charset = $charset;
@@ -44,8 +43,8 @@ class TwigExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'getCurrentCartManager'  => new \Twig_SimpleFunction('getCurrentCartManager', array($this, 'getCurrentCartManager')),
-            'getCurrentCart'         => new \Twig_SimpleFunction('getCurrentCart', array($this, 'getCurrentCart')),
+            'getCurrentCartManager' => new \Twig_SimpleFunction('getCurrentCartManager', array($this, 'getCurrentCartManager')),
+            'getCurrentCart' => new \Twig_SimpleFunction('getCurrentCart', array($this, 'getCurrentCart')),
             'getCurrentCartCurrency' => new \Twig_SimpleFunction('getCurrentCartCurrency', array($this, 'getCurrentCartCurrency')),
         );
     }
@@ -57,7 +56,7 @@ class TwigExtension extends \Twig_Extension
     {
         return array(
             'price' => new \Twig_SimpleFilter('price', array($this, 'price'), array(
-                'is_safe'           => array('html'),
+                'is_safe' => array('html'),
                 'needs_environment' => true,
             )),
         );
@@ -66,6 +65,7 @@ class TwigExtension extends \Twig_Extension
     /**
      * @param \Twig_Environment $twig
      * @param $num
+     *
      * @return string
      */
     public function price(\Twig_Environment $twig, $num)

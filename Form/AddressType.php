@@ -28,9 +28,9 @@ class AddressType extends AbstractType
     protected $dataClass;
 
     /**
-     * @param array $countryChoices
-     * @param array $preferredCountryChoices
-     * @param array $titleChoices
+     * @param array  $countryChoices
+     * @param array  $preferredCountryChoices
+     * @param array  $titleChoices
      * @param string $dataClass
      */
     public function __construct(
@@ -38,8 +38,7 @@ class AddressType extends AbstractType
         array $preferredCountryChoices = array(),
         array $titleChoices = array(),
         $dataClass = null
-    )
-    {
+    ) {
         $this->countryChoices = $countryChoices;
         $this->preferredCountryChoices = $preferredCountryChoices;
         $this->titleChoices = $titleChoices;
@@ -48,7 +47,7 @@ class AddressType extends AbstractType
 
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {

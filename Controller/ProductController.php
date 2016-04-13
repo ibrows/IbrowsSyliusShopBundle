@@ -29,8 +29,10 @@ class ProductController extends AbstractController
     /**
      * @Route("/show/{slug}", name="product_show")
      * @Template("")
+     *
      * @param Request $request
      * @param $slug
+     *
      * @return array
      */
     public function showAction(Request $request, $slug)

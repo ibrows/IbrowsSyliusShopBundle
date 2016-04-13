@@ -36,9 +36,9 @@ class LoginInformation implements LoginInformationInterface
     private $tokenStorage;
 
     /**
-     * @param Request $request
+     * @param Request                   $request
      * @param CsrfTokenManagerInterface $csrfTokenManager
-     * @param TokenStorageInterface $tokenStorage
+     * @param TokenStorageInterface     $tokenStorage
      */
     public function __construct(Request $request, CsrfTokenManagerInterface $csrfTokenManager, TokenStorageInterface $tokenStorage)
     {
@@ -108,11 +108,11 @@ class LoginInformation implements LoginInformationInterface
     public function getUser()
     {
         if (null === $token = $this->tokenStorage->getToken()) {
-            return null;
+            return;
         }
 
         if (!is_object($user = $token->getUser())) {
-            return null;
+            return;
         }
 
         return $user;
