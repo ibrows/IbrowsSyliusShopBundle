@@ -19,8 +19,10 @@
     <h2>Total</h2>{{ cart.total }}
     <h2>deliveryAddress</h2>{{ cart.deliveryAddress }}
     <h2>invoiceAddress</h2>{{ cart.invoiceAddress }}
-    <h2>deliveryOption</h2>{{ dump(cart.deliveryOptionStrategyServiceData) }}
-    <h2>paymentOptions</h2>{{ dump(cart.paymentOptionStrategyServiceData) }}
+    <h4>{{ 'wizard.checkout.summary.deliveryoption'|trans }}</h4>
+    <p>{{ deliveryOptionStrategy.serviceId|trans(deliveryOptionStrategyData) }}</p>
+    <h4>{{ 'wizard.checkout.summary.paymentoption'|trans }}</h4>
+    <p>{{ paymentOptionStrategy.serviceId|trans(paymentOptionStrategyData) }}</p>
     {{ form_start(summaryForm) }}
     {{ form_row(summaryForm.termsAndConditions) }}
     <input type="submit">
