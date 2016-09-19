@@ -57,6 +57,7 @@
                 'dataInputSelector': 'quantity-input-container',
                 'inputSelector': 'input',
                 'minimumQuantity': 0,
+                'minimumQuantitySelector': 'quantity-minimum',
                 'inputObservation': {
                     'standard': 500,
                     'dataSelector': 'quantity-change-delay'
@@ -260,14 +261,21 @@
                 .closest('[data-' + settings.dataContainerSelector + ']')
                 .find('[data-' + settings.dataInputSelector + '] ' + settings.inputSelector + ':first');
 
+            var previousQuantity = parseInt(quantityInput.val());
             var quantityChange = parseInt(elem.data(settings.dataSelector));
-            var newQuantity = parseInt(quantityInput.val()) + quantityChange;
 
-            if (isNaN(newQuantity) || newQuantity < settings.minimumQuantity) {
+            var newQuantity = previousQuantity + quantityChange;
+            var perElementMinimumQuantity = $(elem).data(settings.minimumQuantitySelector);
+
+            if (typeof perElementMinimumQuantity != 'undefined' && (isNaN(newQuantity) || newQuantity < perElementMinimumQuantity)) {
+                newQuantity = parseInt(perElementMinimumQuantity);
+            } else  if (isNaN(newQuantity) || newQuantity < settings.minimumQuantity) {
                 newQuantity = settings.minimumQuantity;
             }
 
-            self.trigger(settings.eventName, [quantityInput, newQuantity]);
+            if (previousQuantity != newQuantity) {
+                self.trigger(settings.eventName, [quantityInput, newQuantity]);
+            }
         });
 
         var timeout = null;
