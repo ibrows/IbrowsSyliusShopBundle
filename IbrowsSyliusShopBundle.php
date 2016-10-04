@@ -28,7 +28,6 @@ class IbrowsSyliusShopBundle extends Bundle
     public static function getBundles()
     {
         $bundles = array(
-            new \Payment\Bundle\SaferpayBundle\PaymentSaferpayBundle(),
             new \Ibrows\DataTransBundle\IbrowsDataTransBundle(),
 
             new \JMS\SerializerBundle\JMSSerializerBundle(),
@@ -56,6 +55,10 @@ class IbrowsSyliusShopBundle extends Bundle
 
         if (class_exists('\\Sonata\\CoreBundle\\SonataCoreBundle')) {
             $bundles[] = new \Sonata\CoreBundle\SonataCoreBundle();
+        }
+
+        if (class_exists('\\Payment\\Bundle\\SaferpayBundle\\PaymentSaferpayBundle')) {
+            $bundles[] = new \Payment\Bundle\SaferpayBundle\PaymentSaferpayBundle(),
         }
 
         return $bundles;
