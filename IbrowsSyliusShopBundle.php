@@ -47,7 +47,6 @@ class IbrowsSyliusShopBundle extends Bundle
             new \Sonata\DoctrineORMAdminBundle\SonataDoctrineORMAdminBundle(),
             new \Sonata\IntlBundle\SonataIntlBundle(),
 
-            new \Ibrows\Bundle\SonataAdminAnnotationBundle\IbrowsSonataAdminAnnotationBundle(),
             new \Knp\Bundle\MenuBundle\KnpMenuBundle(),
 
             new \Ibrows\SyliusShopBundle\IbrowsSyliusShopBundle(),
@@ -58,7 +57,11 @@ class IbrowsSyliusShopBundle extends Bundle
         }
 
         if (class_exists('\\Payment\\Bundle\\SaferpayBundle\\PaymentSaferpayBundle')) {
-            $bundles[] = new \Payment\Bundle\SaferpayBundle\PaymentSaferpayBundle(),
+            $bundles[] = new \Payment\Bundle\SaferpayBundle\PaymentSaferpayBundle();
+        }
+
+        if (class_exists('\\Ibrows\\Bundle\\SonataAdminAnnotationBundle\\IbrowsSonataAdminAnnotationBundle')) {
+            $bundles[] = new \Ibrows\Bundle\SonataAdminAnnotationBundle\IbrowsSonataAdminAnnotationBundle();
         }
 
         return $bundles;
