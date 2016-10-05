@@ -54,8 +54,8 @@
         </service>
 
         <service id="ibrows_syliusshop.login.logininformation" class="%ibrows_sylius_shop.logininformation.class%"
-                 scope="request">
-            <argument type="service" id="request"/>
+                 shared="true">
+            <argument type="service" id="request_stack"/>
             <argument type="service" id="security.csrf.token_manager"/>
             <argument type="service" id="security.token_storage"/>
         </service>

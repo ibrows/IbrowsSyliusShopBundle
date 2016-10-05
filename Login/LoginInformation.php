@@ -4,6 +4,7 @@ namespace Ibrows\SyliusShopBundle\Login;
 
 use FOS\UserBundle\Model\UserInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
@@ -11,9 +12,9 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 class LoginInformation implements LoginInformationInterface
 {
     /**
-     * @var Request
+     * @var RequestStack
      */
-    private $request;
+    private $requestStack;
 
     /**
      * @var string
@@ -36,13 +37,13 @@ class LoginInformation implements LoginInformationInterface
     private $tokenStorage;
 
     /**
-     * @param Request                   $request
+     * @param RequestStack                   $requestStack
      * @param CsrfTokenManagerInterface $csrfTokenManager
      * @param TokenStorageInterface     $tokenStorage
      */
-    public function __construct(Request $request, CsrfTokenManagerInterface $csrfTokenManager, TokenStorageInterface $tokenStorage)
+    public function __construct(RequestStack $requestStack, CsrfTokenManagerInterface $csrfTokenManager, TokenStorageInterface $tokenStorage)
     {
-        $this->request = $request;
+        $this->requestStack = $requestStack;
         $this->csrfTokenManager = $csrfTokenManager;
         $this->tokenStorage = $tokenStorage;
         $this->setInformation();
@@ -75,14 +76,14 @@ class LoginInformation implements LoginInformationInterface
 
     protected function removeInformation()
     {
-        $session = $this->request->getSession();
+        $session = $this->requestStack->getCurrentRequest()->getSession();
         $session->remove(Security::LAST_USERNAME);
         $session->remove(Security::AUTHENTICATION_ERROR);
     }
 
     protected function setInformation()
     {
-        $request = $this->request;
+        $request = $this->requestStack->getCurrentRequest();
         $session = $request->getSession();
 
         $key = Security::AUTHENTICATION_ERROR;
