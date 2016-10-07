@@ -29,7 +29,7 @@
             <argument type="service" id="doctrine"/>
             <argument type="string">%ibrows_sylius_shop.product.class%</argument>
             <argument type="service" id="form.factory"/>
-            <argument type="service" id="sylius.availability_checker.default"/>
+            <argument type="service" id="sylius.availability_checker"/>
         </service>
 
         <service id="ibrows_syliusshop.cart.manager" class="%ibrows_sylius_shop.cart.manager.class%">
@@ -39,7 +39,7 @@
             <argument type="service" id="sylius.repository.cart_item"/>
             <argument type="service" id="ibrows_syliusshop.repository.additional_cart_item"/>
             <argument type="service" id="sylius.cart_resolver"/>
-            <argument type="service" id="sylius.availability_checker.default"/>
+            <argument type="service" id="sylius.availability_checker"/>
         </service>
 
         <service id="ibrows_syliusshop.currentcart.manager" class="%ibrows_sylius_shop.currentcart.manager.class%">
@@ -49,7 +49,7 @@
             <argument type="service" id="sylius.repository.cart_item"/>
             <argument type="service" id="ibrows_syliusshop.repository.additional_cart_item"/>
             <argument type="service" id="sylius.cart_resolver"/>
-            <argument type="service" id="sylius.availability_checker.default"/>
+            <argument type="service" id="sylius.availability_checker"/>
             <argument type="service" id="sylius.cart_provider"/>
         </service>
 
