@@ -78,6 +78,14 @@ abstract class AbstractCartFormStrategy extends AbstractCartStrategy implements 
     }
 
     /**
+     * @return string
+     */
+    public function getBlockPrefix()
+    {
+        return $this->getName();
+    }
+
+    /**
      * @param CartInterface $cart
      *
      * @return string
