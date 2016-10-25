@@ -162,8 +162,8 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
                 case PaymentFinishedResponse::STATUS_OK:
                     return new PaymentFinishedResponse(
                         $this->getServiceId(),
-                        PaymentFinishedResponse::STATUS_ERROR,
-                        PaymentFinishedResponse::ERROR_COMPLETION,
+                        PaymentFinishedResponse::STATUS_OK,
+                        null,
                         $cart->getPaymentOptionStrategyServiceData(),
                         $request->request->all()
                     );
