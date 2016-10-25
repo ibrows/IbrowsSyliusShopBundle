@@ -170,7 +170,7 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
                     break;
                 case PaymentFinishedResponse::STATUS_CANCEL:
                     $data = $request->request->all();
-                    $canceledAuthorizationResponse = $this->authorization->parseCancelAuthorizationResponse($data);
+                    $canceledAuthorizationResponse = $this->authorization->unserializeCancelAuthorizationResponse($data);
 
                     $payment = new Payment();
                     $payment->setData($data);
@@ -186,7 +186,7 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
                     break;
                 case PaymentFinishedResponse::STATUS_ERROR:
                     $data = $request->request->all();
-                    $failedAuthorizationResponse = $this->authorization->parseFailedAuthorizationResponse($data);
+                    $failedAuthorizationResponse = $this->authorization->unserializeFailedAuthorizationResponse($data);
 
                     $payment = new Payment();
                     $payment->setData($data);
@@ -209,7 +209,12 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
         }
 
         try {
-            $authorizationRequestData = $this->getAuthorization()->buildAuthorizationRequestData($authorizationRequest);
+            $violations = $this->getAuthorization()->validateAuthorizationRequest($authorizationRequest);
+            if ($violations) {
+                return new ErrorRedirectResponse($violations);
+            }
+
+            $authorizationRequestData = $this->getAuthorization()->serializeAuthorizationRequest($authorizationRequest);
             if ($url = DataInterface::URL_AUTHORIZATION.'?'.http_build_query($authorizationRequestData)) {
                 return new RedirectResponse($url);
             }
@@ -298,7 +303,7 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
         $invoiceAddress = $cart->getInvoiceAddress();
         $router = $this->getRouter();
 
-        $authorizationRequest = StandardAuthorizationRequest::getInstance(
+        $authorizationRequest = $this->authorization->createStandardAuthorizationRequest(
             $this->getMerchandId(),
             round($cart->getAmountToPay() * 100),
             $cart->getCurrency(),
