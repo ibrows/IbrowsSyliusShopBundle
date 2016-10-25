@@ -210,7 +210,7 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
 
         try {
             $violations = $this->getAuthorization()->validateAuthorizationRequest($authorizationRequest);
-            if ($violations) {
+            if ($violations->count()) {
                 $violationsArr = [];
                 for ($i = 0; $i < $violations->count(); $i++) {
                     $violationsArr[] = $violations->get($i);
