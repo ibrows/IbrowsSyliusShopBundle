@@ -211,7 +211,13 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
         try {
             $violations = $this->getAuthorization()->validateAuthorizationRequest($authorizationRequest);
             if ($violations) {
-                return new ErrorRedirectResponse($violations);
+                $violationsArr = [];
+                for ($i = 0; $i < $violations->count(); $i++) {
+                    $violationsArr[] = $violations->get($i);
+                }
+                return new ErrorRedirectResponse([
+                    'violations' => $violationsArr,
+                ]);
             }
 
             $authorizationRequestData = $this->getAuthorization()->serializeAuthorizationRequest($authorizationRequest);
