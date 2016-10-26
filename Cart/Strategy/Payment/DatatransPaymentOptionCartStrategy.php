@@ -3,6 +3,7 @@
 namespace Ibrows\SyliusShopBundle\Cart\Strategy\Payment;
 
 use Ibrows\DataTrans\Api\Authorization\Authorization;
+use Ibrows\DataTrans\Api\Authorization\Data\Request\AbstractAuthorizationRequest;
 use Ibrows\DataTrans\Api\Authorization\Data\Request\StandardAuthorizationRequest;
 use Ibrows\DataTrans\DataInterface;
 use Ibrows\SyliusShopBundle\Cart\CartManager;
@@ -220,7 +221,7 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
                 ]);
             }
 
-            $authorizationRequestData = $this->getAuthorization()->serializeAuthorizationRequest($authorizationRequest);
+            $authorizationRequestData = $this->serializeAuthorizationRequest($authorizationRequest);
             if ($url = DataInterface::URL_AUTHORIZATION.'?'.http_build_query($authorizationRequestData)) {
                 return new RedirectResponse($url);
             }
@@ -332,5 +333,17 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
         $authorizationRequest->setUppCustomerLanguage(strtolower(substr($context->getRequest()->getLocale(), 0, 2)));
 
         return $authorizationRequest;
+    }
+
+    /**
+     * @param AbstractAuthorizationRequest $authorizationRequest
+     * @param Context $context
+     * @param CartInterface $cart
+     * @param CartManager $cartManager
+     * @return array
+     */
+    protected function serializeAuthorizationRequest(AbstractAuthorizationRequest $authorizationRequest, Context $context, CartInterface $cart, CartManager $cartManager)
+    {
+        return $this->getAuthorization()->serializeAuthorizationRequest($authorizationRequest);
     }
 }
