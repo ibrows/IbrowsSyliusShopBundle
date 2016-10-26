@@ -221,7 +221,7 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
                 ]);
             }
 
-            $authorizationRequestData = $this->serializeAuthorizationRequest($authorizationRequest);
+            $authorizationRequestData = $this->serializeAuthorizationRequest($authorizationRequest, $context, $cart, $cartManager););
             if ($url = DataInterface::URL_AUTHORIZATION.'?'.http_build_query($authorizationRequestData)) {
                 return new RedirectResponse($url);
             }
