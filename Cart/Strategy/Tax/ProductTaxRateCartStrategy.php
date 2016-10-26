@@ -64,7 +64,7 @@ class ProductTaxRateCartStrategy extends AbstractCartStrategy
             if ($item->getPrice() < 0) {
                 $item->setTaxRate($mixedrate);
             } else {
-                $item->setTaxRate($this->getDefaultTaxRate());
+                $item->setTaxRate($this->getTaxRateForAdditionalItem($item, $cart, $cartManager));
             }
         }
 
@@ -86,6 +86,18 @@ class ProductTaxRateCartStrategy extends AbstractCartStrategy
             return floatval(''.$product->$method());
         }
         throw new \Exception('No Taxrate found:'.$product.'->'.$method);
+    }
+
+    /**
+     * @param AdditionalCartItemInterface $item
+     * @param CartInterface               $cart
+     * @param CartManager                 $cartManager
+     *
+     * @return float
+     */
+    protected function getTaxRateForAdditionalItem(AdditionalCartItemInterface $item, CartInterface $cart, CartManager $cartManager)
+    {
+        return $this->getDefaultTaxRate();
     }
 
     /**
