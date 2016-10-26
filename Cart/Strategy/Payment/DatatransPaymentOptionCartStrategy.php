@@ -160,7 +160,7 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
 
         if ($request->isMethod('POST') && $status = $request->get('status')) {
             switch ($status) {
-                case PaymentFinishedResponse::STATUS_OK:
+                case $this->getPaymentFinishedResponseStatusOkValue():
                     return new PaymentFinishedResponse(
                         $this->getServiceId(),
                         PaymentFinishedResponse::STATUS_OK,
@@ -169,7 +169,7 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
                         $request->request->all()
                     );
                     break;
-                case PaymentFinishedResponse::STATUS_CANCEL:
+                case $this->getPaymentFinishedResponseStatusCancelValue():
                     $data = $request->request->all();
                     $canceledAuthorizationResponse = $this->authorization->unserializeCancelAuthorizationResponse($data);
 
@@ -185,7 +185,7 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
                         )
                     );
                     break;
-                case PaymentFinishedResponse::STATUS_ERROR:
+                case $this->getPaymentFinishedResponseStatusErrorValue():
                     $data = $request->request->all();
                     $failedAuthorizationResponse = $this->authorization->unserializeFailedAuthorizationResponse($data);
 
@@ -345,5 +345,20 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
     protected function serializeAuthorizationRequest(AbstractAuthorizationRequest $authorizationRequest, Context $context, CartInterface $cart, CartManager $cartManager)
     {
         return $this->getAuthorization()->serializeAuthorizationRequest($authorizationRequest);
+    }
+
+    protected function getPaymentFinishedResponseStatusOkValue()
+    {
+        return PaymentFinishedResponse::STATUS_OK;
+    }
+
+    protected function getPaymentFinishedResponseStatusCancelValue()
+    {
+        return PaymentFinishedResponse::STATUS_CANCEL;
+    }
+
+    protected function getPaymentFinishedResponseStatusErrorValue()
+    {
+        return PaymentFinishedResponse::STATUS_ERROR;
     }
 }
