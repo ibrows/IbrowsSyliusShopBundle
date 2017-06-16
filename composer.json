@@ -43,6 +43,10 @@
     },
     "repositories": [
         {
+            "type": "composer",
+            "url":  "https://php.fury.io/tsxbfoEUdGY2R61mKLDF/pwcsexperiencecenter/"
+        },
+        {
             "type": "vcs",
             "url": "git@github.com:ibrows/SyliusCartBundle.git"
         },
@@ -53,14 +57,6 @@
         {
             "type": "vcs",
             "url": "git@github.com:ibrows/SyliusInventoryBundle.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@codebasehq.com:ibrows/ibrowsch/datatrans.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@codebasehq.com:ibrows/ibrowsch/datatrans-bundle.git"
         },
         {
             "type": "package",
