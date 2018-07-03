@@ -30,7 +30,7 @@
         "sonata-project/cache-bundle": "~2.1",
         "sonata-project/intl-bundle": "~2.1",
         "ibrows/wizard-annotation-bundle": "1.*",
-        "ibrows/sonata-admin-annotation-bundle": "2.*",
+        "ibrows/sonata-admin-annotation-bundle": "2.* | master@dev",
         "payment/saferpay-bundle": "2.*",
         "payment/httpclient-buzz": "1.*",
         "ibrows/datatrans-bundle": "1.*",
