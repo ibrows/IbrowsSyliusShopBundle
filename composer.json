@@ -20,10 +20,9 @@
     ],
     "require": {
         "php": ">=5.3.0",
-        "symfony/symfony": "2.7.*|3.4.*",
-        "sylius/cart-bundle": "~1.0,>=1.0.2",
+        "symfony/symfony": "v3.4.12",
         "sylius/inventory-bundle": "~1.0",
-        "sylius/resource-bundle": "~1.0",
+        "sylius/resource-bundle": "1.1.0",
         "friendsofsymfony/user-bundle": "*",
         "stof/doctrine-extensions-bundle": "~1.1",
         "sonata-project/doctrine-orm-admin-bundle": "~2.2|3.0.0",
@@ -31,13 +30,12 @@
         "sonata-project/intl-bundle": "~2.1",
         "ibrows/wizard-annotation-bundle": "1.*",
         "ibrows/sonata-admin-annotation-bundle": "2.* | master@dev",
-        "payment/saferpay-bundle": "2.*",
         "payment/httpclient-buzz": "1.*",
-        "ibrows/datatrans-bundle": "1.*",
-        "hinclude/hinclude": "0.9.5"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "3.7.*"
+        "ibrows/datatrans-bundle": "dev-1.0.0-Symfony3.4",
+        "hinclude/hinclude": "0.9.5",
+        "symfony/templating": "3.4.12",
+        "symfony/framework-bundle": "v3.4.0",
+        "sylius/order-bundle": "v1.1.7"
     },
     "repositories": [
         {
@@ -72,6 +70,7 @@
             }
         }
     ],
+    "minimum-stability": "dev",
     "autoload": {
         "psr-4": {"Ibrows\\SyliusShopBundle\\": ""}
     }
