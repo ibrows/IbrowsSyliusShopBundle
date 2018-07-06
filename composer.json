@@ -35,7 +35,9 @@
         "hinclude/hinclude": "0.9.5",
         "symfony/templating": "3.4.12",
         "symfony/framework-bundle": "v3.4.0",
-        "sylius/order-bundle": "v1.1.7"
+        "sylius/order-bundle": "v1.1.7",
+        "sylius/cart-bundle": "dev-1.0.2-Symfony3.4",
+        "ibrows/saferpay": "master@dev"
     },
     "repositories": [
         {
@@ -53,6 +55,10 @@
         {
             "type": "vcs",
             "url": "git@codebasehq.com:ibrows/ibrowsch/datatrans.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:ibrows/saferpay.git"
         },
         {
             "type": "vcs",

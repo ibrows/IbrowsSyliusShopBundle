@@ -9,13 +9,13 @@ use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\ErrorRedirectResponse
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Payment\Bundle\SaferpayBundle\PayInitParameter\PayInitParameterFactory;
-use Payment\Saferpay\Data\PayConfirmParameterInterface;
-use Payment\Saferpay\Data\PayInitParameterInterface;
+use Ibrows\Saferpay\Data\PayConfirmParameterInterface;
+use Ibrows\Saferpay\Data\PayInitParameterInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Payment\Saferpay\Saferpay;
-use Payment\Saferpay\Data\PayInitParameterWithDataInterface;
+use Ibrows\Saferpay\Saferpay;
+use Ibrows\Saferpay\Data\PayInitParameterWithDataInterface;
 
 class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrategy
 {
