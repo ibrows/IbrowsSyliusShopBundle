@@ -37,7 +37,7 @@
         "symfony/framework-bundle": "v3.4.0",
         "sylius/order-bundle": "v1.1.7",
         "sylius/cart-bundle": "dev-1.0.2-Symfony3.4",
-        "ibrows/saferpay": "master@dev"
+        "ibrows/saferpay": "3.1.2"
     },
     "repositories": [
         {
