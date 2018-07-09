@@ -33,7 +33,7 @@
         "payment/httpclient-buzz": "1.*",
         "ibrows/datatrans-bundle": "dev-1.0.0-Symfony3.4",
         "hinclude/hinclude": "0.9.5",
-        "symfony/templating": "3.4.12",
+        "symfony/templating": "^3.4",
         "symfony/framework-bundle": "^3.4",
         "sylius/cart-bundle": "dev-1.0.2-Symfony3.4",
         "ibrows/saferpay": "3.1.2"
