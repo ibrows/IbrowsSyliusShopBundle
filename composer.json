@@ -21,7 +21,7 @@
     "require": {
         "php": ">=5.3.0",
         "symfony/symfony": "^3.4",
-        "sylius/inventory-bundle": "~1.0",
+        "sylius/inventory-bundle": "dev-master-Symfony3.4",
         "sylius/resource-bundle": "dev-master-Symfony3.4",
         "friendsofsymfony/user-bundle": "*",
         "stof/doctrine-extensions-bundle": "~1.1",
