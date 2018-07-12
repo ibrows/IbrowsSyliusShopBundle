@@ -54,7 +54,7 @@
             <argument type="service" id="sylius.cart_provider" />
         </service>
 
-        <service id="ibrows_syliusshop.login.logininformation" class="%ibrows_sylius_shop.logininformation.class%" scope="request">
+        <service id="ibrows_syliusshop.login.logininformation" class="%ibrows_sylius_shop.logininformation.class%">
             <argument type="service" id="request" />
             <argument type="service" id="form.csrf_provider" />
             <argument type="service" id="security.context" />
