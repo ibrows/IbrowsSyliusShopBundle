@@ -13,33 +13,29 @@
 
     <services>
         <service id="ibrows_sylius_shop.repository.voucher"
-                 factory-service="doctrine.orm.default_entity_manager"
-                 factory-method="getRepository"
                  class="%ibrows_sylius_shop.voucher.class%"
                 >
+            <factory service="doctrine.orm.default_entity_manager" method="getRepository"/>
             <argument>%ibrows_sylius_shop.voucher.class%</argument>
         </service>
         <service id="ibrows_sylius_shop.repository.percent_voucher"
-                 factory-service="doctrine.orm.default_entity_manager"
-                 factory-method="getRepository"
                  class="%ibrows_sylius_shop.voucherpercent.class%"
                 >
+            <factory service="doctrine.orm.default_entity_manager" method="getRepository"/>
             <argument>%ibrows_sylius_shop.voucherpercent.class%</argument>
         </service>
         <service
                 id="ibrows_syliusshop.repository.cart_item"
-                factory-service="doctrine.orm.default_entity_manager"
-                factory-method="getRepository"
                 class="%ibrows_syliusshop.repository.cartitem.class%"
                 >
+            <factory service="doctrine.orm.default_entity_manager" method="getRepository"/>
             <argument>%ibrows_syliusshop.cartitem.class%</argument>
         </service>
         <service
                 id="ibrows_syliusshop.repository.additional_cart_item"
-                factory-service="doctrine.orm.default_entity_manager"
-                factory-method="getRepository"
                 class="Doctrine\ORM\EntityRepository"
                 >
+            <factory service="doctrine.orm.default_entity_manager" method="getRepository"/>
             <argument>%ibrows_sylius_shop.additionalcartitem.class%</argument>
         </service>
     </services>
