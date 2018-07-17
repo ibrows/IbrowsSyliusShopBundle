@@ -10,6 +10,7 @@ use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PrePaidPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrategy
 {
@@ -42,5 +43,14 @@ class PrePaidPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrategy
     public function pay(Context $context, CartInterface $cart, CartManager $cartManager)
     {
         return new PaymentFinishedResponse($this->getServiceId(), PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_COMPLETION);
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+    }
+
+    public function getBlockPrefix()
+    {
+        return "";
     }
 }
