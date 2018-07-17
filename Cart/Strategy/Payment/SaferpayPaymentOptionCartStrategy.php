@@ -96,17 +96,17 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
     public function getTranslationKey(CartInterface $cart)
     {
         $data = $cart->getPaymentOptionStrategyServiceData();
-        if(!isset($data['method'])){
+        if (!isset($data['method'])) {
             return parent::getTranslationKey($cart);
         }
 
         $methods = $this->getPaymentMethods();
 
-        if(!isset($methods[$data['method']])){
+        if (!isset($methods[$data['method']])) {
             return parent::getTranslationKey($cart);
         }
 
-        return $methods[$data['method']].' (Saferpay)';
+        return $methods[$data['method']] . ' (Saferpay)';
     }
 
     /**
@@ -117,11 +117,11 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
     public function accept(CartInterface $cart, CartManager $cartManager)
     {
         $selectedServiceId = $cart->getPaymentOptionStrategyServiceId();
-        if($selectedServiceId == $this->getServiceId()){
+        if ($selectedServiceId == $this->getServiceId()) {
             return true;
         }
 
-        if(!$selectedServiceId && $this->isDefault()){
+        if (!$selectedServiceId && $this->isDefault()) {
             $cart->setPaymentOptionStrategyServiceId($this->getServiceId());
             $cart->setPaymentOptionStrategyServiceData(array('method' => $this->getDefaultPaymentMethod()));
             return true;
@@ -184,7 +184,7 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
     public function compute(CartInterface $cart, CartManager $cartManager)
     {
         $data = $cart->getPaymentOptionStrategyServiceData();
-        if(!isset($data['method'])){
+        if (!isset($data['method'])) {
             $this->removeStrategy($cart);
         }
         return array();
@@ -205,19 +205,19 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
         $payInitParameter = $this->getPayInitParameter($context, $cart);
         $PaymentFinishedResponseData = array('payInitParameter' => $payInitParameter->getData());
 
-        switch($request->query->get('status')){
+        switch ($request->query->get('status')) {
             case PaymentFinishedResponse::STATUS_OK:
                 try {
                     $payConfirmParameter = $saferpay->verifyPayConfirm($request->query->get('DATA'), $request->query->get('SIGNATURE'));
                     $PaymentFinishedResponseData['payConfirmParameter'] = $payConfirmParameter->getData();
 
-                    if(true === $this->validatePayConfirmParameter($payConfirmParameter, $payInitParameter)){
-                        if(false === $this->doCompletePayment()){
+                    if (true === $this->validatePayConfirmParameter($payConfirmParameter, $payInitParameter)) {
+                        if (false === $this->doCompletePayment()) {
                             return new PaymentFinishedResponse($this->getServiceId(), PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_COMPLETION, $cart->getPaymentOptionStrategyServiceData(), $PaymentFinishedResponseData);
                         }
 
                         $payCompleteResponse = $saferpay->payCompleteV2($payConfirmParameter, 'Settlement');
-                        if($payCompleteResponse->getResult() != '0'){
+                        if ($payCompleteResponse->getResult() != '0') {
                             return new PaymentFinishedResponse($this->getServiceId(), null, null, $cart->getPaymentOptionStrategyServiceData(), $PaymentFinishedResponseData);
                         }
 
@@ -226,21 +226,21 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
 
                     $saferpay->payCompleteV2($payConfirmParameter, 'Cancel', $this->getSaferpayPassword());
                     return new PaymentFinishedResponse($this->getServiceId(), PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_VALIDATION, $cart->getPaymentOptionStrategyServiceData(), $PaymentFinishedResponseData);
-                }catch(\Exception $e){
+                } catch (\Exception $e) {
                     return new PaymentFinishedResponse($this->getServiceId(), PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_VALIDATION, $cart->getPaymentOptionStrategyServiceData(), $PaymentFinishedResponseData);
                 }
-            break;
+                break;
             case PaymentFinishedResponse::STATUS_ERROR:
                 return new ErrorRedirectResponse(array('paymenterror' => $request->query->get('error')));
-            break;
+                break;
         }
 
         try {
-            if($url = $saferpay->createPayInit($payInitParameter)){
+            if ($url = $saferpay->createPayInit($payInitParameter)) {
                 return new RedirectResponse($url);
             }
             return new ErrorRedirectResponse(array('paymenterror' => 'connectionerror'));
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return new ErrorRedirectResponse(array('paymenterror' => 'connectionerror'));
         }
     }
@@ -280,21 +280,21 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
         $invoiceAddress = $cart->getInvoiceAddress();
         $router = $this->getRouter();
 
-        if($this->isTestMode()){
+        if ($this->isTestMode()) {
             $payInitParameter->setAccountid($this->getTestAccountId());
             $payInitParameter->setPaymentmethods(array($payInitParameter::PAYMENTMETHOD_SAFERPAY_TESTCARD));
-        }else{
+        } else {
             $serviceData = $cart->getPaymentOptionStrategyServiceData();
-            if(isset($serviceData['method'])){
+            if (isset($serviceData['method'])) {
                 $reflection = new \ReflectionClass($payInitParameter);
-                if($code = $reflection->getConstant('PAYMENTMETHOD_'.strtoupper($serviceData['method']))){
+                if ($code = $reflection->getConstant('PAYMENTMETHOD_' . strtoupper($serviceData['method']))) {
                     $payInitParameter->setPaymentmethods(array($code));
                 }
             }
         }
 
         $payInitParameter
-            ->setAmount(round($cart->getAmountToPay()*100))
+            ->setAmount(round($cart->getAmountToPay() * 100))
             ->setDescription(sprintf('Order %s', $cart->getId()))
             ->setOrderid($cart->getId())
             ->setSuccesslink($router->generate($currentRouteName, array('status' => PaymentFinishedResponse::STATUS_OK), true))
@@ -308,14 +308,13 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
             ->setCountry($invoiceAddress->getCountry())
             ->setEmail($invoiceAddress->getEmail())
             ->setCurrency(strtoupper($cart->getCurrency()))
-            ->setLangid($context->getRequest()->getLocale())
-        ;
+            ->setLangid($context->getRequest()->getLocale());
 
-        if($invoiceAddress->isTitleWoman()){
+        if ($invoiceAddress->isTitleWoman()) {
             $payInitParameter->setGender($payInitParameter::GENDER_FEMALE);
-        }elseif($invoiceAddress->isTitleMan()){
+        } elseif ($invoiceAddress->isTitleMan()) {
             $payInitParameter->setGender($payInitParameter::GENDER_MALE);
-        }elseif($invoiceAddress->isTitleCompany()){
+        } elseif ($invoiceAddress->isTitleCompany()) {
             $payInitParameter->setGender($payInitParameter::GENDER_COMPANY);
         }
 
@@ -374,5 +373,14 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
     {
         $this->defaultPaymentMethod = $defaultPaymentMethod;
         return $this;
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+    }
+
+    public function getBlockPrefix()
+    {
+        return "";
     }
 }
