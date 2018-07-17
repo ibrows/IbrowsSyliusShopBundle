@@ -42,9 +42,9 @@ class TwigExtension extends \Twig_Extension
      */
     public function getFunctions(){
         return array(
-            'getCurrentCartManager' => new \Twig_SimpleFunction($this, 'getCurrentCartManager'),
-            'getCurrentCart' => new \Twig_SimpleFunction($this, 'getCurrentCart'),
-            'getCurrentCartCurrency' => new \Twig_SimpleFunction($this, 'getCurrentCartCurrency')
+            'getCurrentCartManager' => new \Twig_SimpleFunction('getCurrentCartManager'),
+            'getCurrentCart' => new \Twig_SimpleFunction('getCurrentCart'),
+            'getCurrentCartCurrency' => new \Twig_SimpleFunction('getCurrentCartCurrency')
         );
     }
 
