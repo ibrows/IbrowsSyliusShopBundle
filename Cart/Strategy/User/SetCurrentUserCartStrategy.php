@@ -8,18 +8,18 @@ use Ibrows\SyliusShopBundle\Cart\Strategy\AbstractCartStrategy;
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\UserCartInterface;
-use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
 class SetCurrentUserCartStrategy extends AbstractCartStrategy
 {
-    protected $securityContext;
+    protected $tokenStorage;
 
     /**
      * @param SecurityContextInterface $securityContext
      */
-    public function __construct(SecurityContextInterface $securityContext)
+    public function __construct(TokenStorage $tokenStorage)
     {
-        $this->securityContext = $securityContext;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -39,7 +39,7 @@ class SetCurrentUserCartStrategy extends AbstractCartStrategy
      */
     public function compute(CartInterface $cart, CartManager $cartManager)
     {
-        if(!$token = $this->securityContext->getToken()){
+        if(!$token = $this->tokenStorage->getToken()){
             return array();
         }
         if(!$user = $token->getUser()){
