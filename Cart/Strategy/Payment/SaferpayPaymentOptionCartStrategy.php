@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Payment\Saferpay\Saferpay;
 use Payment\Saferpay\Data\PayInitParameterWithDataInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrategy
 {
