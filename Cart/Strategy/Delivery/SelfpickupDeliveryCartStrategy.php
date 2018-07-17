@@ -6,6 +6,8 @@ use Ibrows\SyliusShopBundle\Cart\CartManager;
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
 
 class SelfpickupDeliveryCartStrategy extends AbstractDeliveryCartStrategy
 {
@@ -179,5 +181,14 @@ class SelfpickupDeliveryCartStrategy extends AbstractDeliveryCartStrategy
     protected function getItemText($store, $costs, CartInterface $cart, CartManager $cartManager)
     {
         return $this->getServiceId();
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+    }
+
+    public function getBlockPrefix()
+    {
+        return "";
     }
 }
