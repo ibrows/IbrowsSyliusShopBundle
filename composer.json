@@ -28,7 +28,7 @@
         "sonata-project/doctrine-orm-admin-bundle": "~2.2|^3.0",
         "sonata-project/cache-bundle": "~2.1",
         "sonata-project/intl-bundle": "~2.1",
-        "ibrows/wizard-annotation-bundle": "1.*",
+        "ibrows/wizard-annotation-bundle": "dev-1.3.0-Symfony3.4",
         "ibrows/sonata-admin-annotation-bundle": "2.* | master@dev",
         "payment/httpclient-buzz": "1.*",
         "ibrows/datatrans-bundle": "dev-1.0.0-Symfony3.4",

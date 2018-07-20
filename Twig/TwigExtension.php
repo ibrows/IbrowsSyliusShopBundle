@@ -42,16 +42,16 @@ class TwigExtension extends \Twig_Extension
      */
     public function getFunctions(){
         return array(
-            'getCurrentCartManager' => new \Twig_SimpleFunction('getCurrentCartManager'),
-            'getCurrentCart' => new \Twig_SimpleFunction('getCurrentCart'),
-            'getCurrentCartCurrency' => new \Twig_SimpleFunction('getCurrentCartCurrency')
+             new \Twig_SimpleFunction('getCurrentCartManager', array($this, 'getCurrentCartManager')),
+             new \Twig_SimpleFunction('getCurrentCart', array($this, 'getCurrentCart')),
+             new \Twig_SimpleFunction('getCurrentCartCurrency', array($this, 'getCurrentCartCurrency'))
         );
     }
 
     public function getFilters()
     {
         return array(
-            'price' => new \Twig_SimpleFilter('price', array($this, 'price'), array(
+            new \Twig_SimpleFilter('price', array($this, 'price'), array(
                 'is_safe' => array('html'),
                 'needs_environment' => true
             ))
