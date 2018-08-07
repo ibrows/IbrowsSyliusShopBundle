@@ -3,23 +3,24 @@
 namespace Ibrows\SyliusShopBundle\Form;
 
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Form\FormTypeInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\AbstractType;
 
 class BasketItemType extends AbstractType
 {
-    /**
-     * @var string
-     */
-    protected $dataClass;
-
-    /**
-     * @param string $dataClass
-     */
-    public function __construct($dataClass)
-    {
-        $this->dataClass = $dataClass;
-    }
+//    /**
+//     * @var string
+//     */
+//    protected $dataClass;
+//
+//    /**
+//     * @param string $dataClass
+//     */
+//    public function __construct($dataClass)
+//    {
+//        $this->dataClass = $dataClass;
+//    }
 
     /**
      * @param FormBuilderInterface $builder
@@ -33,19 +34,19 @@ class BasketItemType extends AbstractType
         ;
     }
 
-    /**
-     * @param OptionsResolverInterface $resolver
-     */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
-        parent::setDefaultOptions($resolver);
-
-        $resolver
-            ->setDefaults(array(
-                'data_class' => $this->dataClass
-            ))
-        ;
-    }
+//    /**
+//     * @param OptionsResolverInterface $resolver
+//     */
+//    public function setDefaultOptions(OptionsResolverInterface $resolver)
+//    {
+//        parent::setDefaultOptions($resolver);
+//
+//        $resolver
+//            ->setDefaults(array(
+//                'data_class' => $this->dataClass
+//            ))
+//        ;
+//    }
 
     /**
      * @return string
@@ -53,5 +54,12 @@ class BasketItemType extends AbstractType
     public function getName()
     {
         return 'ibr_sylius_basketitem';
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        parent::configureOptions($resolver->setDefaults(array(
+            'dataclass' => null
+        )));
     }
 }

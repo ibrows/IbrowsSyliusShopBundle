@@ -37,7 +37,7 @@ class WizardController extends AbstractWizardController
         }
 
         $cartManager = $this->getCurrentCartManager();
-        $basketForm = $this->createForm(BasketType::class, $cart, array('basketItemType' => new BasketItemType($this->getBasketItemDataClass())));
+        $basketForm = $this->createForm(BasketType::class, $cart, array('basketItemType' => BasketItemType::class));
 
         if ("POST" == $request->getMethod()) {
             $basketForm->handleRequest($request);
