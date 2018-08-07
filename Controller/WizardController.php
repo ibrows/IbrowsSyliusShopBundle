@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Ibrows\SyliusShopBundle\Form\BasketType;
+use Ibrows\SyliusShopBundle\Form\BasketItemType;
 
 /**
  * @Route("/wizard")

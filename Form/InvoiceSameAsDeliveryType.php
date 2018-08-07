@@ -4,7 +4,7 @@ namespace Ibrows\SyliusShopBundle\Form;
 
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Ibrows\SyliusShopBundle\Form\AbstractType;
+use Symfony\Component\Form\AbstractType;
 
 class InvoiceSameAsDeliveryType extends AbstractType
 {

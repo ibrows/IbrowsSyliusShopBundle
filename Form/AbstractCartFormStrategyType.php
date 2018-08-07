@@ -8,7 +8,7 @@ use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
 use Symfony\Component\Form\FormBuilderInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartFormStrategyInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Ibrows\SyliusShopBundle\Form\AbstractType;
+use Symfony\Component\Form\AbstractType;
 
 abstract class AbstractCartFormStrategyType extends AbstractType
 {
