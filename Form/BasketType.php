@@ -32,8 +32,8 @@ class BasketType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
+        parent::configureOptions($resolver->setDefaults(array(
             'basketItemType' => null
-        ));
+        )));
     }
 }
