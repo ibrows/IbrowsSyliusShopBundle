@@ -4,6 +4,7 @@ namespace Ibrows\SyliusShopBundle\Form;
 
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Ibrows\SyliusShopBundle\Form\AbstractType;
 
 class BasketItemType extends AbstractType
 {

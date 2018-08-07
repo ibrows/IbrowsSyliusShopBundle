@@ -15,6 +15,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Ibrows\SyliusShopBundle\Form\BasketType;
 
 /**
  * @Route("/wizard")
@@ -35,7 +36,7 @@ class WizardController extends AbstractWizardController
         }
 
         $cartManager = $this->getCurrentCartManager();
-        $basketForm = $this->createForm($this->getBasketType(), $cart);
+        $basketForm = $this->createForm(BasketType::class, $cart, array('basketItemType' => new BasketItemType($this->getBasketItemDataClass())));
 
         if ("POST" == $request->getMethod()) {
             $basketForm->handleRequest($request);

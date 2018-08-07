@@ -5,6 +5,7 @@ namespace Ibrows\SyliusShopBundle\Form;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Ibrows\SyliusShopBundle\Form\AbstractType;
 
 class AuthType extends AbstractType
 {

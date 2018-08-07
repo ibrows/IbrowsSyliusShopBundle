@@ -3,6 +3,7 @@
 namespace Ibrows\SyliusShopBundle\Form;
 
 use Symfony\Component\Form\FormBuilderInterface;
+use Ibrows\SyliusShopBundle\Form\AbstractType;
 
 class LoginType extends AbstractType
 {

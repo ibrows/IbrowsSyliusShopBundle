@@ -5,6 +5,7 @@ namespace Ibrows\SyliusShopBundle\Form;
 use Ibrows\SyliusShopBundle\Entity\Address;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Form\FormBuilderInterface;
+use Ibrows\SyliusShopBundle\Form\AbstractType;
 
 class AddressType extends AbstractType
 {

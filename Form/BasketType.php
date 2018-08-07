@@ -4,22 +4,10 @@ namespace Ibrows\SyliusShopBundle\Form;
 
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormTypeInterface;
+use Ibrows\SyliusShopBundle\Form\AbstractType;
 
 class BasketType extends AbstractType
 {
-    /**
-     * @var FormTypeInterface
-     */
-    protected $basketItemType;
-
-    /**
-     * @param FormTypeInterface $basketItemType
-     */
-    public function __construct(FormTypeInterface $basketItemType)
-    {
-        $this->basketItemType = $basketItemType;
-    }
-
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -28,7 +16,7 @@ class BasketType extends AbstractType
     {
         $builder
             ->add('items', 'collection', array(
-                'type' => $this->basketItemType
+                'entry_type' => $options['basketItemType']
             ))
             ->add('continue', 'submit')
         ;
@@ -40,5 +28,12 @@ class BasketType extends AbstractType
     public function getName()
     {
         return 'ibr_sylius_basket';
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(array(
+            'basketItemType' => null
+        ));
     }
 }
