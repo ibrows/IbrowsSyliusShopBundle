@@ -390,7 +390,7 @@ abstract class AbstractController extends Controller
     protected function getInvoiceSameAsDeliveryForm(InvoiceAddressInterface $invoiceAddress, DeliveryAddressInterface $deliveryAddress)
     {
         return $this->createForm(
-            $this->getInvoiceSameAsDeliveryType(),
+            get_class($this->getInvoiceSameAsDeliveryType()),
             $this->getInvoiceSameAsDeliveryData($invoiceAddress, $deliveryAddress)
         );
     }

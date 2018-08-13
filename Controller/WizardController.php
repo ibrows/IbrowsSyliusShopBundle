@@ -70,7 +70,7 @@ class WizardController extends AbstractWizardController
                 }
 
                 $this->getManagerForClass($cart)->refresh($cart);
-                $basketForm = $this->createForm($this->getBasketType(), $cart);
+                $basketForm = $this->createForm(get_class($this->getBasketType()), $cart);
             } else {
                 if (($postAction = $this->postInvalidBasketFormValidationAction($basketForm, $cart)) instanceof Response) {
                     return $postAction;
@@ -106,7 +106,7 @@ class WizardController extends AbstractWizardController
         $wizard = $this->getWizard();
 
         $authForm = $this->createForm(
-            $this->getAuthType(),
+            get_class($this->getAuthType()),
             array('email' => $cart->getEmail()),
             array(
                 'validation_groups' => array(
@@ -125,7 +125,7 @@ class WizardController extends AbstractWizardController
         }
 
         $loginForm = $this->createForm(
-            $this->getLoginType(),
+            get_class($this->getLoginType()),
             array(
                 '_csrf_token'   => $loginInformation->getCsrfToken(),
                 '_username'     => $loginInformation->getLastUsername(),
@@ -190,7 +190,7 @@ class WizardController extends AbstractWizardController
         $invoiceAddress = $this->getInvoiceAddress();
 
         $invoiceAddressForm = $this->createForm(
-            $this->getInvoiceAddressType(),
+            get_class($this->getInvoiceAddressType()),
             $invoiceAddress,
             array(
                 'data_class'        => get_class($invoiceAddress),
@@ -220,7 +220,7 @@ class WizardController extends AbstractWizardController
             return $this->redirect($this->getWizard()->getNextStepUrl());
         }
 
-        $deliveryOptionStrategyForm = $this->createForm($this->getDeliveryOptionStrategyType($cartManager), $deliveryOptionStrategyFormData);
+        $deliveryOptionStrategyForm = $this->createForm(get_class($this->getDeliveryOptionStrategyType($cartManager)), $deliveryOptionStrategyFormData);
         $deliveryAddressForm = $this->handleDeliveryAddress();
 
         if ("POST" == $request->getMethod()) {
@@ -269,7 +269,7 @@ class WizardController extends AbstractWizardController
             return $this->redirect($this->getWizard()->getNextStepUrl());
         }
 
-        $paymentOptionStrategyForm = $this->createForm($this->getPaymentOptionStrategyType($cartManager), $paymentOptionStrategyFormData);
+        $paymentOptionStrategyForm = $this->createForm(get_class($this->getPaymentOptionStrategyType($cartManager)), $paymentOptionStrategyFormData);
 
         if ("POST" == $request->getMethod()) {
             $paymentOptionStrategyForm->submit($request);
@@ -310,7 +310,7 @@ class WizardController extends AbstractWizardController
         }
 
         $summaryForm = $this->createForm(
-            $this->getSummaryType(),
+            get_class($this->getSummaryType()),
             $cart,
             array(
                 'validation_groups' => array(

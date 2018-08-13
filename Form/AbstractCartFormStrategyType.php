@@ -68,7 +68,7 @@ abstract class AbstractCartFormStrategyType extends AbstractType
         $builder->add('strategyServiceId', 'choice', $strategyOptions);
 
         foreach ($strategies as $strategy) {
-            $builder->add($strategy->getName(), $strategy);
+            $builder->add($strategy->getName(), get_class($strategy));
         }
     }
 
