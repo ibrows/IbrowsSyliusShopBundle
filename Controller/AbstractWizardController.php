@@ -448,7 +448,7 @@ abstract class AbstractWizardController extends AbstractController
             )
         );
 
-        return $this->createForm($type, $deliveryAddress, $formoptions);
+        return $this->createForm(get_class($type), $deliveryAddress, $formoptions);
     }
 
     /**

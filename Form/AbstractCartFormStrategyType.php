@@ -12,18 +12,18 @@ use Symfony\Component\Form\AbstractType;
 
 abstract class AbstractCartFormStrategyType extends AbstractType
 {
-    /**
-     * @var CartManager
-     */
-    protected $cartManager = array();
-
-    /**
-     * @param CartManager $cartManager
-     */
-    public function __construct(CartManager $cartManager)
-    {
-        $this->cartManager = $cartManager;
-    }
+//    /**
+//     * @var CartManager
+//     */
+//    protected $cartManager = array();
+//
+//    /**
+//     * @param CartManager $cartManager
+//     */
+//    public function __construct(CartManager $cartManager)
+//    {
+//        $this->cartManager = $cartManager;
+//    }
 
     /**
      * @param FormBuilderInterface $builder
@@ -31,7 +31,7 @@ abstract class AbstractCartFormStrategyType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $strategies = $this->getStrategies();
+        $strategies = $this->getStrategies($options);
 
         $choices = array();
         $default = null;
@@ -43,7 +43,7 @@ abstract class AbstractCartFormStrategyType extends AbstractType
         }
 
         $strategyOptions = array(
-            'choice_list' => new ArrayChoiceList(
+            'choices' => array(
                 $choices,
                 function ($val) {
                     if(is_null($val)){
@@ -75,5 +75,12 @@ abstract class AbstractCartFormStrategyType extends AbstractType
     /**
      * @return CartFormStrategyInterface[]
      */
-    abstract protected function getStrategies();
+    abstract protected function getStrategies($options);
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        parent::configureOptions($resolver->setDefaults(array(
+            'cartManager' => null
+        )));
+    }
 }

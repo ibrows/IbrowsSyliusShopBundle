@@ -9,9 +9,9 @@ class PaymentOptionStrategyType extends AbstractCartFormStrategyType
     /**
      * @return CartFormStrategyInterface[]
      */
-    protected function getStrategies()
+    protected function getStrategies($options)
     {
-        return $this->cartManager->getPossiblePaymentOptionStrategies();
+        return $options['cartManager']->getPossiblePaymentOptionStrategies();
     }
 
     /**
