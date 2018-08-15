@@ -77,7 +77,7 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
      */
     public function getPaymentMethods()
     {
-        return $this->paymentMethods;
+        return array_flip($this->paymentMethods);
     }
 
     /**
