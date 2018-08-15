@@ -459,7 +459,7 @@ abstract class AbstractWizardController extends AbstractController
      * @return FormInterface
      * @throws \Exception
      */
-    protected function handleDeliveryAddress($invoiceSameAsDelivery = null, $invoiceAddress = null)
+    protected function handleDeliveryAddress(Request $request, $invoiceSameAsDelivery = null, $invoiceAddress = null)
     {
         $deliveryAddressForm = $this->createDeliveryAddressForm();
 
@@ -492,7 +492,7 @@ abstract class AbstractWizardController extends AbstractController
             $deliveryAddressForm = $this->createDeliveryAddressForm(null, $this->getNewDeliveryAddress());
         }
 
-        $deliveryAddressForm->handleRequest($this->getRequest());
+        $deliveryAddressForm->handleRequest($request);
         if (!$deliveryAddressForm->isValid()) {
             return $deliveryAddressForm;
         }
@@ -521,9 +521,9 @@ abstract class AbstractWizardController extends AbstractController
      * @param FormInterface $deliveryOptionStrategyForm
      * @return boolean
      */
-    protected function bindDeliveryOptions(FormInterface $deliveryOptionStrategyForm)
+    protected function bindDeliveryOptions(FormInterface $deliveryOptionStrategyForm, Request $request)
     {
-        $deliveryOptionStrategyForm->handleRequest($this->getRequest());
+        $deliveryOptionStrategyForm->handleRequest($request);
 
         $deliveryOptionStrategyServiceId = $deliveryOptionStrategyForm->get('strategyServiceId')->getData();
         $deliveryOptioStrategy = $this->getCurrentCartManager()->getPossibleDeliveryOptionStrategyById($deliveryOptionStrategyServiceId);
