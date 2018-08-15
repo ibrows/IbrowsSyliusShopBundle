@@ -220,8 +220,8 @@ class WizardController extends AbstractWizardController
             return $this->redirect($this->getWizard()->getNextStepUrl());
         }
 
-        $deliveryOptionStrategyForm = $this->createForm(get_class($this->getDeliveryOptionStrategyType($cartManager)), $deliveryOptionStrategyFormData, array('cartManager' => $this->getCurrentCartManager()));
-        $deliveryAddressForm = $this->handleDeliveryAddress();
+        $deliveryOptionStrategyForm = $this->createForm(get_class($this->getDeliveryOptionStrategyType($cartManager)), $deliveryOptionStrategyFormData);
+        $deliveryAddressForm = $this->handleDeliveryAddress($request);
 
         if ("POST" == $request->getMethod()) {
             if ($this->saveAddressForm($request, $deliveryOptionStrategyForm, $invoiceAddressForm, $invoiceSameAsDeliveryForm, $invoiceAddress, $deliveryAddressForm)) {
@@ -319,7 +319,7 @@ class WizardController extends AbstractWizardController
             )
         );
 
-        $request = $this->getRequest();
+        $request = $this->get('request');
 
         if ('POST' === $request->getMethod()) {
             $summaryForm->submit($request);

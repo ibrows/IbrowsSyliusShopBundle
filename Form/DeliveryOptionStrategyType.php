@@ -9,9 +9,9 @@ class DeliveryOptionStrategyType extends AbstractCartFormStrategyType
     /**
      * @return CartFormStrategyInterface[]
      */
-    protected function getStrategies($options)
+    protected function getStrategies()
     {
-        return $options['cartManager']->getPossibleDeliveryOptionStrategies();
+        return $this->cartManager->getPossibleDeliveryOptionStrategies();
     }
 
     /**

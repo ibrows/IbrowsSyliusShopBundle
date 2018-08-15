@@ -9,21 +9,22 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\Strategy\CartFormStrategyInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\AbstractType;
+use Ibrows\SyliusShopBundle\ChoiceLoader\ChoiceLoader;
 
 abstract class AbstractCartFormStrategyType extends AbstractType
 {
-//    /**
-//     * @var CartManager
-//     */
-//    protected $cartManager = array();
-//
-//    /**
-//     * @param CartManager $cartManager
-//     */
-//    public function __construct(CartManager $cartManager)
-//    {
-//        $this->cartManager = $cartManager;
-//    }
+    /**
+     * @var CartManager
+     */
+    protected $cartManager = array();
+
+    /**
+     * @param CartManager $cartManager
+     */
+    public function __construct(CartManager $cartManager)
+    {
+        $this->cartManager = $cartManager;
+    }
 
     /**
      * @param FormBuilderInterface $builder
@@ -31,7 +32,7 @@ abstract class AbstractCartFormStrategyType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $strategies = $this->getStrategies($options);
+        $strategies = $this->getStrategies();
 
         $choices = array();
         $default = null;
@@ -43,20 +44,7 @@ abstract class AbstractCartFormStrategyType extends AbstractType
         }
 
         $strategyOptions = array(
-            'choices' => array(
-                $choices,
-                function ($val) {
-                    if(is_null($val)){
-                        return null;
-                    }
-
-                    if (!is_string($val)) {
-                        return $val->getServiceId();
-                    }
-
-                    return $val;
-                }
-            ),
+            'choice_loader' => new ChoiceLoader($choices),
             'multiple' => false,
             'expanded' => true
         );
@@ -75,12 +63,6 @@ abstract class AbstractCartFormStrategyType extends AbstractType
     /**
      * @return CartFormStrategyInterface[]
      */
-    abstract protected function getStrategies($options);
+    abstract protected function getStrategies();
 
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        parent::configureOptions($resolver->setDefaults(array(
-            'cartManager' => null
-        )));
-    }
 }
