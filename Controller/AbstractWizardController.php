@@ -390,7 +390,7 @@ abstract class AbstractWizardController extends AbstractController
      */
     protected function saveAddressForm(Request $request, FormInterface $deliveryOptionStrategyForm, FormInterface &$invoiceAddressForm, FormInterface &$invoiceSameAsDeliveryForm, InvoiceAddressInterface $invoiceAddress, FormInterface &$deliveryAddressForm)
     {
-        $validDeliveryOptionStrategyFormData = $this->bindDeliveryOptions($deliveryOptionStrategyForm);
+        $validDeliveryOptionStrategyFormData = $this->bindDeliveryOptions($deliveryOptionStrategyForm, $request);
 
         $invoiceAddressForm->handleRequest($request);
         $invoiceSameAsDeliveryForm->handleRequest($request);
@@ -398,7 +398,7 @@ abstract class AbstractWizardController extends AbstractController
         $invoiceSameAsDelivery = false;
         if ($invoiceSameAsDeliveryForm->isValid()) {
             $invoiceSameAsDelivery = $this->isInvoiceSameAsDelivery($invoiceSameAsDeliveryForm);
-            $deliveryAddressForm = $this->handleDeliveryAddress($invoiceSameAsDelivery, $invoiceAddress);
+            $deliveryAddressForm = $this->handleDeliveryAddress($request, $invoiceSameAsDelivery, $invoiceAddress);
         }
 
         if ($validDeliveryOptionStrategyFormData && $invoiceAddressForm->isValid() && $invoiceSameAsDeliveryForm->isValid()) {
