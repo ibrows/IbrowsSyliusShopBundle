@@ -302,7 +302,7 @@ class WizardController extends AbstractWizardController
      * @Template
      * @Wizard(name="summary", number=5, validationMethod="summaryValidation")
      */
-    public function summaryAction()
+    public function summaryAction(Request $request)
     {
         $cart = $this->getCurrentCart();
         if (($preAction = $this->preSummaryAction($cart)) instanceof Response) {
@@ -319,10 +319,8 @@ class WizardController extends AbstractWizardController
             )
         );
 
-        $request = $this->get('request');
-
         if ('POST' === $request->getMethod()) {
-            $summaryForm->submit($request);
+            $summaryForm->handleRequest($request);
             if ($summaryForm->isValid()) {
                 // Recompute strategies
                 $this->persistCurrentCart();
