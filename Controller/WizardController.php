@@ -272,7 +272,7 @@ class WizardController extends AbstractWizardController
         $paymentOptionStrategyForm = $this->createForm(get_class($this->getPaymentOptionStrategyType($cartManager)), $paymentOptionStrategyFormData);
 
         if ("POST" == $request->getMethod()) {
-            $paymentOptionStrategyForm->submit($request);
+            $paymentOptionStrategyForm->handleRequest($request);
             if ($paymentOptionStrategyForm->isValid()) {
                 $paymentOptionStrategyServiceId = $paymentOptionStrategyForm->get('strategyServiceId')->getData();
                 $paymentOptionStrategy = $cartManager->getPossiblePaymentOptionStrategyById($paymentOptionStrategyServiceId);
