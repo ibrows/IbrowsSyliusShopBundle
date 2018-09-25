@@ -263,7 +263,7 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('method', 'choice', array(
-            'choices' => $this->getPaymentMethods(),
+            'choices' => array_flip($this->getPaymentMethods()),
             'expanded' => true
         ));
     }
