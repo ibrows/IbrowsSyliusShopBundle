@@ -2,6 +2,10 @@
 
 namespace Ibrows\SyliusShopBundle\Form;
 
+use GuzzleHttp\Collection;
+use Ibrows\ShopBundle\Entity\AppCart;
+use Ibrows\ShopBundle\Entity\AppCartItem;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\Form\AbstractType;
@@ -16,10 +20,12 @@ class BasketType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('items', 'collection', array(
-                'entry_type' => $options['basketItemType']
+            ->add('items', CollectionType::class, array(
+                'entry_type' => $options['basketItemTypeDataClass'],
+                'entry_options' => $options['basketItemTypeOptions']
             ))
             ->add('continue', 'submit')
+            ->add('update', 'submit')
         ;
     }
 
@@ -33,8 +39,10 @@ class BasketType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        parent::configureOptions($resolver->setDefaults(array(
-            'basketItemType' => null
-        )));
+        $resolver->setDefaults(array(
+            'basketItemTypeDataClass' => null,
+            'data_class' => null,
+            'basketItemTypeOptions' => []
+        ));
     }
 }

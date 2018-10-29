@@ -9,18 +9,6 @@ use Symfony\Component\Form\AbstractType;
 
 class BasketItemType extends AbstractType
 {
-//    /**
-//     * @var string
-//     */
-//    protected $dataClass;
-//
-//    /**
-//     * @param string $dataClass
-//     */
-//    public function __construct($dataClass)
-//    {
-//        $this->dataClass = $dataClass;
-//    }
 
     /**
      * @param FormBuilderInterface $builder
@@ -34,20 +22,6 @@ class BasketItemType extends AbstractType
         ;
     }
 
-//    /**
-//     * @param OptionsResolverInterface $resolver
-//     */
-//    public function setDefaultOptions(OptionsResolverInterface $resolver)
-//    {
-//        parent::setDefaultOptions($resolver);
-//
-//        $resolver
-//            ->setDefaults(array(
-//                'data_class' => $this->dataClass
-//            ))
-//        ;
-//    }
-
     /**
      * @return string
      */
@@ -59,7 +33,8 @@ class BasketItemType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver->setDefaults(array(
-            'dataclass' => null
+            'data_class' => null,
+            'quantity' => null
         )));
     }
 }

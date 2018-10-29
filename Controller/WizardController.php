@@ -3,6 +3,7 @@
 namespace Ibrows\SyliusShopBundle\Controller;
 
 use Ibrows\Bundle\WizardAnnotationBundle\Annotation\Wizard;
+use Ibrows\ShopBundle\Entity\AppCartItem;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Context;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\ErrorRedirectResponse;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\PaymentFinishedResponse;
@@ -17,6 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Ibrows\SyliusShopBundle\Form\BasketType;
 use Ibrows\SyliusShopBundle\Form\BasketItemType;
+use Ibrows\ShopBundle\Entity\AppCart;
 
 /**
  * @Route("/wizard")
@@ -37,7 +39,12 @@ class WizardController extends AbstractWizardController
         }
 
         $cartManager = $this->getCurrentCartManager();
-        $basketForm = $this->createForm(BasketType::class, $cart, array('basketItemType' => BasketItemType::class));
+        $basketForm = $this->createForm(BasketType::class, $cart,
+            [
+                'basketItemTypeDataClass' => BasketItemType::class,
+                'data_class' => AppCart::class,
+                'basketItemTypeOptions' => ['data_class' => AppCartItem::class]
+            ]);
 
         if ("POST" == $request->getMethod()) {
             $basketForm->handleRequest($request);
@@ -70,7 +77,13 @@ class WizardController extends AbstractWizardController
                 }
 
                 $this->getManagerForClass($cart)->refresh($cart);
-                $basketForm = $this->createForm(get_class($this->getBasketType()), $cart);
+                $basketForm = $this->createForm(BasketType::class, $cart,
+                    [
+                        'basketItemTypeDataClass' => BasketItemType::class,
+                        'data_class' => AppCart::class,
+                        'basketItemTypeOptions' => ['data_class' => AppCartItem::class]
+                    ]);
+
             } else {
                 if (($postAction = $this->postInvalidBasketFormValidationAction($basketForm, $cart)) instanceof Response) {
                     return $postAction;
