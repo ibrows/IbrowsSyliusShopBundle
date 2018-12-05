@@ -173,9 +173,9 @@ class AddressType extends AbstractType
         $resolver->setDefaults( [
             'data_class' => $this->dataClass,
             'titleChoices' => array_flip(array(
-                'TITLE_WOMAN'   => "Woman",
-                'TITLE_MAN'     => "Man",
-                'TITLE_COMPANY' => "Company"
+                'TITLE_WOMAN'   => "Frau",
+                'TITLE_MAN'     => "Herr",
+                'TITLE_COMPANY' => "Firma"
             ))
         ] );
     }
