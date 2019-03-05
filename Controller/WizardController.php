@@ -205,12 +205,15 @@ class WizardController extends AbstractWizardController
         $invoiceAddressForm = $this->createForm(
             get_class($this->getInvoiceAddressType()),
             $invoiceAddress,
-            array(
+            [
                 'data_class'        => get_class($invoiceAddress),
-                'validation_groups' => array(
-                    'sylius_wizard_address'
-                )
-            )
+                'validation_groups' => [
+                    'sylius_wizard_address',
+                ],
+                'choices' => $this->getInvoiceAddressTypeCountryChoices(),
+                'preferred_choices' => $this->getInvoiceAddressTypePreferredCountryChoices(),
+                'titleChoices' => $this->getInvoiceAddressTypeTitleChoices(),
+            ]
         );
 
         $invoiceSameAsDeliveryForm = $this->getInvoiceSameAsDeliveryForm($invoiceAddress, $this->getDeliveryAddress());

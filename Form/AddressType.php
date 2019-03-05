@@ -3,6 +3,7 @@
 namespace Ibrows\SyliusShopBundle\Form;
 
 use Ibrows\SyliusShopBundle\Entity\Address;
+use Symfony\Component\Form\Extension\Core\Type\CountryType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -12,150 +13,38 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 class AddressType extends AbstractType
 {
     /**
-     * @var array
-     */
-    protected $countryChoices;
-
-    /**
-     * @var array
-     */
-    protected $preferredCountryChoices;
-
-    /**
-     * @var array
-     */
-    protected $titleChoices;
-
-    /**
-     * @var string
-     */
-    protected $dataClass;
-
-    /**
-     * @param array $countryChoices
-     * @param array $preferredCountryChoices
-     * @param array $titleChoices
-     * @param string $dataClass
-     */
-    public function __construct(
-        array $countryChoices = array(),
-        array $preferredCountryChoices = array(),
-        array $titleChoices = array(),
-        $dataClass = null
-    ){
-        $this->countryChoices = $countryChoices;
-        $this->preferredCountryChoices = $preferredCountryChoices;
-        $this->titleChoices = $titleChoices;
-        $this->dataClass = $dataClass;
-    }
-
-    /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $countryOptions = array();
-        if($this->countryChoices){
-            $countryOptions['choices'] = $this->countryChoices;
+        $countryOptions = [];
+        if (isset($options['choices']) && $options['choices']) {
+            $countryOptions['choices'] = $options['choices'];
+            $countryOptions['choice_loader'] = null;
         }
-        if($this->preferredCountryChoices){
-            $countryOptions['preferred_choices'] = $this->preferredCountryChoices;
+        if (isset($options['preferred_choices']) && $options['preferred_choices']) {
+            $countryOptions['preferred_choices'] = $options['preferred_choices'];
         }
 
-        if($this->titleChoices) {
-            $titleChoices = $this->titleChoices;
-        } else {
+        if (isset($options['titleChoices']) && $options['titleChoices']) {
             $titleChoices = $options['titleChoices'];
         }
 
         $builder
-            ->add('title', ChoiceType::class, array(
-                'choices' => $titleChoices
-            ))
+            ->add('title', ChoiceType::class, [
+                'choices' => $titleChoices,
+            ])
             ->add('firstname')
             ->add('lastname')
             ->add('company')
             ->add('street')
             ->add('zip')
             ->add('city')
-            ->add('country', 'country', $countryOptions)
+            ->add('country', CountryType::class, $countryOptions)
             ->add('phone')
             ->add('email', 'email')
         ;
-    }
-
-    /**
-     * @param OptionsResolverInterface $resolver
-     */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
-        parent::setDefaultOptions($resolver);
-        if($this->dataClass){
-            $resolver->setDefaults(array(
-                'data_class' => $this->dataClass,
-                'title_choices' => array(
-                    'TITLE_WOMAN'   => self::TITLE_WOMAN,
-                    'TITLE_MAN'     => self::TITLE_MAN,
-                    'TITLE_COMPANY' => self::TITLE_COMPANY
-                )
-            ));
-        }
-    }
-
-    /**
-     * @return array
-     */
-    public function getPreferredCountryChoices()
-    {
-        return $this->preferredCountryChoices;
-    }
-
-    /**
-     * @param array $preferredCountryChoices
-     * @return AddressType
-     */
-    public function setPreferredCountryChoices($preferredCountryChoices)
-    {
-        $this->preferredCountryChoices = $preferredCountryChoices;
-
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getCountryChoices()
-    {
-        return $this->countryChoices;
-    }
-
-    /**
-     * @param array $countryChoices
-     * @return AddressType
-     */
-    public function setCountryChoices($countryChoices)
-    {
-        $this->countryChoices = $countryChoices;
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getTitleChoices()
-    {
-        return $this->titleChoices;
-    }
-
-    /**
-     * @param array $titleChoices
-     * @return AddressType
-     */
-    public function setTitleChoices($titleChoices)
-    {
-        $this->titleChoices = $titleChoices;
-        return $this;
     }
 
     /**
@@ -166,19 +55,22 @@ class AddressType extends AbstractType
         return 'ibr_sylius_address';
     }
 
+    /**
+     * @param OptionsResolver $resolver
+     */
     public function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver); // TODO: Change the autogenerated stub
 
-        $resolver->setDefaults( [
-            'data_class' => $this->dataClass,
-            'titleChoices' => array_flip(array(
-                'TITLE_WOMAN'   => "Frau",
-                'TITLE_MAN'     => "Herr",
-                'TITLE_COMPANY' => "Firma"
-            ))
+        $resolver->setDefaults([
+            'data_class' => Address::class,
+            'choices' => [],
+            'preferred_choices' => [],
+            'titleChoices' => array_flip([
+                'TITLE_WOMAN'   => 'Frau',
+                'TITLE_MAN'     => 'Herr',
+                'TITLE_COMPANY' => 'Firma',
+            ])
         ] );
     }
-
-
 }

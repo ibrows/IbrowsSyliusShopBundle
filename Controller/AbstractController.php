@@ -498,11 +498,7 @@ abstract class AbstractController extends Controller
      */
     protected function getInvoiceAddressType()
     {
-        return new InvoiceAddressType(
-            $this->getInvoiceAddressTypeCountryChoices(),
-            $this->getInvoiceAddressTypePreferredCountryChoices(),
-            $this->getInvoiceAddressTypeTitleChoices()
-        );
+        return new InvoiceAddressType();
     }
 
     /**
@@ -510,11 +506,7 @@ abstract class AbstractController extends Controller
      */
     protected function getDeliveryAddressType()
     {
-        return new DeliveryAddressType(
-            $this->getDeliveryAddressTypeCountryChoices(),
-            $this->getDeliveryAddressTypePreferredCountryChoices(),
-            $this->getDeliveryAddressTypeTitleChoices()
-        );
+        return new DeliveryAddressType();
     }
 
     /**
