@@ -237,7 +237,14 @@ class WizardController extends AbstractWizardController
         }
 
         $deliveryOptionStrategyForm = $this->createForm(get_class($this->getDeliveryOptionStrategyType($cartManager)), $deliveryOptionStrategyFormData);
-        $deliveryAddressForm = $this->handleDeliveryAddress($request);
+        $deliveryFormOptions = [
+            'data_class'        => $this->getDeliveryAddressClass(),
+            'validation_groups' => [
+                'sylius_wizard_address'
+            ],
+            'choices' => $this->getDeliveryAddressTypeCountryChoices()
+        ];
+        $deliveryAddressForm = $this->handleDeliveryAddress($request,  null, null, $deliveryFormOptions);
 
         if ("POST" == $request->getMethod()) {
             if ($this->saveAddressForm($request, $deliveryOptionStrategyForm, $invoiceAddressForm, $invoiceSameAsDeliveryForm, $invoiceAddress, $deliveryAddressForm)) {

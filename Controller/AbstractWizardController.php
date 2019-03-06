@@ -459,9 +459,9 @@ abstract class AbstractWizardController extends AbstractController
      * @return FormInterface
      * @throws \Exception
      */
-    protected function handleDeliveryAddress(Request $request, $invoiceSameAsDelivery = null, $invoiceAddress = null)
+    protected function handleDeliveryAddress(Request $request, $invoiceSameAsDelivery = null, $invoiceAddress = null, $formOptions = null)
     {
-        $deliveryAddressForm = $this->createDeliveryAddressForm();
+        $deliveryAddressForm = $this->createDeliveryAddressForm(null,  null, $formOptions);
 
         //before post
         if ($invoiceSameAsDelivery === null) {
@@ -489,7 +489,7 @@ abstract class AbstractWizardController extends AbstractController
         //we need to create a new delivery address, otherwise the form binding of the deliveryAddressForm would also change the invoice address
         $deliveryAddressData = $deliveryAddressForm->getData();
         if ($deliveryAddressData && $invoiceAddress && $deliveryAddressData === $invoiceAddress) {
-            $deliveryAddressForm = $this->createDeliveryAddressForm(null, $this->getNewDeliveryAddress());
+            $deliveryAddressForm = $this->createDeliveryAddressForm(null, $this->getNewDeliveryAddress(), $formOptions);
         }
 
         $deliveryAddressForm->handleRequest($request);
