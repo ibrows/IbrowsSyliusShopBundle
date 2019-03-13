@@ -15,6 +15,8 @@ use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
 
 class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrategy
 {
@@ -288,14 +290,18 @@ class DatatransPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrate
         $invoiceAddress = $cart->getInvoiceAddress();
         $router = $this->getRouter();
 
+        $successUrl = $router->generate($currentRouteName, ['status' => PaymentFinishedResponse::STATUS_OK], UrlGeneratorInterface::ABSOLUTE_URL);
+        $failUrl = $router->generate($currentRouteName, ['status' => PaymentFinishedResponse::STATUS_ERROR], UrlGeneratorInterface::ABSOLUTE_URL);
+        $backUrl = $router->generate($currentRouteName, ['status' => PaymentFinishedResponse::STATUS_CANCEL], UrlGeneratorInterface::ABSOLUTE_URL);
+
         $authorizationRequest = StandardAuthorizationRequest::getInstance(
             $this->getMerchandId(),
             round($cart->getAmountToPay() * 100),
             $cart->getCurrency(),
             'Order #' . $cart->getId(),
-            $router->generate($currentRouteName, array('status' => PaymentFinishedResponse::STATUS_OK), true),
-            $router->generate($currentRouteName, array('status' => PaymentFinishedResponse::STATUS_ERROR), true),
-            $router->generate($currentRouteName, array('status' => PaymentFinishedResponse::STATUS_CANCEL), true)
+            $successUrl,
+            $failUrl,
+            $backUrl
         );
 
         $authorizationRequest->setUppWebResponseMethod(DataInterface::RESPONSEMETHOD_POST);

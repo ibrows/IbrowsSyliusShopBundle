@@ -17,6 +17,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Payment\Saferpay\Saferpay;
 use Payment\Saferpay\Data\PayInitParameterWithDataInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
 
 class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrategy
 {
@@ -294,13 +296,17 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
             }
         }
 
+        $successUrl = $router->generate($currentRouteName, ['status' => PaymentFinishedResponse::STATUS_OK], UrlGeneratorInterface::ABSOLUTE_URL);
+        $failUrl = $router->generate($currentRouteName, ['status' => PaymentFinishedResponse::STATUS_ERROR, 'error' => 'fail'], UrlGeneratorInterface::ABSOLUTE_URL);
+        $backUrl = $router->generate($currentRouteName, ['status' => PaymentFinishedResponse::STATUS_ERROR, 'error' => 'back'], UrlGeneratorInterface::ABSOLUTE_URL);
+
         $payInitParameter
             ->setAmount(round($cart->getAmountToPay() * 100))
             ->setDescription(sprintf('Order %s', $cart->getId()))
             ->setOrderid($cart->getId())
-            ->setSuccesslink($router->generate($currentRouteName, array('status' => PaymentFinishedResponse::STATUS_OK), true))
-            ->setFaillink($router->generate($currentRouteName, array('status' => PaymentFinishedResponse::STATUS_ERROR, 'error' => 'fail'), true))
-            ->setBacklink($router->generate($currentRouteName, array('status' => PaymentFinishedResponse::STATUS_ERROR, 'error' => 'back'), true))
+            ->setSuccesslink($successUrl)
+            ->setFaillink($failUrl)
+            ->setBacklink($backUrl)
             ->setFirstname($invoiceAddress->getFirstname())
             ->setLastname($invoiceAddress->getLastname())
             ->setStreet($invoiceAddress->getStreet())
