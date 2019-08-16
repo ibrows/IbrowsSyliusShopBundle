@@ -149,7 +149,7 @@ abstract class AbstractWizardController extends AbstractController
     protected function handlePaymentFinishedResponse(PaymentFinishedResponse $response, Context $context)
     {
         $this->savePaymentFinishedResponse($response);
-
+        
         switch ($response->getStatus()) {
             case $response::STATUS_OK:
                 return $this->handlePaymentFinishedResponseStatusOk($response, $context);

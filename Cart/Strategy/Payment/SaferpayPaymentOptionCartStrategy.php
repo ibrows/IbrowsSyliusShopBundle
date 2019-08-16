@@ -8,35 +8,18 @@ use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\SelfRedirectResponse;
 use Ibrows\SyliusShopBundle\Cart\Strategy\Payment\Response\ErrorRedirectResponse;
 use Ibrows\SyliusShopBundle\Model\Cart\AdditionalCartItemInterface;
 use Ibrows\SyliusShopBundle\Model\Cart\CartInterface;
-use Payment\Bundle\SaferpayBundle\PayInitParameter\PayInitParameterFactory;
-use Payment\Saferpay\Data\PayConfirmParameterInterface;
-use Payment\Saferpay\Data\PayInitParameterInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Payment\Saferpay\Saferpay;
-use Payment\Saferpay\Data\PayInitParameterWithDataInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
+use \Ticketpark\SaferpayJson\PaymentPage\InitializeRequest;
+use \Ticketpark\SaferpayJson\Container;
+use \Ticketpark\SaferpayJson\Message\ErrorResponse;
+use \Ticketpark\SaferpayJson\PaymentPage\AssertRequest;
 
 class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrategy
 {
-    /**
-     * @var Saferpay
-     */
-    protected $saferpay;
-
-    /**
-     * @var string
-     */
-    protected $saferpayPassword;
-
-    /**
-     * @var PayInitParameterFactory
-     */
-    protected $payInitParameterFactory;
-
     /**
      * @var array
      */
@@ -53,25 +36,37 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
     protected $doCompletePayment;
 
     /**
-     * @var string
+     * @var CartInterface
      */
-    protected $testAccountId;
+    protected $cart;
 
     /**
-     * @param Saferpay $saferpay
-     * @param PayInitParameterFactory $payInitParameterFactory
+     * @var CartManager
+     */
+    protected $cartManager;
+
+    /**
+     * @var array
+     */
+    protected $paymentParameter;
+
+    /**
+     * @var array
+     */
+    protected $credentials;
+
+    /**
      * @param array $paymentMethods
      * @param bool $doCompletePayment
      * @param string $testAccountId
      */
-    public function __construct(Saferpay $saferpay, PayInitParameterFactory $payInitParameterFactory, array $paymentMethods, $doCompletePayment = true, $testAccountId = '99867-94913159')
+    public function __construct( array $credentials, $saferpay_live_mode = false, array $paymentMethods, $doCompletePayment = true)
     {
-        $this->saferpay = $saferpay;
-        $this->payInitParameterFactory = $payInitParameterFactory;
         $this->paymentMethods = $paymentMethods;
         $this->setParentVisible(false);
         $this->setDoCompletePayment($doCompletePayment);
-        $this->setTestAccountId($testAccountId);
+        $this->setTestMode($saferpay_live_mode ? false : true);
+        $this->setCredentials($credentials);
     }
 
     /**
@@ -113,6 +108,24 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
     }
 
     /**
+     * @param array $credentials
+     * @return SaferpayPaymentOptionCartStrategy
+     */
+    public function setCredentials(array $credentials)
+    {
+        $this->credentials = $credentials;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCredentials()
+    {
+        return $this->credentials;
+    }
+
+    /**
      * @param CartInterface $cart
      * @param CartManager $cartManager
      * @return bool
@@ -133,21 +146,58 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
         return false;
     }
 
+
     /**
-     * @return Saferpay
+     * @return CartManager
      */
-    protected function getSaferpay()
+    protected function getCartManager()
     {
-        return $this->saferpay;
+        return $this->cartManager;
     }
 
     /**
-     * @param Saferpay $saferpay
+     * @param CartManager $cartManager
      * @return SaferpayPaymentOptionCartStrategy
      */
-    protected function setSaferpay(Saferpay $saferpay)
+    protected function setCartManager(CartManager $cartManager)
     {
-        $this->saferpay = $saferpay;
+        $this->cartManager = $cartManager;
+        return $this;
+    }
+
+    /**
+     * @return CartInterface
+     */
+    protected function getCart()
+    {
+        return $this->cart;
+    }
+
+    /**
+     * @param CartInterface $cart
+     * @return SaferpayPaymentOptionCartStrategy
+     */
+    protected function setCart(CartInterface $cart)
+    {
+        $this->cart = $cart;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getPaymentParameter()
+    {
+        return $this->paymentParameter;
+    }
+
+    /**
+     * @param array $paymentParameter
+     * @return SaferpayPaymentOptionCartStrategy
+     */
+    protected function setPaymentParameter(array $paymentParameter)
+    {
+        $this->paymentParameter = $paymentParameter;
         return $this;
     }
 
@@ -203,61 +253,131 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
     public function pay(Context $context, CartInterface $cart, CartManager $cartManager)
     {
         $request = $context->getRequest();
-        $saferpay = $this->getSaferpay();
+        $this->setCart($cart);
+        $this->setCartManager($cartManager);
+        $this->computeIntiParameter($context);
 
-        $payInitParameter = $this->getPayInitParameter($context, $cart);
-        $PaymentFinishedResponseData = array('payInitParameter' => $payInitParameter->getData());
-
+        // Routes the response result comming from Saferpay
         switch ($request->query->get('status')) {
             case PaymentFinishedResponse::STATUS_OK:
+                // This will be executed if the Redirect response form Saferpay is Successful
                 try {
-                    $payConfirmParameter = $saferpay->verifyPayConfirm($request->query->get('DATA'), $request->query->get('SIGNATURE'));
-                    $PaymentFinishedResponseData['payConfirmParameter'] = $payConfirmParameter->getData();
+                    $PaymentFinishedResponseData = $this->getPaymentInformations();
 
-                    if (true === $this->validatePayConfirmParameter($payConfirmParameter, $payInitParameter)) {
+                    if ($this->verifyPayConfirm()) {
                         if (false === $this->doCompletePayment()) {
                             return new PaymentFinishedResponse($this->getServiceId(), PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_COMPLETION, $cart->getPaymentOptionStrategyServiceData(), $PaymentFinishedResponseData);
                         }
-
-                        $payCompleteResponse = $saferpay->payCompleteV2($payConfirmParameter, 'Settlement');
-                        if ($payCompleteResponse->getResult() != '0') {
-                            return new PaymentFinishedResponse($this->getServiceId(), null, null, $cart->getPaymentOptionStrategyServiceData(), $PaymentFinishedResponseData);
-                        }
-
+                        return new PaymentFinishedResponse($this->getServiceId(), PaymentFinishedResponse::STATUS_OK, null, $cart->getPaymentOptionStrategyServiceData(), $PaymentFinishedResponseData);;
+                    }else{
                         return new PaymentFinishedResponse($this->getServiceId(), PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_COMPLETION, $cart->getPaymentOptionStrategyServiceData(), $PaymentFinishedResponseData);
                     }
 
-                    $saferpay->payCompleteV2($payConfirmParameter, 'Cancel', $this->getSaferpayPassword());
                     return new PaymentFinishedResponse($this->getServiceId(), PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_VALIDATION, $cart->getPaymentOptionStrategyServiceData(), $PaymentFinishedResponseData);
                 } catch (\Exception $e) {
                     return new PaymentFinishedResponse($this->getServiceId(), PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_VALIDATION, $cart->getPaymentOptionStrategyServiceData(), $PaymentFinishedResponseData);
                 }
                 break;
             case PaymentFinishedResponse::STATUS_ERROR:
+                // This will be executed if the Redirect response form Saferpay is contains an Error 
                 return new ErrorRedirectResponse(array('paymenterror' => $request->query->get('error')));
                 break;
         }
 
+        //This send the Customer to Saferpay Payment including the preped Data
+        return $this->requestSaferpay();
+    }
+
+    protected function requestSaferpay()
+    {
         try {
-            if ($url = $saferpay->createPayInit($payInitParameter)) {
-                return new RedirectResponse($url);
+            $credentials = $this->getCredentials();
+            $paymentParameter = $this->getPaymentParameter();
+            // Request Saferpay and get Url for Redirect
+            $response = (new InitializeRequest($credentials['saferpay_api_key'], $credentials['saferpay_api_secret'], true))
+            ->setRequestHeader($paymentParameter['requestHeader'])
+            ->setPayment($paymentParameter['payment'])
+            ->setTerminalId($credentials['saferpay_terminal_id'])
+            ->setReturnUrls($paymentParameter['returnUrls'])
+            ->setNotification($paymentParameter['notification'])
+            ->setPayer($paymentParameter['payer'])
+            ->execute();
+
+            if ($response) {
+                if($response instanceof ErrorResponse ){
+                    return new ErrorRedirectResponse(array('paymenterror' => 'connectionerror'));
+                }
+                $this->saveToken($response->getToken() );
+                // redirect User to Saferpay
+                return new RedirectResponse($response->getRedirectUrl());
             }
             return new ErrorRedirectResponse(array('paymenterror' => 'connectionerror'));
         } catch (\Exception $e) {
             return new ErrorRedirectResponse(array('paymenterror' => 'connectionerror'));
         }
     }
-
     /**
-     * @param PayConfirmParameterInterface $payConfirmParameter
-     * @param PayInitParameterInterface $payInitParameter
-     * @return bool
-     */
-    protected function validatePayConfirmParameter(PayConfirmParameterInterface $payConfirmParameter, PayInitParameterInterface $payInitParameter)
+    * @param string $token
+    * @return SaferpayPaymentOptionCartStrategy
+    */
+    protected function saveToken($token)
     {
-        return $payConfirmParameter->getAmount() == $payInitParameter->getAmount() && $payConfirmParameter->getCurrency() == $payInitParameter->getCurrency();
+        $paymentOptionStrategyServiceData= $this->getCart()->getPaymentOptionStrategyServiceData();
+        $paymentOptionStrategyServiceData['token'] = $token;
+        $this->getCart()->setPaymentOptionStrategyServiceData($paymentOptionStrategyServiceData);
+        $this->getCartManager()->persistCart();
+        return $this;
     }
 
+    /**
+    * @param string $id 
+    * @param string $status
+    * @return SaferpayPaymentOptionCartStrategy
+    */
+    protected function saveTransaction($id, $status)
+    {
+        $paymentOptionStrategyServiceData= $this->getCart()->getPaymentOptionStrategyServiceData();
+        $paymentOptionStrategyServiceData['transactionId'] = $id;
+        $paymentOptionStrategyServiceData['transactionStatus'] = $status;
+        $this->getCart()->setPaymentOptionStrategyServiceData($paymentOptionStrategyServiceData);
+        $this->getCartManager()->persistCart();
+        return $this;
+    }
+
+    protected function verifyPayConfirm()
+    {
+        $paymentOptionStrategyServiceData= $this->getCart()->getPaymentOptionStrategyServiceData();
+        if(!array_key_exists('token',$paymentOptionStrategyServiceData)){
+            return false;
+        }
+        $token = $paymentOptionStrategyServiceData['token'];
+        $credentials = $this->getCredentials();
+
+        // Prepare the assert request
+        // See http://saferpay.github.io/jsonapi/#Payment_v1_PaymentPage_Assert
+        $requestHeader = (new Container\RequestHeader())
+            ->setCustomerId($credentials['saferpay_customer_id'])
+            ->setRequestId(uniqid());
+
+        $response = (new AssertRequest($credentials['saferpay_api_key'], $credentials['saferpay_api_secret']))
+            ->setRequestHeader($requestHeader)
+            ->setToken($token)
+            ->execute();
+        
+        // Check for successful response
+        if ($response instanceof ErrorResponse) {
+            die($response->getErrorMessage());
+        }
+        if($transaction = $response->getTransaction()){
+            if($transaction->getStatus() == 'AUTHORIZED'){
+                // Save Transaction Id for documentation to the cart
+                $this->saveTransaction($transaction->getId(), $transaction->getStatus());
+
+                return $response;
+            }
+        }
+        return false;
+    }
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -272,95 +392,64 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
 
     /**
      * @param Context $context
-     * @param CartInterface $cart
-     * @return PayInitParameterWithDataInterface
+     * @return SaferpayPaymentOptionCartStrategy
      */
-    protected function getPayInitParameter(Context $context, CartInterface $cart)
+    protected function computeIntiParameter(Context $context)
     {
-        $payInitParameter = $this->payInitParameterFactory->createPayInitParameter();
+        $credentials = $this->getCredentials();
+        $cart = $this->getCart();
 
         $currentRouteName = $context->getCurrentRouteName();
-        $invoiceAddress = $cart->getInvoiceAddress();
         $router = $this->getRouter();
-
-        if ($this->isTestMode()) {
-            $payInitParameter->setAccountid($this->getTestAccountId());
-            $payInitParameter->setPaymentmethods(array($payInitParameter::PAYMENTMETHOD_SAFERPAY_TESTCARD));
-        } else {
-            $serviceData = $cart->getPaymentOptionStrategyServiceData();
-            if (isset($serviceData['method'])) {
-                $reflection = new \ReflectionClass($payInitParameter);
-                if ($code = $reflection->getConstant('PAYMENTMETHOD_' . strtoupper($serviceData['method']))) {
-                    $payInitParameter->setPaymentmethods(array($code));
-                }
-            }
-        }
 
         $successUrl = $router->generate($currentRouteName, ['status' => PaymentFinishedResponse::STATUS_OK], UrlGeneratorInterface::ABSOLUTE_URL);
         $failUrl = $router->generate($currentRouteName, ['status' => PaymentFinishedResponse::STATUS_ERROR, 'error' => 'fail'], UrlGeneratorInterface::ABSOLUTE_URL);
         $backUrl = $router->generate($currentRouteName, ['status' => PaymentFinishedResponse::STATUS_ERROR, 'error' => 'back'], UrlGeneratorInterface::ABSOLUTE_URL);
+        
+        $requestHeader = (new Container\RequestHeader())
+            ->setCustomerId($credentials['saferpay_customer_id'])
+            ->setRequestId(uniqid());
 
-        $payInitParameter
-            ->setAmount(round($cart->getAmountToPay() * 100))
-            ->setDescription(sprintf('Order %s', $cart->getId()))
-            ->setOrderid($cart->getId())
-            ->setSuccesslink($successUrl)
-            ->setFaillink($failUrl)
-            ->setBacklink($backUrl)
-            ->setFirstname($invoiceAddress->getFirstname())
-            ->setLastname($invoiceAddress->getLastname())
+
+        $amount = (new Container\Amount())
+            ->setCurrencyCode(strtoupper($cart->getCurrency()))
+            ->setValue(round($cart->getAmountToPay() * 100)); // amount in cents
+
+
+        $payment = (new Container\Payment())
+            ->setAmount($amount)
+            ->setOrderId($cart->getId())
+            ->setDescription(sprintf('Order %s', $cart->getId()));
+
+        $invoiceAddress = $cart->getInvoiceAddress();
+        $address = (new Container\Address())
+            ->setFirstName($invoiceAddress->getFirstname())
+            ->setLastName($invoiceAddress->getLastname())
             ->setStreet($invoiceAddress->getStreet())
             ->setZip($invoiceAddress->getZip())
             ->setCity($invoiceAddress->getCity())
-            ->setCountry($invoiceAddress->getCountry())
-            ->setEmail($invoiceAddress->getEmail())
-            ->setCurrency(strtoupper($cart->getCurrency()))
-            ->setLangid($context->getRequest()->getLocale());
+            ->setCountryCode($invoiceAddress->getCountry())
+            ->setGender('MALE');
 
-        if ($invoiceAddress->isTitleWoman()) {
-            $payInitParameter->setGender($payInitParameter::GENDER_FEMALE);
-        } elseif ($invoiceAddress->isTitleMan()) {
-            $payInitParameter->setGender($payInitParameter::GENDER_MALE);
-        } elseif ($invoiceAddress->isTitleCompany()) {
-            $payInitParameter->setGender($payInitParameter::GENDER_COMPANY);
-        }
+        $payer = (new Container\Payer())
+            ->setLanguageCode($context->getRequest()->getLocale())
+            ->setBillingAddress($address);
 
-        return $payInitParameter;
-    }
+        $returnUrls = (new Container\ReturnUrls())
+            ->setSuccess($successUrl)
+            ->setFail($failUrl)
+            ->setAbort($backUrl);
 
-    /**
-     * @return string
-     */
-    public function getTestAccountId()
-    {
-        return $this->testAccountId;
-    }
+        $notification = (new Container\Notification())
+            ->setNotifyUrl('https://www.mysite.ch/notification');
 
-    /**
-     * @param string $testAccountId
-     * @return SaferpayPaymentOptionCartStrategy
-     */
-    public function setTestAccountId($testAccountId)
-    {
-        $this->testAccountId = $testAccountId;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSaferpayPassword()
-    {
-        return $this->saferpayPassword;
-    }
-
-    /**
-     * @param string $saferpayPassword
-     * @return SaferpayPaymentOptionCartStrategy
-     */
-    public function setSaferpayPassword($saferpayPassword)
-    {
-        $this->saferpayPassword = $saferpayPassword;
+        $this->setPaymentParameter([
+            'requestHeader' => $requestHeader,
+            'payment' => $payment,
+            'returnUrls' => $returnUrls,
+            'notification' => $notification,
+            'payer' => $payer
+        ]);
         return $this;
     }
 
@@ -389,5 +478,42 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
     public function getBlockPrefix()
     {
         return "";
+    }
+    /**
+     * @return array
+     */
+    protected function getPaymentInformations()
+    {
+        $paymentParameter = $this->paymentParameter;
+        $paymentInformation = [];
+        if( $paymentParameter != null ){
+            if(array_key_exists( 'payment', $paymentParameter )){
+                $paymentObj = $paymentParameter['payment'];
+                $amount = $paymentObj->getAmount();
+                $payment['value'] = $amount->getValue();
+                $payment['currencyCode'] = $amount->getCurrencyCode();
+                $payment['orderId'] = $paymentObj->getOrderId();
+                $payment['description'] = $paymentObj->getDescription();
+                $payment['payerNote'] = $paymentObj->getPayerNote();
+                $paymentInformation['payment'] = $payment;
+            }
+            if(array_key_exists( 'payer', $paymentParameter )){
+                $payerObj = $paymentParameter['payer'];
+                $payer['languageCode'] = $payerObj->getLanguageCode();
+                $address = $payerObj->getBillingAddress();
+                $payer['firstName'] = $address->getFirstName();
+                $payer['lastName'] = $address->getLastName();
+                $payer['street'] = $address->getStreet();
+                $payer['zip'] = $address->getZip();
+                $payer['city'] = $address->getCity();
+                $payer['countryCode'] = $address->getCountryCode();
+
+                $paymentInformation['payer'] = $payer;
+            }
+        }
+
+       return [
+        'payConfirmParameter' => $paymentInformation
+       ];
     }
 }
