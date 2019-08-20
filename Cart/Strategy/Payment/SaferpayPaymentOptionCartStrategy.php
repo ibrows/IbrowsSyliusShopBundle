@@ -294,7 +294,7 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
             $credentials = $this->getCredentials();
             $paymentParameter = $this->getPaymentParameter();
             // Request Saferpay and get Url for Redirect
-            $response = (new InitializeRequest($credentials['saferpay_api_key'], $credentials['saferpay_api_secret'], true))
+            $response = (new InitializeRequest($credentials['saferpay_api_key'], $credentials['saferpay_api_secret'], $this->isTestMode()))
             ->setRequestHeader($paymentParameter['requestHeader'])
             ->setPayment($paymentParameter['payment'])
             ->setTerminalId($credentials['saferpay_terminal_id'])
