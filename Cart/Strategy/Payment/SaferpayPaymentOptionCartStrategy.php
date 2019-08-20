@@ -359,7 +359,7 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
             ->setCustomerId($credentials['saferpay_customer_id'])
             ->setRequestId(uniqid());
 
-        $response = (new AssertRequest($credentials['saferpay_api_key'], $credentials['saferpay_api_secret']))
+        $response = (new AssertRequest($credentials['saferpay_api_key'], $credentials['saferpay_api_secret'], $this->isTestMode()))
             ->setRequestHeader($requestHeader)
             ->setToken($token)
             ->execute();
