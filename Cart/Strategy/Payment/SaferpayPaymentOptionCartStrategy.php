@@ -17,6 +17,7 @@ use \Ticketpark\SaferpayJson\PaymentPage\InitializeRequest;
 use \Ticketpark\SaferpayJson\Container;
 use \Ticketpark\SaferpayJson\Message\ErrorResponse;
 use \Ticketpark\SaferpayJson\PaymentPage\AssertRequest;
+use \Ticketpark\SaferpayJson\Transaction\CaptureRequest;
 
 class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrategy
 {
@@ -268,6 +269,9 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
                         if (false === $this->doCompletePayment()) {
                             return new PaymentFinishedResponse($this->getServiceId(), PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_COMPLETION, $cart->getPaymentOptionStrategyServiceData(), $PaymentFinishedResponseData);
                         }
+                        if(!$this->captureTransaction()){
+                            return new PaymentFinishedResponse($this->getServiceId(), PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_COMPLETION, $cart->getPaymentOptionStrategyServiceData(), $PaymentFinishedResponseData);
+                        }
                         return new PaymentFinishedResponse($this->getServiceId(), PaymentFinishedResponse::STATUS_OK, null, $cart->getPaymentOptionStrategyServiceData(), $PaymentFinishedResponseData);;
                     }else{
                         return new PaymentFinishedResponse($this->getServiceId(), PaymentFinishedResponse::STATUS_ERROR, PaymentFinishedResponse::ERROR_COMPLETION, $cart->getPaymentOptionStrategyServiceData(), $PaymentFinishedResponseData);
@@ -378,6 +382,39 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
         }
         return false;
     }
+
+    protected function captureTransaction()
+    {
+        $paymentOptionStrategyServiceData= $this->getCart()->getPaymentOptionStrategyServiceData();
+        if(!array_key_exists('transactionId',$paymentOptionStrategyServiceData) || !array_key_exists('transactionStatus',$paymentOptionStrategyServiceData)){
+            return false;
+        }
+        $transactionId = $paymentOptionStrategyServiceData['transactionId'];
+        $transactionStatus = $paymentOptionStrategyServiceData['transactionStatus'];
+
+        $credentials = $this->getCredentials();
+
+        // Prepare the capture request
+        // https://saferpay.github.io/jsonapi/#Payment_v1_Transaction_Capture
+        $requestHeader = (new Container\RequestHeader())
+            ->setCustomerId($credentials['saferpay_customer_id'])
+            ->setRequestId(uniqid());
+
+        $transactionReference = (new Container\TransactionReference())
+            ->setTransactionId($transactionId);
+
+        $response = (new CaptureRequest($credentials['saferpay_api_key'], $credentials['saferpay_api_secret'], $this->isTestMode()))
+            ->setRequestHeader($requestHeader)
+            ->setTransactionReference($transactionReference)
+            ->execute();
+        
+        // Check for successful response
+        if ($response instanceof ErrorResponse) {
+            return false;
+        }
+        return true;
+    }
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
