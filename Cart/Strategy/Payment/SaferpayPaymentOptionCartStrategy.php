@@ -57,17 +57,34 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
     protected $credentials;
 
     /**
+     * @var string
+     */
+    protected $saferpayNotificationEmail;
+
+    /**
      * @param array $paymentMethods
      * @param bool $doCompletePayment
      * @param string $testAccountId
      */
-    public function __construct( array $credentials, $saferpay_live_mode = false, array $paymentMethods, $doCompletePayment = true)
+    public function __construct( array $credentials, $saferpay_live_mode = false, $saferpayNotificationEmail= null , array $paymentMethods, $doCompletePayment = true)
     {
+        $this->setSaferpayNotificationEmail($saferpayNotificationEmail);
         $this->paymentMethods = $paymentMethods;
         $this->setParentVisible(false);
         $this->setDoCompletePayment($doCompletePayment);
         $this->setTestMode($saferpay_live_mode ? false : true);
         $this->setCredentials($credentials);
+    }
+
+    protected function setSaferpayNotificationEmail ($saferpayNotificationEmail)
+    {
+        $this->saferpayNotificationEmail = $saferpayNotificationEmail;
+        return $this;
+    }
+
+    protected function getSaferpayNotificationEmail ()
+    {
+        return $this->saferpayNotificationEmail;
     }
 
     /**
@@ -478,7 +495,7 @@ class SaferpayPaymentOptionCartStrategy extends AbstractPaymentOptionCartStrateg
             ->setAbort($backUrl);
 
         $notification = (new Container\Notification())
-            ->setNotifyUrl('https://www.mysite.ch/notification');
+            ->setMerchantEmail($this->getSaferpayNotificationEmail());
 
         $this->setPaymentParameter([
             'requestHeader' => $requestHeader,
